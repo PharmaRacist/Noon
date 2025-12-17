@@ -1,0 +1,20 @@
+import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Io
+import qs.modules.common
+import qs.modules.common.functions
+import qs.modules.common.widgets
+import qs.services
+
+QuickToggleButton {
+    id: darkModeButton
+
+    toggled: Mem.states.desktop.appearance.mode === "dark"
+    buttonIcon: toggled ? "dark_mode" : "light_mode"
+    buttonName: toggled ? "Dark" : "Light"
+    onClicked: WallpaperService.toggleShellMode()
+
+    StyledToolTip {
+        content: qsTr("Toggle Dark Mode")
+    }
+}

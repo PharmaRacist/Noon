@@ -1,0 +1,21 @@
+// Zed settings
+{
+  "agent": {
+    "default_model": {
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-chat:free"
+    },
+    "model_parameters": [],
+    "always_allow_tool_actions": false,
+    "version": "2"
+  },
+  "icon_theme": "Material Icon Theme",
+  "ui_font_size": 18,
+  "buffer_font_size": 25.0,
+  "buffer_font_family": "Iosevka",
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Material You"
+  }
+}

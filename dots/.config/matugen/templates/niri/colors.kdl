@@ -1,0 +1,9 @@
+layout {
+    border {
+        active-color = "{{colors.outline.default.hex_stripped}}AA"
+        inactive-color = "{{colors.outline_variant.default.hex_stripped}}AA"
+    }
+}
+overview {
+    backdrop-color "{{colors.surface.default.hex_stripped}}AA"
+}

@@ -1,0 +1,69 @@
+[config]
+include = 'Extra'
+
+[templates.btop]
+input_path = "~/.config/matugen/templates/applications/btop.theme"
+output_path = '~/.config/btop/themes/hyprnoon.theme'
+
+[templates.obsidian]
+input_path = "~/.config/matugen/templates/applications/obsidian.css"
+output_path = "/mnt/Data/General-Archive/notes/.obsidian/snippets/Noon.css"
+
+# [templates.niri]
+# input_path = '~/.config/matugen/templates/niri/colors.kdl'
+# output_path = '~/.config/niri/colors.kdl'
+
+[templates.sequences]
+input_path = "~/.config/matugen/templates/terminal/sequences.txt"
+output_path = '~/.local/state/noon/user/generated/terminal/sequences.txt'
+
+[templates.m3colors]
+input_path = '~/.config/matugen/templates/colors.json'
+output_path = '~/.local/state/noon/user/generated/colors.json'
+
+[templates.starship]
+input_path = '~/.config/matugen/templates/starship.toml'
+output_path = '~/.config/starship.toml'
+
+[templates.hyprland]
+input_path = '~/.config/matugen/templates/hyprland/colors.conf'
+output_path = '~/.cache/hyprland/colors.conf'
+
+[templates.gtk3]
+input_path = '~/.config/matugen/templates/gtk/gtk-colors.css'
+output_path = '~/.config/gtk-3.0/gtk.css'
+
+[templates.gtk4]
+pre_hook = 'rm -rf ~/.config/gtk-4.0 && mkdir -p ~/.config/gtk-4.0'
+input_path = '~/.config/matugen/templates/gtk/gtk-colors.css'
+output_path = '~/.config/gtk-4.0/gtk.css'
+
+[templates.pywalfox]
+input_path = '~/.config/matugen/templates/applications/pywalfox-colors.json'
+output_path = '~/.cache/wal/colors.json'
+post_hook = 'pywalfox update'
+
+[templates.heroic]
+input_path = "~/.config/matugen/templates/applications/heroic-theme.css"
+output_path = "~/.cache/noon/user/generated/heroic-colors.css"
+
+[templates.spicetify]
+input_path = "~/.config/matugen/templates/applications/spicetify.ini"
+output_path = "~/.config/spicetify/Themes/noon/color.ini"
+
+[templates.discord]
+input_path = "~/.config/matugen/templates/applications/midnight-discord.css"
+output_path = "~/.config/vesktop/themes/noon.css"
+
+[templates.zed]
+input_path = '~/.config/matugen/templates/applications/zed.json'
+output_path = '~/.config/zed/themes/m3colors.json'
+
+[templates.telegram]
+input_path = '~/.config/matugen/templates/applications/telegram-colors.tdesktop-theme'
+output_path = '~/.cache/noon/user/generated/colors/noon.tdesktop-theme'
+post_hook = 'ln -sf ${{image}} ~/.cache/noon/user/generated/colors.jpg'
+
+[templates.codium]
+input_path = "~/.config/matugen/templates/applications/vscode.json"
+output_path = "~/.vscode-oss/extensions/noon/colors.json"

@@ -1,0 +1,191 @@
+[ColorEffects:Disabled]
+ChangeSelectionColor=
+Color=#1c1d23
+ColorAmount=0.5
+ColorEffect=3
+ContrastAmount=0
+ContrastEffect=0
+Enable=
+IntensityAmount=0
+IntensityEffect=0
+
+[ColorEffects:Inactive]
+ChangeSelectionColor=true
+Color=#0d0e13
+ColorAmount=0.025
+ColorEffect=0
+ContrastAmount=0.1
+ContrastEffect=0
+Enable=true
+IntensityAmount=0
+IntensityEffect=0
+
+[Colors:Button]
+BackgroundAlternate=#43444d
+BackgroundNormal=#292a2f
+DecorationFocus=#b3c5ff
+DecorationHover=#b3c5ff
+ForegroundActive=#e3e2e9
+ForegroundInactive=#8f909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#e3e2e9
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Complementary]
+BackgroundAlternate=#101116
+BackgroundNormal=#1c1d23
+DecorationFocus=#b3c5ff
+DecorationHover=#b3c5ff
+ForegroundActive=#e3e2e9
+ForegroundInactive=#8f909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c5c6d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Header]
+BackgroundAlternate=#1c1d23
+BackgroundNormal=#1c1d23
+DecorationFocus=#b3c5ff
+DecorationHover=#b3c5ff
+ForegroundActive=#e3e2e9
+ForegroundInactive=#8f909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c5c6d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Header][Inactive]
+BackgroundAlternate=#1c1d23
+BackgroundNormal=#1c1d23
+DecorationFocus=#b3c5ff
+DecorationHover=#b3c5ff
+ForegroundActive=#e3e2e9
+ForegroundInactive=#8f909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c5c6d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Selection]
+BackgroundAlternate=#b3c5ff
+BackgroundNormal=#b3c5ff
+DecorationFocus=#b3c5ff
+DecorationHover=#c1c6dd
+ForegroundActive=#192e60
+ForegroundInactive=#192e60
+ForegroundLink=#004b73
+ForegroundNegative=#920023
+ForegroundNeutral=#753400
+ForegroundNormal=#192e60
+ForegroundPositive=#005228
+ForegroundVisited=#74009f
+
+[Colors:Tooltip]
+BackgroundAlternate=#43444d
+BackgroundNormal=#1c1d23
+DecorationFocus=#b3c5ff
+DecorationHover=#b3c5ff
+ForegroundActive=#e3e2e9
+ForegroundInactive=#8f909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#e3e2e9
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:View]
+BackgroundAlternate=#1c1d23
+BackgroundNormal=#101116
+DecorationFocus=#b3c5ff
+DecorationHover=#495d92
+ForegroundActive=#e3e2e9
+ForegroundInactive=#8f909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#e3e2e9
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Window]
+BackgroundAlternate=#43444d
+BackgroundNormal=#1c1d23
+DecorationFocus=#b3c5ff
+DecorationHover=#b3c5ff
+ForegroundActive=#8fc9fc
+ForegroundInactive=#8f909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c5c6d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[DirSelect Dialog]
+DirSelectDialog Size=848,593
+History Items[$e]=file:///run/media/Data/General-Archive,file:$HOME/HyprNoon_qs
+Splitter State=\x00\x00\x00\xff\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\xa8\x00\x00\x02\xa8\x00\xff\xff\xff\xff\x01\x00\x00\x00\x01\x00
+
+[General]
+ColorScheme=MaterialYouDark
+ColorSchemeHash=7ac248054e10de1eaec226575cc767e0da0cbf12
+LastUsedCustomAccentColor=184,117,220
+XftHintStyle=hintslight
+XftSubPixel=none
+fixed=JetBrainsMono Nerd Font,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+font=Rubik,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+menuFont=Rubik,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+smallestReadableFont=Rubik,9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+toolBarFont=Rubik,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+
+[Icons]
+Theme=Colloid
+
+[KDE]
+ShowDeleteCommand=false
+widgetStyle=Darkly
+
+[KFileDialog Settings]
+Allow Expansion=false
+Automatically select filename extension=true
+Breadcrumb Navigation=true
+Decoration position=2
+Show Full Path=false
+Show Inline Previews=true
+Show Preview=false
+Show Speedbar=true
+Show hidden files=false
+Sort by=Name
+Sort directories first=true
+Sort hidden files last=false
+Sort reversed=false
+Speedbar Width=168
+View Style=DetailTree
+
+[PreviewSettings]
+EnableRemoteFolderThumbnail=false
+MaximumRemoteSize=0
+
+[Sounds]
+Theme=freedesktop
+
+[WM]
+activeBackground=49,50,56
+activeBlend=252,252,252
+activeFont=Rubik,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+activeForeground=227,226,233
+inactiveBackground=63,68,87
+inactiveBlend=161,169,177
+inactiveForeground=221,226,249
+

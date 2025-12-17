@@ -1,0 +1,546 @@
+import Qt.labs.folderlistmodel
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Effects
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Widgets
+import qs
+import qs.modules.common
+import qs.modules.common.functions
+import qs.modules.common.widgets
+import qs.modules.sidebarLauncher.components.polkit
+import qs.modules.sidebarLauncher.components.beats
+import qs.modules.sidebarLauncher.components.misc
+import qs.modules.sidebarLauncher.components.widgets
+import qs.modules.sidebarLauncher.components.games
+import qs.modules.sidebarLauncher.components.view
+import qs.modules.sidebarLauncher.components.session
+import qs.modules.sidebarLauncher.components.wallpapers
+import qs.modules.sidebarLauncher.components.tasks
+import qs.modules.sidebarLauncher.components.notifs
+import qs.modules.sidebarLauncher.components.notes
+import qs.modules.sidebarLauncher.components.gallary
+import qs.modules.sidebarLauncher.components.apis
+import qs.modules.sidebarLauncher.components.settings
+import qs.services
+import qs.store
+
+FocusScope {
+    id: root
+    property bool showContent: false
+    property bool rightMode: true
+    property bool clearAppListOnHide: true
+    property string searchText: ""
+    property string selectedCategory: "Apps"
+    property bool expanded: false
+    property bool _manualExpandedToggle: false
+    property bool effectiveSearchable: LauncherData.isSearchable(selectedCategory)
+    property bool pinned: false
+    property color contentColor: selectedCategory === "Beats" && Mem.options.mediaPlayer.adaptiveTheme ? TrackColorsService.colors.colLayer0 : Colors.colLayer0
+    required property var panelWindow
+
+    // Auxiliary component properties
+    property bool auxVisible: false
+    property string auxCategory: ""
+    property string auxSearchText: ""
+
+    clip: true
+    focus: true
+
+    signal requestPin
+    signal barLayoutChangeRequested(int layoutIndex, bool isVertical)
+    signal appLaunched(var app)
+    signal contentToggleRequested
+    signal hideBarRequested
+    signal dismiss
+
+    // Data models for panels
+    ListModel {
+        id: mainModel
+    }
+
+    ListModel {
+        id: auxModel
+    }
+
+    // Helper to focus search input
+    function focusSearchInput() {
+        const mainPanel = panelRepeater.itemAt(0);
+        if (mainPanel && mainPanel.searchInput && effectiveSearchable) {
+            mainPanel.searchInput.forceActiveFocus();
+        }
+    }
+
+    onShowContentChanged: {
+        if (showContent && GlobalStates.sidebarLauncherOpen) {
+            Qt.callLater(focusSearchInput);
+        }
+
+        if (!showContent && clearAppListOnHide) {
+            mainModel.clear();
+        }
+    }
+
+    onEffectiveSearchableChanged: {
+        if (showContent && GlobalStates.sidebarLauncherOpen) {
+            Qt.callLater(focusSearchInput);
+        }
+    }
+
+    Connections {
+        target: GlobalStates
+        function onSidebarLauncherOpenChanged() {
+            if (GlobalStates.sidebarLauncherOpen && showContent) {
+                Qt.callLater(root.focusSearchInput);
+            }
+        }
+    }
+
+    // Listen to searchFocusRequested from main panel
+    Connections {
+        target: panelRepeater.itemAt(0)
+        ignoreUnknownSignals: true
+
+        function onSearchFocusRequested() {
+            root.focusSearchInput();
+        }
+    }
+
+    function updateAppList(isAux = false) {
+        const category = isAux ? auxCategory : selectedCategory;
+        const query = isAux ? auxSearchText : searchText;
+        const model = isAux ? auxModel : mainModel;
+
+        if (!category || (isAux && !auxVisible)) {
+            if (clearAppListOnHide) {
+                model.clear();
+            }
+            return;
+        }
+
+        if (!isAux && (!showContent || !GlobalStates.sidebarLauncherOpen)) {
+            if (clearAppListOnHide) {
+                model.clear();
+            }
+            return;
+        }
+
+        model.clear();
+        const params = {
+            "frequentEmojis": Emojis.frequentEmojis,
+            "horizontalLayouts": BarData.horizontalLayouts,
+            "verticalLayouts": BarData.verticalLayouts,
+            "isVerticalBar": BarData.verticalBar,
+            "currentHorizontalLayout": Mem.options.bar.currentLayout,
+            "currentVerticalLayout": Mem.options.bar.currentVerticalLayout
+        };
+
+        const results = LauncherData.generateData(category, query.trim(), params);
+        for (let i = 0; i < results.length; ++i) {
+            model.append(results[i]);
+        }
+    }
+
+    function auxReveal(category) {
+        if (!category || (category !== "Auth" && !LauncherData.enabledCategories.includes(category))) {
+            console.warn("Category not enabled:", category);
+            return;
+        }
+
+        const isSameCategory = auxCategory === category;
+
+        if (isSameCategory && auxVisible) {
+            closeAuxPanel();
+            return;
+        }
+
+        // Guard: prevent duplicate content between main and aux panels
+        if (category === selectedCategory && showContent) {
+            console.warn("Category already displayed in main panel:", category);
+            return;
+        }
+
+        auxCategory = category;
+        auxSearchText = "";
+        auxVisible = true;
+
+        if (LauncherData.hasModel(category)) {
+            auxDelayedRefresh.restart();
+        }
+    }
+
+    function closeAuxPanel() {
+        auxVisible = false;
+        auxCategory = "";
+        auxSearchText = "";
+        auxModel.clear();
+    }
+
+    function requestCategoryChange(newCategory, initialQuery = "") {
+        if (newCategory !== "Auth" && !LauncherData.enabledCategories.includes(newCategory)) {
+            console.warn("Category not enabled:", newCategory);
+            return;
+        }
+
+        const isSameCategory = selectedCategory === newCategory;
+        const isExpanded = showContent && GlobalStates.sidebarLauncherOpen;
+
+        if (isSameCategory && isExpanded) {
+            selectedCategory = "";
+            dismiss();
+            return;
+        }
+
+        if (!GlobalStates.sidebarLauncherOpen)
+            GlobalStates.sidebarLauncherOpen = true;
+
+        selectedCategory = newCategory;
+        resetSearch(initialQuery);
+
+        if (!showContent) {
+            Qt.callLater(() => {
+                contentToggleRequested();
+            });
+        }
+    }
+
+    function resetSearch(newQuery = "") {
+        searchText = newQuery;
+    }
+
+    function switchToLayout(layoutIndex, isVertical) {
+        if (isVertical)
+            Mem.options.bar.currentVerticalLayout = layoutIndex;
+        else
+            Mem.options.bar.currentLayout = layoutIndex;
+        barLayoutChangeRequested(layoutIndex, isVertical);
+    }
+
+    onSelectedCategoryChanged: {
+        resetSearch("");
+        if (LauncherData.hasModel(selectedCategory)) {
+            delayedRefresh.restart();
+        }
+    }
+
+    onAuxCategoryChanged: {
+        auxSearchText = "";
+        if (auxCategory && LauncherData.hasModel(auxCategory)) {
+            auxDelayedRefresh.restart();
+        }
+    }
+
+    Binding {
+        target: root
+        property: "expanded"
+        value: {
+            // Force expand when aux is visible
+            if (auxVisible)
+                return true;
+            // Otherwise use category's pre-expand setting
+            return LauncherData.usePreExpand(selectedCategory) && LauncherData.isExpandable(selectedCategory);
+        }
+        when: !_manualExpandedToggle
+    }
+
+    Timer {
+        id: delayedRefresh
+        interval: Mem.options.hacks.arbitraryRaceConditionDelay ?? 100
+        repeat: false
+        onTriggered: if (LauncherData.hasModel(selectedCategory))
+            updateAppList(false)
+    }
+
+    Timer {
+        id: auxDelayedRefresh
+        interval: Mem.options.hacks.arbitraryRaceConditionDelay ?? 100
+        repeat: false
+        onTriggered: if (auxCategory && LauncherData.hasModel(auxCategory))
+            updateAppList(true)
+    }
+
+    Connections {
+        target: PolkitService
+        function onFlowChanged() {
+            const authRegistry = LauncherData.registry["Auth"];
+            if (!authRegistry)
+                return;
+
+            if (PolkitService.flow !== null) {
+                authRegistry.enabled = true;
+                if (!showContent)
+                    contentToggleRequested();
+                if (selectedCategory !== "Auth")
+                    requestCategoryChange("Auth");
+                Qt.callLater(focusSearchInput);
+            } else {
+                authRegistry.enabled = false;
+                if (selectedCategory === "Auth")
+                    dismiss();
+            }
+        }
+    }
+
+    function handleRootKeys(event) {
+        const key = event.key;
+        const mods = event.modifiers;
+
+        if (key === Qt.Key_Escape) {
+            dismiss();
+            event.accepted = true;
+            return true;
+        }
+
+        if (key === Qt.Key_Tab || key === Qt.Key_Backtab) {
+            let targetCategory;
+            if (mods === Qt.ShiftModifier || mods === (Qt.ControlModifier | Qt.ShiftModifier)) {
+                targetCategory = LauncherData.getPreviousEnabledCategory(selectedCategory);
+            } else if (mods === 0) {
+                targetCategory = LauncherData.getNextEnabledCategory(selectedCategory);
+            }
+            if (targetCategory) {
+                requestCategoryChange(targetCategory);
+                event.accepted = true;
+                return true;
+            }
+        }
+
+        if (mods === Qt.ControlModifier) {
+            if (key === Qt.Key_O && LauncherData.isExpandable(selectedCategory)) {
+                // Don't allow manual collapse when aux is visible
+                if (auxVisible && expanded) {
+                    event.accepted = true;
+                    return true;
+                }
+                _manualExpandedToggle = true;
+                expanded = !expanded;
+                event.accepted = true;
+                return true;
+            } else if (key === Qt.Key_P) {
+                Qt.callLater(() => requestPin());
+                event.accepted = true;
+                return true;
+            } else if (key === Qt.Key_Q) {
+                Qt.callLater(() => closeAuxPanel());
+                event.accepted = true;
+                return true;
+            } else if (key === Qt.Key_R && selectedCategory === "History") {
+                Cliphist.wipe();
+                delayedRefresh.restart();
+                event.accepted = true;
+                return true;
+            }
+        }
+
+        const isWallpapers = selectedCategory === "Walls";
+        const shouldHandleViewKeys = (effectiveSearchable && mainModel.count > 0) || isWallpapers;
+
+        if (shouldHandleViewKeys) {
+            if (key === Qt.Key_Return || key === Qt.Key_Enter) {
+                const firstApp = mainModel.get(0);
+                if (firstApp && effectiveSearchable) {
+                    LauncherData.launchApp(firstApp);
+                    event.accepted = true;
+                    return true;
+                }
+            }
+        }
+
+        if (mods === Qt.ControlModifier && isWallpapers) {
+            const mainPanelItem = panelRepeater.itemAt(0);
+            const loader = mainPanelItem ? mainPanelItem.children[mainPanelItem.children.length - 2] : null;
+            const view = loader ? loader.item : null;
+
+            if (view) {
+                switch (key) {
+                case Qt.Key_Left:
+                    WallpaperService.goBack();
+                    break;
+                case Qt.Key_S:
+                    if (typeof view.shuffleWallpapers === 'function')
+                        view.shuffleWallpapers();
+                    break;
+                }
+                event.accepted = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Keys.onPressed: event => handleRootKeys(event)
+
+    anchors.fill: parent
+    anchors.margins: Padding.large
+
+    RowLayout {
+        anchors.fill: parent
+        layoutDirection: rightMode ? Qt.RightToLeft : Qt.LeftToRight
+        spacing: Padding.large
+
+        // Main Content Container with Panels
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            layoutDirection: !root.rightMode ? Qt.LeftToRight : Qt.RightToLeft
+            SidebarNavigationRail {
+                selectedCategory: root.selectedCategory
+            }
+            // Panel Repeater - Main and Aux
+            Repeater {
+                id: panelRepeater
+                model: 2
+                visible: root.showContent && GlobalStates.sidebarLauncherOpen
+                Behavior on opacity {
+                    Anim {}
+                }
+                clip: true
+                ContentChild {
+                    required property int index
+                    showContent: root.showContent
+                    Layout.fillHeight: true
+                    Layout.fillWidth: index === 0
+                    Layout.preferredWidth: {
+                        // if (index === 0) {
+                        //     const baseWidth = LauncherData.sizePresets.contentThreeQuarter || 600;
+                        //     const expandWidth = root.expanded ? LauncherData.sizePresets.contentQuarter : 0;
+                        //     return baseWidth + expandWidth;
+                        // }
+                        return LauncherData.sizePresets.contentQuarter;
+                    }
+                    Layout.margins: visible ? Padding.normal : 0
+                    Layout.maximumWidth: isAux ? LauncherData.sizePresets.contentQuarter : Number.POSITIVE_INFINITY
+                    visible: index === 0 ? true : auxVisible
+
+                    category: index === 0 ? selectedCategory : auxCategory
+                    searchText: index === 0 ? root.searchText : auxSearchText
+                    dataModel: index === 0 ? mainModel : auxModel
+                    componentMap: root.componentMap
+                    parentRoot: root
+                    isAux: index === 1
+
+                    onSearchUpdated: newText => {
+                        if (index === 0) {
+                            root.searchText = newText;
+                            delayedRefresh.restart();
+                        } else {
+                            root.auxSearchText = newText;
+                            auxDelayedRefresh.restart();
+                        }
+                    }
+
+                    Behavior on Layout.preferredWidth {
+                        Anim {}
+                    }
+                }
+            }
+        }
+    }
+
+    // Component definitions
+    Component {
+        id: notificationscomponent
+        Notifs {}
+    }
+    Component {
+        id: polkitComponent
+        Polkit {}
+    }
+    Component {
+        id: beatscomponent
+        CurrentTrackView {}
+    }
+    Component {
+        id: kanbancomponent
+        KanbanWidget {
+            quarters: root.expanded
+        }
+    }
+    Component {
+        id: sessioncomponent
+        PowerMenu {
+            buttonSize: 140
+            verticalMode: true
+        }
+    }
+    Component {
+        id: tweakscomponent
+        QuickSettings {
+            expanded: root.expanded
+            sidebarMode: true
+            searchText: root.searchText
+        }
+    }
+    Component {
+        id: overviewcomponent
+        OverviewWidget {
+            panelWindow: root.panelWindow
+            rowsNumber: 5
+            scale: 0.225
+            windowOffset: 0.043
+            expanded: root.expanded
+        }
+    }
+    Component {
+        id: gamescomponent
+        GameLauncher {
+            searchQuery: root.searchText
+            sidebarMode: true
+        }
+    }
+    Component {
+        id: wallpaperselectorcomponent
+        WallpaperSelector {
+            expanded: root.expanded
+            searchQuery: root.searchText
+        }
+    }
+    Component {
+        id: notesComponent
+        Notes {}
+    }
+    Component {
+        id: listviewcomponent
+        AppListView {}
+    }
+    Component {
+        id: apicomponent
+        ApisContent {
+            onExpandRequested: root.expanded = !root.expanded
+        }
+    }
+    Component {
+        id: misccomponent
+        MiscWidget {}
+    }
+    Component {
+        id: gridviewcomponent
+        AppGridView {}
+    }
+    Component {
+        id: gallerycomponent
+        GalleryWidget {}
+    }
+
+    readonly property var componentMap: ({
+            "WallpaperSelector": wallpaperselectorcomponent,
+            "OverviewWidget": overviewcomponent,
+            "KanbanWidget": kanbancomponent,
+            "PowerMenu": sessioncomponent,
+            "API": apicomponent,
+            "StyledNotifications": notificationscomponent,
+            "Beats": beatscomponent,
+            "AppListView": listviewcomponent,
+            "AppGridView": gridviewcomponent,
+            "Tweaks": tweakscomponent,
+            "Notes": notesComponent,
+            "GalleryWidget": gallerycomponent,
+            "MiscComponent": misccomponent,
+            "Auth": polkitComponent,
+            "Games": gamescomponent
+        })
+}

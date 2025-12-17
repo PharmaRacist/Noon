@@ -1,0 +1,120 @@
+import Qt5Compat.GraphicalEffects
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import qs
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.services
+import qs.modules.sidebarLauncher.components.apis.medicalDictionary
+import qs.modules.sidebarLauncher.components.apis.translator
+
+Item {
+    id: root
+    onFocusChanged: swipeView.currentItem.forceActiveFocus()
+    signal expandRequested
+    property var tabButtonList: [...(Mem.options.policies.ai ? [
+                {
+                    "icon": "neurology",
+                    "name": qsTr("Intelligence")
+                }
+            ] : []), ...(Mem.options.policies.medicalDictionary ? [
+                {
+                    "icon": "rib_cage",
+                    "name": qsTr("Medical")
+                }
+            ] : []), ...(Mem.options.policies.translator ? [
+                {
+                    "icon": "translate",
+                    "name": qsTr("Translator")
+                }
+            ] : [])]
+    Keys.onPressed: event => {
+        if (event.modifiers === Qt.ControlModifier) {
+            switch (event.key) {
+            case Qt.Key_PageDown:
+                Mem.states.sidebarLauncher.apis.selectedTab = Math.min(Mem.states.sidebarLauncher.apis.selectedTab + 1, root.tabButtonList.length - 1);
+                event.accepted = true;
+                break;
+            case Qt.Key_PageUp:
+                Mem.states.sidebarLauncher.apis.selectedTab = Math.max(Mem.states.sidebarLauncher.apis.selectedTab - 1, 0);
+                event.accepted = true;
+                break;
+            case Qt.Key_Tab:
+                Mem.states.sidebarLauncher.apis.selectedTab = (Mem.states.sidebarLauncher.apis.selectedTab + 1) % root.tabButtonList.length;
+                event.accepted = true;
+                break;
+            case Qt.Key_Backtab:
+                Mem.states.sidebarLauncher.apis.selectedTab = (Mem.states.sidebarLauncher.apis.selectedTab - 1 + root.tabButtonList.length) % root.tabButtonList.length;
+                event.accepted = true;
+                break;
+            case Qt.Key_O:
+                root.expandRequested();
+                event.accepted = true;
+                break;
+            }
+        }
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 4
+
+        // Tab strip
+        Toolbar {
+            visible: tabBar.tabButtonList.length > 1
+            Layout.alignment: Qt.AlignHCenter
+            ToolbarTabBar {
+                id: tabBar
+                Layout.alignment: Qt.AlignHCenter
+                tabButtonList: root.tabButtonList
+                currentIndex: swipeView.currentIndex
+                onCurrentIndexChanged: Mem.states.sidebarLauncher.apis.selectedTab = currentIndex
+            }
+        }
+
+        // Content pages
+        SwipeView {
+            id: swipeView
+
+            Layout.topMargin: Padding.large
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 10
+            currentIndex: Mem.states.sidebarLauncher.apis.selectedTab
+            onCurrentIndexChanged: Mem.states.sidebarLauncher.apis.selectedTab = currentIndex
+            clip: true
+            layer.enabled: true
+            contentChildren: [...(Mem.options.policies.ai ? [aiChat.createObject()] : []), ...(Mem.options.policies.medicalDictionary ? [medical.createObject()] : []), ...(Mem.options.policies.translator ? [translator.createObject()] : []),]
+
+            layer.effect: OpacityMask {
+
+                maskSource: Rectangle {
+                    width: swipeView.width
+                    height: swipeView.height
+                    radius: Rounding.small
+                }
+            }
+        }
+
+        Component {
+            id: aiChat
+
+            AiChat {
+                onExpandRequested: root.expandRequested()
+            }
+        }
+
+        Component {
+            id: translator
+
+            Translator {}
+        }
+
+        Component {
+            id: medical
+
+            MedicalDictionary {}
+        }
+    }
+}

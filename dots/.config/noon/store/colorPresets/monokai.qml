@@ -1,0 +1,66 @@
+// Monokai.qml
+import QtQuick
+
+QtObject {
+    readonly property string name: "Monokai"
+    readonly property string description: "Classic Monokai dark theme with bright accents"
+    readonly property bool isDark: true
+    readonly property string author: "Wimer Hazenberg"
+    readonly property url website: "https://github.com/Monokai/monokai"
+
+    readonly property var colors: ({
+        "primary": "#f92672",
+        "on_primary": "#272822",
+        "primary_container": "#3e3d32",
+        "on_primary_container": "#f8f8f2",
+        "primary_fixed": "#f92672",
+        "primary_fixed_dim": "#c2165d",
+
+        "secondary": "#fd971f",
+        "on_secondary": "#272822",
+        "secondary_container": "#3e3d32",
+        "on_secondary_container": "#f8f8f2",
+        "secondary_fixed": "#fd971f",
+        "secondary_fixed_dim": "#d47a16",
+
+        "tertiary": "#a6e22e",
+        "on_tertiary": "#272822",
+        "tertiary_container": "#3e3d32",
+        "on_tertiary_container": "#f8f8f2",
+        "tertiary_fixed": "#a6e22e",
+        "tertiary_fixed_dim": "#86b91f",
+
+        "error": "#f92672",
+        "on_error": "#272822",
+        "error_container": "#3e3d32",
+        "on_error_container": "#f8f8f2",
+
+        "background": "#272822",
+        "on_background": "#f8f8f2",
+        "surface": "#3e3d32",
+        "on_surface": "#f8f8f2",
+
+        "surface_dim": "#1f1f1a",
+        "surface_bright": "#504f46",
+
+        "surface_container_lowest": "#1c1c16",
+        "surface_container_low": "#33322b",
+        "surface_container": "#3e3d32",
+        "surface_container_high": "#504f46",
+        "surface_container_highest": "#625f53",
+
+        "surface_variant": "#504f46",
+        "on_surface_variant": "#d7d6c5",
+        "surface_tint": "#f92672",
+
+        "outline": "#75715e",
+        "outline_variant": "#504f46",
+
+        "shadow": "#000000",
+        "scrim": "#000000",
+
+        "inverse_surface": "#f8f8f2",
+        "inverse_on_surface": "#272822",
+        "inverse_primary": "#c2165d"
+    })
+}
