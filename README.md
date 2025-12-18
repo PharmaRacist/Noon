@@ -19,8 +19,10 @@
 
 ## Some Screenshots
 
-![Lyrics,Beam](./.github/screenshots/1.png) 
-![Depth Wallpapers](./.github/screenshots/2.png) 
+![Beam, Clipboard](./.github/screenshots/1.png) 
+![HyprView](./.github/screenshots/2.png) 
+![Lyrics, Spotify Search ](./.github/screenshots/3.png)
+![Alarms](./.github/screenshots/4.png)
 
 ## Im too lazy to list the capabilities, So u will figure it out :)
 # Enjoy <3
