@@ -10,6 +10,13 @@
 - quickshell
 - hyprland ofc
 
+### Install
+```bash
+  git clone https://github.com/pharmaracist/hyprnoon ~/hyprnoon
+  cd ~/hyprnoon
+  ./setup.sh install
+```
+
 ## Some Screenshots
 
 ![Lyrics,Beam](./.github/screenshots/1.png) 
