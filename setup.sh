@@ -14,15 +14,24 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTS="$DIR/dots"
 BACKUP="$HOME/.dots_backup_$(date +%Y%m%d_%H%M%S)"
 PKGS_FILE="$DIR/packages.txt"
+NVIDIA_PKGS_FILE="$DIR/nvidia_packages.txt"
+NVIDIA_PATCH="$DIR/setup_nvidia.sh"
+GREETER_FILE="$DIR/greeter_asci.txt"
 PKGS=()
 AUTO=false
 DO_BACKUP=false
+USE_NVIDIA=false
 
 # Print functions
 info() { echo -e "${B}▶${N} $1"; }
 ok() { echo -e "${G}✓${N} $1"; }
 err() { echo -e "${R}✗${N} $1"; }
 warn() { echo -e "${Y}!${N} $1"; }
+
+# Show greeter
+show_greeter() {
+    [ -f "$GREETER_FILE" ] && cat "$GREETER_FILE" && echo ""
+}
 
 # Sudo keep-alive
 sudo_loop() {
@@ -56,6 +65,19 @@ load_packages() {
         line=$(echo "$line" | sed 's/#.*//;s/^[[:space:]]*//;s/[[:space:]]*$//')
         [ -n "$line" ] && PKGS+=("$line")
     done < "$PKGS_FILE"
+    
+    # Load NVIDIA packages if requested
+    if [ "$USE_NVIDIA" = true ]; then
+        if [ -f "$NVIDIA_PKGS_FILE" ]; then
+            info "Loading NVIDIA packages..."
+            while IFS= read -r line; do
+                line=$(echo "$line" | sed 's/#.*//;s/^[[:space:]]*//;s/[[:space:]]*$//')
+                [ -n "$line" ] && PKGS+=("$line")
+            done < "$NVIDIA_PKGS_FILE"
+        else
+            warn "nvidia_packages.txt not found, skipping NVIDIA packages"
+        fi
+    fi
     
     [ ${#PKGS[@]} -eq 0 ] && err "No packages in packages.txt" && exit 1
     info "Loaded ${#PKGS[@]} packages"
@@ -113,6 +135,24 @@ install_pkgs() {
     
     ok "Installed $ok packages"
     [ ${#fail[@]} -gt 0 ] && err "Failed: ${fail[*]}"
+}
+
+# Run NVIDIA patch
+run_nvidia_patch() {
+    [ "$USE_NVIDIA" != true ] && return 0
+    
+    if [ -f "$NVIDIA_PATCH" ]; then
+        info "Running NVIDIA patch script..."
+        chmod +x "$NVIDIA_PATCH"
+        if bash "$NVIDIA_PATCH"; then
+            ok "NVIDIA patch completed"
+        else
+            err "NVIDIA patch failed"
+            return 1
+        fi
+    else
+        warn "setup_nvidia.sh not found, skipping NVIDIA patch"
+    fi
 }
 
 # Copy dotfiles
@@ -221,6 +261,7 @@ main() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -a|--auto) AUTO=true; shift ;;
+            --nvidia) USE_NVIDIA=true; shift ;;
             -h|--help)
                 echo "Usage: $0 [OPTIONS] COMMAND"
                 echo ""
@@ -230,8 +271,9 @@ main() {
                 echo "  update     Update dotfiles only"
                 echo ""
                 echo "Options:"
-                echo "  -a, --auto  Autopilot mode"
-                echo "  -h, --help  Show help"
+                echo "  -a, --auto    Autopilot mode"
+                echo "  --nvidia      Enable NVIDIA support (skip prompt)"
+                echo "  -h, --help    Show help"
                 exit 0
                 ;;
             install|uninstall|update)
@@ -245,13 +287,26 @@ main() {
     
     [ -z "$CMD" ] && err "No command specified" && exit 1
     
+    show_greeter
     sudo_loop
+    
+    # Ask about NVIDIA GPU before install (if not already set via --nvidia flag)
+    if [ "$CMD" = "install" ] && [ "$USE_NVIDIA" != true ]; then
+        if confirm "Do you have an NVIDIA GPU?"; then
+            USE_NVIDIA=true
+            ok "NVIDIA support enabled"
+        else
+            info "Skipping NVIDIA packages"
+        fi
+    fi
+    
     load_packages
     
     case $CMD in
         install)
             if confirm "Install packages?"; then
                 install_pkgs
+                run_nvidia_patch
             else
                 info "Skipping packages"
             fi

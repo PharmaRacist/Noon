@@ -66,4 +66,4 @@ post_hook = 'ln -sf ${{image}} ~/.cache/noon/user/generated/colors.jpg'
 
 [templates.codium]
 input_path = "~/.config/matugen/templates/applications/vscode.json"
-output_path = "~/.vscode-oss/extensions/noon/colors.json"
+output_path = '~/.config/VSCodium/User/settings.json'
