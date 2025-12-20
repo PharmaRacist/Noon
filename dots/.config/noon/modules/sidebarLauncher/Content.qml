@@ -1,31 +1,27 @@
+import "./components/apis"
+import "./components/beats"
+import "./components/gallary"
+import "./components/games"
+import "./components/misc"
+import "./components/notes"
+import "./components/notifs"
+import "./components/polkit"
+import "./components/session"
+import "./components/settings"
+import "./components/tasks"
+import "./components/view"
+import "./components/wallpapers"
+import "./components/widgets"
 import Qt.labs.folderlistmodel
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
-import Quickshell.Io
-import Quickshell.Wayland
 import Quickshell.Widgets
 import qs
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
-import qs.modules.sidebarLauncher.components.apis
-import qs.modules.sidebarLauncher.components.beats
-import qs.modules.sidebarLauncher.components.gallary
-import qs.modules.sidebarLauncher.components.games
-import qs.modules.sidebarLauncher.components.misc
-import qs.modules.sidebarLauncher.components.notes
-import qs.modules.sidebarLauncher.components.notifs
-import qs.modules.sidebarLauncher.components.polkit
-import qs.modules.sidebarLauncher.components.session
-import qs.modules.sidebarLauncher.components.settings
-import qs.modules.sidebarLauncher.components.tasks
-import qs.modules.sidebarLauncher.components.view
-import qs.modules.sidebarLauncher.components.wallpapers
-import qs.modules.sidebarLauncher.components.widgets
 import qs.services
 import qs.store
 
@@ -163,8 +159,8 @@ FocusScope {
         resetSearch(initialQuery);
         if (!showContent)
             Qt.callLater(() => {
-                contentToggleRequested();
-            });
+            contentToggleRequested();
+        });
 
     }
 
@@ -348,9 +344,9 @@ FocusScope {
         interval: Mem.options.hacks.arbitraryRaceConditionDelay ?? 100
         repeat: false
         onTriggered: {
-            if (LauncherData.hasModel(selectedCategory)) {
+            if (LauncherData.hasModel(selectedCategory))
                 updateAppList(false);
-            }
+
         }
     }
 
@@ -360,9 +356,9 @@ FocusScope {
         interval: Mem.options.hacks.arbitraryRaceConditionDelay ?? 100
         repeat: false
         onTriggered: {
-            if (auxCategory && LauncherData.hasModel(auxCategory)) {
+            if (auxCategory && LauncherData.hasModel(auxCategory))
                 updateAppList(true);
-            }
+
         }
     }
 
