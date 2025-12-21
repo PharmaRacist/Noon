@@ -8,7 +8,6 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -16,28 +15,31 @@ import qs.store
 
 Rectangle {
     id: navContainer
+
     required property string selectedCategory
+
     implicitWidth: LauncherData.sizePresets.bar - Padding.large
-    clip:true
+    clip: true
     color: "transparent"
     Layout.fillHeight: true
+
     NavigationRail {
         id: navRail
+
+        property bool sleek: !Mem.options.sidebarLauncher.appearance.showNavTitles
+
         anchors.centerIn: parent
         implicitWidth: navContainer.implicitWidth
-        property bool sleek: !Mem.options.sidebarLauncher.appearance.showNavTitles
         expanded: false
         spacing: sleek ? Padding.small : Padding.large
 
-        Behavior on spacing {
-            Anim {}
-        }
-
         Repeater {
             model: LauncherData.enabledCategories
+
             NavigationRailButton {
                 required property int index
                 required property string modelData
+
                 showText: !navRail.sleek
                 fontSize: baseSize / 3.5
                 baseSize: navContainer.implicitWidth
@@ -49,12 +51,20 @@ Rectangle {
                 highlightColorHover: navContainer.selectedCategory === "Beats" ? TrackColorsService.colors.colSecondaryContainerHover : Colors.colSecondaryContainerHover
                 highlightColorActive: navContainer.selectedCategory === "Beats" ? TrackColorsService.colors.colSecondaryContainerActive : Colors.colSecondaryContainerActive
                 itemColorActive: navContainer.selectedCategory === "Beats" ? TrackColorsService.colors.colOnSecondaryContainer : Colors.colOnLayer0
-
                 onClicked: {
                     Noon.playSound("pressed");
                     requestCategoryChange(modelData);
                 }
             }
+
         }
+
+        Behavior on spacing {
+            Anim {
+            }
+
+        }
+
     }
+
 }

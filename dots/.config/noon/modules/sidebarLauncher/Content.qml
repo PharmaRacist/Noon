@@ -18,7 +18,6 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import qs
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets

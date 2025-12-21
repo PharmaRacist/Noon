@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import qs
 import qs.modules.bar.components
 import qs.modules.common
 import qs.modules.common.widgets
@@ -15,10 +14,12 @@ MouseArea {
     implicitHeight: columnLayout.height + Padding.huge
     implicitWidth: BarData.currentBarExclusiveSize
     hoverEnabled: true
+
     BarGroup {
         anchors.centerIn: parent
         implicitHeight: parent.implicitHeight
         implicitWidth: parent.implicitWidth * padding
+
         ColumnLayout {
             id: columnLayout
 
@@ -50,10 +51,13 @@ MouseArea {
                 Layout.alignment: Qt.AlignHCenter
                 visible: DateTime.dayTime !== "" // Only show if 12-hour format is enabled
             }
+
         }
+
     }
 
     PrayerPopup {
         hoverTarget: root
     }
+
 }

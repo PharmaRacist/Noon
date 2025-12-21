@@ -14,7 +14,6 @@ import Quickshell.Services.Mpris
 import Quickshell.Services.UPower
 import Quickshell.Wayland
 import Quickshell.Widgets
-import qs
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets

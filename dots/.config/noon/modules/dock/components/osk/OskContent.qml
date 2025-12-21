@@ -6,7 +6,6 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Widgets
 import "layouts.js" as Layouts
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services

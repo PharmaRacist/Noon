@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -9,18 +8,23 @@ import qs.store
 Item {
     id: root
 
-    property var activeTimers: TimerService.uiTimers.filter(timer => timer.isRunning || timer.isPaused)
+    property var activeTimers: TimerService.uiTimers.filter((timer) => {
+        return timer.isRunning || timer.isPaused;
+    })
     property int contentWidth: Math.max(timerDock.width + activeTimers.length * timerDock.width, implicitHeight)
-    Layout.alignment: Qt.AlignLeft
+
     function requestOverlayMode() {
         Mem.options.desktop.timerOverlayMode = !Mem.options.desktop.timerOverlayMode;
     }
+
+    Layout.alignment: Qt.AlignLeft
     visible: activeTimers.length > 0
     implicitHeight: bg.implicitHeight
     width: contentWidth
 
     Rectangle {
         id: timerDock
+
         implicitHeight: parent.implicitHeight
         width: Math.max(implicitHeight, timerContent.implicitWidth + Padding.veryhuge)
         anchors.left: parent.left
@@ -36,6 +40,7 @@ Item {
 
         RowLayout {
             id: timerContent
+
             anchors.centerIn: parent
             spacing: Padding.verylarge
 
@@ -44,13 +49,16 @@ Item {
 
                 delegate: Item {
                     id: timerItem
+
                     property bool hovered: false
+
                     // Full size container - no animation here
                     implicitWidth: timerLayout.implicitWidth
                     implicitHeight: circProg.size
 
                     Rectangle {
                         id: timerRect
+
                         implicitHeight: parent.implicitHeight
                         // Animate the inner rectangle width
                         width: parent.width
@@ -60,18 +68,21 @@ Item {
 
                         RowLayout {
                             id: timerLayout
+
                             spacing: Padding.normal
                             anchors.left: parent.left
                             anchors.verticalCenter: parent.verticalCenter
 
                             CircularProgress {
                                 id: circProg
+
                                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                                 lineWidth: 4
                                 value: (modelData.originalDuration - modelData.remainingTime) / modelData.originalDuration
                                 size: 45
                                 secondaryColor: "transparent"
                                 primaryColor: modelData.color || Colors.m3.m3secondary
+
                                 MaterialSymbol {
                                     anchors.centerIn: parent
                                     fill: 1
@@ -79,10 +90,12 @@ Item {
                                     font.pixelSize: Fonts.sizes.large
                                     color: Colors.m3.m3onSecondaryContainer
                                 }
+
                             }
 
                             Revealer {
                                 id: revealer
+
                                 Layout.leftMargin: Padding.normal
                                 reveal: mouse.containsMouse
 
@@ -102,17 +115,21 @@ Item {
                                         text: TimerService.formatTime(modelData.remainingTime) + " remaining"
                                         font.pixelSize: Fonts.sizes.small
                                     }
+
                                 }
+
                             }
+
                         }
 
                         MouseArea {
                             id: mouse
+
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-                            onClicked: mouse => {
+                            onClicked: (mouse) => {
                                 if (mouse.button === Qt.RightButton) {
                                     root.requestOverlayMode();
                                 } else if (mouse.button === Qt.MiddleButton) {
@@ -125,6 +142,7 @@ Item {
                                 }
                             }
                         }
+
                     }
 
                     Rectangle {
@@ -137,8 +155,13 @@ Item {
                         width: 2
                         color: Colors.colOutline
                     }
+
                 }
+
             }
+
         }
+
     }
+
 }

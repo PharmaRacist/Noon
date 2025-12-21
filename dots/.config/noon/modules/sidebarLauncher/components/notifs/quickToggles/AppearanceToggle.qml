@@ -5,13 +5,12 @@ import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
-import qs
 
 QuickToggleButton {
     toggled: Mem.states.desktop.appearance.mode === "dark"
     buttonIcon: toggled ? "dark_mode" : "light_mode"
     buttonName: toggled ? "Dark" : "Light"
     onClicked: WallpaperService.toggleShellMode()
-    hasDialog:true
+    hasDialog: true
     onRequestDialog: GlobalStates.showAppearanceDialog = true
 }

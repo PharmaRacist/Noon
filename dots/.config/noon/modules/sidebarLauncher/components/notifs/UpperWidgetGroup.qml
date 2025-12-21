@@ -2,12 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import qs
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
-import qs.services
 import qs.modules.sidebarLauncher.components.notifs.quickToggles
+import qs.services
 
 Item {
     id: root
@@ -19,25 +18,31 @@ Item {
     ColumnLayout {
         id: contentLayout
 
+        spacing: Padding.normal
+
         anchors {
             fill: parent
             bottomMargin: Padding.large
             topMargin: Padding.normal
         }
-        spacing: Padding.normal
 
-        UptimeRow {}
+        UptimeRow {
+        }
+
         ColumnLayout {
             visible: Mem.options.sidebarLauncher.appearance.showSliders ?? false
             spacing: Padding.small
             Layout.fillWidth: true
             Layout.rightMargin: Padding.normal
+
             BrightnessSlider {
                 Layout.fillWidth: true
             }
+
             VolumeSlider {
                 Layout.fillWidth: true
             }
+
         }
 
         Grid {
@@ -46,25 +51,51 @@ Item {
             rowSpacing: Padding.normal
             columnSpacing: Padding.normal
 
-            NetworkToggle {}
-            BluetoothToggle {}
-            NightLightToggle {}
-            AppearanceToggle {}
-            KdeConnectToggle {}
-            TransparencyToggle {}
+            NetworkToggle {
+            }
+
+            BluetoothToggle {
+            }
+
+            NightLightToggle {
+            }
+
+            AppearanceToggle {
+            }
+
+            KdeConnectToggle {
+            }
+
+            TransparencyToggle {
+            }
+
         }
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
 
-            CaffieneToggle {}
-            EasyEffectsToggle {}
-            RecordToggle {}
-            GameModeToggle {}
-            InputToggle {}
-            BacklightToggle {}
+            CaffieneToggle {
+            }
+
+            EasyEffectsToggle {
+            }
+
+            RecordToggle {
+            }
+
+            GameModeToggle {
+            }
+
+            InputToggle {
+            }
+
+            BacklightToggle {
+            }
+
         }
+
     }
+
     component UptimeRow: StyledText {
         font.pixelSize: Fonts.sizes.verylarge
         color: Colors.colOnLayer0
@@ -72,4 +103,5 @@ Item {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft
     }
+
 }

@@ -8,7 +8,6 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
-import qs
 import qs.modules.common
 import qs.modules.common.functions
 import qs.services
@@ -25,11 +24,13 @@ IconImage {
     smooth: true
     antialiasing: true
     mipmap: true
+
     Loader {
         opacity: 1 - root.tint
         active: colorize
         anchors.fill: root
         asynchronous: true
+
         sourceComponent: Item {
             ColorOverlay {
                 z: 1
@@ -37,6 +38,9 @@ IconImage {
                 source: root
                 color: root.tintColor
             }
+
         }
+
     }
+
 }

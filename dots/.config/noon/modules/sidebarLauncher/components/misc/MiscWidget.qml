@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import QtQuick.Effects
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services

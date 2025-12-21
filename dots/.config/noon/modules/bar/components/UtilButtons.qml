@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
-import qs
 import qs.modules.bar.components
 import qs.modules.common
 import qs.modules.common.widgets
@@ -38,6 +37,7 @@ Rectangle {
                 font.pixelSize: Fonts.sizes.large
                 color: Colors.colOnLayer1
             }
+
         }
 
         CircleUtilButton {
@@ -51,6 +51,7 @@ Rectangle {
                 font.pixelSize: Fonts.sizes.large
                 color: Colors.colOnLayer1
             }
+
         }
 
         CircleUtilButton {
@@ -64,19 +65,24 @@ Rectangle {
                 font.pixelSize: Fonts.sizes.normal
                 color: Colors.colOnLayer1
             }
+
         }
+
     }
 
     component CircleUtilButton: RippleButton {
         id: button
 
-        default required property Item content
+        required default property Item content
         property bool extraActiveCondition: false
 
         implicitHeight: Math.max(content.implicitHeight, 26, content.implicitHeight)
         implicitWidth: Math.max(content.implicitHeight, 26, content.implicitWidth)
         contentItem: content
 
-        PointingHandInteraction {}
+        PointingHandInteraction {
+        }
+
     }
+
 }

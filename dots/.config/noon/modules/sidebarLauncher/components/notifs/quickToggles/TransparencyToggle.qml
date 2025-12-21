@@ -6,11 +6,12 @@ import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
-import qs
 
 QuickToggleButton {
     id: root
-    signal requestTransparencyDialog
+
+    signal requestTransparencyDialog()
+
     hasDialog: true
     onRequestDialog: GlobalStates.showTransparencyDialog = true
     buttonName: toggled ? "Transluscent" : "opaque"

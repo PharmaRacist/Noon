@@ -1,6 +1,5 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
-import qs
 import qs.modules.common
 import Quickshell
 import Quickshell.Services.UPower

@@ -1,27 +1,18 @@
-import qs
-import qs.store
-import qs.modules.common
-import qs.modules.common.widgets
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Io
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.store
 
 GroupButton {
     id: root
+
     property string buttonIcon
     property string buttonName
     property bool showButtonName: buttonName.length > 0
     property bool hasDialog: false
-    signal requestDialog
-    Layout.fillWidth: showButtonName
-    Layout.fillHeight: false
-    baseWidth: !showButtonName ? 48 : (LauncherData.sizePresets.quarter / 2.5) - Padding.normal
-    baseHeight: 48
-    clip: true
-    clickedWidth: implicitWidth
-    toggled: false
     property int activeRadius: {
         const r1 = Rounding.verylarge;
         const r2 = Rounding.normal;
@@ -30,22 +21,36 @@ GroupButton {
         else
             return r1;
     }
+
+    signal requestDialog()
+
+    Layout.fillWidth: showButtonName
+    Layout.fillHeight: false
+    baseWidth: !showButtonName ? 48 : (LauncherData.sizePresets.quarter / 2.5) - Padding.normal
+    baseHeight: 48
+    clip: true
+    clickedWidth: implicitWidth
+    toggled: false
     buttonRadius: toggled ? Rounding.verylarge : Rounding.normal
     buttonRadiusPressed: activeRadius
     color: toggled ? Colors.colPrimary : Colors.colLayer2
-    Behavior on color {
-        CAnim {}
-    }
     altAction: () => {
         if (!showButtonName)
             requestDialog();
+
     }
+
     StyledRect {
         id: dialogBox
+
         z: 99
         color: !toggled ? Colors.colPrimary : Colors.colLayer2
         visible: hasDialog && showButtonName
         enableShadows: true
+        implicitWidth: 50
+        topRightRadius: root.rightRadius
+        bottomRightRadius: root.rightRadius
+
         anchors {
             top: parent.top
             right: parent.right
@@ -53,24 +58,27 @@ GroupButton {
             margins: -0.5
         }
 
-        implicitWidth: 50
-        topRightRadius: root.rightRadius
-        bottomRightRadius: root.rightRadius
         MaterialSymbol {
             id: symbol
+
             text: "keyboard_arrow_right"
             font.pixelSize: Fonts.sizes.huge
             fill: 1
             color: !toggled ? Colors.colOnPrimary : Colors.colOnLayer2
             anchors.centerIn: parent
             rotation: dialogBoxMouse.containsMouse ? 90 : 0
+
             Behavior on rotation {
-                Anim {}
+                Anim {
+                }
+
             }
+
         }
 
         MouseArea {
             id: dialogBoxMouse
+
             hoverEnabled: true
             anchors.fill: parent
             onReleased: {
@@ -78,9 +86,18 @@ GroupButton {
                 Noon.playSound("pressed");
             }
         }
+
     }
+
+    Behavior on color {
+        CAnim {
+        }
+
+    }
+
     contentItem: RowLayout {
         spacing: 10
+
         anchors {
             top: parent.top
             bottom: parent.bottom
@@ -89,6 +106,7 @@ GroupButton {
             left: parent.left
             leftMargin: Padding.large
         }
+
         MaterialSymbol {
             font.pixelSize: Fonts.sizes.verylarge
             fill: toggled ? 1 : 0
@@ -99,9 +117,13 @@ GroupButton {
             text: buttonIcon
 
             Behavior on color {
-                CAnim {}
+                CAnim {
+                }
+
             }
+
         }
+
         StyledText {
             visible: showButtonName
             Layout.fillWidth: true
@@ -111,6 +133,10 @@ GroupButton {
             color: toggled ? Colors.colOnPrimary : Colors.colOnLayer2
             text: buttonName
         }
-        Spacer {}
+
+        Spacer {
+        }
+
     }
+
 }

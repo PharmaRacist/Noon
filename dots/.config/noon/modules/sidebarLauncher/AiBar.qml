@@ -6,7 +6,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick.Controls
 
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services

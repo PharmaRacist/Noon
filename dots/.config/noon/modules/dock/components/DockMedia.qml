@@ -6,7 +6,6 @@ import Qt5Compat.GraphicalEffects
 import QtQuick.Effects
 import Quickshell.Hyprland
 import Quickshell.Widgets
-import qs
 import qs.modules.bar.components
 import qs.modules.common
 import qs.modules.common.functions

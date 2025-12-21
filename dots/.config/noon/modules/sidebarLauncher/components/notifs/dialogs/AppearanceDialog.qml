@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -13,7 +12,8 @@ SidebarDialog {
         text: qsTr("Appearance")
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     ColumnLayout {
         Layout.fillWidth: true
@@ -45,6 +45,7 @@ SidebarDialog {
                     WallpaperService.toggleShellMode();
                 }
             }
+
         }
 
         // Auto Shell Mode
@@ -68,9 +69,11 @@ SidebarDialog {
                 checked: Mem.states.desktop.appearance.autoShellMode
                 onToggled: Mem.states.desktop.appearance.autoShellMode = checked
             }
+
         }
 
-        WindowDialogSeparator {}
+        WindowDialogSeparator {
+        }
 
         // Auto Scheme Selection
         RowLayout {
@@ -93,9 +96,11 @@ SidebarDialog {
                 checked: Mem.states.desktop.appearance.autoSchemeSelection
                 onToggled: Mem.states.desktop.appearance.autoSchemeSelection = checked
             }
+
         }
 
-        WindowDialogSeparator {}
+        WindowDialogSeparator {
+        }
 
         // Chroma Slider
         ColumnLayout {
@@ -122,6 +127,7 @@ SidebarDialog {
                     color: Colors.colOnSurfaceVariant
                     opacity: 0.7
                 }
+
             }
 
             StyledSlider {
@@ -131,6 +137,7 @@ SidebarDialog {
                 value: Mem.states.desktop.Colors.chroma
                 onMoved: Mem.states.desktop.Colors.chroma = value
             }
+
         }
 
         // Tone Slider
@@ -158,6 +165,7 @@ SidebarDialog {
                     color: Colors.colOnSurfaceVariant
                     opacity: 0.7
                 }
+
             }
 
             StyledSlider {
@@ -167,18 +175,25 @@ SidebarDialog {
                 value: Mem.states.desktop.Colors.tone
                 onMoved: Mem.states.desktop.Colors.tone = value
             }
+
         }
 
         Item {
             Layout.fillHeight: true
         }
+
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     WindowDialogButtonRow {
         implicitHeight: 48
-        Item {Layout.fillWidth:true}
+
+        Item {
+            Layout.fillWidth: true
+        }
+
         DialogButton {
             buttonText: qsTr("Pick Accent Color")
             onClicked: WallpaperService.pickAccentColor()
@@ -188,5 +203,7 @@ SidebarDialog {
             buttonText: qsTr("Done")
             onClicked: root.dismiss()
         }
+
     }
+
 }

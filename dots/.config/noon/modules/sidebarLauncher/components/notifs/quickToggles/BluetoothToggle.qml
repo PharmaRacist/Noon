@@ -6,9 +6,9 @@ import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
-import qs
+
 QuickToggleButton {
-    hasDialog:true
+    hasDialog: true
     toggled: BluetoothService.enabled
     buttonIcon: BluetoothService.bluetoothConnected ? "bluetooth_connected" : BluetoothService.enabled ? "bluetooth" : "bluetooth_disabled"
     buttonName: BluetoothService.bluetoothConnected ? BluetoothService.bluetoothDeviceName : "Bluetooth"
@@ -28,6 +28,8 @@ QuickToggleButton {
         onRunningChanged: {
             if (!running)
                 BluetoothService.update();
+
         }
     }
+
 }

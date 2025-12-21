@@ -4,7 +4,6 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import qs
 import qs.modules.bar.components
 import qs.modules.common
 import qs.modules.common.functions

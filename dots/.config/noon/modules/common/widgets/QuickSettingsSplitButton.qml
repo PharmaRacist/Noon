@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -188,11 +187,15 @@ Item {
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {}
+                Anim {
+                }
+
             }
 
             Behavior on color {
-                CAnim {}
+                CAnim {
+                }
+
             }
 
         }
@@ -232,7 +235,8 @@ Item {
                 rotation: secondMouse.pressed ? 180 : secondMouse.containsMouse ? 90 : 0
 
                 Behavior on rotation {
-                  Anim {}
+                    Anim {
+                    }
 
                 }
 
@@ -259,20 +263,27 @@ Item {
             }
 
             Behavior on topLeftRadius {
-                Anim {}
+                Anim {
+                }
+
             }
 
             Behavior on bottomLeftRadius {
-                Anim {}
+                Anim {
+                }
+
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {}
+                Anim {
+                }
 
             }
 
             Behavior on color {
-                CAnim {}
+                CAnim {
+                }
+
             }
 
         }
@@ -302,7 +313,8 @@ Item {
                 rotation: thirdMouse.pressed ? 180 : thirdMouse.containsMouse ? 90 : 0
 
                 Behavior on rotation {
-                    Anim {}
+                    Anim {
+                    }
 
                 }
 
@@ -325,20 +337,27 @@ Item {
             }
 
             Behavior on topLeftRadius {
-                Anim {}
+                Anim {
+                }
+
             }
 
             Behavior on bottomLeftRadius {
-                Anim {}
+                Anim {
+                }
+
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {}
+                Anim {
+                }
 
             }
 
             Behavior on color {
-                CAnim {}
+                CAnim {
+                }
+
             }
 
         }

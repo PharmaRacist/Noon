@@ -1,11 +1,10 @@
-import qs
-import qs.services
-import qs.modules.common
-import qs.modules.common.widgets
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.services
 
 Item {
     id: root
@@ -16,7 +15,6 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
     clip: true
-
     Component.onCompleted: {
         textArea.text = NotesService.content;
         textArea.forceActiveFocus();
@@ -25,6 +23,7 @@ Item {
     // Auto-save timer
     Timer {
         id: autoSaveTimer
+
         interval: root.autoSaveInterval
         running: NotesService.isDirty
         repeat: false
@@ -37,20 +36,21 @@ Item {
         running: NotesService.lastSaved !== ""
         repeat: true
         onTriggered: {
-            if (!NotesService.isDirty && NotesService.lastSaved) {
+            if (!NotesService.isDirty && NotesService.lastSaved)
                 statusLabel.text = "Saved " + DateTime.getRelativeTime(NotesService.lastSaved);
-            }
+
         }
     }
 
     // Sync content changes from service
     Connections {
-        target: NotesService
         function onContentChanged() {
-            if (textArea.text !== NotesService.content) {
+            if (textArea.text !== NotesService.content)
                 textArea.text = NotesService.content;
-            }
+
         }
+
+        target: NotesService
     }
 
     // Background watermark
@@ -61,15 +61,18 @@ Item {
         font.family: Fonts.family.iconMaterial
         color: Colors.m3.m3secondaryContainer
         opacity: 0.15
+
         anchors {
             left: parent.left
             leftMargin: 200
             bottom: parent.bottom
             bottomMargin: -120
         }
+
         transform: Rotation {
             angle: 45
         }
+
     }
 
     // Main layout
@@ -98,12 +101,14 @@ Item {
 
                 Label {
                     id: statusLabel
+
                     text: NotesService.isDirty ? "Unsaved changes..." : (NotesService.lastSaved ? "Saved " + DateTime.getRelativeTime(NotesService.lastSaved) : "Ready")
                     color: NotesService.isDirty ? Colors.m3.m3tertiary : Colors.m3.m3primary
                     Layout.fillWidth: true
                     font.family: Fonts.family.main
                     font.pixelSize: Fonts.sizes.small
                 }
+
             }
 
             Item {
@@ -115,6 +120,7 @@ Item {
                 implicitHeight: 36
                 buttonRadius: Rounding.small
                 toggled: root.editing
+                onPressed: root.editing = !root.editing
 
                 contentItem: MaterialSymbol {
                     text: "edit"
@@ -123,8 +129,8 @@ Item {
                     color: parent.parent.toggled ? Colors.colOnPrimaryContainer : Colors.colOnLayer1
                 }
 
-                onPressed: root.editing = !root.editing
             }
+
         }
 
         // Text editor
@@ -143,16 +149,12 @@ Item {
                 wrapMode: TextArea.Wrap
                 readOnly: !root.editing
                 focus: true
-
                 textFormat: root.editing ? TextEdit.PlainText : TextEdit.MarkdownText
                 selectedTextColor: Colors.m3.m3onSecondaryContainer
                 selectionColor: Colors.colSecondaryContainer
-
                 placeholderText: root.editing ? "Start typing your notes here..." : "Switch to edit mode to start writing..."
                 placeholderTextColor: Colors.m3.m3onSurfaceVariant
-
                 background: null
-
                 onTextChanged: {
                     if (root.editing && text !== NotesService.content) {
                         NotesService.content = text;
@@ -160,17 +162,10 @@ Item {
                         autoSaveTimer.restart();
                     }
                 }
-
-                onLinkActivated: link => Qt.openUrlExternally(link)
-
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
-                    hoverEnabled: true
-                    cursorShape: parent.hoveredLink !== "" ? Qt.PointingHandCursor : root.editing ? Qt.IBeamCursor : Qt.ArrowCursor
+                onLinkActivated: (link) => {
+                    return Qt.openUrlExternally(link);
                 }
-
-                Keys.onPressed: event => {
+                Keys.onPressed: (event) => {
                     if (event.modifiers === Qt.ControlModifier) {
                         if (event.key === Qt.Key_S) {
                             NotesService.save();
@@ -181,7 +176,18 @@ Item {
                         }
                     }
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    hoverEnabled: true
+                    cursorShape: parent.hoveredLink !== "" ? Qt.PointingHandCursor : root.editing ? Qt.IBeamCursor : Qt.ArrowCursor
+                }
+
             }
+
         }
+
     }
+
 }

@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -17,7 +16,7 @@ Rectangle {
     property string hint: ""
     property string type: "button" // button | switch | spin | slider | combobox | text | action
     property string actionName: ""
-    property bool reloadOnChange:false
+    property bool reloadOnChange: false
     property bool enabled: true
     property bool subOption: false
     property bool useStates: false
@@ -82,18 +81,14 @@ Rectangle {
     property string _pendingType: ""
 
     signal valueChanged(var newValue)
-    signal clicked
-    onValueChanged: function(newValue) {
-        if (reloadOnChange && _ready) {
-            Qt.callLater(() => Quickshell.reload(true));
-        }
-    }
+    signal clicked()
 
     function debouncedSetValue(value, valueType) {
         _pendingValue = value;
         _pendingType = valueType;
         debounceTimer.restart();
     }
+
     function getConfigValue() {
         if (key === "" || !Mem)
             return undefined;
@@ -108,6 +103,7 @@ Rectangle {
         for (let i = 0; i < keys.length; i++) {
             if (current === undefined || current === null)
                 return undefined;
+
             current = current[keys[i]];
         }
         return current;
@@ -115,25 +111,34 @@ Rectangle {
 
     function setConfigValue(value) {
         if (key === "" || !Mem || !_ready)
-            return;
+            return ;
 
         // Use ternary to select root object
         let root = useStates ? Mem.states : Mem.options;
         if (!root)
-            return;
+            return ;
 
         let keys = key.split('.');
         let current = root;
         for (let i = 0; i < keys.length - 1; i++) {
             if (!current[keys[i]])
-                current[keys[i]] = {};
+                current[keys[i]] = {
+            };
+
             current = current[keys[i]];
         }
         current[keys[keys.length - 1]] = value;
     }
 
+    onValueChanged: function(newValue) {
+        if (reloadOnChange && _ready)
+            Qt.callLater(() => {
+                return Quickshell.reload(true);
+            });
+
+    }
     Component.onCompleted: {
-        _ready = false;  // Ensure it's false first
+        _ready = false; // Ensure it's false first
         let val = getConfigValue();
         if (val !== undefined && val !== null) {
             if (type === "spin") {
@@ -154,12 +159,12 @@ Rectangle {
             }
         }
         // Enable change tracking only AFTER initial values are loaded
-        Qt.callLater(() => _ready = true);
+        Qt.callLater(() => {
+            return _ready = true;
+        });
     }
-
     Layout.fillHeight: fillHeight
     Layout.preferredHeight: (root.fillHeight && mainLoader.item) ? mainLoader.item.implicitHeight + 2 * Padding.normal : 65
-
     Layout.fillWidth: true
     color: {
         if (!enabled)
@@ -225,13 +230,17 @@ Rectangle {
             to: 1
             duration: 100
         }
+
     }
+
     Loader {
         active: root.enableTooltip
+
         sourceComponent: StyledToolTip {
             extraVisibleCondition: hint !== "" && mouseArea.containsMouse
             content: hint
         }
+
     }
 
     RowLayout {
@@ -242,7 +251,6 @@ Rectangle {
         spacing: 12
 
         Rectangle {
-            visible: !root.hideTitle
             readonly property bool isActive: {
                 switch (type) {
                 case "button":
@@ -262,6 +270,7 @@ Rectangle {
                 }
             }
 
+            visible: !root.hideTitle
             Layout.preferredHeight: 40
             Layout.preferredWidth: 40
             radius: 10
@@ -289,20 +298,25 @@ Rectangle {
                         duration: 250
                         easing.type: Easing.OutQuad
                     }
+
                 }
 
                 Behavior on color {
                     ColorAnimation {
                         duration: 200
                     }
+
                 }
+
             }
 
             Behavior on color {
                 ColorAnimation {
                     duration: 200
                 }
+
             }
+
         }
 
         StyledText {
@@ -319,6 +333,7 @@ Rectangle {
 
         Loader {
             id: mainLoader
+
             sourceComponent: {
                 switch (type) {
                 case "spin":
@@ -331,9 +346,9 @@ Rectangle {
                     return plainFieldComponent;
                 case "text":
                     return textFieldComponent;
-                    case "action":
-                        return actionComponent;
-                    case "switch":
+                case "action":
+                    return actionComponent;
+                case "switch":
                     return switchComponent;
                 case "button":
                 default:
@@ -365,6 +380,7 @@ Rectangle {
                     }
                 }
             }
+
         }
 
         Component {
@@ -388,6 +404,7 @@ Rectangle {
                     }
                 }
             }
+
         }
 
         Component {
@@ -399,7 +416,7 @@ Rectangle {
                 enabled: root.enabled
                 model: root.comboBoxValues
                 currentIndex: root.comboBoxCurrentIndex
-                onActivated: function (index) {
+                onActivated: function(index) {
                     if (index >= 0 && index < root.comboBoxValues.length && index !== root.comboBoxCurrentIndex) {
                         root.comboBoxCurrentIndex = index;
                         root.comboBoxCurrentValue = root.comboBoxValues[index];
@@ -410,7 +427,9 @@ Rectangle {
                     }
                 }
             }
+
         }
+
         Component {
             id: plainFieldComponent
 
@@ -437,10 +456,11 @@ Rectangle {
                     }
                     iconAnimation.start();
                 }
-
                 Keys.onEscapePressed: focus = false
             }
+
         }
+
         Component {
             id: textFieldComponent
 
@@ -471,28 +491,34 @@ Rectangle {
                     iconAnimation.start();
                 }
             }
+
         }
+
         Component {
-            id:actionComponent
+            id: actionComponent
+
             RippleButton {
                 width: 45
-                height:width
-                colBackground:Colors.colLayer3
-                releaseAction:function(){
-                    let cmd = Directories.scriptsDir + "/"+root.actionName
-                    Noon.execDetached(cmd)
-                    Noon.callIpc("sidebar_launcher hide")
+                height: width
+                colBackground: Colors.colLayer3
+                releaseAction: function() {
+                    let cmd = Directories.scriptsDir + "/" + root.actionName;
+                    Noon.execDetached(cmd);
+                    Noon.callIpc("sidebar_launcher hide");
                 }
+
                 MaterialSymbol {
-                    font.pixelSize:24
-                    fill:1
-                    anchors.centerIn:parent
+                    font.pixelSize: 24
+                    fill: 1
+                    anchors.centerIn: parent
                     text: "play_arrow"
-                    color:Colors.colOnLayer1
+                    color: Colors.colOnLayer1
                 }
 
             }
+
         }
+
         Component {
             id: switchComponent
 
@@ -519,14 +545,21 @@ Rectangle {
                     }
                 }
             }
+
         }
+
     }
 
     Behavior on color {
-        CAnim {}
+        CAnim {
+        }
+
     }
 
     Behavior on opacity {
-        Anim {}
+        Anim {
+        }
+
     }
+
 }

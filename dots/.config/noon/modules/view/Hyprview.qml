@@ -1,19 +1,20 @@
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Effects
-import Quickshell
-import Quickshell.Io
-import Quickshell.Widgets
-import Quickshell.Wayland
-import Quickshell.Hyprland
-import Qt5Compat.GraphicalEffects
-import qs
-import qs.modules.common.widgets
-import qs.modules.common
-import "./layouts"
 import "."
+import "./layouts"
+import Qt5Compat.GraphicalEffects
+import QtQuick
+import QtQuick.Effects
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Widgets
+import qs.modules.common
+import qs.modules.common.widgets
 
 StyledPanel {
+    // --- USER INTERFACE ---
+
     id: root
 
     // --- SETTINGS ---
@@ -21,12 +22,53 @@ StyledPanel {
     property string lastLayoutAlgorithm: ""
     property bool liveCapture: true
     property bool moveCursorToActiveWindow: true
-
     // --- INTERNAL STATE ---
     property bool isActive: false
     property bool specialActive: false
     property bool animateWindows: false
-    property var lastPositions: {}
+    property var lastPositions: {
+    }
+
+    function toggleExpose() {
+        root.isActive = !root.isActive;
+        if (root.isActive) {
+            if (root.layoutAlgorithm === 'random') {
+                var layouts = ['smartgrid', 'justified', 'bands', 'masonry', 'hero', 'spiral', 'satellite', 'staggered', 'columnar'].filter((l) => {
+                    return l !== root.lastLayoutAlgorithm;
+                });
+                var randomLayout = layouts[Math.floor(Math.random() * layouts.length)];
+                root.lastLayoutAlgorithm = randomLayout;
+            } else {
+                root.lastLayoutAlgorithm = root.layoutAlgorithm;
+            }
+            exposeArea.currentIndex = 0;
+            exposeArea.searchText = "";
+            Hyprland.refreshToplevels();
+            searchInput.forceActiveFocus();
+            refreshThumbs();
+        } else {
+            root.animateWindows = false;
+            root.lastPositions = {
+            };
+        }
+    }
+
+    function refreshThumbs() {
+        if (!root.isActive)
+            return ;
+
+        for (var i = 0; i < winRepeater.count; ++i) {
+            var it = winRepeater.itemAt(i);
+            if (it && it.visible && it.refreshThumb)
+                it.refreshThumb();
+
+        }
+    }
+
+    visible: isActive
+    // LayerShell Config
+    kbFocus: true
+    name: "expose"
 
     anchors {
         top: true
@@ -35,23 +77,20 @@ StyledPanel {
         right: true
     }
 
-    visible: isActive
-    // LayerShell Config
-    kbFocus: true
-    name: "expose"
-
     Connections {
-        target: GlobalStates
         function onExposeViewChanged() {
             root.layoutAlgorithm = Mem.options.desktop.view.mode ?? "masonry";
             root.toggleExpose();
         }
+
+        target: GlobalStates
     }
+
     Connections {
-        target: Hyprland
         function onRawEvent(ev) {
             if (!root.isActive && ev.name !== "activespecial")
-                return;
+                return ;
+
             switch (ev.name) {
             case "openwindow":
             case "closewindow":
@@ -59,139 +98,48 @@ StyledPanel {
             case "movewindow":
                 Hyprland.refreshToplevels();
                 refreshThumbs();
-                return;
+                return ;
             case "activespecial":
                 var dataStr = String(ev.data);
                 var namePart = dataStr.split(",")[0];
                 root.specialActive = (namePart.length > 0);
-                return;
+                return ;
             default:
-                return;
+                return ;
             }
         }
+
+        target: Hyprland
     }
 
     // Update thumbs every 125ms if liveCapture = false
     Timer {
         id: screencopyTimer
+
         interval: 125
         repeat: true
         running: !root.liveCapture && root.isActive
         onTriggered: root.refreshThumbs()
     }
 
-    function toggleExpose() {
-        root.isActive = !root.isActive;
-        if (root.isActive) {
-            if (root.layoutAlgorithm === 'random') {
-                var layouts = ['smartgrid', 'justified', 'bands', 'masonry', 'hero', 'spiral', 'satellite', 'staggered', 'columnar'].filter(l => l !== root.lastLayoutAlgorithm);
-                var randomLayout = layouts[Math.floor(Math.random() * layouts.length)];
-                root.lastLayoutAlgorithm = randomLayout;
-            } else {
-                root.lastLayoutAlgorithm = root.layoutAlgorithm;
-            }
-
-            exposeArea.currentIndex = 0;
-            exposeArea.searchText = "";
-            Hyprland.refreshToplevels();
-            searchInput.forceActiveFocus();
-            refreshThumbs();
-        } else {
-            root.animateWindows = false;
-            root.lastPositions = {};
-        }
-    }
-
-    function refreshThumbs() {
-        if (!root.isActive)
-            return;
-        for (var i = 0; i < winRepeater.count; ++i) {
-            var it = winRepeater.itemAt(i);
-            if (it && it.visible && it.refreshThumb) {
-                it.refreshThumb();
-            }
-        }
-    }
-
-    // --- USER INTERFACE ---
-
     FocusScope {
         id: mainScope
+
         anchors.fill: parent
         focus: true
-
         // Keyboard navigation
-        Keys.onPressed: event => {
+        Keys.onPressed: (event) => {
             if (!root.isActive)
-                return;
+                return ;
+
             if (event.key === Qt.Key_Escape) {
                 root.toggleExpose();
                 event.accepted = true;
-                return;
+                return ;
             }
-
             const total = winRepeater.count;
             if (total <= 0)
-                return;
-
-            // Helper for horizontal navigation
-            function moveSelectionHorizontal(delta) {
-                var start = exposeArea.currentIndex;
-                for (var step = 1; step <= total; ++step) {
-                    var candidate = (start + delta * step + total) % total;
-                    var it = winRepeater.itemAt(candidate);
-                    if (it && it.visible) {
-                        exposeArea.currentIndex = candidate;
-                        return;
-                    }
-                }
-            }
-
-            // Helper for vertical navigation
-            function moveSelectionVertical(dir) {
-                var startIndex = exposeArea.currentIndex;
-                var currentItem = winRepeater.itemAt(startIndex);
-
-                if (!currentItem || !currentItem.visible) {
-                    moveSelectionHorizontal(dir > 0 ? 1 : -1);
-                    return;
-                }
-
-                var curCx = currentItem.x + currentItem.width / 2;
-                var curCy = currentItem.y + currentItem.height / 2;
-
-                var bestIndex = -1;
-                var bestDy = 99999999;
-                var bestDx = 99999999;
-
-                for (var i = 0; i < total; ++i) {
-                    var it = winRepeater.itemAt(i);
-                    if (!it || !it.visible || i === startIndex)
-                        continue;
-                    var cx = it.x + it.width / 2;
-                    var cy = it.y + it.height / 2;
-                    var dy = cy - curCy;
-
-                    // Direction filtering
-                    if (dir > 0 && dy <= 0)
-                        continue;
-                    if (dir < 0 && dy >= 0)
-                        continue;
-                    var absDy = Math.abs(dy);
-                    var absDx = Math.abs(cx - curCx);
-
-                    // Search for nearest thumb (first in vertical, then horizontal distance)
-                    if (absDy < bestDy || (absDy === bestDy && absDx < bestDx)) {
-                        bestDy = absDy;
-                        bestDx = absDx;
-                        bestIndex = i;
-                    }
-                }
-
-                if (bestIndex >= 0) {
-                    exposeArea.currentIndex = bestIndex;
-                }
-            }
+                return ;
 
             if (event.key === Qt.Key_Right || event.key === Qt.Key_Tab) {
                 moveSelectionHorizontal(1);
@@ -214,6 +162,61 @@ StyledPanel {
             }
         }
 
+        // Helper for horizontal navigation
+        function moveSelectionHorizontal(delta) {
+            var start = exposeArea.currentIndex;
+            for (var step = 1; step <= total; ++step) {
+                var candidate = (start + delta * step + total) % total;
+                var it = winRepeater.itemAt(candidate);
+                if (it && it.visible) {
+                    exposeArea.currentIndex = candidate;
+                    return ;
+                }
+            }
+        }
+
+        // Helper for vertical navigation
+        function moveSelectionVertical(dir) {
+            var startIndex = exposeArea.currentIndex;
+            var currentItem = winRepeater.itemAt(startIndex);
+            if (!currentItem || !currentItem.visible) {
+                moveSelectionHorizontal(dir > 0 ? 1 : -1);
+                return ;
+            }
+            var curCx = currentItem.x + currentItem.width / 2;
+            var curCy = currentItem.y + currentItem.height / 2;
+            var bestIndex = -1;
+            var bestDy = 1e+08;
+            var bestDx = 1e+08;
+            for (var i = 0; i < total; ++i) {
+                var it = winRepeater.itemAt(i);
+                if (!it || !it.visible || i === startIndex)
+                    continue;
+
+                var cx = it.x + it.width / 2;
+                var cy = it.y + it.height / 2;
+                var dy = cy - curCy;
+                // Direction filtering
+                if (dir > 0 && dy <= 0)
+                    continue;
+
+                if (dir < 0 && dy >= 0)
+                    continue;
+
+                var absDy = Math.abs(dy);
+                var absDx = Math.abs(cx - curCx);
+                // Search for nearest thumb (first in vertical, then horizontal distance)
+                if (absDy < bestDy || (absDy === bestDy && absDx < bestDx)) {
+                    bestDy = absDy;
+                    bestDx = absDx;
+                    bestIndex = i;
+                }
+            }
+            if (bestIndex >= 0)
+                exposeArea.currentIndex = bestIndex;
+
+        }
+
         MouseArea {
             anchors.fill: parent
             hoverEnabled: false
@@ -223,11 +226,13 @@ StyledPanel {
 
         Item {
             id: layoutContainer
+
             anchors.fill: parent
             anchors.margins: 32
 
             Column {
                 id: layoutRoot
+
                 anchors.fill: parent
                 anchors.margins: 48
                 spacing: 20
@@ -235,12 +240,12 @@ StyledPanel {
                 // thumbs area
                 Item {
                     id: exposeArea
-                    width: layoutRoot.width
-                    height: layoutRoot.height - searchBox.implicitHeight - layoutRoot.spacing
 
                     property int currentIndex: 0
                     property string searchText: ""
 
+                    width: layoutRoot.width
+                    height: layoutRoot.height - searchBox.implicitHeight - layoutRoot.spacing
                     // Reset active thumb on searchText change
                     onSearchTextChanged: {
                         currentIndex = (windowLayoutModel.count > 0) ? 0 : -1;
@@ -263,19 +268,19 @@ StyledPanel {
                             var q = (query || "").toLowerCase();
                             var windowList = [];
                             var idx = 0;
-
                             if (!rawToplevels)
                                 return [];
 
                             for (var it of rawToplevels) {
                                 var w = it;
-                                var clientInfo = w && w.lastIpcObject ? w.lastIpcObject : {};
+                                var clientInfo = w && w.lastIpcObject ? w.lastIpcObject : {
+                                };
                                 var workspace = clientInfo && clientInfo.workspace ? clientInfo.workspace : null;
                                 var workspaceId = workspace && workspace.id !== undefined ? workspace.id : undefined;
-
                                 // Filter invalid workspace or offscreen windows
                                 if (workspaceId === undefined || workspaceId === null)
                                     continue;
+
                                 var size = clientInfo && clientInfo.size ? clientInfo.size : [0, 0];
                                 var at = clientInfo && clientInfo.at ? clientInfo.at : [-1000, -1000];
                                 if (at[1] + size[1] <= 0)
@@ -286,43 +291,45 @@ StyledPanel {
                                 var clazz = (clientInfo["class"] || "").toLowerCase();
                                 var ic = (clientInfo.initialClass || "").toLowerCase();
                                 var app = (w.appId || clientInfo.initialClass || "").toLowerCase();
-
                                 if (q.length > 0) {
                                     var match = title.indexOf(q) !== -1 || clazz.indexOf(q) !== -1 || ic.indexOf(q) !== -1 || app.indexOf(q) !== -1;
                                     if (!match)
                                         continue;
-                                }
 
+                                }
                                 windowList.push({
-                                    win: w,
-                                    clientInfo: clientInfo,
-                                    workspaceId: workspaceId,
-                                    width: size[0],
-                                    height: size[1],
-                                    originalIndex: idx++,
-                                    lastIpcObject: w.lastIpcObject
+                                    "win": w,
+                                    "clientInfo": clientInfo,
+                                    "workspaceId": workspaceId,
+                                    "width": size[0],
+                                    "height": size[1],
+                                    "originalIndex": idx++,
+                                    "lastIpcObject": w.lastIpcObject
                                 });
                             }
-
                             // Sort by workspaceId, then originalIndex
-                            windowList.sort(function (a, b) {
+                            windowList.sort(function(a, b) {
                                 if (a.workspaceId < b.workspaceId)
                                     return -1;
+
                                 if (a.workspaceId > b.workspaceId)
                                     return 1;
+
                                 if (a.originalIndex < b.originalIndex)
                                     return -1;
+
                                 if (a.originalIndex > b.originalIndex)
                                     return 1;
+
                                 return 0;
                             });
-
                             return LayoutsManager.doLayout(algo, windowList, areaW, areaH);
                         }
                     }
 
                     Repeater {
                         id: winRepeater
+
                         model: windowLayoutModel
 
                         delegate: WindowThumbnail {
@@ -333,20 +340,21 @@ StyledPanel {
                             thumbW: modelData.width
                             thumbH: modelData.height
                             clientInfo: hWin.lastIpcObject
-
                             // Layout-generated coordinates
                             targetX: modelData.x
                             targetY: modelData.y
-
                             hovered: visible && (exposeArea.currentIndex === index)
                             moveCursorToActiveWindow: root.moveCursorToActiveWindow
                         }
+
                     }
+
                 }
 
                 // Search bar
                 StyledRect {
                     id: searchBox
+
                     width: Math.min(layoutRoot.width * 0.6, 480)
                     height: 50
                     radius: Rounding.large
@@ -354,14 +362,19 @@ StyledPanel {
                     enableShadows: true
                     clip: true
                     anchors.horizontalCenter: parent.horizontalCenter
+
                     Rectangle {
                         id: sideRect
+
                         implicitWidth: 50
+                        color: Colors.colPrimary
+
                         anchors {
                             top: parent.top
                             left: parent.left
                             bottom: parent.bottom
                         }
+
                         MaterialSymbol {
                             anchors.centerIn: parent
                             anchors.horizontalCenterOffset: Padding.tiny
@@ -370,11 +383,23 @@ StyledPanel {
                             text: "search"
                             fill: 1
                         }
-                        color: Colors.colPrimary
+
                     }
 
                     TextInput {
                         id: searchInput
+
+                        verticalAlignment: TextInput.AlignVCenter
+                        color: Colors.colOnLayer2
+                        font.pixelSize: Fonts.sizes.small
+                        text: exposeArea.searchText
+                        activeFocusOnTab: false
+                        selectByMouse: true
+                        onTextChanged: {
+                            exposeArea.searchText = text;
+                            root.animateWindows = true;
+                        }
+
                         anchors {
                             leftMargin: Padding.verylarge
                             top: parent.top
@@ -382,17 +407,7 @@ StyledPanel {
                             left: sideRect.right
                             right: parent.right
                         }
-                        verticalAlignment: TextInput.AlignVCenter
-                        color: Colors.colOnLayer2
-                        font.pixelSize: Fonts.sizes.small
-                        text: exposeArea.searchText
-                        activeFocusOnTab: false
-                        selectByMouse: true
 
-                        onTextChanged: {
-                            exposeArea.searchText = text;
-                            root.animateWindows = true;
-                        }
                         StyledText {
                             animateChange: true
                             anchors.fill: parent
@@ -404,9 +419,15 @@ StyledPanel {
                             text: "Type to filter windows..."
                             visible: !searchInput.text || searchInput.text.length === 0
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
+
 }

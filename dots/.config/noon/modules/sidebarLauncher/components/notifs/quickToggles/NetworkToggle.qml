@@ -6,15 +6,15 @@ import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
-import qs
 
 QuickToggleButton {
     property bool showWifiDialog: false
-    hasDialog:true
+
+    hasDialog: true
     buttonName: `${Network.networkName} `
     toggled: Network.networkName.length > 0 && Network.networkName != "lo"
     buttonIcon: Network.materialSymbol
-    onRequestDialog:GlobalStates.showWifiDialog = true
+    onRequestDialog: GlobalStates.showWifiDialog = true
     onClicked: {
         toggleNetwork.running = true;
     }
@@ -29,4 +29,5 @@ QuickToggleButton {
 
         }
     }
+
 }

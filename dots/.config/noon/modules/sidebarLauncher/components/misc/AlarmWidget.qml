@@ -1,24 +1,26 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import qs
-import qs.services
 import qs.modules.common
-import qs.modules.common.widgets
 import qs.modules.common.functions
+import qs.modules.common.widgets
+import qs.services
 
 FocusScope {
     id: root
+
     property bool revealAddDialog: false
-    Keys.onPressed: event => {
+
+    Keys.onPressed: (event) => {
         if ((event.modifiers & Qt.ControlModifier)) {
             if (event.key === Qt.Key_L)
                 AlarmService.clearAll();
-            if (event.key === Qt.Key_R) {
+
+            if (event.key === Qt.Key_R)
                 AlarmService.reload();
-            }
+
             event.accepted = true;
         }
     }
@@ -38,49 +40,56 @@ FocusScope {
 
         StyledListView {
             id: listView
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: Padding.normal
             clip: true
-
             model: AlarmService.alarms
-            delegate: AlarmItem {
-                width: listView.width
-                alarmData: modelData
-            }
 
             PagePlaceholder {
                 shown: !AlarmService.hasAlarms
                 icon: "timer"
                 title: "No active alarms"
             }
+
+            delegate: AlarmItem {
+                width: listView.width
+                alarmData: modelData
+            }
+
         }
+
     }
 
     RippleButtonWithIcon {
         id: addButton
+
+        materialIcon: "add"
+        implicitSize: 55
+        buttonRadius: Rounding.full
+        releaseAction: () => {
+            console.log("Add alarm clicked");
+            bottomDialog.show = true;
+        }
+
         anchors {
             bottom: parent.bottom
             right: parent.right
             margins: 30
         }
-        materialIcon: "add"
-        implicitSize: 55
-        buttonRadius: Rounding.full
 
-        releaseAction: () => {
-            console.log("Add alarm clicked");
-            bottomDialog.show = true;
-        }
     }
+
     BottomDialog {
         id: bottomDialog
+
         show: revealAddDialog
         collapsedHeight: expandedHeight
         onShowChanged: root.revealAddDialog = bottomDialog.show
         expand: true
+
         contentItem: Item {
-            anchors.fill: parent
             function addTimer() {
                 if (nameField.text) {
                     const time = `${timePicker.hour}:${timePicker.minute}`;
@@ -89,20 +98,28 @@ FocusScope {
                     bottomDialog.show = false;
                 }
             }
+
+            anchors.fill: parent
+
             ColumnLayout {
                 id: content
+
+                spacing: Padding.normal
+
                 anchors {
                     fill: parent
                     margins: Padding.massive
                 }
-                spacing: Padding.normal
+
                 RowLayout {
                     id: header
+
                     Layout.fillWidth: true
                     Layout.fillHeight: false
                     Layout.preferredHeight: 50
                     Layout.bottomMargin: 0
                     Layout.margins: Padding.normal
+
                     StyledText {
                         text: "Add Timer"
                         font.pixelSize: Fonts.sizes.subTitle
@@ -110,20 +127,32 @@ FocusScope {
                         verticalAlignment: Text.AlignVCenter
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     }
-                    Spacer {}
+
+                    Spacer {
+                    }
+
                     RippleButtonWithIcon {
                         materialIcon: "close"
                         Layout.alignment: Qt.AlignRight | Qt.AlignTop
-                        releaseAction: () => bottomDialog.show = false
+                        releaseAction: () => {
+                            return bottomDialog.show = false;
+                        }
                     }
+
                 }
-                Separator {}
+
+                Separator {
+                }
+
                 RowLayout {
                     id: nameArea
+
                     Layout.fillWidth: true
                     Layout.preferredHeight: 30
+
                     TextField {
                         id: nameField
+
                         Layout.fillWidth: true
                         Layout.leftMargin: Padding.normal
                         placeholderText: "Name"
@@ -135,48 +164,75 @@ FocusScope {
                         selectByMouse: true
                         onAccepted: bottomDialog.addTimer()
                     }
+
                 }
+
                 TimePicker {
                     id: timePicker
+
                     clockPicker: true
                 }
-                Spacer {}
+
+                Spacer {
+                }
+
             }
+
             RippleButton {
                 id: saveButton
+
                 visible: bottomDialog.height > 300
                 buttonRadius: Rounding.verylarge
                 colBackground: Colors.colPrimaryContainer
                 implicitWidth: 100
                 implicitHeight: 50
-                releaseAction: () => bottomDialog.addTimer()
+                releaseAction: () => {
+                    return bottomDialog.addTimer();
+                }
+
                 anchors {
                     bottom: parent.bottom
                     right: parent.right
                     margins: 20
                 }
+
                 RowLayout {
                     anchors.centerIn: parent
                     spacing: Padding.normal
+
                     MaterialSymbol {
                         text: "edit"
                         fill: 1
                         font.pixelSize: Fonts.sizes.large
                         color: Colors.colOnPrimaryContainer
                     }
+
                     StyledText {
                         color: Colors.colOnPrimaryContainer
                         font.pixelSize: Fonts.sizes.normal
                         text: "Save"
                     }
+
                 }
+
             }
+
         }
+
     }
+
     component AlarmItem: RippleButton {
         id: alarmRoot
 
         property var alarmData: null
+        readonly property int timeUntilSeconds: {
+            if (!alarmData || !alarmData.time)
+                return 0;
+
+            let alarmTime = new Date(alarmData.time);
+            let now = new Date();
+            return alarmTime > now ? Math.floor((alarmTime - now) / 1000) : 0;
+        }
 
         implicitHeight: 110
         colBackground: Colors.colLayer1
@@ -184,20 +240,14 @@ FocusScope {
         clip: true
         visible: alarmData !== null && alarmData !== undefined
         releaseAction: () => {
-            if (alarmData && alarmData.id) {
+            if (alarmData && alarmData.id)
                 toggleSwitch.checked = !toggleSwitch.checked;
-            }
-        }
-        readonly property int timeUntilSeconds: {
-            if (!alarmData || !alarmData.time)
-                return 0;
-            let alarmTime = new Date(alarmData.time);
-            let now = new Date();
-            return alarmTime > now ? Math.floor((alarmTime - now) / 1000) : 0;
+
         }
 
         RowLayout {
             id: mainRow
+
             anchors {
                 fill: parent
                 margins: Padding.large
@@ -207,12 +257,14 @@ FocusScope {
 
             ColumnLayout {
                 id: infoColumn
+
                 Layout.fillHeight: true
                 Layout.preferredWidth: parent.width / 2
                 spacing: 0
 
                 StyledText {
                     id: alarmTime
+
                     Layout.fillWidth: true
                     font.pixelSize: Fonts.sizes.subTitle
                     color: Colors.colOnLayer1
@@ -221,10 +273,13 @@ FocusScope {
                     horizontalAlignment: Text.AlignLeft
                     text: alarmData ? (alarmData.period || AlarmService.formatTime(alarmData.time)) : ""
                 }
+
                 ColumnLayout {
                     Layout.fillWidth: true
+
                     StyledText {
                         id: alarmName
+
                         Layout.fillWidth: true
                         font.pixelSize: Fonts.sizes.normal
                         color: Colors.colOnLayer1
@@ -232,6 +287,7 @@ FocusScope {
                         horizontalAlignment: Text.AlignLeft
                         text: alarmData ? (alarmData.message || "Unnamed Alarm") : ""
                     }
+
                     StyledText {
                         font.pixelSize: Fonts.sizes.small
                         color: Colors.colSubtext
@@ -239,7 +295,9 @@ FocusScope {
                         text: AlarmService.formatUntil(alarmRoot.timeUntilSeconds)
                         Layout.alignment: Qt.AlignLeft
                     }
+
                 }
+
             }
 
             Item {
@@ -248,16 +306,20 @@ FocusScope {
 
             StyledSwitch {
                 id: toggleSwitch
+
                 scale: 1
                 checked: alarmData ? (alarmData.active || false) : false
                 enabled: alarmData ? (alarmRoot.timeUntilSeconds >= 0) : false
                 onCheckedChanged: {
                     if (alarmData && alarmData.id) {
                         console.log("Toggle alarm ID:", alarmData.id, "to", checked);
-                        AlarmService.toggleAlarm(alarmData.id, checked);  // ✅ Use ID not time
+                        AlarmService.toggleAlarm(alarmData.id, checked); // ✅ Use ID not time
                     }
                 }
             }
+
         }
+
     }
+
 }

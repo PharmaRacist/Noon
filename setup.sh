@@ -1,36 +1,48 @@
 #!/usr/bin/env bash
 
-set -e
-
-# Colors
-R='\033[0;31m'
-G='\033[0;32m'
-Y='\033[1;33m'
-B='\033[0;34m'
-N='\033[0m'
-
 # Config
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTS="$DIR/dots"
+SETUP_DATA="$DIR/setup_data"
 BACKUP="$HOME/.dots_backup_$(date +%Y%m%d_%H%M%S)"
-PKGS_FILE="$DIR/packages.txt"
-NVIDIA_PKGS_FILE="$DIR/nvidia_packages.txt"
-NVIDIA_PATCH="$DIR/setup_nvidia.sh"
-GREETER_FILE="$DIR/greeter_asci.txt"
+PKGS_FILE="$SETUP_DATA/packages.txt"
+NVIDIA_PKGS_FILE="$SETUP_DATA/nvidia_packages.txt"
+NVIDIA_PATCH="$SETUP_DATA/setup_nvidia.sh"
+GREETER_FILE="$SETUP_DATA/greeter_asci.txt"
+SEQUENCE_FILE="$SETUP_DATA/sequence.txt"
+GLOBAL_SERVICES_FILE="$SETUP_DATA/global_services.txt"
+NVIDIA_SERVICES_FILE="$SETUP_DATA/nvidia_services.txt"
 PKGS=()
+SERVICES=()
 AUTO=false
 DO_BACKUP=false
 USE_NVIDIA=false
+DO_INSTALL_PKGS=false
+DO_INSTALL_DOTS=false
+DO_ENABLE_SERVICES=false
+DO_REMOVE_DOTS=false
+DO_DISABLE_SERVICES=false
+DO_REMOVE_PKGS=false
 
 # Print functions
-info() { echo -e "${B}▶${N} $1"; }
-ok() { echo -e "${G}✓${N} $1"; }
-err() { echo -e "${R}✗${N} $1"; }
-warn() { echo -e "${Y}!${N} $1"; }
+info() { echo "▶ $1"; }
+ok() { echo "✓ $1"; }
+err() { echo "✗ $1"; }
+warn() { echo "! $1"; }
 
 # Show greeter
 show_greeter() {
     [ -f "$GREETER_FILE" ] && cat "$GREETER_FILE" && echo ""
+}
+
+# Show terminal color scheme
+show_sequence() {
+    if [ -f "$SEQUENCE_FILE" ]; then
+        while IFS= read -r line; do
+            printf '%b' "$line"
+        done < "$SEQUENCE_FILE"
+        echo ""
+    fi
 }
 
 # Sudo keep-alive
@@ -49,12 +61,70 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Confirm prompt
-confirm() {
-    [ "$AUTO" = true ] && return 0
-    read -p "$1 [y/N]: " -n 1 -r
+# Simple yes/no prompt
+prompt() {
+    local msg="$1"
+    local response
+    
+    read -p "? $msg [y/N]: " -n 1 -r response
     echo
-    [[ $REPLY =~ ^[Yy]$ ]]
+    [[ $response =~ ^[Yy]$ ]]
+}
+
+# Collect all user inputs upfront
+collect_install_inputs() {
+    echo ""
+    
+    # NVIDIA support
+    if [ "$USE_NVIDIA" != true ]; then
+        prompt "Do you have an NVIDIA GPU?" && USE_NVIDIA=true
+        echo ""
+    fi
+    
+    # Install packages
+    prompt "Install packages?" && DO_INSTALL_PKGS=true
+    echo ""
+    
+    # Install dotfiles
+    prompt "Install dotfiles?" && DO_INSTALL_DOTS=true
+    echo ""
+    
+    # Enable services
+    prompt "Enable and start services?" && DO_ENABLE_SERVICES=true
+    echo ""
+    
+    # Show summary
+    echo "NVIDIA: $USE_NVIDIA | Packages: $DO_INSTALL_PKGS | Dotfiles: $DO_INSTALL_DOTS | Services: $DO_ENABLE_SERVICES"
+    echo ""
+    
+    if ! prompt "Proceed?"; then
+        info "Cancelled"
+        exit 0
+    fi
+    echo ""
+}
+
+# Collect all user inputs for uninstall
+collect_uninstall_inputs() {
+    echo ""
+    
+    prompt "Remove dotfiles?" && DO_REMOVE_DOTS=true
+    echo ""
+    
+    prompt "Disable services?" && DO_DISABLE_SERVICES=true
+    echo ""
+    
+    prompt "Remove packages?" && DO_REMOVE_PKGS=true
+    echo ""
+    
+    echo "Remove Dotfiles: $DO_REMOVE_DOTS | Disable Services: $DO_DISABLE_SERVICES | Remove Packages: $DO_REMOVE_PKGS"
+    echo ""
+    
+    if ! prompt "Proceed?"; then
+        info "Cancelled"
+        exit 0
+    fi
+    echo ""
 }
 
 # Load packages
@@ -69,18 +139,39 @@ load_packages() {
     # Load NVIDIA packages if requested
     if [ "$USE_NVIDIA" = true ]; then
         if [ -f "$NVIDIA_PKGS_FILE" ]; then
-            info "Loading NVIDIA packages..."
             while IFS= read -r line; do
                 line=$(echo "$line" | sed 's/#.*//;s/^[[:space:]]*//;s/[[:space:]]*$//')
                 [ -n "$line" ] && PKGS+=("$line")
             done < "$NVIDIA_PKGS_FILE"
         else
-            warn "nvidia_packages.txt not found, skipping NVIDIA packages"
+            warn "nvidia_packages.txt not found"
         fi
     fi
     
-    [ ${#PKGS[@]} -eq 0 ] && err "No packages in packages.txt" && exit 1
-    info "Loaded ${#PKGS[@]} packages"
+    [ ${#PKGS[@]} -eq 0 ] && err "No packages found" && exit 1
+}
+
+# Load services
+load_services() {
+    SERVICES=()
+    
+    # Load global services
+    if [ -f "$GLOBAL_SERVICES_FILE" ]; then
+        while IFS= read -r line; do
+            line=$(echo "$line" | sed 's/#.*//;s/^[[:space:]]*//;s/[[:space:]]*$//')
+            [ -n "$line" ] && SERVICES+=("$line")
+        done < "$GLOBAL_SERVICES_FILE"
+    fi
+    
+    # Load NVIDIA services if requested
+    if [ "$USE_NVIDIA" = true ]; then
+        if [ -f "$NVIDIA_SERVICES_FILE" ]; then
+            while IFS= read -r line; do
+                line=$(echo "$line" | sed 's/#.*//;s/^[[:space:]]*//;s/[[:space:]]*$//')
+                [ -n "$line" ] && SERVICES+=("$line")
+            done < "$NVIDIA_SERVICES_FILE"
+        fi
+    fi
 }
 
 # Ensure yay is installed
@@ -88,7 +179,6 @@ ensure_yay() {
     command -v yay &>/dev/null && return 0
     
     info "Installing yay..."
-    confirm "Install yay?" || return 1
     
     sudo pacman -S --needed --noconfirm base-devel git
     local tmp=$(mktemp -d)
@@ -120,7 +210,7 @@ install_pkgs() {
     [ ${#not_found[@]} -gt 0 ] && err "Not found: ${not_found[*]}"
     [ ${#to_install[@]} -eq 0 ] && ok "All packages installed" && return
     
-    info "To install: ${to_install[*]}"
+    info "Installing ${#to_install[@]} package(s)..."
     
     local ok=0
     local fail=()
@@ -142,17 +232,67 @@ run_nvidia_patch() {
     [ "$USE_NVIDIA" != true ] && return 0
     
     if [ -f "$NVIDIA_PATCH" ]; then
-        info "Running NVIDIA patch script..."
+        info "Running NVIDIA patch..."
         chmod +x "$NVIDIA_PATCH"
-        if bash "$NVIDIA_PATCH"; then
-            ok "NVIDIA patch completed"
-        else
-            err "NVIDIA patch failed"
-            return 1
-        fi
-    else
-        warn "setup_nvidia.sh not found, skipping NVIDIA patch"
+        bash "$NVIDIA_PATCH" && ok "NVIDIA patch complete" || err "NVIDIA patch failed"
     fi
+}
+
+# Enable and start services
+manage_services() {
+    [ ${#SERVICES[@]} -eq 0 ] && info "No services to manage" && return
+    
+    info "Managing ${#SERVICES[@]} service(s)..."
+    
+    local enabled=0
+    local started=0
+    local failed_enable=()
+    local failed_start=()
+    local not_found=()
+    
+    for service in "${SERVICES[@]}"; do
+        # Check if service exists
+        if ! systemctl list-unit-files "$service" &>/dev/null && \
+           ! systemctl list-unit-files "$service.service" &>/dev/null; then
+            not_found+=("$service")
+            continue
+        fi
+        
+        # Normalize service name
+        local svc="$service"
+        [[ ! "$svc" =~ \.service$ ]] && svc="${svc}.service"
+        
+        # Enable service
+        sudo systemctl enable "$svc" &>/dev/null && ((enabled++)) || failed_enable+=("$service")
+        
+        # Start service
+        sudo systemctl start "$svc" &>/dev/null && ((started++)) || failed_start+=("$service")
+    done
+    
+    ok "Enabled $enabled, started $started service(s)"
+    [ ${#not_found[@]} -gt 0 ] && warn "Not found: ${not_found[*]}"
+    [ ${#failed_enable[@]} -gt 0 ] && warn "Failed to enable: ${failed_enable[*]}"
+    [ ${#failed_start[@]} -gt 0 ] && warn "Failed to start: ${failed_start[*]}"
+}
+
+# Disable and stop services
+disable_services() {
+    [ ${#SERVICES[@]} -eq 0 ] && return
+    
+    info "Disabling ${#SERVICES[@]} service(s)..."
+    
+    local stopped=0
+    local disabled=0
+    
+    for service in "${SERVICES[@]}"; do
+        local svc="$service"
+        [[ ! "$svc" =~ \.service$ ]] && svc="${svc}.service"
+        
+        systemctl is-active --quiet "$svc" && sudo systemctl stop "$svc" 2>/dev/null && ((stopped++))
+        systemctl is-enabled --quiet "$svc" 2>/dev/null && sudo systemctl disable "$svc" 2>/dev/null && ((disabled++))
+    done
+    
+    ok "Stopped $stopped, disabled $disabled service(s)"
 }
 
 # Copy dotfiles
@@ -161,45 +301,14 @@ copy_dots() {
     [ ! -d "$DOTS" ] && err "dots/ not found" && exit 1
     
     local copied=0
-    local backed=0
     
-    # Copy using rsync or cp -r to preserve structure
     if command -v rsync &>/dev/null; then
-        # Backup existing files first
-        if [ "$DO_BACKUP" = true ]; then
-            mkdir -p "$BACKUP"
-            shopt -s dotglob nullglob
-            for item in "$DOTS"/*; do
-                [ -e "$item" ] || continue
-                local name=$(basename "$item")
-                
-                local dst="$HOME/$name"
-                if [ -e "$dst" ]; then
-                    cp -a "$dst" "$BACKUP/$name" 2>/dev/null && ((backed++))
-                fi
-            done
-            shopt -u dotglob nullglob
-        fi
-        
-        # Copy with rsync
         rsync -a --exclude='.git' "$DOTS/" "$HOME/"
         copied=$(find "$DOTS" -type f | wc -l)
     else
-        # Fallback to cp
         shopt -s dotglob nullglob
         for item in "$DOTS"/*; do
             [ -e "$item" ] || continue
-            local name=$(basename "$item")
-            
-            local dst="$HOME/$name"
-            
-            # Backup if exists
-            if [ "$DO_BACKUP" = true ] && [ -e "$dst" ]; then
-                mkdir -p "$BACKUP"
-                cp -a "$dst" "$BACKUP/$name" 2>/dev/null && ((backed++))
-            fi
-            
-            # Copy
             cp -rf "$item" "$HOME/"
             if [ -d "$item" ]; then
                 copied=$((copied + $(find "$item" -type f | wc -l)))
@@ -211,7 +320,6 @@ copy_dots() {
     fi
     
     ok "Copied $copied files"
-    [ $backed -gt 0 ] && info "Backed up to $BACKUP"
 }
 
 # Remove dotfiles
@@ -225,7 +333,6 @@ remove_dots() {
     for item in "$DOTS"/*; do
         [ -e "$item" ] || continue
         local name=$(basename "$item")
-        
         local dst="$HOME/$name"
         
         if [ -d "$item" ]; then
@@ -249,9 +356,7 @@ uninstall_pkgs() {
     
     [ ${#to_remove[@]} -eq 0 ] && info "No packages to remove" && return
     
-    warn "Will remove: ${to_remove[*]}"
-    confirm "Remove packages?" || return
-    
+    info "Removing ${#to_remove[@]} package(s)..."
     sudo pacman -Rs --noconfirm "${to_remove[@]}"
     ok "Packages removed"
 }
@@ -260,19 +365,26 @@ uninstall_pkgs() {
 main() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            -a|--auto) AUTO=true; shift ;;
+            -a|--auto) 
+                AUTO=true
+                USE_NVIDIA=false
+                DO_INSTALL_PKGS=true
+                DO_INSTALL_DOTS=true
+                DO_ENABLE_SERVICES=true
+                shift 
+                ;;
             --nvidia) USE_NVIDIA=true; shift ;;
             -h|--help)
                 echo "Usage: $0 [OPTIONS] COMMAND"
                 echo ""
                 echo "Commands:"
-                echo "  install    Install packages and dotfiles"
-                echo "  uninstall  Remove dotfiles and packages"
+                echo "  install    Install packages, dotfiles, and enable services"
+                echo "  uninstall  Remove dotfiles, disable services, and remove packages"
                 echo "  update     Update dotfiles only"
                 echo ""
                 echo "Options:"
-                echo "  -a, --auto    Autopilot mode"
-                echo "  --nvidia      Enable NVIDIA support (skip prompt)"
+                echo "  -a, --auto    Auto mode (prompts shown)"
+                echo "  --nvidia      Enable NVIDIA support"
                 echo "  -h, --help    Show help"
                 exit 0
                 ;;
@@ -288,39 +400,60 @@ main() {
     [ -z "$CMD" ] && err "No command specified" && exit 1
     
     show_greeter
-    sudo_loop
+    show_sequence
     
-    # Ask about NVIDIA GPU before install (if not already set via --nvidia flag)
-    if [ "$CMD" = "install" ] && [ "$USE_NVIDIA" != true ]; then
-        if confirm "Do you have an NVIDIA GPU?"; then
-            USE_NVIDIA=true
-            ok "NVIDIA support enabled"
-        else
-            info "Skipping NVIDIA packages"
-        fi
-    fi
-    
-    load_packages
-    
+    # Collect all user inputs at the start
     case $CMD in
         install)
-            if confirm "Install packages?"; then
-                install_pkgs
-                run_nvidia_patch
-            else
-                info "Skipping packages"
-            fi
-            copy_dots
-            ok "Done!"
+            collect_install_inputs
             ;;
         uninstall)
-            remove_dots
-            confirm "Also remove packages?" && uninstall_pkgs
-            ok "Done!"
+            collect_uninstall_inputs
+            ;;
+        update)
+            echo ""
+            prompt "Update dotfiles?" || exit 0
+            echo ""
+            ;;
+    esac
+    
+    # Start execution
+    sudo_loop
+    
+    # Always load packages and services lists (needed for service management)
+    if [ "$DO_INSTALL_PKGS" = true ] || [ "$DO_REMOVE_PKGS" = true ]; then
+        load_packages
+    fi
+    
+    if [ "$DO_ENABLE_SERVICES" = true ] || [ "$DO_DISABLE_SERVICES" = true ]; then
+        load_services
+    fi
+    
+    if [ ${#PKGS[@]} -gt 0 ] || [ ${#SERVICES[@]} -gt 0 ]; then
+        info "Loaded ${#PKGS[@]} package(s), ${#SERVICES[@]} service(s)"
+        echo ""
+    fi
+    
+    # Execute based on collected inputs
+    case $CMD in
+        install)
+            [ "$DO_INSTALL_PKGS" = true ] && install_pkgs && run_nvidia_patch
+            [ "$DO_INSTALL_DOTS" = true ] && copy_dots
+            [ "$DO_ENABLE_SERVICES" = true ] && manage_services
+            echo ""
+            ok "Installation complete!"
+            ;;
+        uninstall)
+            [ "$DO_REMOVE_DOTS" = true ] && remove_dots
+            [ "$DO_DISABLE_SERVICES" = true ] && disable_services
+            [ "$DO_REMOVE_PKGS" = true ] && uninstall_pkgs
+            echo ""
+            ok "Uninstallation complete!"
             ;;
         update)
             copy_dots
-            ok "Done!"
+            echo ""
+            ok "Update complete!"
             ;;
     esac
 }

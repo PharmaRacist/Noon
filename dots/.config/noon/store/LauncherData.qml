@@ -3,7 +3,6 @@ import QtQuick
 import Qt.labs.folderlistmodel
 import Quickshell
 import Quickshell.Io
-import qs
 import qs.modules.common
 import qs.modules.common.functions
 import qs.services
@@ -71,7 +70,7 @@ Singleton {
           enabled: Mem.options.sidebarLauncher.content.documents },
         { id: "Movies", name: "Movies", icon: "movie", placeholder: qsTr("Search movies..."), 
           component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter, 
-          folderPath: Directories.videos, nameFilters: ["*.mp4", "*.mkv", "*.avi", "*.mov", "*.wmv", "*.flv"], 
+          folderPath: Directories.movies, nameFilters: ["*.mp4", "*.mkv", "*.avi", "*.mov", "*.wmv", "*.flv"], 
           enabled: Mem.options.sidebarLauncher.content.movies },
         { id: "Bookmarks", name: "Bookmarks", icon: "bookmark", placeholder: qsTr("Search bookmarks..."), 
           component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter, 
@@ -85,14 +84,16 @@ Singleton {
     ]
 
     Component.onCompleted: {
-        const map = {}, enabled = [];
-        for (let i = 0; i < categories.length; i++) {
-            const cat = categories[i];
-            map[cat.id] = cat;
-            if (cat.enabled) enabled.push(cat.id);
+        if (Mem.ready) {
+            const map = {}, enabled = [];
+            for (let i = 0; i < categories.length; i++) {
+                const cat = categories[i];
+                map[cat.id] = cat;
+                if (cat.enabled) enabled.push(cat.id);
+            }
+            _categoryMap = map;
+            _enabledCategories = enabled;
         }
-        _categoryMap = map;
-        _enabledCategories = enabled;
     }
 
     // Invalidate app cache when desktop entries change

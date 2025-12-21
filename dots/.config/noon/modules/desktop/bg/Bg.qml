@@ -8,7 +8,6 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import Quickshell.Widgets
 import Quickshell.Io
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.modules.common.functions

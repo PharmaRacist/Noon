@@ -7,18 +7,16 @@ import qs.modules.common.utils
 import QtQuick
 
 /**
- * KDE Connect service with persistent state management
- * Storage: Uses Mem.states.services.kdeconnect
+ * KDE Connect service
+ * Persistence: Only selectedDeviceId
  */
 Singleton {
     id: root
 
-    // Core device data
     property var devices: []
     property var availableDevices: []
     property string selectedDeviceId: ""
     property bool isRefreshing: false
-    property bool initialized: false
     property bool daemonRunning: false
 
     signal devicesUpdated
@@ -26,182 +24,123 @@ Singleton {
     signal deviceUnpaired(string deviceId)
     signal error(string message)
 
-    // Auto-refresh timer
-    Timer {
-        id: refreshTimer
-        interval: 30000
-        repeat: true
-        running: false
-        onTriggered: root.refresh()
-    }
+    // No auto-refresh timer - only manual refresh on critical activities
 
     FilePicker {
         id: filePicker
         title: "Select file to share via KDE Connect"
         multipleSelection: true
-        fileFilters: [filePicker.filterPresets.ALL, filePicker.filterPresets.IMAGES, filePicker.filterPresets.DOCUMENTS, filePicker.filterPresets.VIDEOS, filePicker.filterPresets.AUDIO]
+        fileFilters: [filePicker.filterPresets.ALL, filePicker.filterPresets.IMAGES, 
+                     filePicker.filterPresets.DOCUMENTS, filePicker.filterPresets.VIDEOS, 
+                     filePicker.filterPresets.AUDIO]
 
         onFileSelected: files => {
-            const deviceId = root.selectedDeviceId;
-            if (!deviceId) {
-                root.error("No device selected");
+            if (!selectedDeviceId) {
+                error("No device selected");
                 return;
             }
 
             const fileArray = Array.isArray(files) ? files : [files];
-            fileArray.forEach(file => {
-                executeCommand(["--device", deviceId, "--share", file]);
-            });
+            fileArray.forEach(file => executeCommand(["--device", selectedDeviceId, "--share", file]));
         }
 
-        onCancelled: {}
-
-        onError: message => {
-            root.error(message);
-        }
+        onError: message => error(message)
     }
 
-    // Storage Operations
     function saveToConfig() {
-        Mem.states.services.kdeconnect.devices = root.devices;
-        Mem.states.services.kdeconnect.availableDevices = root.availableDevices;
+        if (!Mem.states.services) Mem.states.services = {};
+        if (!Mem.states.services.kdeconnect) Mem.states.services.kdeconnect = {};
         Mem.states.services.kdeconnect.selectedDeviceId = selectedDeviceId;
     }
 
     function loadFromConfig() {
-        if (!Mem.states.services || !Mem.states.services.kdeconnect) {
-            return;
-        }
-
-        const savedDevices = Mem.states.services.kdeconnect.devices || [];
-        const savedAvailable = Mem.states.services.kdeconnect.availableDevices || [];
-        const savedSelected = Mem.states.services.kdeconnect.selectedDeviceId || "";
-
-        if (savedDevices && savedDevices.length > 0) {
-            root.devices = savedDevices;
-        }
-        if (savedAvailable && savedAvailable.length > 0) {
-            root.availableDevices = savedAvailable;
-        }
-        if (savedSelected) {
-            selectedDeviceId = savedSelected;
-        }
+        const saved = Mem.states.services?.kdeconnect?.selectedDeviceId;
+        if (saved) selectedDeviceId = saved;
     }
 
-    // Execute command helper
     function executeCommand(args, onSuccess, onError) {
         const proc = processComponent.createObject(root, {
-            "commandArgs": args,
-            "successCallback": onSuccess,
-            "errorCallback": onError
+            commandArgs: args,
+            successCallback: onSuccess,
+            errorCallback: onError
         });
         proc.running = true;
     }
 
-    // Parse device list output
     function parseDeviceList(output) {
-        if (!output || output.trim() === "") {
-            return [];
-        }
+        if (!output?.trim()) return [];
 
-        const lines = output.split('\n').filter(line => line.trim() !== '');
-        const parsed = lines.map(line => {
-            const spaceIndex = line.indexOf(' ');
-            if (spaceIndex === -1) {
-                return {
-                    id: line,
-                    name: line
-                };
-            }
-            return {
-                id: line.substring(0, spaceIndex),
-                name: line.substring(spaceIndex + 1).trim()
-            };
-        });
-
-        return parsed;
+        return output.split('\n')
+            .filter(line => line.trim())
+            .map(line => {
+                const spaceIndex = line.indexOf(' ');
+                return spaceIndex === -1 
+                    ? { id: line, name: line }
+                    : { id: line.substring(0, spaceIndex), name: line.substring(spaceIndex + 1).trim() };
+            });
     }
 
-    // Check if daemon is running
     function checkDaemon() {
-        executeCommand(["--list-devices"], output => {
-            daemonRunning = true;
-        }, errOutput => {
-            daemonRunning = false;
-        });
+        executeCommand(["--list-devices"], 
+            () => daemonRunning = true,
+            () => daemonRunning = false
+        );
     }
 
-    // List all devices (paired, regardless of online status)
     function listAllDevices() {
         executeCommand(["--list-devices", "--id-name-only"], output => {
-            root.devices = parseDeviceList(output);
-            root.devices = root.devices.slice(0);
+            devices = parseDeviceList(output);
             devicesUpdated();
-            saveToConfig();
-        }, errOutput => {});
+        });
     }
 
-    // List available devices (online and reachable)
     function listAvailableDevices() {
-        if (isRefreshing)
-            return;
+        if (isRefreshing) return;
 
         isRefreshing = true;
-        executeCommand(["--list-available", "--id-name-only"], output => {
-            isRefreshing = false;
-            root.availableDevices = parseDeviceList(output);
-            root.availableDevices = root.availableDevices.slice(0);
-            devicesUpdated();
-            saveToConfig();
-        }, errOutput => {
-            isRefreshing = false;
-        });
+        executeCommand(["--list-available", "--id-name-only"], 
+            output => {
+                isRefreshing = false;
+                availableDevices = parseDeviceList(output);
+                devicesUpdated();
+            },
+            () => isRefreshing = false
+        );
     }
 
-    // Refresh discovery
     function refresh() {
-        if (isRefreshing)
-            return;
-
+        if (isRefreshing) return;
+        
         checkDaemon();
-
         executeCommand(["--refresh"], () => {
-            Qt.callLater(() => {
-                listAllDevices();
-                listAvailableDevices();
-            });
-        }, errOutput => {});
-    }
-
-    // Pair device
-    function pairDevice(deviceId) {
-        if (!deviceId) {
-            error("Device ID is required");
-            return;
-        }
-        executeCommand(["--device", deviceId, "--pair"], output => {
-            devicePaired(deviceId, getDeviceName(deviceId));
-            listAvailableDevices();
-        });
-    }
-
-    // Unpair device
-    function unpairDevice(deviceId) {
-        if (!deviceId) {
-            error("Device ID is required");
-            return;
-        }
-        executeCommand(["--device", deviceId, "--unpair"], output => {
-            deviceUnpaired(deviceId);
             listAllDevices();
             listAvailableDevices();
         });
     }
 
-    // Ring device
-    function ringDevice(deviceId) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function pairDevice(deviceId) {
+        if (!deviceId) {
+            error("Device ID is required");
+            return;
+        }
+        executeCommand(["--device", deviceId, "--pair"], () => {
+            devicePaired(deviceId, getDeviceName(deviceId));
+            refresh(); // Auto-refresh after pairing
+        });
+    }
+
+    function unpairDevice(deviceId) {
+        if (!deviceId) {
+            error("Device ID is required");
+            return;
+        }
+        executeCommand(["--device", deviceId, "--unpair"], () => {
+            deviceUnpaired(deviceId);
+            refresh(); // Auto-refresh after unpairing
+        });
+    }
+
+    function ringDevice(deviceId = selectedDeviceId) {
         if (!deviceId) {
             error("No device selected");
             return;
@@ -209,35 +148,18 @@ Singleton {
         executeCommand(["--device", deviceId, "--ring"]);
     }
 
-    function pingSelectedDevice(message) {
-        let deviceId = selectedDeviceId;
-        const args = ["--device", deviceId];
-        args.push("--ping-msg", message);
-        executeCommand(args);
-    }
-
-    // Send ping
-    function pingDevice(message, deviceId) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function pingDevice(message = "", deviceId = selectedDeviceId) {
         if (!deviceId) {
             error("No device selected");
             return;
         }
 
-        const args = ["--device", deviceId];
-        if (message) {
-            args.push("--ping-msg", message);
-        } else {
-            args.push("--ping");
-        }
+        const args = ["--device", deviceId, message ? "--ping-msg" : "--ping"];
+        if (message) args.push(message);
         executeCommand(args);
     }
 
-    // Share file or URL
-    function shareFile(deviceId, path) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function shareFile(path = "", deviceId = selectedDeviceId) {
         if (!deviceId) {
             error("No device selected");
             return;
@@ -251,10 +173,7 @@ Singleton {
         }
     }
 
-    // Share text
-    function shareText(deviceId, text) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function shareText(text, deviceId = selectedDeviceId) {
         if (!deviceId || !text) {
             error("Device ID and text required");
             return;
@@ -262,10 +181,7 @@ Singleton {
         executeCommand(["--device", deviceId, "--share-text", text]);
     }
 
-    // Send clipboard
-    function sendClipboard(deviceId) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function sendClipboard(deviceId = selectedDeviceId) {
         if (!deviceId) {
             error("No device selected");
             return;
@@ -273,10 +189,7 @@ Singleton {
         executeCommand(["--device", deviceId, "--send-clipboard"]);
     }
 
-    // Lock device
-    function lockDevice(deviceId) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function lockDevice(deviceId = selectedDeviceId) {
         if (!deviceId) {
             error("No device selected");
             return;
@@ -284,57 +197,42 @@ Singleton {
         executeCommand(["--device", deviceId, "--lock"]);
     }
 
-    // Send SMS
-    function sendSMS(deviceId, phoneNumber, message, attachments) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function sendSMS(phoneNumber, message, attachments = [], deviceId = selectedDeviceId) {
         if (!deviceId || !phoneNumber || !message) {
             error("Device ID, phone number, and message required");
             return;
         }
 
         const args = ["--device", deviceId, "--send-sms", message, "--destination", phoneNumber];
-
-        if (attachments && Array.isArray(attachments)) {
-            attachments.forEach(attachment => {
-                args.push("--attachment", attachment);
-            });
-        }
+        attachments.forEach(attachment => {
+            args.push("--attachment", attachment);
+        });
 
         executeCommand(args);
     }
 
-    // Get encryption info
-    function getEncryptionInfo(deviceId) {
-        if (!deviceId)
-            deviceId = selectedDeviceId;
+    function getEncryptionInfo(deviceId = selectedDeviceId) {
         if (!deviceId) {
             error("No device selected");
             return;
         }
-        executeCommand(["--device", deviceId, "--encryption-info"], output => {});
+        executeCommand(["--device", deviceId, "--encryption-info"]);
     }
 
-    // Helper: Get device name by ID
     function getDeviceName(deviceId) {
-        let device = availableDevices.find(d => d.id === deviceId);
-        if (!device) {
-            device = devices.find(d => d.id === deviceId);
-        }
-        return device ? device.name : deviceId;
+        const device = availableDevices.find(d => d.id === deviceId) 
+                    || devices.find(d => d.id === deviceId);
+        return device?.name || deviceId;
     }
 
-    // Helper: Get first available device
     function getFirstAvailableDevice() {
-        return availableDevices.length > 0 ? availableDevices[0] : null;
+        return availableDevices[0] || null;
     }
 
-    // Helper: Check if device is online
     function isDeviceAvailable(deviceId) {
         return availableDevices.some(d => d.id === deviceId);
     }
 
-    // Select device
     function selectDevice(deviceId) {
         selectedDeviceId = deviceId;
         saveToConfig();
@@ -342,18 +240,10 @@ Singleton {
 
     Component.onCompleted: {
         loadFromConfig();
-
-        Qt.callLater(() => {
-            if (!initialized) {
-                initialized = true;
-                checkDaemon();
-                refresh();
-                refreshTimer.start();
-            }
-        });
+        checkDaemon();
+        refresh();
     }
 
-    // Process component factory
     Component {
         id: processComponent
 
@@ -368,23 +258,20 @@ Singleton {
             running: false
 
             stdout: SplitParser {
-                onRead: line => {
-                    outputBuffer += line + "\n";
-                }
+                onRead: line => outputBuffer += line + "\n"
             }
 
             stderr: SplitParser {
-                onRead: line => {
-                    errorBuffer += line + "\n";
-                }
+                onRead: line => errorBuffer += line + "\n"
             }
 
             onExited: (exitCode, exitStatus) => {
                 if (exitCode === 0 && successCallback) {
                     successCallback(outputBuffer.trim());
-                } else if (exitCode !== 0 && errorCallback) {
-                    errorCallback(errorBuffer.trim());
-                    root.error(errorBuffer.trim());
+                } else if (exitCode !== 0) {
+                    const err = errorBuffer.trim();
+                    if (errorCallback) errorCallback(err);
+                    if (err) error(err);
                 }
             }
         }

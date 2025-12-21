@@ -5,7 +5,6 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Mpris
-import qs
 import qs.modules.common
 import qs.modules.view
 import qs.modules.common.functions

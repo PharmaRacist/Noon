@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.modules.dock
@@ -16,23 +15,22 @@ StyledRect {
 
     property bool pinned
 
-    implicitWidth: content.implicitWidth +
-                   (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
-
-    implicitHeight: content.implicitHeight +
-                    (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
-
+    implicitWidth: content.implicitWidth + (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
+    implicitHeight: content.implicitHeight + (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
     color: Colors.colLayer0
     radius: dockRoot.mainRounding
     enableBorders: true
     enableShadows: true
 
     RowLayout {
-        id:content
+        id: content
+
         anchors.centerIn: parent
 
         DockApps {
             id: dockApps
         }
+
     }
+
 }

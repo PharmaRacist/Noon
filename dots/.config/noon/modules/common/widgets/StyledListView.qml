@@ -1,18 +1,17 @@
-import qs
-import qs.modules.common
-import qs.modules.common.widgets
-import qs.services
+import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
-import Qt5Compat.GraphicalEffects
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.services
 
 /**
  * A ListView with animations.
  */
 ListView {
     id: root
-    spacing: 5
+
     property real removeOvershoot: 100 // Account for gaps and bouncy animations
     property int dragIndex: -1
     property real dragDistance: 0
@@ -25,7 +24,6 @@ ListView {
     property bool fasterInteractions: Mem.options.interactions.scrolling.fasterTouchpadScroll
     // Accumulated scroll destination so wheel deltas stack while animating
     property real scrollTargetY: 0
-
     property real touchpadScrollFactor: Mem.options.interactions.scrolling.touchpadScrollFactor ?? 100
     property real mouseScrollFactor: Mem.options.interactions.scrolling.mouseScrollFactor ?? 50
     property real mouseScrollDeltaThreshold: Mem.options.interactions.scrolling.mouseScrollDeltaThreshold ?? 120
@@ -35,9 +33,16 @@ ListView {
         root.dragDistance = 0;
     }
 
+    spacing: 5
     maximumFlickVelocity: 1000
     boundsBehavior: Flickable.StopAtBounds
-    ScrollBar.vertical: StyledScrollBar {}
+    // Keep target synced when not animating (e.g., drag/flick or programmatic changes)
+    onContentYChanged: {
+        if (!scrollAnim.running)
+            root.scrollTargetY = root.contentY;
+
+    }
+    layer.enabled: root.clip
 
     Rectangle {
         z: -1
@@ -49,7 +54,7 @@ ListView {
         visible: Mem.options.interactions.scrolling.fasterTouchpadScroll
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
-        onWheel: function (wheelEvent) {
+        onWheel: function(wheelEvent) {
             const delta = wheelEvent.angleDelta.y / root.mouseScrollDeltaThreshold;
             var scrollFactor = Math.abs(wheelEvent.angleDelta.y) >= root.mouseScrollDeltaThreshold ? root.mouseScrollFactor : root.touchpadScrollFactor;
             const maxY = Math.max(0, root.contentHeight - root.height);
@@ -61,20 +66,18 @@ ListView {
         }
     }
 
+    ScrollBar.vertical: StyledScrollBar {
+    }
+
     Behavior on contentY {
         Anim {
             id: scrollAnim
+
             duration: Animations.durations.small
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
-    }
 
-    // Keep target synced when not animating (e.g., drag/flick or programmatic changes)
-    onContentYChanged: {
-        if (!scrollAnim.running) {
-            root.scrollTargetY = root.contentY;
-        }
     }
 
     add: Transition {
@@ -86,6 +89,7 @@ ListView {
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
+
     }
 
     addDisplaced: Transition {
@@ -95,6 +99,7 @@ ListView {
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
+
         Anim {
             properties: root.popin ? "opacity,scale" : "opacity"
             to: 1
@@ -102,6 +107,7 @@ ListView {
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
+
     }
 
     displaced: Transition {
@@ -112,6 +118,7 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
             Anim {
                 properties: root.popin ? "opacity,scale" : "opacity"
                 to: 1
@@ -119,7 +126,9 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
         }
+
     }
 
     move: Transition {
@@ -130,6 +139,7 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
             Anim {
                 properties: root.popin ? "opacity,scale" : "opacity"
                 to: 1
@@ -137,7 +147,9 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
         }
+
     }
 
     moveDisplaced: Transition {
@@ -148,6 +160,7 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
             Anim {
                 properties: root.popin ? "opacity,scale" : "opacity"
                 to: 1
@@ -155,7 +168,9 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
         }
+
     }
 
     remove: Transition {
@@ -167,6 +182,7 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
             Anim {
                 properties: "opacity"
                 to: 0
@@ -174,7 +190,9 @@ ListView {
                 easing.type: Easing.BezierSpline
                 easing.bezierCurve: Animations.curves.expressiveFastSpatial
             }
+
         }
+
     }
 
     // This is movement when something is removed, not removing animation!
@@ -183,19 +201,24 @@ ListView {
             Anim {
                 properties: "y"
             }
+
             Anim {
                 properties: root.popin ? "opacity,scale" : "opacity"
                 to: 1
             }
+
         }
+
     }
 
-    layer.enabled: root.clip
     layer.effect: OpacityMask {
+
         maskSource: Rectangle {
             width: root.width
             height: root.height
             radius: root.radius
         }
+
     }
+
 }

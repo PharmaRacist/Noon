@@ -3,7 +3,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Hyprland
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 

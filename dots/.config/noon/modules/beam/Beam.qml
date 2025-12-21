@@ -6,7 +6,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick.Controls
 
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -49,6 +48,14 @@ Scope {
                         shape: MaterialShape.Shape.Oval,
                         placeholder: "Command Master ..",
                         showHint: true,
+                        showOsrButton: false
+                    },
+                    "install": {
+                        prefix: "$",
+                        icon: "deployed_code_update",
+                        shape: MaterialShape.Shape.SoftBurst,
+                        placeholder: "Install ..",
+                        showHint: false,
                         showOsrButton: false
                     },
                     "note": {
@@ -369,6 +376,11 @@ Scope {
                 case "todo":
                     if (cleanQuery.length > 0) {
                         TodoService.addTask(cleanQuery);
+                    }
+                    break;
+                case "install":
+                    if (cleanQuery.length > 0) {
+                        Noon.installPkg(cleanQuery);
                     }
                     break;
                 case "ipc":

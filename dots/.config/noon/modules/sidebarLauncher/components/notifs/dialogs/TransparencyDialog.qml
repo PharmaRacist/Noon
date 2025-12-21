@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -13,17 +12,19 @@ SidebarDialog {
         text: qsTr("Transparency")
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     ColumnLayout {
+        // --- Toggle: Enable Transparency
+        // --- Toggle: Blur Background
+        // --- Slider: Transparency Amount
+
         Layout.fillWidth: true
         Layout.fillHeight: true
         spacing: 16
         anchors.margins: Rounding.large
 
-        //
-        // --- Toggle: Enable Transparency
-        //
         RowLayout {
             Layout.fillWidth: true
             spacing: 10
@@ -44,11 +45,9 @@ SidebarDialog {
                 checked: Mem.options.appearance.transparency.enabled
                 onToggled: Mem.options.appearance.transparency.enabled = checked
             }
+
         }
 
-        //
-        // --- Toggle: Blur Background
-        //
         RowLayout {
             Layout.fillWidth: true
             spacing: 10
@@ -70,11 +69,9 @@ SidebarDialog {
                 onToggled: Mem.options.appearance.transparency.blur = checked
                 enabled: Mem.options.appearance.transparency
             }
+
         }
 
-        //
-        // --- Slider: Transparency Amount
-        //
         ColumnLayout {
             Layout.fillWidth: true
             spacing: 6
@@ -99,6 +96,7 @@ SidebarDialog {
                     color: Colors.colOnSurfaceVariant
                     opacity: 0.7
                 }
+
             }
 
             StyledSlider {
@@ -108,14 +106,17 @@ SidebarDialog {
                 value: Mem.options.appearance.transparency.scale
                 onMoved: Mem.options.appearance.transparency.scale = value
             }
+
         }
 
         Item {
             Layout.fillHeight: true
         }
+
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     WindowDialogButtonRow {
         implicitHeight: 48
@@ -124,5 +125,7 @@ SidebarDialog {
             buttonText: qsTr("Done")
             onClicked: root.dismiss()
         }
+
     }
+
 }

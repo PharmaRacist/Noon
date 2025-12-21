@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Pam
-import qs
 import qs.modules.common
 
 Scope {
@@ -20,9 +19,9 @@ Scope {
     property bool showFailure: false
     property var targetAction: LockContext.ActionEnum.Unlock
 
-    signal shouldReFocus
+    signal shouldReFocus()
     signal unlocked(var targetAction)
-    signal failed
+    signal failed()
 
     function resetTargetAction() {
         root.targetAction = LockContext.ActionEnum.Unlock;
@@ -72,9 +71,10 @@ Scope {
         onPamMessage: {
             if (this.responseRequired)
                 this.respond(root.currentText);
+
         }
         // pam_unix won't send any important messages so all we need is the completion status.
-        onCompleted: result => {
+        onCompleted: (result) => {
             if (result == PamResult.Success) {
                 root.unlocked(root.targetAction);
             } else {
@@ -85,4 +85,5 @@ Scope {
             }
         }
     }
+
 }

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -13,7 +12,8 @@ SidebarDialog {
         text: qsTr("KDE Connect")
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     ColumnLayout {
         Layout.fillWidth: true
@@ -43,9 +43,11 @@ SidebarDialog {
                 color: Colors.colOnSurfaceVariant
                 opacity: 0.7
             }
+
         }
 
-        WindowDialogSeparator {}
+        WindowDialogSeparator {
+        }
 
         // Paired Devices Section
         StyledText {
@@ -64,11 +66,12 @@ SidebarDialog {
 
                 MaterialSymbol {
                     text: {
-                        if (KdeConnectService.isDeviceAvailable(modelData.id)) {
-                            return "phone_android";  // Online
-                        } else {
-                            return "phone_disabled";  // Offline
-                        }
+                        // Online
+
+                        if (KdeConnectService.isDeviceAvailable(modelData.id))
+                            return "phone_android";
+                        else
+                            return "phone_disabled"; // Offline
                     }
                     font.pixelSize: Fonts.sizes.verylarge
                     color: KdeConnectService.isDeviceAvailable(modelData.id) ? Colors.colPrimaryActive : Colors.colOnSurfaceVariant
@@ -78,19 +81,21 @@ SidebarDialog {
                     Layout.fillWidth: true
                     text: modelData.name + (KdeConnectService.isDeviceAvailable(modelData.id) ? "" : qsTr(" (offline)"))
                     color: Colors.colOnSurfaceVariant
-                    opacity: KdeConnectService.isDeviceAvailable(modelData.id) ? 1.0 : 0.6
+                    opacity: KdeConnectService.isDeviceAvailable(modelData.id) ? 1 : 0.6
                 }
 
                 StyledSwitch {
                     checked: modelData.id === KdeConnectService.selectedDeviceId
                     enabled: KdeConnectService.isDeviceAvailable(modelData.id)
                     onToggled: {
-                        if (checked) {
+                        if (checked)
                             KdeConnectService.selectDevice(modelData.id);
-                        }
+
                     }
                 }
+
             }
+
         }
 
         // Empty state for paired devices
@@ -112,9 +117,11 @@ SidebarDialog {
                 color: Colors.colOnSurfaceVariant
                 opacity: 0.7
             }
+
         }
 
-        WindowDialogSeparator {}
+        WindowDialogSeparator {
+        }
 
         // Discoverable Devices Section
         StyledText {
@@ -132,7 +139,7 @@ SidebarDialog {
                 spacing: 10
 
                 MaterialSymbol {
-                    text: "phone_in_talk"  // New device icon
+                    text: "phone_in_talk" // New device icon
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
                 }
@@ -147,7 +154,9 @@ SidebarDialog {
                     materialIcon: "link"
                     onClicked: KdeConnectService.pairDevice(modelData.id)
                 }
+
             }
+
         }
 
         // Empty state for discoverable
@@ -170,9 +179,11 @@ SidebarDialog {
                 opacity: 0.7
                 wrapMode: Text.WordWrap
             }
+
         }
 
-        WindowDialogSeparator {}
+        WindowDialogSeparator {
+        }
 
         // Quick Actions
         StyledText {
@@ -204,6 +215,7 @@ SidebarDialog {
                 materialIcon: "play_arrow"
                 onClicked: KdeConnectService.ringDevice()
             }
+
         }
 
         RowLayout {
@@ -227,6 +239,7 @@ SidebarDialog {
                 materialIcon: "play_arrow"
                 onClicked: KdeConnectService.pingDevice()
             }
+
         }
 
         RowLayout {
@@ -250,6 +263,7 @@ SidebarDialog {
                 materialIcon: "play_arrow"
                 onClicked: KdeConnectService.lockDevice()
             }
+
         }
 
         RowLayout {
@@ -273,6 +287,7 @@ SidebarDialog {
                 materialIcon: "play_arrow"
                 onClicked: KdeConnectService.sendClipboard()
             }
+
         }
 
         WindowDialogSeparator {
@@ -313,7 +328,9 @@ SidebarDialog {
                     Noon.callIpc("sidebar_launcher hide");
                 }
             }
+
         }
+
         RowLayout {
             Layout.fillWidth: true
             spacing: 10
@@ -339,17 +356,21 @@ SidebarDialog {
                     KdeConnectService.selectDevice("");
                 }
             }
+
         }
 
         Item {
             Layout.fillHeight: true
         }
+
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     WindowDialogButtonRow {
         implicitHeight: 48
+
         Item {
             Layout.fillWidth: true
         }
@@ -363,5 +384,7 @@ SidebarDialog {
             buttonText: qsTr("Done")
             onClicked: root.dismiss()
         }
+
     }
+
 }

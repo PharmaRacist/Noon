@@ -3,7 +3,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris
-import qs
 import qs.services
 import qs.modules.common
 import qs.modules.common.functions
@@ -18,10 +17,11 @@ Singleton {
     property bool commandsReady: false
 
     function iconPath(icon: string): string {
-        let iconName
+        let iconName;
         if (Mem.states.desktop.appearance.mode === "dark") {
-            iconName = "noon-dark.png"
-        } else iconName = "noon-light.png"
+            iconName = "noon-dark.png";
+        } else
+            iconName = "noon-light.png";
         return Quickshell.iconPath(icon, iconName);
     }
 
@@ -78,6 +78,10 @@ Singleton {
     function setHyprKey(key: string, value: string) {
         Quickshell.execDetached(["hyprctl", "keyword", key, value]);
     }
+    function installPkg(app: string) {
+        const terminal = Mem.options.apps.terminal || "kitty";
+        Quickshell.execDetached(["kitty", "-e", "fish", "-c", ` yay -S --noconfirm  ${app}`]);
+    }
 
     Process {
         id: execProc
@@ -86,14 +90,14 @@ Singleton {
         if (!commandsReady)
             commandLoader.running = true;
     }
-    function fetchIpcCommands(){
+    function fetchIpcCommands() {
         if (!ipcReady)
-            ipcCommands.running = true
+            ipcCommands.running = true;
     }
     Process {
-        id:ipcCommands
+        id: ipcCommands
         running: false
-        command: ["bash","-c", `qs -c ${FileUtils.trimFileProtocol(Directories.config)}/noon  ipc  show`]
+        command: ["bash", "-c", `qs -c ${FileUtils.trimFileProtocol(Directories.config)}/noon  ipc  show`]
         stdout: StdioCollector {
             onStreamFinished: {
                 const out = text.trim();
@@ -133,7 +137,7 @@ Singleton {
                 }
                 Mem.states.misc.systemCommands = out.split("\n");
                 root.commandsReady = true;
-                console.log("[Noon] fetched Bash commands")
+                console.log("[Noon] fetched Bash commands");
             }
         }
     }

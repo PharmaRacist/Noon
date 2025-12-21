@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Shapes
-import qs
 import qs.modules.common
 
 Item {

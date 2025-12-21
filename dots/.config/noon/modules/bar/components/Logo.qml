@@ -4,7 +4,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -51,19 +50,25 @@ MouseArea {
             source: SystemInfo.distroIcon
         }
 
-
         ColorOverlay {
             anchors.fill: distroIcon
             source: distroIcon
             color: hovered ? Colors.colPrimary : Colors.m3.m3onSecondaryContainer
 
             Behavior on color {
-                CAnim {}
+                CAnim {
+                }
+
             }
+
         }
 
         Behavior on scale {
-            Anim {}
+            Anim {
+            }
+
         }
+
     }
+
 }

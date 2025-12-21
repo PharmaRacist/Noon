@@ -6,16 +6,16 @@ import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
-import qs
 
 QuickToggleButton {
     id: root
 
     property bool showRecordingDialog: false
 
-    signal requestRecordingDialog
-    hasDialog:true
-    onRequestDialog:GlobalStates.showRecordingDialog = true
+    signal requestRecordingDialog()
+
+    hasDialog: true
+    onRequestDialog: GlobalStates.showRecordingDialog = true
     buttonName: RecordingService.isRecording ? `${qsTr("Recording")} ${RecordingService.getFormattedDuration()}` : qsTr("Record")
     toggled: RecordingService.isRecording
     buttonIcon: RecordingService.isRecording ? "radio_button_checked" : "radio_button_unchecked"
@@ -34,7 +34,8 @@ QuickToggleButton {
     }
 
     StyledToolTip {
-        extraVisibleCondition:RecordingService.isRecording
-        content: StringUtils.format(qsTr("Recording {0} | Right-click to stop"), RecordingService.getFormattedDuration());
+        extraVisibleCondition: RecordingService.isRecording
+        content: StringUtils.format(qsTr("Recording {0} | Right-click to stop"), RecordingService.getFormattedDuration())
     }
+
 }

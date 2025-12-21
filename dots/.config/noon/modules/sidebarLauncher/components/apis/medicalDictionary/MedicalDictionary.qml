@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.modules.sidebarLauncher.components.apis

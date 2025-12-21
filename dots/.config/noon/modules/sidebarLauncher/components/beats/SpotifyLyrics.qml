@@ -5,7 +5,6 @@ import Quickshell
 import QtQuick.Effects
 import qs.modules.common.widgets
 import qs.services
-import qs
 import qs.modules.common
 import qs.modules.common.functions
 

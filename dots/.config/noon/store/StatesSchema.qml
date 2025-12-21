@@ -53,7 +53,11 @@ JsonAdapter {
         property JsonObject emojis
         property JsonObject ambientSounds
         property JsonObject mediaPlayer
+        property JsonObject power
 
+        power: JsonObject {
+            property string controller
+        }
         kdeconnect: JsonObject {
             property list<var> devices: []
             property list<var> availableDevices: []
@@ -116,7 +120,7 @@ JsonAdapter {
         property bool pinned: false
         property list<var> pinnedApps: ["firefox", "dolphin"]
     }
-    property JsonObject misc:JsonObject {
+    property JsonObject misc: JsonObject {
         property list<string> ipcCommands: []
         property list<string> systemCommands: []
     }

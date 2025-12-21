@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -12,14 +11,18 @@ Item {
     property string font: Mem.options.desktop.clock.font
     property var weatherData: WeatherService.weatherData
     property bool arabicDayMode: true
-    PersistentProperties {
-        id: states
-        reloadableId: "depthClock"
-        property bool editMode: false
-    }
+
     z: 1
     x: screen.width * Mem.options.desktop.clock.x
     y: screen.height * Mem.options.desktop.clock.y
+
+    PersistentProperties {
+        id: states
+
+        property bool editMode: false
+
+        reloadableId: "depthClock"
+    }
 
     MouseArea {
         anchors.fill: clockItem
@@ -30,14 +33,12 @@ Item {
         drag.maximumX: screen.width - clockItem.width
         drag.minimumY: 0
         drag.maximumY: screen.height - clockItem.height
-
         onPositionChanged: {
             if (drag.active) {
                 Mem.options.desktop.clock.x = clockContainer.x / screen.width;
                 Mem.options.desktop.clock.y = clockContainer.y / screen.height;
             }
         }
-
         onDoubleClicked: Mem.options.desktop.clock.states.editMode = !states.editMode
         cursorShape: states.editMode ? Qt.PointingHandCursor : Qt.ArrowCursor
         hoverEnabled: true
@@ -60,10 +61,6 @@ Item {
         height: implicitHeight
         spacing: Mem.options.desktop.clock.spacingMultiplier * 100
 
-        Behavior on spacing {
-            Anim {}
-        }
-
         RowLayout {
             Layout.maximumHeight: clockText.font.pixelSize / 7.5
             Layout.fillWidth: true
@@ -73,6 +70,7 @@ Item {
 
             StyledText {
                 id: dateText
+
                 Layout.leftMargin: 125 * Mem.options.desktop.clock.scale
                 text: arabicDayMode ? `${DateTime.hour}:${DateTime.minute}` : DateTime.date
                 font.weight: 600
@@ -96,7 +94,9 @@ Item {
                     font.weight: 600
                     color: dateText.color
                 }
+
             }
+
         }
 
         StyledText {
@@ -111,8 +111,19 @@ Item {
             text: arabicDayMode ? DateTime.arabicDayName : `${DateTime.hour}:${DateTime.minute}`
 
             Behavior on color {
-                CAnim {}
+                CAnim {
+                }
+
             }
+
         }
+
+        Behavior on spacing {
+            Anim {
+            }
+
+        }
+
     }
+
 }

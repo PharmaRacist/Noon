@@ -1,13 +1,10 @@
-pragma ComponentBehavior: Bound
-pragma Singleton
-import qs.services
 import QtQuick
 import Quickshell
-import Quickshell.Io
-import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.modules.common.widgets
+import qs.services
 import qs.store
+pragma Singleton
 
 Singleton {
     id: root
@@ -20,28 +17,45 @@ Singleton {
 
     ConfigFileView {
         id: optionsView
+
         fileName: "options"
-        adapter: OptionsSchema {}
+
+        adapter: OptionsSchema {
+        }
+
     }
 
     ConfigFileView {
         id: todoView
+
         state: true
         fileName: "todo"
-        adapter: TodoSchema {}
+
+        adapter: TodoSchema {
+        }
+
     }
 
     ConfigFileView {
         id: statesView
+
         state: true
         fileName: "states"
-        adapter: StatesSchema {}
+
+        adapter: StatesSchema {
+        }
+
     }
 
     ConfigFileView {
         id: timersView
+
         state: true
         fileName: "timers"
-        adapter: TimersSchema {}
+
+        adapter: TimersSchema {
+        }
+
     }
+
 }

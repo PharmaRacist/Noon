@@ -6,7 +6,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.UPower
 import Quickshell.Services.SystemTray
-import qs
 import qs.store
 import qs.modules.common
 import qs.modules.common.widgets

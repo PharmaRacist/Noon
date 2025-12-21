@@ -8,7 +8,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
-import qs
 import qs.modules.view
 import qs.modules.bar
 import qs.modules.desktop.bg

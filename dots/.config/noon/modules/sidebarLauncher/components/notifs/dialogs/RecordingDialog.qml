@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -22,23 +21,19 @@ SidebarDialog {
             spacing: 4
 
             Repeater {
-                model: [
-                    {
-                        "text": qsTr("Full Screen"),
-                        "icon": "screenshot_monitor",
-                        "mode": 0
-                    },
-                    {
-                        "text": qsTr("Select Region"),
-                        "icon": "crop_free",
-                        "mode": 1
-                    },
-                    {
-                        "text": qsTr("Active Window"),
-                        "icon": "web_asset",
-                        "mode": 2
-                    }
-                ]
+                model: [{
+                    "text": qsTr("Full Screen"),
+                    "icon": "screenshot_monitor",
+                    "mode": 0
+                }, {
+                    "text": qsTr("Select Region"),
+                    "icon": "crop_free",
+                    "mode": 1
+                }, {
+                    "text": qsTr("Active Window"),
+                    "icon": "web_asset",
+                    "mode": 2
+                }]
 
                 delegate: DialogButton {
                     property bool selected: RecordingService.recordingMode === modelData.mode
@@ -79,10 +74,15 @@ SidebarDialog {
                             font.pixelSize: Fonts.sizes.verylarge
                             color: Colors.colOnPrimary
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
     Component {
@@ -97,28 +97,23 @@ SidebarDialog {
             spacing: 4
 
             Repeater {
-                model: [
-                    {
-                        "text": qsTr("Muted"),
-                        "icon": "volume_off",
-                        "mode": 0
-                    },
-                    {
-                        "text": qsTr("System Audio"),
-                        "icon": "volume_up",
-                        "mode": 1
-                    },
-                    {
-                        "text": qsTr("Microphone"),
-                        "icon": "mic",
-                        "mode": 2
-                    },
-                    {
-                        "text": qsTr("System + Microphone"),
-                        "icon": "speaker_phone",
-                        "mode": 3
-                    }
-                ]
+                model: [{
+                    "text": qsTr("Muted"),
+                    "icon": "volume_off",
+                    "mode": 0
+                }, {
+                    "text": qsTr("System Audio"),
+                    "icon": "volume_up",
+                    "mode": 1
+                }, {
+                    "text": qsTr("Microphone"),
+                    "icon": "mic",
+                    "mode": 2
+                }, {
+                    "text": qsTr("System + Microphone"),
+                    "icon": "speaker_phone",
+                    "mode": 3
+                }]
 
                 delegate: DialogButton {
                     property bool selected: RecordingService.audioMode === modelData.mode
@@ -159,10 +154,15 @@ SidebarDialog {
                             font.pixelSize: Fonts.sizes.verylarge
                             color: Colors.colOnPrimary
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
     Component {
@@ -177,28 +177,23 @@ SidebarDialog {
             spacing: 4
 
             Repeater {
-                model: [
-                    {
-                        "text": qsTr("Low (720p 30fps)"),
-                        "icon": "sd",
-                        "quality": 0
-                    },
-                    {
-                        "text": qsTr("Medium (1080p 30fps)"),
-                        "icon": "hd",
-                        "quality": 1
-                    },
-                    {
-                        "text": qsTr("High (1080p 60fps)"),
-                        "icon": "high_quality",
-                        "quality": 2
-                    },
-                    {
-                        "text": qsTr("Ultra (4K 60fps)"),
-                        "icon": "4k",
-                        "quality": 3
-                    }
-                ]
+                model: [{
+                    "text": qsTr("Low (720p 30fps)"),
+                    "icon": "sd",
+                    "quality": 0
+                }, {
+                    "text": qsTr("Medium (1080p 30fps)"),
+                    "icon": "hd",
+                    "quality": 1
+                }, {
+                    "text": qsTr("High (1080p 60fps)"),
+                    "icon": "high_quality",
+                    "quality": 2
+                }, {
+                    "text": qsTr("Ultra (4K 60fps)"),
+                    "icon": "4k",
+                    "quality": 3
+                }]
 
                 delegate: DialogButton {
                     property bool selected: RecordingService.quality === modelData.quality
@@ -239,10 +234,15 @@ SidebarDialog {
                             font.pixelSize: Fonts.sizes.verylarge
                             color: Colors.colOnPrimary
                         }
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
     Component {
@@ -276,6 +276,7 @@ SidebarDialog {
                     checked: RecordingService.showCursor
                     onToggled: RecordingService.showCursor = checked
                 }
+
             }
 
             RowLayout {
@@ -317,9 +318,13 @@ SidebarDialog {
                         bottom: 1
                         top: 144
                     }
+
                 }
+
             }
+
         }
+
     }
 
     WindowDialogTitle {
@@ -369,6 +374,7 @@ SidebarDialog {
             color: Colors.colOnSurfaceVariant
             opacity: 0.7
         }
+
     }
 
     WindowDialogSeparator {
@@ -407,6 +413,7 @@ SidebarDialog {
                 title: "Options"
                 icon: "tune"
             }
+
         }
 
         delegate: Item {
@@ -480,7 +487,9 @@ SidebarDialog {
                             font.pixelSize: Fonts.sizes.verylarge
                             color: Colors.colOnSurfaceVariant
                         }
+
                     }
+
                 }
 
                 // Expanded content loader
@@ -506,9 +515,13 @@ SidebarDialog {
                             }
                         }
                     }
+
                 }
+
             }
+
         }
+
     }
 
     WindowDialogButtonRow {
@@ -523,6 +536,7 @@ SidebarDialog {
                 RecordingService.toggleRecording();
                 if (!RecordingService.isRecording)
                     root.dismiss();
+
             }
         }
 
@@ -537,5 +551,7 @@ SidebarDialog {
                 dismiss();
             }
         }
+
     }
+
 }

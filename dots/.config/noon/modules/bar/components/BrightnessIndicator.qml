@@ -7,7 +7,6 @@ import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
 import qs.store
-import qs
 
 MouseArea {
     id: root

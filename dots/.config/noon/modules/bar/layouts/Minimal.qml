@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Hyprland
 import Quickshell.Services.UPower
-import qs
 import qs.modules.bar.components
 import qs.modules.common
 import qs.modules.common.functions
@@ -19,6 +18,7 @@ StyledRect {
     readonly property bool shouldShow: Screen.width > 1080 ?? false
     readonly property int barRadius: Mem.options.bar.appearance.radius
     readonly property int mode: Mem.options.bar.appearance.mode
+
     enableShadows: true
     enableBorders: true
     radius: barRadius
@@ -43,6 +43,7 @@ StyledRect {
                 bottomRightRadius: barBackground.barRadius
                 bottomLeftRadius: barBackground.barRadius
             }
+
         },
         State {
             name: "notched"
@@ -61,6 +62,7 @@ StyledRect {
                 bottomRightRadius: !barBackground.bottomMode ? barBackground.barRadius : 0
                 bottomLeftRadius: !barBackground.bottomMode ? barBackground.barRadius : 0
             }
+
         }
     ]
 
@@ -78,6 +80,7 @@ StyledRect {
 
         TimeWidget {
             id: clock
+
             onReveal: revealer.reveal = !revealer.reveal
             showDate: false
         }
@@ -90,23 +93,28 @@ StyledRect {
             TimeWidget {
                 showTime: false
             }
+
         }
 
-        Spacer {}
+        Spacer {
+        }
 
         UnicodeWs {
             bar: barRoot
             Layout.alignment: Qt.AlignCenter
         }
 
-        Spacer {}
+        Spacer {
+        }
 
         BatteryIndicator {
             Layout.alignment: Qt.AlignRight
             Layout.rightMargin: 10
         }
 
-        StatusIcons {}
+        StatusIcons {
+        }
+
     }
 
     anchors {
@@ -118,16 +126,24 @@ StyledRect {
     }
 
     component TimeWidget: RippleButton {
-        signal reveal
-        clip: true
         property alias showDate: clock.showDate
         property alias showTime: clock.showTime
-        releaseAction: () => reveal()
+
+        signal reveal()
+
+        clip: true
+        releaseAction: () => {
+            return reveal();
+        }
+
         contentItem: StackedClockWidget {
             id: clock
+
             timeFont: Mem.options.desktop.clock.font
             fontScale: 2
             anchors.centerIn: parent
         }
+
     }
+
 }

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -13,7 +12,8 @@ SidebarDialog {
         text: qsTr("Caffaine")
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     ColumnLayout {
         Layout.fillWidth: true
@@ -41,6 +41,7 @@ SidebarDialog {
                 checked: Mem.options.services.idle.inhibit
                 onToggled: Mem.options.services.idle.inhibit = checked
             }
+
         }
 
         RowLayout {
@@ -58,6 +59,7 @@ SidebarDialog {
                 text: qsTr("Idle Timeout")
                 color: Colors.colOnSurfaceVariant
             }
+
             MaterialTextField {
                 Layout.preferredHeight: 45
                 Layout.preferredWidth: 120
@@ -69,13 +71,17 @@ SidebarDialog {
                     Mem.options.services.idle.timeOut = val;
                 }
             }
+
         }
+
         Item {
             Layout.fillHeight: true
         }
+
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     WindowDialogButtonRow {
         implicitHeight: 48
@@ -84,5 +90,7 @@ SidebarDialog {
             buttonText: qsTr("Done")
             onClicked: root.dismiss()
         }
+
     }
+
 }

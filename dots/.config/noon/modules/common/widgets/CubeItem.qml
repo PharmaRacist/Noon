@@ -13,7 +13,6 @@ import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.modules.common
 import qs.services
-import qs
 
 Loader {
     property bool loadCondition: false

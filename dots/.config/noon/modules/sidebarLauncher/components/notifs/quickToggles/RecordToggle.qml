@@ -6,7 +6,6 @@ import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
-import qs
 
 QuickToggleButton {
     id: root
@@ -29,4 +28,5 @@ QuickToggleButton {
         extraVisibleCondition: RecordingService.isRecording
         content: StringUtils.format(qsTr("Recording {0} | Right-click to stop"), RecordingService.getFormattedDuration())
     }
+
 }

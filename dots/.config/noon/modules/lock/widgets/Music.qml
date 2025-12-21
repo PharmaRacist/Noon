@@ -16,6 +16,7 @@ StyledRect {
     enableShadows: true
     color: Colors.colLayer1
     radius: Rounding.verylarge
+    visible: MusicPlayerService.artist.length > 0
 
     Visualizer {
     }

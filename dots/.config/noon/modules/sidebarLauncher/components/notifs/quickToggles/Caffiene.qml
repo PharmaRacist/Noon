@@ -9,16 +9,17 @@ import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
-import qs
 
 QuickToggleButton {
     id: root
-    hasDialog:true
-    onRequestDialog:GlobalStates.showCaffaineDialog = true
+
+    hasDialog: true
     showButtonName: false
     toggled: IdleService.inhibited
     buttonIcon: "coffee"
     buttonName: toggled ? "Awake" : "Sleepy"
     onClicked: IdleService.toggleInhibit()
-    altAction: () => GlobalStates.showCaffaineDialog = true
+    altAction: () => {
+        return GlobalStates.showCaffaineDialog = true;
+    }
 }

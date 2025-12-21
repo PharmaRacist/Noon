@@ -200,16 +200,16 @@ JsonAdapter {
             property bool history: true
             property bool emojies: true
             property bool notifs: true
+            property bool notes: true
             property bool barSwitcher: true
             property bool beats: true
             property bool tweaks: true
             property bool wallpapers: true
             property bool session: true
-            property bool overview: true
+            property bool overview: false
             property bool misc: true
             property bool games: false
             property bool gallery: false
-            property bool notes: false
             property bool scripts: false
             property bool movies: false
             property bool documents: false

@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Services.UPower
-import qs
 import qs.modules.bar.components
 import qs.modules.common
 import qs.modules.common.widgets
@@ -29,6 +28,7 @@ Rectangle {
             left: parent.left
             leftMargin: Padding.huge
         }
+
     }
 
     RoundCorner {
@@ -42,6 +42,7 @@ Rectangle {
             bottom: !bottomMode ? undefined : centerNotchBg.bottom
             right: centerNotchBg.left
         }
+
     }
 
     RoundCorner {
@@ -55,6 +56,7 @@ Rectangle {
             bottom: !bottomMode ? undefined : centerNotchBg.bottom
             left: centerNotchBg.right
         }
+
     }
 
     Rectangle {
@@ -76,9 +78,11 @@ Rectangle {
             anchors.centerIn: parent
             spacing: 20
 
-            Logo {}
+            Logo {
+            }
 
-            GnomeClock {}
+            GnomeClock {
+            }
 
             StyledText {
                 text: WeatherService.weatherData.currentTemp + "  &  " + WeatherService.weatherData.currentCondition
@@ -86,7 +90,9 @@ Rectangle {
                 font.pixelSize: Fonts.sizes.normal
                 color: Colors.m3.m3onSurfaceVariant
             }
+
         }
+
     }
 
     RowLayout {
@@ -102,10 +108,13 @@ Rectangle {
             bar: barRoot
         }
 
-        SystemBattery {}
+        SystemBattery {
+        }
 
         SystemStatusIcons {
             id: statusIcons
         }
+
     }
+
 }

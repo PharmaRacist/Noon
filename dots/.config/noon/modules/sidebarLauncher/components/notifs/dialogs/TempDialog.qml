@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
@@ -13,7 +12,8 @@ SidebarDialog {
         text: qsTr("Nightlight")
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     ColumnLayout {
         Layout.fillWidth: true
@@ -41,6 +41,7 @@ SidebarDialog {
                 checked: NightLightService.enabled
                 onToggled: NightLightService.enabled = checked
             }
+
         }
 
         RowLayout {
@@ -51,15 +52,18 @@ SidebarDialog {
                 font.pixelSize: Fonts.sizes.verylarge
                 color: Colors.colOnSurfaceVariant
             }
+
             StyledText {
                 Layout.fillWidth: true
                 text: qsTr("Auto")
                 color: Colors.colOnSurfaceVariant
             }
+
             StyledSwitch {
                 checked: Mem.options.services.time.autoNightLightCycle
                 onToggled: Mem.options.services.time.autoNightLightCycle = checked
             }
+
         }
 
         RowLayout {
@@ -82,6 +86,7 @@ SidebarDialog {
                 color: Colors.colOnSurfaceVariant
                 opacity: 0.7
             }
+
         }
 
         StyledSlider {
@@ -97,9 +102,11 @@ SidebarDialog {
         Item {
             Layout.fillHeight: true
         }
+
     }
 
-    WindowDialogSeparator {}
+    WindowDialogSeparator {
+    }
 
     WindowDialogButtonRow {
         implicitHeight: 48
@@ -108,5 +115,7 @@ SidebarDialog {
             buttonText: qsTr("Done")
             onClicked: root.dismiss()
         }
+
     }
+
 }

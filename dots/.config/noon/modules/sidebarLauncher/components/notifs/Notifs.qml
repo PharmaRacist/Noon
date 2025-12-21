@@ -4,73 +4,69 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import Quickshell.Widgets
-import qs
-import qs.services
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.modules.sidebarLauncher.components.notifs.calendar
-import qs.modules.sidebarLauncher.components.notifs.notifications
 import qs.modules.sidebarLauncher.components.notifs.dialogs
+import qs.modules.sidebarLauncher.components.notifs.notifications
+import qs.services
 
 Item {
     id: root
-    clip:true
-    property var dialogConfigs: [
-        {
-            name: "wifi",
-            show: GlobalStates.showWifiDialog,
-            component: wifiComponent,
-            onCompleted: function () {
-                Network.enableWifi();
-                Network.rescanWifi();
-            }
-        },
-        {
-            name: "recording",
-            show: GlobalStates.showRecordingDialog,
-            component: recordingComponent
-        },
-        {
-            name: "kdeConnect",
-            show: GlobalStates.showKdeConnectDialog,
-            component: kdeComponent
-        },
-        {
-            name: "caffaine",
-            show: GlobalStates.showCaffaineDialog,
-            component: caffaineComponent
-        },
-        {
-            name: "bluetooth",
-            show: GlobalStates.showBluetoothDialog,
-            component: bluetoothComponent,
-            onCompleted: function () {
-                BluetoothService.defaultAdapter.enabled = true;
-                BluetoothService.defaultAdapter.discovering = true;
-            }
-        },
-        {
-            name: "appearance",
-            show: GlobalStates.showAppearanceDialog,
-            component: appearanceComponent
-        },
-        {
-            name: "transparency",
-            show: GlobalStates.showTransparencyDialog,
-            component: transparencyComponent
-        },
-        {
-            name: "temp",
-            show: GlobalStates.showTempDialog,
-            component: tempComponent
-        }
-    ]
 
-    property bool showDialogs: dialogConfigs.some(d => d.show)
+    property var dialogConfigs: [{
+        "name": "wifi",
+        "show": GlobalStates.showWifiDialog,
+        "component": wifiComponent,
+        "onCompleted": function() {
+            Network.enableWifi();
+            Network.rescanWifi();
+        }
+    }, {
+        "name": "recording",
+        "show": GlobalStates.showRecordingDialog,
+        "component": recordingComponent
+    }, {
+        "name": "kdeConnect",
+        "show": GlobalStates.showKdeConnectDialog,
+        "component": kdeComponent
+    }, {
+        "name": "caffaine",
+        "show": GlobalStates.showCaffaineDialog,
+        "component": caffaineComponent
+    }, {
+        "name": "bluetooth",
+        "show": GlobalStates.showBluetoothDialog,
+        "component": bluetoothComponent,
+        "onCompleted": function() {
+            BluetoothService.defaultAdapter.enabled = true;
+            BluetoothService.defaultAdapter.discovering = true;
+        }
+    }, {
+        "name": "appearance",
+        "show": GlobalStates.showAppearanceDialog,
+        "component": appearanceComponent
+    }, {
+        "name": "transparency",
+        "show": GlobalStates.showTransparencyDialog,
+        "component": transparencyComponent
+    }, {
+        "name": "temp",
+        "show": GlobalStates.showTempDialog,
+        "component": tempComponent
+    }]
+    property bool showDialogs: dialogConfigs.some((d) => {
+        return d.show;
+    })
+
+    clip: true
+
     Timer {
         interval: 7000
         repeat: true
-        running: dialogConfigs.some(d => d.show)
+        running: dialogConfigs.some((d) => {
+            return d.show;
+        })
         onTriggered: {
             GlobalStates.showWifiDialog = false;
             GlobalStates.showRecordingDialog = false;
@@ -80,6 +76,7 @@ Item {
             GlobalStates.showTempDialog = false;
         }
     }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: Padding.normal
@@ -93,68 +90,26 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
         }
+
         CalendarWidget {
-            visible:false
-            Layout.fillWidth:true
+            visible: false
+            Layout.fillWidth: true
         }
+
     }
 
     Repeater {
         model: root.dialogConfigs
 
         Loader {
-            id:dialogLoader
-            anchors {
-                // top: parent.top
-                right:parent.right
-                left:parent.left
-            }
-            states:[
-            State {
-                name: "hidden"
-                when:!dialogLoader.active
-                PropertyChanges {
-                    dialogLoader.height:0
-                    dialogLoader.opacity:0
-                }
-            },
-            State {
-                name: "revealed"
-                when:dialogLoader.active
-                PropertyChanges {
-                    dialogLoader.height:1020
-                    dialogLoader.opacity:1
-                }
-            }
-            ]
-            transitions: [
-                  Transition {
-                      reversible:true
-                      from: "*"; to: "revealed"
-                      FAnim {
-                          properties:"width,height"
-                      }
-                      Anim {
-                      }
-                  },
-                  Transition {
-                      reversible:true
-                      from: "*"; to: "hidden";
-                      FAnim {
-                          properties:"width,height"
-                      }
-                      Anim {
-                      }
-                  }
-              ]
-              active: modelData.show
-            sourceComponent: modelData.component
+            id: dialogLoader
 
+            active: modelData.show
+            sourceComponent: modelData.component
             onLoaded: {
                 item.show = modelData.show;
-
                 // Connect dismiss signal
-                item.dismiss.connect(function () {
+                item.dismiss.connect(function() {
                     switch (modelData.name) {
                     case "wifi":
                         GlobalStates.showWifiDialog = false;
@@ -180,48 +135,134 @@ Item {
                         break;
                     }
                 });
-
-                if (modelData.onCompleted) {
+                if (modelData.onCompleted)
                     modelData.onCompleted();
-                }
+
             }
+            states: [
+                State {
+                    name: "hidden"
+                    when: !dialogLoader.active
+
+                    PropertyChanges {
+                        dialogLoader.height: 0
+                        dialogLoader.opacity: 0
+                    }
+
+                },
+                State {
+                    name: "revealed"
+                    when: dialogLoader.active
+
+                    PropertyChanges {
+                        dialogLoader.height: 1020
+                        dialogLoader.opacity: 1
+                    }
+
+                }
+            ]
+            transitions: [
+                Transition {
+                    reversible: true
+                    from: "*"
+                    to: "revealed"
+
+                    FAnim {
+                        properties: "width,height"
+                    }
+
+                    Anim {
+                    }
+
+                },
+                Transition {
+                    reversible: true
+                    from: "*"
+                    to: "hidden"
+
+                    FAnim {
+                        properties: "width,height"
+                    }
+
+                    Anim {
+                    }
+
+                }
+            ]
+
+            anchors {
+                // top: parent.top
+                right: parent.right
+                left: parent.left
+            }
+
         }
+
     }
 
     // Component definitions
     Component {
         id: wifiComponent
+
         WifiDialog {
         }
+
     }
 
     Component {
         id: recordingComponent
-        RecordingDialog {}
+
+        RecordingDialog {
+        }
+
     }
+
     Component {
         id: caffaineComponent
-        CaffaineDialog {}
+
+        CaffaineDialog {
+        }
+
     }
+
     Component {
         id: bluetoothComponent
-        BluetoothDialog {}
+
+        BluetoothDialog {
+        }
+
     }
 
     Component {
         id: transparencyComponent
-        TransparencyDialog {}
+
+        TransparencyDialog {
+        }
+
     }
+
     Component {
         id: appearanceComponent
-        AppearanceDialog {}
+
+        AppearanceDialog {
+        }
+
     }
+
     Component {
         id: kdeComponent
-        KdeConnectDialog {}
+
+        KdeConnectDialog {
+        }
+
     }
+
     Component {
         id: tempComponent
-        TempDialog {}
+
+        TempDialog {
+        }
+
     }
+
 }

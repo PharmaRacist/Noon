@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Services.UPower
-import qs
 import qs.modules.bar.components as Components
 import qs.modules.common
 import qs.modules.common.widgets
@@ -59,9 +58,10 @@ Item {
                 width: wsChunk.width
                 height: wsChunk.height
                 acceptedButtons: Qt.RightButton
-                onClicked: event => {
+                onClicked: (event) => {
                     if (event.button === Qt.RightButton)
                         Noon.callIpc("sidebar_launcher reveal View");
+
                 }
             }
 
@@ -76,7 +76,9 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     bar: barRoot
                 }
+
             }
+
         }
 
         Rectangle {
@@ -116,6 +118,7 @@ Item {
                     visualizer.active = !visualizer.active;
                 }
             }
+
         }
 
         Rectangle {
@@ -132,6 +135,7 @@ Item {
                 bar: barRoot
                 anchors.fill: parent
             }
+
         }
 
         Item {
@@ -156,6 +160,7 @@ Item {
                 spread: 2
                 color: Colors.colShadow
             }
+
             RowLayout {
                 id: indicatorsAreaRow
 
@@ -169,11 +174,16 @@ Item {
                     visible: SystemTray.items.values.length > 0
                 }
 
-                Components.StatusIcons {}
+                Components.StatusIcons {
+                }
 
-                Components.Logo {}
+                Components.Logo {
+                }
+
             }
+
         }
+
     }
 
     Rectangle {
@@ -222,6 +232,9 @@ Item {
 
                 Layout.alignment: Qt.AlignHCenter
             }
+
         }
+
     }
+
 }
