@@ -2,7 +2,7 @@ import qs.services
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.modules.common.functions
-import qs.modules.sidebarLauncher.components.apis.aiChat
+import qs.modules.sidebar.components.apis.aiChat
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -54,7 +54,7 @@ Item {
             name: "scale",
             description: qsTr("Change response's font scale by decimal."),
             execute: args => {
-                Mem.states.sidebarLauncher.apis.fontScale = args.join(" ").trim();
+                Mem.states.sidebar.apis.fontScale = args.join(" ").trim();
             }
         },
         {

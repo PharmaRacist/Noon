@@ -6,7 +6,7 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import qs.modules.common
 import qs.modules.common.widgets
-import qs.modules.sidebarLauncher.components.apis
+import qs.modules.sidebar.components.apis
 import qs.services
 
 Item {

@@ -5,7 +5,7 @@ import Quickshell.Widgets
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
-import qs.modules.sidebarLauncher.components.notifs.quickToggles
+import qs.modules.sidebar.components.notifs.quickToggles
 import qs.services
 
 Item {
@@ -30,7 +30,7 @@ Item {
         }
 
         ColumnLayout {
-            visible: Mem.options.sidebarLauncher.appearance.showSliders ?? false
+            visible: Mem.options.sidebar.appearance.showSliders ?? false
             spacing: Padding.small
             Layout.fillWidth: true
             Layout.rightMargin: Padding.normal

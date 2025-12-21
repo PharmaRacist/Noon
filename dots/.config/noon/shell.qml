@@ -18,7 +18,7 @@ import qs.modules.lock
 import qs.modules.notificationPopup
 import qs.modules.onScreenDisplay
 import qs.modules.greetd
-import qs.modules.sidebarLauncher
+import qs.modules.sidebar
 import qs.modules.beam
 
 ShellRoot {
@@ -36,7 +36,7 @@ ShellRoot {
 
     WidgetLoader {
         enabled: true
-        SidebarLauncher {}
+        Sidebar {}
     }
 
     WidgetLoader {

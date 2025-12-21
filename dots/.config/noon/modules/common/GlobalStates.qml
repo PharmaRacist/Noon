@@ -16,8 +16,8 @@ Singleton {
     property bool superHeld: false
     property bool superReleaseMightTrigger: false
     property bool screenLocked: false
-    property bool sidebarLauncherOpen: true
-    property bool sidebarLauncherHovered: false
+    property bool sidebarOpen: true
+    property bool sidebarHovered: false
     property bool exposeView: false
     property bool showOsdValues:false
     property bool showBeam:false
@@ -50,7 +50,6 @@ Singleton {
     function handle_init() {
         MaterialThemeLoader.reapplyTheme();
         NightLightService.applyTemperature();
-        IdleService.init();
         KeyringStorage.fetchKeyringData();
         Noon.playSound("device_unlocked");
         Cliphist.refresh()

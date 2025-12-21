@@ -6,9 +6,9 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.modules.common
 import qs.modules.common.widgets
-import qs.modules.sidebarLauncher.components.notifs.calendar
-import qs.modules.sidebarLauncher.components.notifs.dialogs
-import qs.modules.sidebarLauncher.components.notifs.notifications
+import qs.modules.sidebar.components.notifs.calendar
+import qs.modules.sidebar.components.notifs.dialogs
+import qs.modules.sidebar.components.notifs.notifications
 import qs.services
 
 Item {

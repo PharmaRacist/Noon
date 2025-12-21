@@ -279,9 +279,9 @@ Scope {
             }
 
             function revealSidebar() {
-                if (GlobalStates.sidebarLauncherOpen)
+                if (GlobalStates.sidebarOpen)
                     return;
-                Mem.states.sidebarLauncher.apis.selectedTab = 0;
+                Mem.states.sidebar.apis.selectedTab = 0;
                 Noon.callIpc("sidebar_launcher reveal API");
             }
 
@@ -368,7 +368,7 @@ Scope {
                         const id = TimerService.addTimer("Focus Time", duration);
                         TimerService.startTimer(id);
                         if (root.revealLauncherOnAction) {
-                            Mem.states.sidebarLauncher.misc.selectedTabIndex = 2;
+                            Mem.states.sidebar.misc.selectedTabIndex = 2;
                             Noon.callIpc("sidebar_launcher reveal Misc");
                         }
                     }
@@ -413,7 +413,7 @@ Scope {
                 case "alarm":
                     AlarmService.addTimer(cleanQuery, "Beam Timer");
                     if (root.revealLauncherOnAction) {
-                        Mem.states.sidebarLauncher.misc.selectedTabIndex = 3;
+                        Mem.states.sidebar.misc.selectedTabIndex = 3;
                         Noon.callIpc("sidebar_launcher reveal Misc");
                     }
                     break;

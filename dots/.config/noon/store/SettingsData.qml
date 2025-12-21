@@ -198,32 +198,32 @@ QtObject {
             "items": [{
                 "icon": "tune",
                 "name": "Mode",
-                "key": "sidebarLauncher.appearance.mode",
+                "key": "sidebar.appearance.mode",
                 "type": "spin"
             }, {
                 "icon": "width",
                 "name": "Overlay",
-                "key": "sidebarLauncher.behavior.overlay"
+                "key": "sidebar.behavior.overlay"
             }, {
                 "icon": "width",
                 "name": "Pre-Expand",
-                "key": "sidebarLauncher.behavior.preExpand"
+                "key": "sidebar.behavior.preExpand"
             }, {
                 "icon": "keyboard_command_key",
                 "name": "Seek on Super",
-                "key": "sidebarLauncher.behavior.superHeldReveal"
+                "key": "sidebar.behavior.superHeldReveal"
             }, {
                 "icon": "width",
                 "name": "List View for Apps",
-                "key": "sidebarLauncher.appearance.useAppListView"
+                "key": "sidebar.appearance.useAppListView"
             }, {
                 "icon": "text_fields",
                 "name": "Show Nav Titles",
-                "key": "sidebarLauncher.appearance.showNavTitles"
+                "key": "sidebar.appearance.showNavTitles"
             }, {
                 "icon": "linear_scale",
                 "name": "Show Sliders",
-                "key": "sidebarLauncher.appearance.showSliders"
+                "key": "sidebar.appearance.showSliders"
             }]
         }, {
             "section": "Sidebar Content",
@@ -231,63 +231,63 @@ QtObject {
             "items": [{
                 "icon": "check_box",
                 "name": "Tasks",
-                "key": "sidebarLauncher.content.tasks"
+                "key": "sidebar.content.tasks"
             }, {
                 "icon": "history",
                 "name": "History",
-                "key": "sidebarLauncher.content.history"
+                "key": "sidebar.content.history"
             }, {
                 "icon": "notifications",
                 "name": "Notifications",
-                "key": "sidebarLauncher.content.notifs"
+                "key": "sidebar.content.notifs"
             }, {
                 "icon": "emoji_emotions",
                 "name": "Emojis",
-                "key": "sidebarLauncher.content.emojies"
+                "key": "sidebar.content.emojies"
             }, {
                 "icon": "widgets",
                 "name": "Bar Switcher",
-                "key": "sidebarLauncher.content.barSwitcher"
+                "key": "sidebar.content.barSwitcher"
             }, {
                 "icon": "music_note",
                 "name": "Beats",
-                "key": "sidebarLauncher.content.beats"
+                "key": "sidebar.content.beats"
             }, {
                 "icon": "tune",
                 "name": "Tweaks",
-                "key": "sidebarLauncher.content.tweaks"
+                "key": "sidebar.content.tweaks"
             }, {
                 "icon": "image",
                 "name": "Wallpapers",
-                "key": "sidebarLauncher.content.wallpapers"
+                "key": "sidebar.content.wallpapers"
             }, {
                 "icon": "dashboard_2",
                 "name": "Overview",
-                "key": "sidebarLauncher.content.overview"
+                "key": "sidebar.content.overview"
             }, {
                 "icon": "account_circle",
                 "name": "Session",
-                "key": "sidebarLauncher.content.session"
+                "key": "sidebar.content.session"
             }, {
                 "icon": "sports_esports",
                 "name": "Games",
-                "key": "sidebarLauncher.content.games"
+                "key": "sidebar.content.games"
             }, {
                 "icon": "photo_library",
                 "name": "Gallery",
-                "key": "sidebarLauncher.content.gallery"
+                "key": "sidebar.content.gallery"
             }, {
                 "icon": "stylus",
                 "name": "Notes",
-                "key": "sidebarLauncher.content.notes"
+                "key": "sidebar.content.notes"
             }, {
                 "icon": "movie",
                 "name": "Movies",
-                "key": "sidebarLauncher.content.movies"
+                "key": "sidebar.content.movies"
             }, {
                 "icon": "folder",
                 "name": "Documents",
-                "key": "sidebarLauncher.content.documents"
+                "key": "sidebar.content.documents"
             }]
         }, {
             "section": "AI Instructions",

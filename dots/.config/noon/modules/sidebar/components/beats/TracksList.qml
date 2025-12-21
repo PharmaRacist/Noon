@@ -5,7 +5,7 @@ import Quickshell.Hyprland
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
-import qs.modules.sidebarLauncher
+import qs.modules.sidebar
 import qs.services
 
 ColumnLayout {

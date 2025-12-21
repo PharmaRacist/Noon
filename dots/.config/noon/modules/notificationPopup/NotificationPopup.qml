@@ -19,7 +19,7 @@ Scope {
         WlrLayershell.layer: WlrLayer.Overlay
         exclusiveZone: Mem.options.bar.currentLayout === 3 ? -1 : 0
         aboveWindows: false
-        property bool rightMode:Mem.states.sidebarLauncher.behavior.expanded || GlobalStates.sidebarOpen || Mem.options.bar.behavior.position !== "right"
+        property bool rightMode:Mem.states.sidebar.behavior.expanded || GlobalStates.sidebarOpen || Mem.options.bar.behavior.position !== "right"
 
         anchors {
             top: true

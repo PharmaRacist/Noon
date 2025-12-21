@@ -46,8 +46,8 @@ StyledRect {
                 id: tabBar
                 Layout.alignment: Qt.AlignHCenter
                 tabButtonList: root.tabButtonList
-                currentIndex: Mem.states.sidebarLauncher.misc.selectedTabIndex
-                onCurrentIndexChanged: Mem.states.sidebarLauncher.misc.selectedTabIndex = currentIndex
+                currentIndex: Mem.states.sidebar.misc.selectedTabIndex
+                onCurrentIndexChanged: Mem.states.sidebar.misc.selectedTabIndex = currentIndex
             }
         }
 
@@ -58,8 +58,8 @@ StyledRect {
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: Padding.normal
-            currentIndex: Mem.states.sidebarLauncher.misc.selectedTabIndex
-            onCurrentIndexChanged: Mem.states.sidebarLauncher.misc.selectedTabIndex = currentIndex
+            currentIndex: Mem.states.sidebar.misc.selectedTabIndex
+            onCurrentIndexChanged: Mem.states.sidebar.misc.selectedTabIndex = currentIndex
             clip: true
             layer.enabled: true
             layer.effect: OpacityMask {
@@ -78,16 +78,16 @@ StyledRect {
             Keys.onPressed: event => {
                 if (event.modifiers === Qt.ControlModifier) {
                     if (event.key === Qt.Key_PageDown) {
-                        Mem.states.sidebarLauncher.misc.selectedTabIndex = Math.min(Mem.states.sidebarLauncher.misc.selectedTabIndex + 1, root.tabButtonList.length - 1);
+                        Mem.states.sidebar.misc.selectedTabIndex = Math.min(Mem.states.sidebar.misc.selectedTabIndex + 1, root.tabButtonList.length - 1);
                         event.accepted = true;
                     } else if (event.key === Qt.Key_PageUp) {
-                        Mem.states.sidebarLauncher.misc.selectedTabIndex = Math.max(Mem.states.sidebarLauncher.misc.selectedTabIndex - 1, 0);
+                        Mem.states.sidebar.misc.selectedTabIndex = Math.max(Mem.states.sidebar.misc.selectedTabIndex - 1, 0);
                         event.accepted = true;
                     } else if (event.key === Qt.Key_Tab) {
-                        Mem.states.sidebarLauncher.misc.selectedTabIndex = (Mem.states.sidebarLauncher.misc.selectedTabIndex + 1) % root.tabButtonList.length;
+                        Mem.states.sidebar.misc.selectedTabIndex = (Mem.states.sidebar.misc.selectedTabIndex + 1) % root.tabButtonList.length;
                         event.accepted = true;
                     } else if (event.key === Qt.Key_Backtab) {
-                        Mem.states.sidebarLauncher.misc.selectedTabIndex = (Mem.states.sidebarLauncher.misc.selectedTabIndex - 1 + root.tabButtonList.length) % root.tabButtonList.length;
+                        Mem.states.sidebar.misc.selectedTabIndex = (Mem.states.sidebar.misc.selectedTabIndex - 1 + root.tabButtonList.length) % root.tabButtonList.length;
                         event.accepted = true;
                     }
                 }

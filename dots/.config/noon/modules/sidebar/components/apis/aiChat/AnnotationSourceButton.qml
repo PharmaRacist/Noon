@@ -9,22 +9,22 @@ import qs.services
 RippleButton {
     id: root
 
-    property string query
+    property string displayText
+    property string url
+    property real faviconSize: 20
 
     implicitHeight: 30
-    leftPadding: 6
+    leftPadding: (implicitHeight - faviconSize) / 2
     rightPadding: 10
-    buttonRadius: Rounding.verysmall
+    buttonRadius: Rounding.full
     colBackground: Colors.colSurfaceContainerHighest
     colBackgroundHover: Colors.colSurfaceContainerHighestHover
     colRipple: Colors.colSurfaceContainerHighestActive
     onClicked: {
-        let url = Mem.options.search.engineBaseUrl + root.query;
-        for (let site of (Mem.options.search.excludedSites ?? [])) {
-            url += ` -site:${site}`;
+        if (url) {
+            Qt.openUrlExternally(url);
+            Mem.states.sidebar.behavior.expanded = false;
         }
-        Qt.openUrlExternally(url);
-        Mem.states.sidebarLauncher.behavior.expanded = false;
     }
 
     PointingHandInteraction {
@@ -38,20 +38,20 @@ RippleButton {
         RowLayout {
             id: rowLayout
 
-            anchors.centerIn: parent
+            anchors.fill: parent
             spacing: 5
 
-            MaterialSymbol {
-                text: "search"
-                font.pixelSize: 20
-                color: Colors.m3.m3onSurface
+            Favicon {
+                url: root.url
+                size: root.faviconSize
+                displayText: root.displayText
             }
 
             StyledText {
                 id: text
 
                 horizontalAlignment: Text.AlignHCenter
-                text: root.query
+                text: displayText
                 color: Colors.m3.m3onSurface
             }
 

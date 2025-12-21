@@ -26,7 +26,7 @@ Rectangle {
     NavigationRail {
         id: navRail
 
-        property bool sleek: !Mem.options.sidebarLauncher.appearance.showNavTitles
+        property bool sleek: !Mem.options.sidebar.appearance.showNavTitles
 
         anchors.centerIn: parent
         implicitWidth: navContainer.implicitWidth

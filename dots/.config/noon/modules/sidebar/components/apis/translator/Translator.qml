@@ -5,7 +5,7 @@ import Quickshell.Io
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
-import qs.modules.sidebarLauncher.components.apis
+import qs.modules.sidebar.components.apis
 import qs.services
 
 /**
@@ -213,7 +213,8 @@ Item {
                 root.showLanguageSelector = false;
                 if (!result || result.length === 0)
                     return ;
- // No selection made
+
+                // No selection made
                 if (root.languageSelectorTarget) {
                     TranslatorService.setTargetLanguage(result, true);
                     Mem.options.language.translator.targetLanguage = result; // Save to config

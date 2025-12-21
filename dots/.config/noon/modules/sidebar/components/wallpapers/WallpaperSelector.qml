@@ -262,7 +262,7 @@ Item {
             id: controls
             expanded: root.expanded
             onBrowserOpened: {
-                GlobalStates.sidebarLauncherOpen = false;
+                GlobalStates.sidebarOpen = false;
                 dashboardOpen = false;
             }
         }

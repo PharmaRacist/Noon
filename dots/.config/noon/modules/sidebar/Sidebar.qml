@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
@@ -12,13 +12,13 @@ import qs.store
 
 Scope {
     id: root
-    property bool pinned: Mem.states.sidebarLauncher.behavior.pinned
+    property bool pinned: Mem.states.sidebar.behavior.pinned
     property bool barMode: true
-    property bool seekOnSuper: Mem.options.sidebarLauncher.behavior.superHeldReveal
+    property bool seekOnSuper: Mem.options.sidebar.behavior.superHeldReveal
     property int sidebarWidth: LauncherData.currentSize(barMode, launcherContent.expanded, launcherContent.selectedCategory) + (launcherContent.auxVisible && !barMode ? LauncherData.sizePresets.contentQuarter : 0)
     property bool reveal: (hoverArea.containsMouse && root.barMode) || _isTransitioning || (seekOnSuper ? GlobalStates.superHeld : null) || PolkitService.flow !== null
     property bool _isTransitioning: false
-    property bool shouldFocus: GlobalStates.sidebarLauncherOpen && !barMode
+    property bool shouldFocus: GlobalStates.sidebarOpen && !barMode
     function hideLauncher() {
         if (root._isTransitioning)
             return;
@@ -33,15 +33,15 @@ Scope {
             return;
 
         root.barMode = false;
-        GlobalStates.sidebarLauncherOpen = true;
-        Mem.states.sidebarLauncher.behavior.expanded = true;
+        GlobalStates.sidebarOpen = true;
+        Mem.states.sidebar.behavior.expanded = true;
         launcherContent.forceActiveFocus();
     }
 
     function finalizeHide() {
         root._isTransitioning = false;
         root.barMode = true;
-        Mem.states.sidebarLauncher.behavior.expanded = false;
+        Mem.states.sidebar.behavior.expanded = false;
         if (!pinned)
             root.reveal = Qt.binding(function () {
                 return (hoverArea.containsMouse && root.barMode) || _isTransitioning || (seekOnSuper ? GlobalStates.superHeld : null) || PolkitService.flow !== null;
@@ -51,11 +51,11 @@ Scope {
             launcherContent.clearSearch();
     }
     function togglePin() {
-        Mem.states.sidebarLauncher.behavior.pinned = !Mem.states.sidebarLauncher.behavior.pinned;
+        Mem.states.sidebar.behavior.pinned = !Mem.states.sidebar.behavior.pinned;
     }
     Binding {
         target: GlobalStates
-        property: "sidebarLauncherHovered"
+        property: "sidebarHovered"
         value: root.reveal
     }
     Binding {
@@ -65,12 +65,12 @@ Scope {
     }
     Binding {
         target:GlobalStates
-        property: "sidebarLauncherOpen"
+        property: "sidebarOpen"
         value:!barMode
     }
     StyledPanel {
         id: dashboardRoot
-        name: "sidebarLauncher"
+        name: "sidebar"
         visible: true
         implicitWidth: visualContainer.width + visualContainer.rounding
         exclusiveZone: root.pinned ? implicitWidth - visualContainer.rounding : 0
@@ -116,7 +116,7 @@ Scope {
             id: visualContainer
 
             property bool rightMode: Mem.options.bar?.behavior?.position === "left" ?? true
-            property int mode: Mem.options.sidebarLauncher.appearance.mode
+            property int mode: Mem.options.sidebar.appearance.mode
             property int rounding: Rounding.verylarge
             property real horizontalMargin: (!root.barMode || root.reveal) ? -1 : -(width - 1)
             enableShadows: true
@@ -190,7 +190,17 @@ Scope {
                 }
             }
         }
+        SidebarBubble {
+            show: !root.barMode
+            rightMode:visualContainer.rightMode
+            anchors {
+                right: !visualContainer.rightMode ? undefined : visualContainer.left
+                left: visualContainer.rightMode ? undefined : visualContainer.right
+                bottom: visualContainer.bottom
+                margins: Padding.verylarge
+            }
 
+        }
         HyprlandFocusGrab {
             id: grab
 
@@ -206,7 +216,7 @@ Scope {
 
     Connections {
         function onHideBarRequested() {
-            GlobalStates.sidebarLauncherOpen = false;
+            GlobalStates.sidebarOpen = false;
             root.hideLauncher();
         }
 
@@ -214,7 +224,7 @@ Scope {
             if (root.barMode) {
                 root.reveal = false;
                 root.reveal = Qt.binding(function () {
-                    return hoverArea.containsMouse && root.barMode && GlobalStates.sidebarLauncherOpen;
+                    return hoverArea.containsMouse && root.barMode && GlobalStates.sidebarOpen;
                 });
             } else {
                 root.hideLauncher();

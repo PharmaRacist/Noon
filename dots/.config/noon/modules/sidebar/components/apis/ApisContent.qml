@@ -5,8 +5,8 @@ import QtQuick.Layouts
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
-import qs.modules.sidebarLauncher.components.apis.medicalDictionary
-import qs.modules.sidebarLauncher.components.apis.translator
+import qs.modules.sidebar.components.apis.medicalDictionary
+import qs.modules.sidebar.components.apis.translator
 
 Item {
     id: root
@@ -32,19 +32,19 @@ Item {
         if (event.modifiers === Qt.ControlModifier) {
             switch (event.key) {
             case Qt.Key_PageDown:
-                Mem.states.sidebarLauncher.apis.selectedTab = Math.min(Mem.states.sidebarLauncher.apis.selectedTab + 1, root.tabButtonList.length - 1);
+                Mem.states.sidebar.apis.selectedTab = Math.min(Mem.states.sidebar.apis.selectedTab + 1, root.tabButtonList.length - 1);
                 event.accepted = true;
                 break;
             case Qt.Key_PageUp:
-                Mem.states.sidebarLauncher.apis.selectedTab = Math.max(Mem.states.sidebarLauncher.apis.selectedTab - 1, 0);
+                Mem.states.sidebar.apis.selectedTab = Math.max(Mem.states.sidebar.apis.selectedTab - 1, 0);
                 event.accepted = true;
                 break;
             case Qt.Key_Tab:
-                Mem.states.sidebarLauncher.apis.selectedTab = (Mem.states.sidebarLauncher.apis.selectedTab + 1) % root.tabButtonList.length;
+                Mem.states.sidebar.apis.selectedTab = (Mem.states.sidebar.apis.selectedTab + 1) % root.tabButtonList.length;
                 event.accepted = true;
                 break;
             case Qt.Key_Backtab:
-                Mem.states.sidebarLauncher.apis.selectedTab = (Mem.states.sidebarLauncher.apis.selectedTab - 1 + root.tabButtonList.length) % root.tabButtonList.length;
+                Mem.states.sidebar.apis.selectedTab = (Mem.states.sidebar.apis.selectedTab - 1 + root.tabButtonList.length) % root.tabButtonList.length;
                 event.accepted = true;
                 break;
             case Qt.Key_O:
@@ -68,7 +68,7 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 tabButtonList: root.tabButtonList
                 currentIndex: swipeView.currentIndex
-                onCurrentIndexChanged: Mem.states.sidebarLauncher.apis.selectedTab = currentIndex
+                onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
             }
         }
 
@@ -80,8 +80,8 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 10
-            currentIndex: Mem.states.sidebarLauncher.apis.selectedTab
-            onCurrentIndexChanged: Mem.states.sidebarLauncher.apis.selectedTab = currentIndex
+            currentIndex: Mem.states.sidebar.apis.selectedTab
+            onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
             clip: true
             layer.enabled: true
             contentChildren: [...(Mem.options.policies.ai ? [aiChat.createObject()] : []), ...(Mem.options.policies.medicalDictionary ? [medical.createObject()] : []), ...(Mem.options.policies.translator ? [translator.createObject()] : []),]

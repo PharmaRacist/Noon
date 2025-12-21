@@ -124,7 +124,7 @@ JsonAdapter {
         property list<string> ipcCommands: []
         property list<string> systemCommands: []
     }
-    property JsonObject sidebarLauncher: JsonObject {
+    property JsonObject sidebar: JsonObject {
         property JsonObject behavior
         property JsonObject misc
         property JsonObject apis

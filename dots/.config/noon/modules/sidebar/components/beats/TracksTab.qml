@@ -8,7 +8,7 @@ import Quickshell.Services.Mpris
 import qs.modules.common
 import qs.modules.common.functions
 import qs.modules.common.widgets
-import qs.modules.sidebarLauncher
+import qs.modules.sidebar
 import qs.services
 
 ColumnLayout {
@@ -36,12 +36,12 @@ ColumnLayout {
         function getTrackInfo(index) {
             if (index < 0 || index >= count)
                 return {
-                    "name": "",
-                    "path": "",
-                    "fileUrl": "",
-                    "extension": "",
-                    "fileName": ""
-                };
+                "name": "",
+                "path": "",
+                "fileUrl": "",
+                "extension": "",
+                "fileName": ""
+            };
 
             try {
                 const fileName = get(index, "fileName") || "";
@@ -185,9 +185,9 @@ ColumnLayout {
             onPressed: (event) => {
                 if (event.button === Qt.MiddleButton && trackPath)
                     MusicPlayerService.isolateTrack(trackPath, () => {
-                        musicModel.refresh();
-                        tracksTab.filteredIndices = MusicPlayerService.filterTracks(musicModel, tracksTab.searchText);
-                    });
+                    musicModel.refresh();
+                    tracksTab.filteredIndices = MusicPlayerService.filterTracks(musicModel, tracksTab.searchText);
+                });
 
             }
 

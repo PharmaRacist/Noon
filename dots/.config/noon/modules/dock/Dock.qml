@@ -30,7 +30,7 @@ Scope {
 
             property real mainRounding: 2 * Rounding.verylarge * Mem.options.dock.appearance.iconSizeMultiplier
             property int dockHeight: root.showOsk ? 340 : mainLoader.implicitHeight + Sizes.elevationMargin
-            property bool reveal: root.showOsk || GlobalStates.superHeld || root.pinned || dockMouseArea.containsMouse || (!ToplevelManager.activeToplevel?.activated && !Mem.states.sidebarLauncher.behavior.expanded)
+            property bool reveal: root.showOsk || GlobalStates.superHeld || root.pinned || dockMouseArea.containsMouse || (!ToplevelManager.activeToplevel?.activated && !Mem.states.sidebar.behavior.expanded)
             exclusiveZone: root.pinned ? mainLoader.implicitHeight + Sizes.elevationMargin : -1
 
             implicitWidth: content.implicitWidth + 10 * mainRounding

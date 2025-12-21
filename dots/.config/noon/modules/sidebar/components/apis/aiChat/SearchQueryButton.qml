@@ -9,25 +9,26 @@ import qs.services
 RippleButton {
     id: root
 
-    property string displayText
-    property string url
-    property real faviconSize: 20
+    property string query
 
     implicitHeight: 30
-    leftPadding: (implicitHeight - faviconSize) / 2
+    leftPadding: 6
     rightPadding: 10
-    buttonRadius: Rounding.full
+    buttonRadius: Rounding.verysmall
     colBackground: Colors.colSurfaceContainerHighest
     colBackgroundHover: Colors.colSurfaceContainerHighestHover
     colRipple: Colors.colSurfaceContainerHighestActive
     onClicked: {
-        if (url) {
-            Qt.openUrlExternally(url);
-            Mem.states.sidebarLauncher.behavior.expanded = false;
+        let url = Mem.options.search.engineBaseUrl + root.query;
+        for (let site of (Mem.options.search.excludedSites ?? [])) {
+            url += ` -site:${site}`;
         }
+        Qt.openUrlExternally(url);
+        Mem.states.sidebar.behavior.expanded = false;
     }
 
-    PointingHandInteraction {}
+    PointingHandInteraction {
+    }
 
     contentItem: Item {
         anchors.centerIn: parent
@@ -37,22 +38,25 @@ RippleButton {
         RowLayout {
             id: rowLayout
 
-            anchors.fill: parent
+            anchors.centerIn: parent
             spacing: 5
 
-            Favicon {
-                url: root.url
-                size: root.faviconSize
-                displayText: root.displayText
+            MaterialSymbol {
+                text: "search"
+                font.pixelSize: 20
+                color: Colors.m3.m3onSurface
             }
 
             StyledText {
                 id: text
 
                 horizontalAlignment: Text.AlignHCenter
-                text: displayText
+                text: root.query
                 color: Colors.m3.m3onSurface
             }
+
         }
+
     }
+
 }

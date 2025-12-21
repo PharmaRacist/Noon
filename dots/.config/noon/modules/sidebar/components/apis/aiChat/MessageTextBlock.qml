@@ -24,7 +24,7 @@ ColumnLayout {
     property list<string> renderedLatexHashes: []
     property string renderedSegmentContent: ""
     property string shownText: ""
-    property bool fadeChunkSplitting: !forceDisableChunkSplitting && !editing && !/\n\|/.test(shownText) && Mem.options.sidebarLauncher.behavior.aiTextFadeIn
+    property bool fadeChunkSplitting: !forceDisableChunkSplitting && !editing && !/\n\|/.test(shownText) && Mem.options.sidebar.behavior.aiTextFadeIn
 
     Layout.fillWidth: true
 
@@ -154,7 +154,7 @@ ColumnLayout {
             renderType: Text.NativeRendering
             font.family: Fonts.family.reading
             font.hintingPreference: Font.PreferNoHinting // Prevent weird bold text
-            font.pixelSize: Fonts.sizes.large * Mem.states.sidebarLauncher.apis.fontScale
+            font.pixelSize: Fonts.sizes.large * Mem.states.sidebar.apis.fontScale
             selectedTextColor: Colors.m3.m3onSecondaryContainer
             selectionColor: Colors.colSecondaryContainer
             wrapMode: TextEdit.Wrap

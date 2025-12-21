@@ -83,7 +83,7 @@ FocusScope {
             model.clear();
             return ;
         }
-        if (!isAux && (!showContent || !GlobalStates.sidebarLauncherOpen)) {
+        if (!isAux && (!showContent || !GlobalStates.sidebarOpen)) {
             if (clearAppListOnHide)
                 model.clear();
 
@@ -145,14 +145,14 @@ FocusScope {
             return ;
         }
         const isSameCategory = selectedCategory === newCategory;
-        const isExpanded = showContent && GlobalStates.sidebarLauncherOpen;
+        const isExpanded = showContent && GlobalStates.sidebarOpen;
         if (isSameCategory && isExpanded) {
             selectedCategory = "";
             dismiss();
             return ;
         }
-        if (!GlobalStates.sidebarLauncherOpen)
-            GlobalStates.sidebarLauncherOpen = true;
+        if (!GlobalStates.sidebarOpen)
+            GlobalStates.sidebarOpen = true;
 
         selectedCategory = newCategory;
         resetSearch(initialQuery);
@@ -262,7 +262,7 @@ FocusScope {
     clip: true
     focus: true
     onShowContentChanged: {
-        if (showContent && GlobalStates.sidebarLauncherOpen)
+        if (showContent && GlobalStates.sidebarOpen)
             Qt.callLater(focusSearchInput);
 
         if (!showContent && clearAppListOnHide)
@@ -270,7 +270,7 @@ FocusScope {
 
     }
     onEffectiveSearchableChanged: {
-        if (showContent && GlobalStates.sidebarLauncherOpen)
+        if (showContent && GlobalStates.sidebarOpen)
             Qt.callLater(focusSearchInput);
 
     }
@@ -304,8 +304,8 @@ FocusScope {
     }
 
     Connections {
-        function onSidebarLauncherOpenChanged() {
-            if (GlobalStates.sidebarLauncherOpen && showContent)
+        function onsidebarOpenChanged() {
+            if (GlobalStates.sidebarOpen && showContent)
                 Qt.callLater(root.focusSearchInput);
 
         }
@@ -407,7 +407,7 @@ FocusScope {
                 id: panelRepeater
 
                 model: 2
-                visible: root.showContent && GlobalStates.sidebarLauncherOpen
+                visible: root.showContent && GlobalStates.sidebarOpen
                 clip: true
 
                 ContentChild {

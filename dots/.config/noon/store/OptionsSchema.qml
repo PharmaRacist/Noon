@@ -188,7 +188,7 @@ JsonAdapter {
         }
     }
 
-    property JsonObject sidebarLauncher: JsonObject {
+    property JsonObject sidebar: JsonObject {
         property JsonObject content
         property JsonObject behavior
         property JsonObject appearance
