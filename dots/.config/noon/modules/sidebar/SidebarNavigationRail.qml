@@ -1,25 +1,16 @@
-import Qt.labs.folderlistmodel
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Effects
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Hyprland
-import Quickshell.Io
-import Quickshell.Wayland
-import Quickshell.Widgets
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
 import qs.store
 
-Rectangle {
+StyledRect {
     id: navContainer
 
     required property string selectedCategory
 
     implicitWidth: LauncherData.sizePresets.bar - Padding.large
-    clip: true
     color: "transparent"
     Layout.fillHeight: true
 
@@ -55,12 +46,6 @@ Rectangle {
                     Noon.playSound("pressed");
                     requestCategoryChange(modelData);
                 }
-            }
-
-        }
-
-        Behavior on spacing {
-            Anim {
             }
 
         }

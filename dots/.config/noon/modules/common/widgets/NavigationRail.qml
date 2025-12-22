@@ -10,4 +10,11 @@ ColumnLayout {
 
     property bool expanded: false
     property int currentIndex: 0
+
+    Behavior on spacing {
+        Anim {
+        }
+
+    }
+
 }
