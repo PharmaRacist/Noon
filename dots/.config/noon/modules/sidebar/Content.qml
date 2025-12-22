@@ -483,7 +483,7 @@ FocusScope {
     Component {
         id: beatscomponent
 
-        CurrentTrackView {
+        Beats {
         }
 
     }
