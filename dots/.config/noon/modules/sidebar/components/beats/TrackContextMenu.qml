@@ -1,11 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
-import Qt5Compat.GraphicalEffects
-import qs.modules.common.widgets
 import qs.modules.common
+import qs.modules.common.widgets
 import qs.services
 
 Menu {
@@ -18,16 +16,6 @@ Menu {
     property var onRefresh: null
     property var parentButton: null
 
-    // Make sure menu is visible
-    visible: false
-
-    // Size properties
-    width: 200
-
-    modal: true
-    dim: false
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
     // Custom popup function with positioning
     function showMenu() {
         // Position at mouse or parent
@@ -35,32 +23,31 @@ Menu {
             x = parentButton.width / 2;
             y = parentButton.height;
         }
-
         // Try both methods
-        if (typeof popup === "function") {
+        if (typeof popup === "function")
             popup();
-        } else if (typeof open === "function") {
+        else if (typeof open === "function")
             open();
-        } else {
+        else
             visible = true;
-        }
     }
 
-    background: StyledRect {
-        color: TrackColorsService.colors.colLayer2
-        radius: Rounding.large
-        enableShadows: true
-    }
+    // Make sure menu is visible
+    visible: false
+    // Size properties
+    width: 200
+    modal: true
+    dim: false
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     // Play Track
     MenuItem {
         text: qsTr("Play")
         height: 40
-
         onTriggered: () => {
-            if (trackPath) {
+            if (trackPath)
                 MusicPlayerService.playTrack(trackPath, musicModel);
-            }
+
         }
 
         background: Rectangle {
@@ -86,18 +73,19 @@ Menu {
                 font.pixelSize: Fonts.sizes.small
                 Layout.fillWidth: true
             }
+
         }
+
     }
 
     // Isolate Track
     MenuItem {
         text: qsTr("Isolate")
         height: 40
-
         onTriggered: {
-            if (trackPath && onRefresh) {
+            if (trackPath && onRefresh)
                 MusicPlayerService.isolateTrack(trackPath, onRefresh);
-            }
+
         }
 
         background: Rectangle {
@@ -123,7 +111,9 @@ Menu {
                 font.pixelSize: Fonts.sizes.small
                 Layout.fillWidth: true
             }
+
         }
+
     }
 
     // Share via KDE Connect
@@ -131,11 +121,10 @@ Menu {
         text: qsTr("Share")
         height: 40
         enabled: KdeConnectService.selectedDeviceId !== ""
-
         onTriggered: {
-            if (trackPath) {
+            if (trackPath)
                 KdeConnectService.shareFile(KdeConnectService.selectedDeviceId, trackPath);
-            }
+
         }
 
         background: Rectangle {
@@ -160,16 +149,17 @@ Menu {
                 color: parent.parent.enabled ? TrackColorsService.colors.colOnLayer2 : TrackColorsService.colors.colSubtext
                 font.pixelSize: Fonts.sizes.small
                 Layout.fillWidth: true
-                opacity: parent.parent.enabled ? 1.0 : 0.5
+                opacity: parent.parent.enabled ? 1 : 0.5
             }
+
         }
+
     }
 
     // Show in File Manager
     MenuItem {
         text: qsTr("Show in Files")
         height: 40
-
         onTriggered: {
             if (trackPath) {
                 const dirPath = trackPath.substring(0, trackPath.lastIndexOf('/'));
@@ -200,6 +190,15 @@ Menu {
                 font.pixelSize: Fonts.sizes.small
                 Layout.fillWidth: true
             }
+
         }
+
     }
+
+    background: StyledRect {
+        color: TrackColorsService.colors.colLayer2
+        radius: Rounding.large
+        enableShadows: true
+    }
+
 }

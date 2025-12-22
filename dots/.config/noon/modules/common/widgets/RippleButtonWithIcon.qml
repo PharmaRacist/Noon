@@ -10,17 +10,22 @@ RippleButton {
     property string materialIcon
     property bool materialIconFill: true
     property int implicitSize: 36
+    property alias iconColor: symbol.color
+    property alias iconSize: symbol.font.pixelSize
+
     implicitWidth: implicitSize
     implicitHeight: implicitSize
     buttonRadius: Rounding.normal
     colBackground: Colors.colLayer2
-    property alias iconSize: symbol.font.pixelSize
+
     MaterialSymbol {
         id: symbol
-        font.pixelSize:root.implicitSize / 2
+
+        font.pixelSize: root.implicitSize / 2
         anchors.centerIn: parent
         text: materialIcon
         color: Colors.colOnSecondaryContainer
         fill: materialIconFill ? 1 : 0
     }
+
 }

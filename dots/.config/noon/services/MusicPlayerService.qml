@@ -15,7 +15,7 @@ Singleton {
 
     // Player management
     property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex
-    property bool hasPlasmaIntegration: false
+    property bool hasPlasmaIntegration: true
     property bool filterPlayersEnabled: false
     readonly property var meaningfulPlayers: filterDuplicatePlayers(realPlayers)
 

@@ -1,17 +1,10 @@
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
-import qs.modules.common.functions
-import Qt5Compat.GraphicalEffects
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Mpris
-import Quickshell.Widgets
-import Quickshell.Hyprland
 
 Item {
     id: root
@@ -20,145 +13,83 @@ Item {
 
     property bool showDownload: true
     readonly property MprisPlayer player: MusicPlayerService.player
+    readonly property bool isPlaying: player?.playbackState === MprisPlaybackState.Playing
+
+    component DockMediaButton: RippleButtonWithIcon {
+        implicitSize: 30
+        buttonRadius: Rounding.full
+        colBackground: toggled ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainer
+        colBackgroundHover: toggled ? TrackColorsService.colors.colPrimaryHover : TrackColorsService.colors.colSecondaryContainerHover
+        colRipple: toggled ? TrackColorsService.colors.colSecondaryContainer : TrackColorsService.colors.colSecondaryContainerActive
+    }
 
     RowLayout {
         id: mediaControls
         spacing: Padding.small
 
-
         DockMediaButton {
-            iconName: "shuffle"
-            enabled: !!root.player && root.player.canControl
+            materialIcon: "shuffle"
+            enabled: root.player?.canControl
             opacity: root.player ? 1 : 0.5
-            isToggled: root.player ? root.player.shuffle : false
-            onClicked: {
-                if (root.player?.canControl)
-                    root.player.shuffle = !root.player.shuffle;
-            }
+            toggled: root.player?.shuffle ?? false
+            onClicked: root.player && (root.player.shuffle = !root.player.shuffle)
         }
 
         DockMediaButton {
-            iconName: "skip_previous"
-            enabled: !!root.player && root.player.canGoPrevious
-            opacity: root.player?.canGoPrevious ? 1 : 0.5
-            onClicked: {
-                if (root.player?.canGoPrevious)
-                    root.player.previous();
-            }
+            materialIcon: "skip_previous"
+            enabled: root.player?.canGoPrevious
+            opacity: enabled ? 1 : 0.5
+            onClicked: root.player?.previous()
         }
 
-        RippleButton {
-            implicitWidth: root.player && root.player.playbackState === MprisPlaybackState.Playing ? 80 : 40
+        RippleButtonWithIcon {
+            toggled:root.isPlaying
+            enabled: root.player?.canPause
+
+            implicitWidth: toggled ? 80 : 40
             implicitHeight: 40
-            buttonRadius: 16
-            Layout.rightMargin: 6
-            Layout.leftMargin: 6
-            enabled: true
-            opacity: root.player?.canPause ? 1 : 0.5
+            buttonRadius: toggled ? Rounding.verylarge : Rounding.large
+            
+            colBackground: toggled ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainer
+            colBackgroundHover: toggled ? TrackColorsService.colors.colPrimaryHover : TrackColorsService.colors.colSecondaryContainerHover
+            colRipple: toggled ? TrackColorsService.colors.colPrimaryActive : TrackColorsService.colors.colSecondaryContainerActive
 
-            colBackground: root.player && root.player.playbackState === MprisPlaybackState.Playing ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainer
-            colBackgroundHover: root.player && root.player.playbackState === MprisPlaybackState.Playing ? TrackColorsService.colors.colPrimaryHover : TrackColorsService.colors.colSecondaryContainerHover
-            colRipple: root.player && root.player.playbackState === MprisPlaybackState.Playing ? TrackColorsService.colors.colPrimaryActive : TrackColorsService.colors.colSecondaryContainerActive
+            onClicked: root.player?.canPause ? root.player.togglePlaying() : (GlobalStates.playlistOpen = true)
+            materialIcon: toggled ? "pause" : "play_arrow"
+            iconColor: toggled ? TrackColorsService.colors.colOnPrimary : TrackColorsService.colors.colOnSecondaryContainer
 
-            onClicked: {
-                if (root.player?.canPause)
-                    root.player.togglePlaying();
-                else
-                    GlobalStates.playlistOpen = true;
-            }
-
-            Behavior on buttonRadius {
-                Anim {}
-            }
-
-            Behavior on implicitWidth {
-                Anim {}
-            }
-
-            contentItem: MaterialSymbol {
-                font.pixelSize: Fonts.sizes.normal
-                fill: 1
-                horizontalAlignment: Text.AlignHCenter
-                color: root.player && root.player.playbackState === MprisPlaybackState.Playing ? TrackColorsService.colors.colOnPrimary : TrackColorsService.colors.colOnSecondaryContainer
-                text: root.player && root.player.playbackState === MprisPlaybackState.Playing ? "pause" : "play_arrow"
-            }
+            Behavior on implicitWidth { Anim {} }
         }
 
         DockMediaButton {
-            iconName: "skip_next"
-            enabled: !!root.player && root.player.canGoNext
-            opacity: root.player?.canGoNext ? 1 : 0.5
-            onClicked: {
-                if (root.player?.canGoNext)
-                    root.player.next();
-            }
+            materialIcon: "skip_next"
+            enabled: root.player?.canGoNext
+            opacity: enabled ? 1 : 0.5
+            onClicked: root.player?.next()
         }
 
         DockMediaButton {
-            iconName: {
-                switch (root.player?.loopState) {
-                case MprisLoopState.Track:
-                    return "repeat_one";
-                case MprisLoopState.Playlist:
-                    return "repeat";
-                default:
-                    return "repeat";
-                }
-            }
-            enabled: !!root.player && root.player.canControl
+            materialIcon: root.player?.loopState === MprisLoopState.Track ? "repeat_one" : "repeat"
+            enabled: root.player?.canControl
             opacity: root.player ? 1 : 0.5
-            isToggled: root.player ? root.player.loopState !== MprisLoopState.None : false
-
+            toggled: root.player?.loopState !== MprisLoopState.None
             onClicked: MusicPlayerService.cycleRepeat()
             StyledToolTip {
-                content: {
-                    switch (root.player?.loopState) {
-                    case MprisLoopState.Track:
-                        return "Repeat Track";
-                    case MprisLoopState.Playlist:
-                        return "Repeat Playlist";
-                    default:
-                        return "Repeat Off";
-                    }
-                }
+                content: root.player?.loopState === MprisLoopState.Track ? "Repeat Track" : root.player?.loopState === MprisLoopState.Playlist ? "Repeat Playlist" : "Repeat Off"
             }
         }
 
         DockMediaButton {
             visible: MusicPlayerService.isCurrentPlayer()
-            iconName: "close"
-            enabled: true
-            opacity: 1
+            materialIcon: "close"
             onClicked: MusicPlayerService.stopPlayer()
         }
 
         DockMediaButton {
             visible: root.showDownload && !MusicPlayerService.isCurrentPlayer()
-            iconName: "download"
+            materialIcon: "download"
             enabled: !YtDLP.isDownloading
-            opacity: 1
             onClicked: MusicPlayerService.downloadCurrentSong()
-        }
-    }
-    component DockMediaButton: RippleButton {
-        id: root
-        implicitWidth: 30
-        implicitHeight: 30
-        buttonRadius: 99
-        property color contentColor: isToggled ? TrackColorsService.colors.colOnPrimary : TrackColorsService.colors.colOnSecondaryContainer
-        property string iconName: ""
-        property bool isToggled: false
-
-        colBackground: isToggled ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainer
-        colBackgroundHover: isToggled ? TrackColorsService.colors.colPrimaryHover : TrackColorsService.colors.colSecondaryContainerHover
-        colRipple: isToggled ? TrackColorsService.colors.colSecondaryContainer : TrackColorsService.colors.colSecondaryContainerActive
-
-        contentItem: MaterialSymbol {
-            fill: 1
-            font.pixelSize: 15
-            horizontalAlignment: Text.AlignHCenter
-            color: root.contentColor
-            text: iconName
         }
     }
 }
