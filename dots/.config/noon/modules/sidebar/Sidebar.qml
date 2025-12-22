@@ -19,6 +19,7 @@ Scope {
     property bool reveal: (hoverArea.containsMouse && root.barMode) || _isTransitioning || (seekOnSuper ? GlobalStates.superHeld : null) || PolkitService.flow !== null
     property bool _isTransitioning: false
     property bool shouldFocus: GlobalStates.sidebarOpen && !barMode
+    property bool noExlusiveZone:Mem.options.bar.appearance.mode === 0 && (Mem.options.bar.behavior.position === "top" || Mem.options.bar.behavior.position === "bottom") 
     function hideLauncher() {
         if (root._isTransitioning)
             return;
@@ -73,7 +74,7 @@ Scope {
         name: "sidebar"
         visible: true
         implicitWidth: visualContainer.width + visualContainer.rounding
-        exclusiveZone: root.pinned ? implicitWidth - visualContainer.rounding : 0
+        exclusiveZone: root.pinned ? implicitWidth - visualContainer.rounding : root.noExlusiveZone ? -1 : 0 
         aboveWindows: true
         kbFocus: root.shouldFocus
         WlrLayershell.layer: LauncherData?.isOverlay(launcherContent.selectedCategory) ? WlrLayer.Overlay : WlrLayer.Top

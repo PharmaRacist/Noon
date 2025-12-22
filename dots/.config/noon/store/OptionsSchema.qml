@@ -349,7 +349,7 @@ JsonAdapter {
         property int currentLayout: 0
         property int currentVerticalLayout: 0
         property list<string> vLayout: ["materialStatusIcons", "nightlight", "weather", "separator", "battery", "separator", "sysTray", "spacer", "title", "spacer", "media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
-        property list<string> hLayout: ["logo", "title", "spacer", "spacer", "resources", "media", "workspaces", "clock", "weather", "utilButtons", "battery", "spacer", "spacer", "spacer", "sysTray", "materialStatusIcons"]
+        property list<string> hLayout: ["power", "title", "spacer", "spacer", "resources", "media", "workspaces", "clock",  "utilButtons",  "spacer", "spacer", "spacer", "sysTray","nightlight" ,"weather","battery","materialStatusIcons"]
 
         appearance: JsonObject {
             property int mode: 2

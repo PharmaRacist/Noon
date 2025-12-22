@@ -5,51 +5,31 @@ import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
 
-Item {
+GridView {
     id: root
+
     property bool verticalMode: false
     property var weatherData: WeatherService.weatherData
 
     Component.onCompleted: WeatherService.loadWeather()
-
     Layout.fillHeight: true
-    Loader {
-        id: contentLoader
-        anchors.fill: parent
-        sourceComponent: verticalMode ? weatherColumn : weatherRow
-    }
+    Layout.fillWidth: !verticalMode
+    cellWidth: verticalMode ? implicitWidth : 100
+    cellHeight: verticalMode ? 60 : 35
+    flow: verticalMode ? GridView.FlowTopToBottom : GridView.FlowLeftToRight
+    model: 1
 
-    Component {
-        id: weatherColumn
-        ColumnLayout {
-            anchors.centerIn: parent
-            spacing: 4
-            MaterialSymbol {
-                text: weatherData.currentEmoji
-                iconSize: Fonts.sizes.large
-                color: Colors.colOnLayer1
-                fill: 1
-                horizontalAlignment: Text.AlignHCenter
-            }
+    delegate: Item {
+        width: root.cellWidth
+        height: root.cellHeight
 
-            StyledText {
-                text: weatherData.currentTemp
-                font.pixelSize: Fonts.sizes.normal
-                font.family: Fonts.family.main
-                color: Colors.colOnLayer1
-                horizontalAlignment: Text.AlignHCenter
-            }
-        }
-    }
-
-    Component {
-        id: weatherRow
         RowLayout {
-            spacing: 8
-            implicitHeight: 35
+            anchors.centerIn: parent
+            spacing: verticalMode ? 4 : 8
+
             MaterialSymbol {
                 text: weatherData.currentEmoji
-                iconSize: Fonts.sizes.normal
+                iconSize: verticalMode ? Fonts.sizes.large : Fonts.sizes.normal
                 color: Colors.colOnLayer1
                 fill: 1
             }
@@ -60,14 +40,17 @@ Item {
                 font.family: Fonts.family.main
                 color: Colors.colOnLayer1
             }
+
         }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            ToolTip.visible: containsMouse
+            ToolTip.text: weatherData.currentCondition
+            ToolTip.delay: 500
+        }
+
     }
 
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        ToolTip.visible: containsMouse
-        ToolTip.text: weatherData.currentCondition
-        ToolTip.delay: 500
-    }
 }
