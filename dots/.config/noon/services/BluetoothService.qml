@@ -10,24 +10,27 @@ Singleton {
 
     readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
     readonly property bool available: adapter !== null
-    readonly property bool enabled: adapter.powered 
-    readonly property bool discovering: (adapter && adapter.discovering) 
+    readonly property bool enabled: adapter.powered || false
+    readonly property bool discovering: adapter ? adapter.discovering : false
     readonly property var devices: adapter ? adapter.devices : null
+    
     readonly property var pairedDevices: {
-        if (!adapter || !adapter.devices)
-            return [];
-
-        return adapter.devices.values.filter(dev => {
-            return dev && (dev.paired || dev.trusted);
-        });
+        if (!adapter || !adapter.devices) return [];
+        return adapter.devices.values.filter(dev => 
+            dev && (dev.paired || dev.trusted)
+        );
     }
-    readonly property var allDevicesWithBattery: {
-        if (!adapter || !adapter.devices)
-            return [];
-
-        return adapter.devices.values.filter(dev => {
-            return dev && dev.batteryPercentage !== undefined && dev.batteryPercentage >= 0;
-        });
+    
+    readonly property var connectedDevices: {
+        if (!adapter || !adapter.devices) return [];
+        return adapter.devices.values.filter(dev => dev && dev.connected);
+    }
+    
+    readonly property var devicesWithBattery: {
+        if (!adapter || !adapter.devices) return [];
+        return adapter.devices.values.filter(dev => 
+            dev && dev.batteryAvailable && dev.battery >= 0
+        );
     }
 
     function startDiscovery() {
@@ -60,14 +63,6 @@ Singleton {
         }
     }
 
-    function unpairDevice(device) {
-        if (device && device.paired && !isDeviceBusy(device)) {
-            if (typeof device.unpair === "function") {
-                device.unpair();
-            }
-        }
-    }
-
     function trustDevice(device) {
         if (device) {
             device.trusted = true;
@@ -80,50 +75,53 @@ Singleton {
         }
     }
 
-    function connectDeviceWithTrust(device) {
-        if (!device || isDeviceBusy(device))
-            return;
-
+    function connectWithTrust(device) {
+        if (!device || isDeviceBusy(device)) return;
         device.trusted = true;
         device.connect();
     }
 
+    function togglePower() {
+        if (adapter && adapter.powered !== undefined) {
+            adapter.powered = !adapter.powered;
+        }
+    }
+
     function sortDevices(devices) {
+        if (!devices) return [];
+        
         return devices.sort((a, b) => {
-            if (a.connected && !b.connected)
-                return -1;
-            if (!a.connected && b.connected)
-                return 1;
+            // Connected first
+            if (a.connected !== b.connected)
+                return a.connected ? -1 : 1;
 
-            if (a.paired && !b.paired)
-                return -1;
-            if (!a.paired && b.paired)
-                return 1;
+            // Then paired
+            if (a.paired !== b.paired)
+                return a.paired ? -1 : 1;
 
-            var aName = a.name || a.alias || "";
-            var bName = b.name || b.alias || "";
-            var aHasRealName = aName.includes(" ") && aName.length > 3;
-            var bHasRealName = bName.includes(" ") && bName.length > 3;
+            // Then by signal strength
+            var aRssi = (a.rssi && a.rssi < 0) ? Math.abs(a.rssi) : 999;
+            var bRssi = (b.rssi && b.rssi < 0) ? Math.abs(b.rssi) : 999;
+            
+            if (aRssi !== bRssi)
+                return aRssi - bRssi;
 
-            if (aHasRealName && !bHasRealName)
-                return -1;
-            if (!aHasRealName && bHasRealName)
-                return 1;
-
-            var aSignal = (a.rssi !== undefined && a.rssi < 0) ? Math.abs(a.rssi) : 999;
-            var bSignal = (b.rssi !== undefined && b.rssi < 0) ? Math.abs(b.rssi) : 999;
-            return aSignal - bSignal;
+            // Finally alphabetically
+            var aName = a.name || a.alias || a.deviceName || "";
+            var bName = b.name || b.alias || b.deviceName || "";
+            return aName.localeCompare(bName);
         });
     }
 
     function getDeviceIcon(device) {
-        if (!device)
-            return "bluetooth";
+        if (!device) return "bluetooth";
 
-        var name = (device.name || device.alias || "").toLowerCase();
+        var name = (device.name || device.alias || device.deviceName || "").toLowerCase();
         var icon = (device.icon || "").toLowerCase();
 
-        if (icon.includes("headset") || icon.includes("audio") || name.includes("headphone") || name.includes("airpod") || name.includes("headset") || name.includes("arctis"))
+        if (icon.includes("headset") || icon.includes("audio") || 
+            name.includes("headphone") || name.includes("airpod") || 
+            name.includes("headset") || name.includes("arctis"))
             return "headset";
 
         if (icon.includes("mouse") || name.includes("mouse"))
@@ -132,7 +130,9 @@ Singleton {
         if (icon.includes("keyboard") || name.includes("keyboard"))
             return "keyboard";
 
-        if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android") || name.includes("samsung"))
+        if (icon.includes("phone") || name.includes("phone") || 
+            name.includes("iphone") || name.includes("android") || 
+            name.includes("samsung"))
             return "smartphone";
 
         if (icon.includes("watch") || name.includes("watch"))
@@ -147,26 +147,15 @@ Singleton {
         return "bluetooth";
     }
 
-    function canConnect(device) {
-        if (!device)
-            return false;
-
-        return !device.connected && !device.paired && !isDeviceBusy(device) && !device.blocked;
-    }
-
     function getSignalStrength(device) {
         if (!device || device.rssi === undefined)
             return "Unknown";
 
         var rssi = device.rssi;
-        if (rssi >= -30)
-            return "Excellent";
-        if (rssi >= -50)
-            return "Good";
-        if (rssi >= -70)
-            return "Fair";
-        if (rssi >= -85)
-            return "Poor";
+        if (rssi >= -30) return "Excellent";
+        if (rssi >= -50) return "Good";
+        if (rssi >= -70) return "Fair";
+        if (rssi >= -85) return "Poor";
         return "Very Poor";
     }
 
@@ -175,76 +164,71 @@ Singleton {
             return "signal_cellular_null";
 
         var rssi = device.rssi;
-        if (rssi >= -30)
-            return "signal_cellular_4_bar";
-        if (rssi >= -50)
-            return "signal_cellular_3_bar";
-        if (rssi >= -70)
-            return "signal_cellular_2_bar";
-        if (rssi >= -85)
-            return "signal_cellular_1_bar";
+        if (rssi >= -30) return "signal_cellular_4_bar";
+        if (rssi >= -50) return "signal_cellular_3_bar";
+        if (rssi >= -70) return "signal_cellular_2_bar";
+        if (rssi >= -85) return "signal_cellular_1_bar";
         return "signal_cellular_0_bar";
     }
 
-    function isDeviceBusy(device) {
-        if (!device)
-            return false;
-        return device.pairing || (device.connecting !== undefined && device.connecting);
-    }
-
     function getBatteryIcon(device) {
-        if (!device || device.batteryPercentage === undefined || device.batteryPercentage < 0)
+        if (!device || !device.batteryAvailable || device.battery < 0)
             return "";
 
-        var level = device.batteryPercentage;
-        if (level >= 90)
-            return "battery_full";
-        if (level >= 60)
-            return "battery_3_bar";
-        if (level >= 30)
-            return "battery_2_bar";
-        if (level >= 10)
-            return "battery_1_bar";
+        var level = Math.round(device.battery * 100);
+        if (level >= 90) return "battery_full";
+        if (level >= 60) return "battery_3_bar";
+        if (level >= 30) return "battery_2_bar";
+        if (level >= 10) return "battery_1_bar";
         return "battery_0_bar";
     }
 
-    function getDeviceStatusText(device) {
-        if (!device)
-            return "Unknown";
-        if (isDeviceBusy(device))
-            return "Busy";
-        if (device.connected)
-            return "Connected";
-        if (device.paired)
-            return "Paired";
-        if (device.trusted)
-            return "Trusted";
+    function getBatteryPercent(device) {
+        if (!device || !device.batteryAvailable || device.battery < 0)
+            return -1;
+        return Math.round(device.battery * 100);
+    }
+
+    function getDeviceStatus(device) {
+        if (!device) return "Unknown";
+        if (isDeviceBusy(device)) return "Busy";
+        if (device.connected) return "Connected";
+        if (device.paired) return "Paired";
+        if (device.trusted) return "Trusted";
         return "Available";
     }
 
-    function filterByText(devices, filterText) {
-        if (!filterText || filterText.length === 0)
-            return devices;
+    function isDeviceBusy(device) {
+        if (!device) return false;
+        return device.pairing || device.connecting;
+    }
 
-        return devices.filter(device => {
-            var deviceName = (device.name || device.alias || "").toLowerCase();
-            return deviceName.includes(filterText.toLowerCase());
+    function canConnect(device) {
+        if (!device) return false;
+        return !device.connected && !device.blocked && !isDeviceBusy(device);
+    }
+
+    function filterByName(devices, text) {
+        if (!text || text.length === 0) return devices;
+        return devices.filter(dev => {
+            var name = (dev.name || dev.alias || dev.deviceName || "").toLowerCase();
+            return name.includes(text.toLowerCase());
         });
     }
 
     function filterPairedDevices(devices) {
-        return devices.filter(device => device && (device.paired || device.trusted));
+        if (!devices) return [];
+        return devices.filter(dev => dev && (dev.paired || dev.trusted));
     }
 
     function filterConnectableDevices(devices) {
-        return devices.filter(device => device && canConnect(device));
+        if (!devices) return [];
+        return devices.filter(dev => dev && canConnect(dev));
     }
-    function togglePower() {
-        if (adapter) {
-            adapter.powered = !adapter.powered;
-        }
-    }
+
     function filterConnectedDevices(devices) {
-        return devices.filter(device => device && device.connected);
+        if (!devices) return [];
+        return devices.filter(dev => dev && dev.connected);
     }
+
 }

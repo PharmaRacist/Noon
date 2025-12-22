@@ -761,6 +761,7 @@ Scope {
                         }
                     }
                     RoundCorner {
+                        id:c2
                         visible:c1.visible
                         corner:cornerEnum.bottomRight
                         size:Rounding.verylarge
