@@ -10,7 +10,7 @@ Singleton {
 
     readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
     readonly property bool available: adapter !== null
-    readonly property bool enabled: (adapter && adapter.powered) 
+    readonly property bool enabled: adapter.powered 
     readonly property bool discovering: (adapter && adapter.discovering) 
     readonly property var devices: adapter ? adapter.devices : null
     readonly property var pairedDevices: {

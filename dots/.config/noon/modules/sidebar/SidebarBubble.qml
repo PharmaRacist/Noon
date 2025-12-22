@@ -44,6 +44,12 @@ StyledRect {
 
     }
 
+    Behavior on height {
+        Anim {
+        }
+
+    }
+
     Behavior on width {
         Anim {
         }

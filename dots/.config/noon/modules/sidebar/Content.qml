@@ -12,14 +12,10 @@ import "./components/tasks"
 import "./components/view"
 import "./components/wallpapers"
 import "./components/widgets"
-import Qt.labs.folderlistmodel
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import qs.modules.common
-import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
 import qs.store

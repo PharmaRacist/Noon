@@ -1,15 +1,7 @@
-import Qt.labs.folderlistmodel
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
-import Quickshell.Io
-import Quickshell.Wayland
-import Quickshell.Widgets
 import qs.modules.common
-import qs.modules.common.functions
 import qs.modules.common.widgets
 import qs.services
 import qs.store
@@ -228,7 +220,7 @@ Item {
                     leftMargin: Padding.normal
                 }
 
-                TextField {
+                StyledTextField {
                     id: searchInput
 
                     Layout.fillWidth: true
