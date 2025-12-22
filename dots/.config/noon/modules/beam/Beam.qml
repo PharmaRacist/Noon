@@ -573,7 +573,18 @@ Scope {
                             }
 
                         ]
-
+                        transitions: [
+                            Transition {
+                                Anim {
+                                    properties: "anchors.margins,anchors.bottomMargin,radius,topLeftRadius,topRightRadius,bottomLeftRadius,bottomRightRadius"
+                                }
+                                
+                                Anim {
+                                    properties: "anchors.topMargin,anchors.bottomMargin,opacity"
+                                    targets: [c1, c2]
+                                }
+                            }
+                        ]
                         color: Colors.colLayer0
                         enableShadows: true
                         enableBorders: true

@@ -33,7 +33,7 @@ GroupButton {
     toggled: false
     buttonRadius: toggled ? Rounding.verylarge : Rounding.normal
     buttonRadiusPressed: activeRadius
-    color: toggled ? Colors.colPrimary : Colors.colLayer2
+    color: toggled ? Colors.m3.m3primary : Colors.m3.m3surfaceContainer
     altAction: () => {
         if (!showButtonName)
             requestDialog();
@@ -44,7 +44,7 @@ GroupButton {
         id: dialogBox
 
         z: 99
-        color: !toggled ? Colors.colPrimary : Colors.colLayer2
+        color: !toggled ? Colors.m3.m3primary : Colors.m3.m3surfaceContainerHigh
         visible: hasDialog && showButtonName
         enableShadows: true
         implicitWidth: 50

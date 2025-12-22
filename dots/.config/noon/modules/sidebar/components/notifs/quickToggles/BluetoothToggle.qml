@@ -1,35 +1,12 @@
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
-import Quickshell.Io
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
 import qs.services
 
 QuickToggleButton {
     hasDialog: true
-    toggled: BluetoothService.enabled
-    buttonIcon: BluetoothService.bluetoothConnected ? "bluetooth_connected" : BluetoothService.enabled ? "bluetooth" : "bluetooth_disabled"
-    buttonName: BluetoothService.bluetoothConnected ? BluetoothService.bluetoothDeviceName : "Bluetooth"
+    toggled: BluetoothService.available > 0
+    buttonIcon: BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices).length > 0 ? BluetoothService.getDeviceIcon(BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices)[0]) : "bluetooth"
+    buttonName: BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices).length > 0 ? (BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices)[0].name || "Connected") : "Bluetooth"
     onRequestDialog: GlobalStates.showBluetoothDialog = true
-    onClicked: {
-        toggleBluetooth.running = !toggleBluetooth.running;
-    }
-    holdAction: () => {
-        Noon.exec(Mem.options.apps.bluetooth);
-        Noon.callIpc("sidebar_launcher hide");
-    }
-
-    Process {
-        id: toggleBluetooth
-
-        command: ["bash", "-c", `bluetoothctl power ${BluetoothService.enabled ? "off" : "on"}`]
-        onRunningChanged: {
-            if (!running)
-                BluetoothService.update();
-
-        }
-    }
-
+    onClicked: BluetoothService.toggleBluetooth()
 }

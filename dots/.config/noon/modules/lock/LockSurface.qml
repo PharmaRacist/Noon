@@ -33,6 +33,9 @@ Item {
 
     }
 
+    LockQuotes {
+    }
+
     LockContentArea {
     }
 

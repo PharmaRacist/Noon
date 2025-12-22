@@ -80,18 +80,12 @@ Item {
                 target: panel
                 property: "contentYOffset"
                 to: 0
-                duration: Animations.durations.expressiveDefaultSpatial
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Animations.curves.emphasizedDecel
             }
 
             Anim {
                 target: panel
                 property: "contentOpacity"
                 to: 1
-                duration: Animations.durations.expressiveDefaultSpatial
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Animations.curves.emphasizedDecel
             }
 
         }
@@ -181,27 +175,6 @@ Item {
 
             transform: Translate {
                 y: contentYOffset
-            }
-
-        }
-
-        PagePlaceholder {
-            visible: dataModel.count === 0 && LauncherData.hasModel(category) && showContent
-            opacity: visible ? contentOpacity : 0
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            icon: "block"
-            shape: MaterialShape.Clover4Leaf
-            title: "Nothing found"
-
-            transform: Translate {
-                y: contentYOffset
-            }
-
-            Behavior on opacity {
-                Anim {
-                }
-
             }
 
         }
@@ -360,6 +333,25 @@ Item {
 
             transform: Translate {
                 y: contentYOffset
+            }
+
+        }
+
+    }
+
+    PagePlaceholder {
+        visible: dataModel.count === 0 && LauncherData.hasModel(category) && showContent
+        opacity: visible ? contentOpacity : 0
+        icon: "block"
+        shape: MaterialShape.Clover4Leaf
+        title: "Nothing found"
+
+        transform: Translate {
+            y: contentYOffset
+        }
+
+        Behavior on opacity {
+            Anim {
             }
 
         }

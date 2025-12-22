@@ -66,7 +66,7 @@ input_path = '~/.config/matugen/templates/applications/telegram.tdesktop-theme'
 output_path = '~/.cache/noon/user/generated/colors/noon.tdesktop-theme'
 post_hook = 'ln -sf ${{image}} ~/.cache/noon/user/generated/colors.jpg'
 
-[templates.codium]
+[templates.code]
 input_path = "~/.config/matugen/templates/applications/vscode.json"
 output_path = '~/.config/VSCodium/User/settings.json'
 

@@ -94,7 +94,7 @@ QtObject {
     property color colTooltip: m3.darkmode ? ColorUtils.mix(m3.m3background, "#3C4043", 0.5) : "#3C4043"
     property color colOnTooltip: "#F8F9FA"
     property color colScrim: ColorUtils.transparentize(m3.m3scrim, 0.45)
-    property color colShadow: ColorUtils.transparentize(m3.m3surface, 0.7)
+    property color colShadow: m3.m3surface //ColorUtils.transparentize(m3.m3surface, )
 
     m3: QtObject {
         property bool darkmode: WallpaperService.shellMode === "dark"
@@ -169,4 +169,5 @@ QtObject {
         property color term14: "#8D76AD"
         property color term15: "#221A1A"
     }
+
 }

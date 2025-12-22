@@ -27,6 +27,7 @@ StyledRect {
     readonly property int barRadius: Rounding.verylarge
     readonly property int barMargins: Sizes.hyprlandGapsOut
     readonly property int barElevation: Sizes.barElevation
+
     enableShadows: true
     enableBorders: false
     color: Mem.options.bar.appearance.useBg ? Colors.colLayer0 : "transparent"
@@ -55,6 +56,7 @@ StyledRect {
                 target: c2
                 visible: false
             }
+
         },
         State {
             name: "docked"
@@ -80,6 +82,7 @@ StyledRect {
                 target: c2
                 visible: false
             }
+
         },
         State {
             name: "dockedCornered"
@@ -115,6 +118,7 @@ StyledRect {
                 anchors.right: rightMode ? barBackground.left : undefined
                 anchors.bottomMargin: Sizes.frameThickness
             }
+
         },
         State {
             name: "notch"
@@ -142,17 +146,38 @@ StyledRect {
                 target: c2
                 visible: false
             }
+
         }
     ]
-    Content {}
+    transitions: [
+        Transition {
+            Anim {
+                properties: "radius,topLeftRadius,topRightRadius,bottomLeftRadius,bottomRightRadius,anchors.rightMargin,anchors.leftMargin,anchors.topMargin,anchors.bottomMargin,anchors.margins,anchors.leftMargin,anchors.rightMargin"
+            }
+
+            Anim {
+                properties: "anchors.topMargin,anchors.bottomMargin"
+                target: [c1, c2]
+            }
+
+        }
+    ]
+
+    Content {
+    }
+
     RoundCorner {
         id: c1
+
         parent: barBackground.parent
         visible: false
     }
+
     RoundCorner {
         id: c2
+
         parent: barBackground.parent
         visible: false
     }
+
 }

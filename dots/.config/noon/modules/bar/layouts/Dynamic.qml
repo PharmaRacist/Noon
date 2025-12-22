@@ -13,6 +13,7 @@ StyledRect {
     readonly property bool bottomMode: Mem.options.bar.behavior.position === "bottom"
     readonly property int barRadius: Rounding.verylarge
     readonly property int barMargins: Sizes.hyprlandGapsOut
+
     enableBorders: mode === 0
     enableShadows: mode === 0
     color: Mem.options.bar.appearance.useBg ? Colors.colLayer0 : "transparent"
@@ -41,6 +42,7 @@ StyledRect {
                 target: c2
                 visible: false
             }
+
         },
         State {
             name: "docked"
@@ -65,6 +67,7 @@ StyledRect {
                 target: c2
                 visible: false
             }
+
         },
         State {
             name: "dockedCornered"
@@ -99,6 +102,7 @@ StyledRect {
                 anchors.top: root.bottomMode ? undefined : root.bottom
                 anchors.bottom: root.bottomMode ? root.top : undefined
             }
+
         },
         State {
             name: "notch"
@@ -127,6 +131,7 @@ StyledRect {
                 target: c2
                 visible: false
             }
+
         },
         State {
             name: "notchCorners"
@@ -163,11 +168,26 @@ StyledRect {
                 anchors.top: root.bottomMode ? root.top : undefined
                 anchors.bottom: !root.bottomMode ? undefined : root.bottom
             }
+
+        }
+    ]
+    transitions: [
+        Transition {
+            Anim {
+                properties: "anchors.margins,anchors.leftMargin,anchors.rightMargin,anchors.topMargin,anchors.bottomMargin,radius,topLeftRadius,topRightRadius,bottomLeftRadius,bottomRightRadius"
+            }
+
+            Anim {
+                properties: "anchors.leftMargin,anchors.rightMargin,anchors.topMargin,anchors.bottomMargin,opacity"
+                targets: [c1, c2]
+            }
+
         }
     ]
 
     // Content area of bar
-    Content {}
+    Content {
+    }
 
     // Rounded corner shapes
     RoundCorner {
@@ -183,4 +203,5 @@ StyledRect {
         color: root.color
         visible: false
     }
+
 }

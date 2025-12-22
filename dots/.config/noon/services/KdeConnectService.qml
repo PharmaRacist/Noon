@@ -6,10 +6,6 @@ import qs.modules.common
 import qs.modules.common.utils
 import QtQuick
 
-/**
- * KDE Connect service
- * Persistence: Only selectedDeviceId
- */
 Singleton {
     id: root
 
@@ -23,8 +19,6 @@ Singleton {
     signal devicePaired(string deviceId, string deviceName)
     signal deviceUnpaired(string deviceId)
     signal error(string message)
-
-    // No auto-refresh timer - only manual refresh on critical activities
 
     FilePicker {
         id: filePicker
@@ -125,7 +119,7 @@ Singleton {
         }
         executeCommand(["--device", deviceId, "--pair"], () => {
             devicePaired(deviceId, getDeviceName(deviceId));
-            refresh(); // Auto-refresh after pairing
+            refresh();
         });
     }
 
@@ -136,7 +130,7 @@ Singleton {
         }
         executeCommand(["--device", deviceId, "--unpair"], () => {
             deviceUnpaired(deviceId);
-            refresh(); // Auto-refresh after unpairing
+            refresh();
         });
     }
 
@@ -236,6 +230,14 @@ Singleton {
     function selectDevice(deviceId) {
         selectedDeviceId = deviceId;
         saveToConfig();
+    }
+
+    function togglePower(deviceId = selectedDeviceId) {
+        if (!deviceId) {
+            error("No device selected");
+            return;
+        }
+        executeCommand(["--device", deviceId, "--toggle-connectivity"]);
     }
 
     Component.onCompleted: {

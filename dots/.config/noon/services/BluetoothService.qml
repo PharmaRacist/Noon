@@ -10,8 +10,8 @@ Singleton {
 
     readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
     readonly property bool available: adapter !== null
-    readonly property bool enabled: (adapter && adapter.powered) ?? false  // Changed from 'enabled' to 'powered'
-    readonly property bool discovering: (adapter && adapter.discovering) ?? false
+    readonly property bool enabled: (adapter && adapter.powered) 
+    readonly property bool discovering: (adapter && adapter.discovering) 
     readonly property var devices: adapter ? adapter.devices : null
     readonly property var pairedDevices: {
         if (!adapter || !adapter.devices)
@@ -26,58 +26,44 @@ Singleton {
             return [];
 
         return adapter.devices.values.filter(dev => {
-            return dev && dev.batteryPercentage !== undefined && dev.batteryPercentage >= 0;  // Changed from 'batteryAvailable' and 'battery'
+            return dev && dev.batteryPercentage !== undefined && dev.batteryPercentage >= 0;
         });
     }
 
-    // Service methods for discovery
     function startDiscovery() {
-        // console.log("Starting discovery - Adapter:", adapter, "Powered:", enabled, "Discovering:", discovering);
         if (adapter && enabled && !discovering) {
-            // console.log("Calling startDiscovery()");
             adapter.startDiscovery();
-        } else
-        // console.log("Cannot start discovery - Adapter:", !!adapter, "Powered:", enabled, "Already discovering:", discovering);
-        {}
+        }
     }
 
     function stopDiscovery() {
-        console.log("Stopping discovery");
         if (adapter && discovering) {
             adapter.stopDiscovery();
         }
     }
 
-    // Service methods for device operations
     function connectDevice(device) {
         if (device && !isDeviceBusy(device)) {
-            console.log("Connecting to device:", device.name || device.address);
             device.connect();
         }
     }
 
     function disconnectDevice(device) {
         if (device && device.connected && !isDeviceBusy(device)) {
-            console.log("Disconnecting from device:", device.name || device.address);
             device.disconnect();
         }
     }
 
     function pairDevice(device) {
         if (device && !device.paired && !isDeviceBusy(device)) {
-            console.log("Pairing with device:", device.name || device.address);
             device.pair();
         }
     }
 
     function unpairDevice(device) {
         if (device && device.paired && !isDeviceBusy(device)) {
-            console.log("Unpairing device:", device.name || device.address);
-            // Note: Check if unpair() method exists, might need to use different approach
             if (typeof device.unpair === "function") {
                 device.unpair();
-            } else {
-                console.log("Unpair method not available");
             }
         }
     }
@@ -102,23 +88,19 @@ Singleton {
         device.connect();
     }
 
-    // Utility functions
     function sortDevices(devices) {
         return devices.sort((a, b) => {
-            // Prioritize connected devices
             if (a.connected && !b.connected)
                 return -1;
             if (!a.connected && b.connected)
                 return 1;
 
-            // Then paired devices
             if (a.paired && !b.paired)
                 return -1;
             if (!a.paired && b.paired)
                 return 1;
 
-            // Then devices with real names
-            var aName = a.name || a.alias || "";  // Added 'alias' as fallback
+            var aName = a.name || a.alias || "";
             var bName = b.name || b.alias || "";
             var aHasRealName = aName.includes(" ") && aName.length > 3;
             var bHasRealName = bName.includes(" ") && bName.length > 3;
@@ -128,10 +110,9 @@ Singleton {
             if (!aHasRealName && bHasRealName)
                 return 1;
 
-            // Finally by signal strength (RSSI)
-            var aSignal = (a.rssi !== undefined && a.rssi < 0) ? Math.abs(a.rssi) : 999;  // Changed from 'signalStrength' to 'rssi'
+            var aSignal = (a.rssi !== undefined && a.rssi < 0) ? Math.abs(a.rssi) : 999;
             var bSignal = (b.rssi !== undefined && b.rssi < 0) ? Math.abs(b.rssi) : 999;
-            return aSignal - bSignal;  // Lower RSSI (closer to 0) is better
+            return aSignal - bSignal;
         });
     }
 
@@ -174,10 +155,9 @@ Singleton {
     }
 
     function getSignalStrength(device) {
-        if (!device || device.rssi === undefined)  // Changed from 'signalStrength' to 'rssi'
+        if (!device || device.rssi === undefined)
             return "Unknown";
 
-        // RSSI values are negative, closer to 0 is better
         var rssi = device.rssi;
         if (rssi >= -30)
             return "Excellent";
@@ -209,12 +189,11 @@ Singleton {
     function isDeviceBusy(device) {
         if (!device)
             return false;
-        // Check if the device has connecting/disconnecting states
         return device.pairing || (device.connecting !== undefined && device.connecting);
     }
 
     function getBatteryIcon(device) {
-        if (!device || device.batteryPercentage === undefined || device.batteryPercentage < 0)  // Changed from 'batteryAvailable' and 'battery'
+        if (!device || device.batteryPercentage === undefined || device.batteryPercentage < 0)
             return "";
 
         var level = device.batteryPercentage;
@@ -243,7 +222,6 @@ Singleton {
         return "Available";
     }
 
-    // Device filtering helpers
     function filterByText(devices, filterText) {
         if (!filterText || filterText.length === 0)
             return devices;
@@ -261,7 +239,11 @@ Singleton {
     function filterConnectableDevices(devices) {
         return devices.filter(device => device && canConnect(device));
     }
-
+    function togglePower() {
+        if (adapter) {
+            adapter.powered = !adapter.powered;
+        }
+    }
     function filterConnectedDevices(devices) {
         return devices.filter(device => device && device.connected);
     }
