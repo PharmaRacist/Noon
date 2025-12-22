@@ -1,107 +1,66 @@
 #!/bin/bash
-# power_service.sh <update|set> [mode]
 
 ACTION=$1
 MODE=$2
 STATE_FILE="$HOME/.local/state/noon/states.json"
-
-# Ensure state directory and file exist
 mkdir -p "$(dirname "$STATE_FILE")"
-if [ ! -f "$STATE_FILE" ]; then
-    echo '{}' > "$STATE_FILE"
-fi
+[ -f "$STATE_FILE" ] || echo '{}' > "$STATE_FILE"
 
 get_controller() {
-    if command -v powerprofilesctl >/dev/null 2>&1; then
-        echo "power-profiles-daemon"
-    elif command -v tlp >/dev/null 2>&1; then
-        echo "tlp"
-    else
-        echo "none"
-    fi
+    command -v powerprofilesctl >/dev/null && echo power-profiles-daemon && return
+    command -v tlp >/dev/null && echo tlp && return
+    echo none
 }
 
 update_json() {
-    local controller="$1"
-    local mode="$2"
-    local modes="$3"
-    
-    temp_file="${STATE_FILE}.tmp"
-    jq --arg ctrl "$controller" \
-       --arg m "$mode" \
-       --argjson mds "$modes" \
-       '.services.power.controller = $ctrl | 
-        .services.power.mode = $m | 
-        .services.power.modes = $mds' \
-       "$STATE_FILE" > "$temp_file" && mv "$temp_file" "$STATE_FILE"
+    local ctrl="$1" mode="$2" modes="$3"
+    jq --arg ctrl "$ctrl" --arg m "$mode" --argjson mds "$modes" \
+       '.services.power.controller=$ctrl | .services.power.mode=$m | .services.power.modes=$mds' \
+       "$STATE_FILE" > "${STATE_FILE}.tmp" && mv "${STATE_FILE}.tmp" "$STATE_FILE"
 }
 
 case "$ACTION" in
     update)
-        CONTROLLER=$(get_controller)
-        
-        case "$CONTROLLER" in
+        CTRL=$(get_controller)
+        case "$CTRL" in
             power-profiles-daemon)
-                MODE=$(powerprofilesctl get 2>/dev/null || echo "balanced")
+                MODE=$(powerprofilesctl get 2>/dev/null || echo balanced)
                 MODES='["power-saver","balanced","performance"]'
                 ;;
-                
             tlp)
                 MODE=$(pkexec tlp-stat -m 2>/dev/null | awk -F'/' '{print tolower($1)}')
-                
-                case "$MODE" in
-                    performance) MODE="performance" ;;
-                    powersave|power-saver) MODE="power-saver" ;;
-                    balanced) MODE="balanced" ;;
-                    *) MODE="balanced" ;;
-                esac
-                
+                [[ $MODE =~ perf ]] && MODE=performance
+                [[ $MODE =~ save ]] && MODE=power-saver
+                [[ -z $MODE ]] && MODE=balanced
                 MODES='["power-saver","balanced","performance"]'
                 ;;
-                
             *)
-                MODE="power-saver"
+                MODE=power-saver
                 MODES='["power-saver"]'
                 ;;
         esac
-        
-        update_json "$CONTROLLER" "$MODE" "$MODES"
+        update_json "$CTRL" "$MODE" "$MODES"
         ;;
-        
     set)
-        CONTROLLER=$(get_controller)
-        case "$CONTROLLER" in
+        CTRL=$(get_controller)
+        case "$CTRL" in
             tlp)
-                # Single pkexec call: set mode AND get new status
-                NEW_MODE=$(pkexec bash -c "tlp '$MODE' >/dev/null 2>&1 && tlp-stat -m 2>/dev/null" | awk -F'/' '{print tolower($1)}')
-                
-                case "$NEW_MODE" in
-                    performance) NEW_MODE="performance" ;;
-                    powersave|power-saver) NEW_MODE="power-saver" ;;
-                    balanced) NEW_MODE="balanced" ;;
-                    *) NEW_MODE="$MODE" ;;
-                esac
-                
-                update_json "tlp" "$NEW_MODE" '["power-saver","balanced","performance"]'
+                NEW=$(pkexec bash -c "tlp '$MODE' >/dev/null 2>&1 && tlp-stat -m 2>/dev/null" | awk -F'/' '{print tolower($1)}')
+                [[ $NEW =~ perf ]] && NEW=performance
+                [[ $NEW =~ save ]] && NEW=power-saver
+                [[ -z $NEW ]] && NEW=$MODE
+                update_json tlp "$NEW" '["power-saver","balanced","performance"]'
                 ;;
-                
             power-profiles-daemon)
-                powerprofilesctl set "$MODE" && \
-                NEW_MODE=$(powerprofilesctl get 2>/dev/null || echo "$MODE")
-                update_json "power-profiles-daemon" "$NEW_MODE" '["power-saver","balanced","performance"]'
-                ;;
-                
-            none)
-                exit 1
+                powerprofilesctl set "$MODE" && NEW=$(powerprofilesctl get 2>/dev/null || echo "$MODE")
+                update_json power-profiles-daemon "$NEW" '["power-saver","balanced","performance"]'
                 ;;
         esac
         ;;
-        
     status)
         "$0" update
-        cat "$STATE_FILE" | jq -r '.services.power | "\(.controller)|\(.mode)|\(.modes | join(","))"'
+        jq -r '.services.power | "\(.controller)|\(.mode)|\(.modes|join(","))"' "$STATE_FILE"
         ;;
-        
     *)
         echo "Usage: $0 <update|set|status> [mode]"
         exit 1

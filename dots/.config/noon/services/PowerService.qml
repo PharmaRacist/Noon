@@ -1,11 +1,9 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.modules.common
-pragma Singleton
-/* 
-    Power Service for tlp , powerprofiles-daemon (non-native) , auto-cpufreq 
-*/
+
 Singleton {
     id: root
 
@@ -16,49 +14,22 @@ Singleton {
     property string currentMode: Mem.states.services?.power?.mode || "power-saver"
 
     function cycleMode() {
-        if (!controller || modes.length === 0)
-            return;
-
-        const currentIndex = modes.indexOf(currentMode);
-        const nextIndex = (currentIndex + 1) % modes.length;
-        const newMode = modes[nextIndex];
-        
-        const cmd = ["bash", "-c", `${Directories.scriptsDir}/power_service.sh set ${newMode}`];
-        Noon.execDetached(cmd);
+        if (!controller || !modes.length)
+            return
+        const next = modes[(modes.indexOf(currentMode) + 1) % modes.length]
+        Noon.execDetached(["bash", "-c", `${Directories.scriptsDir}/power_service.sh set ${next}`])
     }
 
     function getModeDisplayName(mode) {
-        switch (mode) {
-        case "bat":
-        case "power-saver":
-            return "Power Saver";
-        case "balanced":
-            return "Balanced";
-        case "ac":
-        case "performance":
-            return "Performance";
-        default:
-            return mode;
-        }
+        return { "bat": "Power Saver", "power-saver": "Power Saver", "balanced": "Balanced", "ac": "Performance", "performance": "Performance" }[mode] || mode
     }
 
     function getModeIcon(mode) {
-        switch (mode) {
-        case "bat":
-        case "power-saver":
-            return "eco";
-        case "balanced":
-            return "balance";
-        case "ac":
-        case "performance":
-            return "bolt";
-        default:
-            return "eco";
-        }
+        return { "bat": "eco", "power-saver": "eco", "balanced": "balance", "ac": "bolt", "performance": "bolt" }[mode] || "eco"
     }
 
     onCurrentModeChanged: {
-        modeName = getModeDisplayName(currentMode);
-        icon = getModeIcon(currentMode);
+        modeName = getModeDisplayName(currentMode)
+        icon = getModeIcon(currentMode)
     }
 }
