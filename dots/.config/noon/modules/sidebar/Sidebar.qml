@@ -74,7 +74,7 @@ Scope {
         name: "sidebar"
         visible: true
         implicitWidth: visualContainer.width + visualContainer.rounding
-        exclusiveZone: root.pinned ? implicitWidth - visualContainer.rounding : root.noExlusiveZone ? -1 : 0 
+        exclusiveZone: !root.barMode && root.pinned ? implicitWidth - visualContainer.rounding : root.noExlusiveZone ? -1 : 0 
         aboveWindows: true
         kbFocus: root.shouldFocus
         WlrLayershell.layer: LauncherData?.isOverlay(launcherContent.selectedCategory) ? WlrLayer.Overlay : WlrLayer.Top

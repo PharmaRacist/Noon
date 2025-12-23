@@ -21,3 +21,6 @@ zathura
 zathura-pdf-mupdf
 perplexity
 opencode-bin
+spotify
+spicetify-cli
+spicetify-marketplace-bin
