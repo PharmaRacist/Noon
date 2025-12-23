@@ -157,6 +157,7 @@ StyledRect {
                         color: TrackColorsService.colors.colOnLayer0
                         elide: Text.ElideRight
                         text: MusicPlayerService.player?.trackTitle || "No players available"
+                        horizontalAlignment:Text.AlignLeft
                     }
 
                     StyledText {
@@ -165,6 +166,8 @@ StyledRect {
                         color: TrackColorsService.colors.colSubtext
                         elide: Text.ElideRight
                         text: MusicPlayerService.player?.trackArtist || "No players available"
+                        horizontalAlignment:Text.AlignLeft
+
                     }
                 }
             }
