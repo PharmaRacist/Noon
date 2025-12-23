@@ -8,70 +8,66 @@ import Quickshell
 import Quickshell.Services.Mpris
 import Quickshell.Widgets
 
+
 StyledRect {
     id: root
+    
     clip: true
     radius: Rounding.verylarge
     color: "transparent"
-    property bool expandDialog: false
-    property int coverArtSize: 300
-    readonly property MprisPlayer player: MusicPlayerService.player
-    property bool playing: player && player.playbackState === MprisPlaybackState.Playing
-    property bool displayingLyrics: LyricsService.lyrics.length > 0
+    
+    readonly property bool playing: MusicPlayerService.player?.playbackState === MprisPlaybackState.Playing
+    readonly property bool displayingLyrics: LyricsService.lyrics.length > 0
 
     Keys.onPressed: event => {
-        if ((event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+        const ctrl = event.modifiers & Qt.ControlModifier;
+        const shift = event.modifiers & Qt.ShiftModifier;
+        const player = MusicPlayerService.player;
+        
+        if (ctrl && shift) {
             switch (event.key) {
-            case Qt.Key_R:
-                LyricsService.fetchLyrics(MusicPlayerService.artist || "", MusicPlayerService.title || "");
-                event.accepted = true;
-                break;
-            case Qt.Key_Right:
-                player?.canControl && player.next();
-                event.accepted = true;
-                break;
-            case Qt.Key_Left:
-                player?.canControl && player.previous();
-                event.accepted = true;
-                break;
-            case Qt.Key_D:
-                MusicPlayerService.downloadCurrentSong();
-                event.accepted = true;
-                break;
-            case Qt.Key_S:
-                player && (player.shuffle = !player.shuffle);
-                event.accepted = true;
-                break;
+                case Qt.Key_R:
+                    LyricsService.fetchLyrics(MusicPlayerService.artist || "", MusicPlayerService.title || "");
+                    break;
+                case Qt.Key_Right:
+                    player?.canControl && player.next();
+                    break;
+                case Qt.Key_Left:
+                    player?.canControl && player.previous();
+                    break;
+                case Qt.Key_D:
+                    MusicPlayerService.downloadCurrentSong();
+                    break;
+                case Qt.Key_S:
+                    player && (player.shuffle = !player.shuffle);
+                    break;
+                default:
+                    return;
             }
-        } else if (event.modifiers & Qt.ControlModifier) {
-            if (event.key === Qt.Key_R) {
-                MusicPlayerService.cycleRepeat();
-                event.accepted = true;
-            }
+        } else if (ctrl && event.key === Qt.Key_R) {
+            MusicPlayerService.cycleRepeat();
         } else {
             switch (event.key) {
-            case Qt.Key_Up:
-                Audio?.sink?.audio && (Audio.sink.audio.volume = Math.min(1.0, Audio.sink.audio.volume + 0.05));
-                event.accepted = true;
-                break;
-            case Qt.Key_Down:
-                Audio?.sink?.audio && (Audio.sink.audio.volume = Math.max(0.0, Audio.sink.audio.volume - 0.05));
-                event.accepted = true;
-                break;
-            case Qt.Key_Space:
-                player?.togglePlaying();
-                event.accepted = true;
-                break;
-            case Qt.Key_Right:
-                player?.canSeek && player.length && (player.position = Math.min(player.length, player.position + 10));
-                event.accepted = true;
-                break;
-            case Qt.Key_Left:
-                player?.canSeek && player.length && (player.position = Math.max(0, player.position - 10));
-                event.accepted = true;
-                break;
+                case Qt.Key_Up:
+                    Audio?.sink?.audio && (Audio.sink.audio.volume = Math.min(1.0, Audio.sink.audio.volume + 0.05));
+                    break;
+                case Qt.Key_Down:
+                    Audio?.sink?.audio && (Audio.sink.audio.volume = Math.max(0.0, Audio.sink.audio.volume - 0.05));
+                    break;
+                case Qt.Key_Space:
+                    player?.togglePlaying();
+                    break;
+                case Qt.Key_Right:
+                    player?.canSeek && player.length && (player.position = Math.min(player.length, player.position + 10));
+                    break;
+                case Qt.Key_Left:
+                    player?.canSeek && player.length && (player.position = Math.max(0, player.position - 10));
+                    break;
+                default:
+                    return;
             }
         }
+        event.accepted = true;
     }
 
     Loader {
@@ -101,32 +97,147 @@ StyledRect {
         }
     }
 
+    ColumnLayout {
+        anchors {
+            fill: parent
+            margins: Padding.large
+        }
+        spacing: Padding.large
+
+        Item { Layout.fillHeight: true }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            spacing: Padding.large
+            layoutDirection: displayingLyrics ? Qt.LeftToRight : Qt.RightToLeft
+
+            Item { Layout.fillHeight: true }
+        }
+
+        PlayerSelector {}
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.margins: Padding.large
+            spacing: Padding.huge
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Padding.large
+
+                Revealer {
+                    reveal: LyricsService.state !== LyricsService.NoLyricsFound
+                    Layout.maximumWidth: 75
+                    Layout.maximumHeight: 75
+
+                    CroppedImage {
+                        visible: parent.reveal
+                        anchors.centerIn: parent
+                        z: 99
+                        source: MusicPlayerService.artUrl
+                        sourceSize: Qt.size(width, height)
+                        mipmap: true
+                        radius: Rounding.normal
+                        tint: true
+                        tintLevel: 0.8
+                        tintColor: TrackColorsService.colors.colSecondaryContainer
+                    }
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 4
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        font.pixelSize: Fonts.sizes.huge
+                        font.weight: Font.Medium
+                        color: TrackColorsService.colors.colOnLayer0
+                        elide: Text.ElideRight
+                        text: MusicPlayerService.player?.trackTitle || "No players available"
+                    }
+
+                    StyledText {
+                        Layout.fillWidth: true
+                        font.pixelSize: 17
+                        color: TrackColorsService.colors.colSubtext
+                        elide: Text.ElideRight
+                        text: MusicPlayerService.player?.trackArtist || "No players available"
+                    }
+                }
+            }
+
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 18
+
+                StyledProgressBar {
+                    sperm: true
+                    anchors.fill: parent
+                    value: MusicPlayerService.currentTrackProgressRatio
+                    highlightColor: TrackColorsService.colors.colPrimary
+                    trackColor: TrackColorsService.colors.colSecondaryContainer
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: MusicPlayerService.player?.canSeek && MusicPlayerService.player?.length > 0
+                    hoverEnabled: true
+                    property bool isDragging: false
+
+                    onPressed: mouse => {
+                        isDragging = true;
+                        seekTo(mouse.x);
+                    }
+                    onPositionChanged: mouse => isDragging && seekTo(mouse.x)
+                    onReleased: isDragging = false
+
+                    function seekTo(x) {
+                        const player = MusicPlayerService.player;
+                        if (!player?.canSeek || !player?.length) return;
+                        player.position = Math.max(0, Math.min(1, x / width)) * player.length;
+                    }
+                }
+            }
+
+            MediaPlayerControls {
+                Layout.alignment: Qt.AlignHCenter
+                showDownload: !(MusicPlayerService.player?.dbusName?.includes("vlc") ?? false)
+            }
+        }
+    }
+
+    SpotifyLyrics {
+    }
+
     BottomDialog {
         id: bottomDialog
+        
         z: 99
-        visible: true
-        expandedHeight: parent.height * 0.75
+        expandedHeight: root.height * 0.45
         collapsedHeight: 100
-        expand: root.expandDialog
+        revealOnWheel: true
+        enableStagedReveal: true
 
         contentItem: ColumnLayout {
+            anchors.fill:parent
+            anchors.margins:Padding.verylarge
             spacing: Padding.large
-            anchors {
-                fill: parent
-                margins: Padding.massive
-            }
 
             RowLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 50
+                Layout.margins: Padding.large
 
                 StyledText {
-                    text: MusicPlayerService.filteredIndices.length + " Tracks"
+                    text: `${MusicPlayerService.filteredIndices.length} Tracks`
                     font.pixelSize: Fonts.sizes.subTitle
                     color: Colors.colOnLayer2
                 }
 
-                Spacer {}
+                Item { Layout.fillWidth: true }
 
                 RippleButtonWithIcon {
                     materialIcon: "close"
@@ -135,22 +246,24 @@ StyledRect {
             }
 
             Separator {
-                visible: musicListView.visible
+                visible: bottomDialog.expand
+                Layout.leftMargin: Padding.large
+                Layout.rightMargin: Padding.large
             }
-
-            SearchBar {
-                visible: musicListView.visible
-                Layout.preferredHeight: 40
-                searchInput.placeholderText: "Search Tracks"
-                color: "transparent"
-                onSearchTextChanged: MusicPlayerService.updateSearchFilter(searchText)
-            }
-
+            // SearchBar {
+            //     Layout.fillWidth: true
+            //     Layout.preferredHeight: 40
+            //     Layout.leftMargin: Padding.large
+            //     Layout.rightMargin: Padding.large
+            //     searchInput.placeholderText: "Search Tracks"
+            //     color: "transparent"
+            //     onSearchTextChanged: MusicPlayerService.updateSearchFilter(searchText)
+            // }
             StyledListView {
-                id: musicListView
                 visible: bottomDialog.expand
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.margins: Padding.large
                 spacing: 8
                 clip: true
                 model: MusicPlayerService.filteredTracksCount
@@ -165,7 +278,7 @@ StyledRect {
                     readonly property bool currentlyPlaying: trackPath === MusicPlayerService.currentTrackPath
 
                     title: trackInfo.name || "Unknown Track"
-                    subtext: trackInfo.extension ? trackInfo.extension + " Audio" : ""
+                    subtext: trackInfo.extension ? `${trackInfo.extension} Audio` : ""
                     colActiveColor: currentlyPlaying ? TrackColorsService.colors.colSecondaryContainerActive : TrackColorsService.colors.colSecondaryContainer
                     colActiveItemColor: currentlyPlaying ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondary
                     colBackground: currentlyPlaying ? TrackColorsService.colors.colSecondaryContainerActive : TrackColorsService.colors.colLayer1
@@ -181,121 +294,7 @@ StyledRect {
                     altAction: () => trackPath && trackContextMenu.showMenu()
                 }
             }
-        }
-    }
-
-    SpotifyLyrics {
-        id: lyrics
-        coverArtSize: root.coverArtSize
-    }
-
-    ColumnLayout {
-        z: -1
-        anchors {
-            fill: parent
-            margins: Padding.large
-        }
-        spacing: Padding.large
-
-        Spacer {}
-
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: Padding.large
-            layoutDirection: !root.displayingLyrics ? Qt.RightToLeft : Qt.LeftToRight
-
             Spacer {}
-        }
-            PlayerSelector {}
-
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            Layout.margins: Padding.large
-            spacing: Padding.huge
-
-            RowLayout {
-                spacing: Padding.large
-                Layout.fillWidth: true
-
-                Revealer {
-                    reveal: LyricsService.state !== LyricsService.NoLyricsFound
-                    Layout.maximumWidth: root.coverArtSize / 4
-                    Layout.maximumHeight: root.coverArtSize / 4
-
-                    CroppedImage {
-                        visible:parent.reveal
-                        anchors.centerIn: parent
-                        z: 99
-                        source: MusicPlayerService?.artUrl
-                        sourceSize: Qt.size(width, height)
-                        mipmap: true
-                        radius: Rounding.normal
-                        tint: true
-                        tintLevel: 0.8
-                        tintColor: TrackColorsService.colors.colSecondaryContainer
-                    }
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        font.pixelSize: Fonts.sizes.huge
-                        font.weight: Font.Medium
-                        color: TrackColorsService.colors.colOnLayer0
-                        elide: Text.ElideRight
-                        text: player?.trackTitle || "No players available"
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        font.pixelSize: 17
-                        color: TrackColorsService.colors.colSubtext
-                        elide: Text.ElideRight
-                        text: player?.trackArtist || "No players available"
-                    }
-                }
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 18
-
-                StyledProgressBar {
-                    sperm:true
-                    anchors.fill: parent
-                    value: MusicPlayerService.currentTrackProgressRatio
-                    highlightColor: TrackColorsService.colors.colPrimary
-                    trackColor: TrackColorsService.colors.colSecondaryContainer
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: player?.canSeek && player.length > 0
-                    hoverEnabled: true
-                    property bool isDragging: false
-
-                    onPressed: mouse => {
-                        isDragging = true;
-                        seek(mouse.x);
-                    }
-                    onPositionChanged: mouse => isDragging && seek(mouse.x)
-                    onReleased: isDragging = false
-
-                    function seek(x) {
-                        if (!player?.canSeek || !player.length) return;
-                        player.position = Math.max(0, Math.min(1, x / width)) * player.length;
-                    }
-                }
-            }
-
-            MediaPlayerControls {
-                Layout.alignment: Qt.AlignHCenter
-                showDownload: !(player?.dbusName?.includes("vlc"))
-            }
         }
     }
 }
