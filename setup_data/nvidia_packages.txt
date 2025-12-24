@@ -1,5 +1,15 @@
-nvidia-dkms
-nvidia-utils
-lib32-nvidia-utils
-libva-nvidia-driver
+# Common Packages
 nvtop
+libva-nvidia-driver
+
+# Modern Drives (Turing and above) 
+# nvidia-dkms
+# nvidia-utils
+# lib32-nvidia-utils
+
+# Legacy Drivers (Below That) 
+nvidia-580xx-dkms
+nvidia-580xx-utils
+opencl-nvidia-580xx
+lib32-opencl-nvidia
+lib32-nvidia-580xx-utils
