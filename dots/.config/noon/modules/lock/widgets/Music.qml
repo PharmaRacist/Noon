@@ -18,8 +18,7 @@ StyledRect {
     radius: Rounding.verylarge
     visible: MusicPlayerService.artist.length > 0
 
-    Visualizer {
-    }
+    Visualizer {}
 
     RowLayout {
         spacing: Padding.massive
@@ -47,7 +46,7 @@ StyledRect {
             StyledText {
                 Layout.maximumWidth: parent.width * 0.8
                 Layout.fillWidth: true
-                font.pixelSize: Fonts.sizes.veryhuge
+                font.pixelSize: Fonts.sizes.huge
                 font.family: Fonts.family.main
                 horizontalAlignment: Text.AlignLeft
                 elide: Text.ElideRight
@@ -74,9 +73,6 @@ StyledRect {
                         return "No players available";
                 }
             }
-
         }
-
     }
-
 }

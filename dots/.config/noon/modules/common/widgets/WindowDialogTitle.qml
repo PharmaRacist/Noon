@@ -8,8 +8,7 @@ StyledText {
     text: "Dialog Title"
 
     font {
-        pixelSize: Fonts.sizes.veryhuge
+        pixelSize: Fonts.sizes.huge
         family: Fonts.family.main
     }
-
 }

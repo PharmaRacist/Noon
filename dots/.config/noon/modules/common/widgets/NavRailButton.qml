@@ -16,9 +16,8 @@ Button {
     Layout.alignment: Qt.AlignHCenter
     implicitHeight: columnLayout.implicitHeight
     implicitWidth: columnLayout.implicitWidth
-    background:null
-    PointingHandInteraction {
-    }
+    background: null
+    PointingHandInteraction {}
 
     // Real stuff
     ColumnLayout {
@@ -37,7 +36,7 @@ Button {
                 id: navRailButtonIcon
 
                 anchors.centerIn: parent
-                font.pixelSize: Fonts.sizes.veryhuge
+                font.pixelSize: Fonts.sizes.huge
                 fill: toggled ? 1 : 0
                 text: buttonIcon
                 color: toggled ? Colors.m3.m3onSecondaryContainer : Colors.colOnLayer1
@@ -45,13 +44,11 @@ Button {
                 Behavior on color {
                     CAnim {}
                 }
-
             }
 
             Behavior on color {
                 CAnim {}
             }
-
         }
 
         StyledText {
@@ -59,7 +56,5 @@ Button {
             text: buttonText
             color: Colors.colOnLayer1
         }
-
     }
-
 }

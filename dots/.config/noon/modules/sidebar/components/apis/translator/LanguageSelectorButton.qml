@@ -40,13 +40,10 @@ RippleButton {
 
             MaterialSymbol {
                 Layout.alignment: Qt.AlignVCenter
-                font.pixelSize: Fonts.sizes.veryhuge
+                font.pixelSize: Fonts.sizes.huge
                 text: "arrow_drop_down"
                 color: Colors.colOnLayer2
             }
-
         }
-
     }
-
 }

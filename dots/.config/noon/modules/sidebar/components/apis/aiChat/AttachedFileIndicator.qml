@@ -86,7 +86,7 @@ Rectangle {
                         return "description";
                     return "file_present";
                 }
-                font.pixelSize: Fonts.sizes.veryhuge
+                font.pixelSize: Fonts.sizes.huge
             }
 
             StyledText {

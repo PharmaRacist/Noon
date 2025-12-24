@@ -28,7 +28,7 @@ GroupButton {
             Layout.fillWidth: false
             Layout.leftMargin: 5
             color: Colors.colOnLayer2
-            font.pixelSize: Fonts.sizes.veryhuge
+            font.pixelSize: Fonts.sizes.huge
             text: input ? "mic_external_on" : "media_output"
         }
 
