@@ -86,6 +86,7 @@ Item {
         MaterialSymbol {
             id: networkIcon
 
+            fill: 1
             font.pixelSize: commonIconSize
             color: commonIconColor
             text: {
@@ -118,11 +119,18 @@ Item {
         }
 
         MaterialSymbol {
-            text: BluetoothService.bluetoothConnected ? "bluetooth_connected" : BluetoothService.bluetoothEnabled ? "bluetooth" : "bluetooth_disabled"
+            text: BluetoothService.currentDeviceIcon
             font.pixelSize: commonIconSize
             color: commonIconColor
+            fill: 1
+
+            BluetoothPopup {
+                hoverTarget: btMouse
+            }
 
             MouseArea {
+                id: btMouse
+
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true

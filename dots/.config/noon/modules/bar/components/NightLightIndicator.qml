@@ -120,10 +120,13 @@ MouseArea {
                 font.weight: Font.DemiBold
 
                 Behavior on value {
-                    Anim {}
+                    Anim {
+                    }
 
                 }
+
             }
+
         }
 
         MaterialSymbol {

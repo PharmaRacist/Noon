@@ -13,7 +13,16 @@ Singleton {
     readonly property bool enabled: adapter.powered || false
     readonly property bool discovering: adapter ? adapter.discovering : false
     readonly property var devices: adapter ? adapter.devices : null
-    
+    readonly property string currentDeviceIcon: {
+                if (filterConnectedDevices(pairedDevices).length > 0)
+                    return getDeviceIcon(filterConnectedDevices(pairedDevices)[0]);
+                else if (connectedDevices.length > 0)
+                    return "bluetooth_connected";
+                else if (enabled)
+                    return "bluetooth";
+                else
+                    "bluetooth_disabled";
+            }
     readonly property var pairedDevices: {
         if (!adapter || !adapter.devices) return [];
         return adapter.devices.values.filter(dev => 
@@ -50,7 +59,7 @@ Singleton {
             device.connect();
         }
     }
-
+    
     function disconnectDevice(device) {
         if (device && device.connected && !isDeviceBusy(device)) {
             device.disconnect();
@@ -188,7 +197,14 @@ Singleton {
             return -1;
         return Math.round(device.battery * 100);
     }
-
+    function getDeviceStatusIcon(device) {
+        // if (!device) return "..";
+        // if (isDeviceBusy(device)) return "Busy";
+        // if (device.connected) return "Connected";
+        // if (device.paired) return "Paired";
+        // if (device.trusted) return "Trusted";
+        return "restart_alt";
+    }
     function getDeviceStatus(device) {
         if (!device) return "Unknown";
         if (isDeviceBusy(device)) return "Busy";

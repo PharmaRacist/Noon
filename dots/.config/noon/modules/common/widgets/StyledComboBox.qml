@@ -45,7 +45,13 @@ ComboBox {
         id: display
         text: root.displayText
         color: Colors.colOnLayer1
-        anchors.centerIn: parent
+        anchors.leftMargin:Padding.large
+        anchors.rightMargin:Padding.verylarge
+        anchors.fill: parent
+        elide: Text.ElideRight
+        wrapMode: TextEdit.Wrap
+        maximumLineCount: 1
+
     }
 
     background: Rectangle {

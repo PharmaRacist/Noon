@@ -6,12 +6,16 @@ import qs.modules.common.widgets
 pragma Singleton
 
 Singleton {
-    readonly property var palettes: ["auto","ayu_dark", "catppuccin_latte", "catppuccin_mocha", "cobalt2", "dracula", "github_dark", "gruvbox_dark", "gruvbox_light", "high_contrast_dark", "high_contrast_light", "material_dark", "material_light", "monokai", "nord", "night_owl", "one_dark", "palen_night", "shades_of_purple", "solarized_dark", "solarized_light", "synthwave84", "tokyo_night"]
+    //     {
+    //     "name": "Monochromatic",
+    //     "value": "bw",
+    //     "icon": "contrast"
+    // },
+
+    // Color Palettes
+    readonly property var palettes: ["auto", "ayu_dark", "catppuccin_latte", "catppuccin_mocha", "cobalt2", "dracula", "github_dark", "gruvbox_dark", "gruvbox_light", "high_contrast_dark", "high_contrast_light", "material_dark", "material_light", "monokai", "nord", "night_owl", "one_dark", "palen_night", "shades_of_purple", "solarized_dark", "solarized_light", "synthwave84", "tokyo_night"]
+    // Gowall
     property var themes: [{
-        "name": "Monochromatic",
-        "value": "bw",
-        "icon": "contrast"
-    }, {
         "name": "Arc Dark",
         "value": "arcdark",
         "icon": "gradient"
@@ -92,6 +96,7 @@ Singleton {
         "value": "tokyo-storm",
         "icon": "thunderstorm"
     }]
+    // M3 Modes
     property var modes: [{
         "name": "Tonal Spot",
         "value": "scheme-tonal-spot",

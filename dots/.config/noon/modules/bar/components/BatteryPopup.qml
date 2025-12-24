@@ -49,8 +49,9 @@ StyledPopup {
             text: Math.round(BatteryService.percentage * 100) + "%"
 
             font {
-                pixelSize: Fonts.sizes.huge
-                weight: 700
+                pixelSize: Fonts.sizes.title
+                family: Fonts.family.numbers
+                variableAxes: Fonts.variableAxes.longNumbers
             }
 
         }

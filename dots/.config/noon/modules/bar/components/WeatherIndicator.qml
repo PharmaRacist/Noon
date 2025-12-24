@@ -51,10 +51,13 @@ MouseArea {
                 color: Colors.colOnLayer1
                 horizontalAlignment: Text.AlignHCenter
             }
+
         }
+
     }
 
     WeatherPopup {
         hoverTarget: root
     }
+
 }

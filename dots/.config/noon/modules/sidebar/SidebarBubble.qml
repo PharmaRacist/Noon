@@ -52,6 +52,7 @@ StyledRect {
         }]
     }, {
         "cat": "API",
+        "extraVisibleCondition": Mem.states.sidebar.apis.selectedTab === 0,
         "bubbles": [{
             "key": "clear",
             "icon": "clear_all",
@@ -124,7 +125,7 @@ StyledRect {
 
             ColumnLayout {
                 spacing: parent.spacing
-                visible: modelData.cat === root.selectedCategory
+                visible: modelData.cat === root.selectedCategory && (modelData.extraVisibleCondition ?? true)
 
                 ColumnLayout {
                     spacing: parent.spacing

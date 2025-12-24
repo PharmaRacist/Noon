@@ -293,8 +293,8 @@ StyledRect {
                         parentButton: parent
                     }
 
-                    releaseAction: () => trackPath && BeatsService.playTrackByPath(trackPath)
-                    altAction: () => trackPath && trackContextMenu.showMenu()
+                    releaseAction: () =>  BeatsService.playTrackByPath(trackPath)
+                    altAction: () => trackContextMenu.showMenu()
                 }
             }
             Spacer {}
