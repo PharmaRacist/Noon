@@ -57,7 +57,7 @@ StyledPopup {
                 horizontalAlignment: Text.AlignRight
                 font.weight: Font.Medium
                 color: Colors.m3.m3onSurfaceVariant
-                text: `${(ResourcesService.cpuUsagePercentage).toFixed(1)}%`
+                text: `${ResourcesService.stats.cpu_percent.toFixed(1)}%`
             }
 
         }
@@ -81,7 +81,7 @@ StyledPopup {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: `${(ResourcesService.avgCpuTemp * 100).toFixed(1)} °C`
+                text: `${ResourcesService.stats.cpu_temp.toFixed(1)} °C`
             }
 
         }
@@ -105,7 +105,7 @@ StyledPopup {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: `${ResourcesService.cpuClockGHz.toFixed(2)} GHz`
+                text: `${ResourcesService.stats.cpu_freq_ghz.toFixed(2)} GHz`
             }
 
         }
@@ -126,10 +126,13 @@ StyledPopup {
             }
 
             StyledText {
+                property double memUsed: ResourcesService.stats.mem_total - ResourcesService.stats.mem_available
+                property double memPercent: (memUsed / ResourcesService.stats.mem_total) * 100
+
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: `${(ResourcesService.memoryUsedPercentage * 100).toFixed(1)}% (${(ResourcesService.memoryUsed / 1073741824).toFixed(1)} / ${(ResourcesService.memoryTotal / 1073741824).toFixed(1)} GB)`
+                text: `${memPercent.toFixed(1)}% (${(memUsed / 1073741824).toFixed(1)} / ${(ResourcesService.stats.mem_total / 1073741824).toFixed(1)} GB)`
             }
 
         }
@@ -137,7 +140,7 @@ StyledPopup {
         RowLayout {
             spacing: 5
             Layout.fillWidth: true
-            visible: ResourcesService.swapTotal > 0
+            visible: ResourcesService.stats.swap_total > 0
 
             MaterialSymbol {
                 text: "sync_alt"
@@ -151,16 +154,19 @@ StyledPopup {
             }
 
             StyledText {
+                property double swapUsed: ResourcesService.stats.swap_total - ResourcesService.stats.swap_free
+                property double swapPercent: (swapUsed / ResourcesService.stats.swap_total) * 100
+
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: `${(ResourcesService.swapUsedPercentage * 100).toFixed(1)}% (${(ResourcesService.swapUsed / 1073741824).toFixed(1)} / ${(ResourcesService.swapTotal / 1073741824).toFixed(1)} GB)`
+                text: `${swapPercent.toFixed(1)}% (${(swapUsed / 1073741824).toFixed(1)} / ${(ResourcesService.stats.swap_total / 1073741824).toFixed(1)} GB)`
             }
 
         }
 
         Repeater {
-            model: ResourcesService.gpus
+            model: ResourcesService.stats.gpus
 
             Column {
                 spacing: 4
@@ -199,7 +205,7 @@ StyledPopup {
                         Layout.fillWidth: true
                         horizontalAlignment: Text.AlignRight
                         color: Colors.m3.m3onSurfaceVariant
-                        text: `${(modelData.utilization * 100).toFixed(1)}%`
+                        text: `${modelData.utilization.toFixed(1)}%`
                     }
 
                 }
@@ -207,6 +213,7 @@ StyledPopup {
                 RowLayout {
                     spacing: 5
                     width: parent.width
+                    visible: modelData.temperature > 0
 
                     MaterialSymbol {
                         text: "device_thermostat"
@@ -223,7 +230,7 @@ StyledPopup {
                         Layout.fillWidth: true
                         horizontalAlignment: Text.AlignRight
                         color: Colors.m3.m3onSurfaceVariant
-                        text: `${(modelData.temperature * 100).toFixed(1)} °C`
+                        text: `${modelData.temperature.toFixed(1)} °C`
                     }
 
                 }
@@ -231,6 +238,7 @@ StyledPopup {
                 RowLayout {
                     spacing: 5
                     width: parent.width
+                    visible: modelData.memory_total > 1
 
                     MaterialSymbol {
                         text: "memory"
@@ -247,7 +255,7 @@ StyledPopup {
                         Layout.fillWidth: true
                         horizontalAlignment: Text.AlignRight
                         color: Colors.m3.m3onSurfaceVariant
-                        text: `${(modelData.memoryPercentage * 100).toFixed(1)}% (${modelData.memoryUsed} / ${modelData.memoryTotal} MB)`
+                        text: `${((modelData.memory_used / modelData.memory_total) * 100).toFixed(1)}% (${modelData.memory_used.toFixed(0)} / ${modelData.memory_total.toFixed(0)} MB)`
                     }
 
                 }
@@ -255,7 +263,7 @@ StyledPopup {
                 RowLayout {
                     spacing: 5
                     width: parent.width
-                    visible: modelData.powerDraw !== null
+                    visible: modelData.power_draw > 0
 
                     MaterialSymbol {
                         text: "bolt"
@@ -272,7 +280,7 @@ StyledPopup {
                         Layout.fillWidth: true
                         horizontalAlignment: Text.AlignRight
                         color: Colors.m3.m3onSurfaceVariant
-                        text: modelData.powerDraw !== null ? `${modelData.powerDraw.toFixed(1)} / ${modelData.powerLimit.toFixed(0)} W` : "N/A"
+                        text: `${modelData.power_draw.toFixed(1)} / ${modelData.power_limit.toFixed(0)} W`
                     }
 
                 }

@@ -46,14 +46,14 @@ BarGroup {
         Resource {
             iconName: "memory"
             collapsed: !root.revealAll
-            percentage: ResourcesService.memoryUsedPercentage
+            percentage: (ResourcesService.stats.mem_total - ResourcesService.stats.mem_available) / ResourcesService.stats.mem_total
             itemSize: root.itemSize
         }
 
         Resource {
             iconName: "swap_horiz"
             collapsed: !root.revealAll
-            percentage: ResourcesService.swapUsedPercentage
+            percentage: (ResourcesService.stats.swap_total - ResourcesService.stats.swap_free) / ResourcesService.stats.swap_total
             visible: percentage > 0
             itemSize: root.itemSize
         }
@@ -61,14 +61,14 @@ BarGroup {
         Resource {
             collapsed: !root.revealAll
             iconName: "settings_slow_motion"
-            percentage: ResourcesService.cpuUsage
+            percentage: ResourcesService.stats.cpu_percent / 100
             itemSize: root.itemSize
         }
 
         Resource {
             collapsed: !root.revealAll
             iconName: "thermometer"
-            percentage: ResourcesService.avgCpuTemp
+            percentage: ResourcesService.stats.cpu_temp / 100
             itemSize: root.itemSize
         }
 
