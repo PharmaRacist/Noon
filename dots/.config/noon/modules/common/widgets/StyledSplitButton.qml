@@ -116,7 +116,9 @@ Item {
                     font.pixelSize: Fonts.sizes.huge
 
                     Behavior on color {
-                        CAnim {}
+                        CAnim {
+                        }
+
                     }
 
                 }
@@ -160,7 +162,8 @@ Item {
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {}
+                Anim {
+                }
 
             }
             // Rounded corners - left side only
@@ -257,14 +260,16 @@ Item {
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {}
+                Anim {
+                }
 
             }
             // Rounded corners - right side only
 
             // Smooth color transitions
             Behavior on color {
-                CAnim {}
+                CAnim {
+                }
 
             }
 

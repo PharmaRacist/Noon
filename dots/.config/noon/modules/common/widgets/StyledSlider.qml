@@ -1,14 +1,17 @@
-import qs.modules.common
-import qs.modules.common.widgets
-import qs.services
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Widgets
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.services
 
 // Material 3 slider. See [https://m3.material.io/components/sliders/overview](https://m3.material.io/components/sliders/overview)
 Slider {
+    // Adjust increment/decrement amount (5% per wheel click)
+
     id: root
+
     property real scale: 0.85
     property real backgroundDotSize: 4 * scale
     property real backgroundDotMargins: 4 * scale
@@ -19,7 +22,6 @@ Slider {
     property real trackHeight: 30 * scale
     property real trackRadius: Rounding.verysmall * scale
     property real unsharpenRadius: Rounding.tiny
-
     // Color properties
     property color highlightColor: Colors.colPrimary
     property color trackColor: Colors.colSecondaryContainer
@@ -27,36 +29,39 @@ Slider {
     property bool enableTooltip: true
     property real limitedHandleRangeWidth: (root.availableWidth - handleWidth - root.handleLimit * 2)
     property string tooltipContent: `${Math.round(value * 100)}%`
-
     // Wheel handler properties
-    property real wheelStepSize: 0.05  // Adjust increment/decrement amount (5% per wheel click)
+    property real wheelStepSize: 0.05
 
     Layout.fillWidth: true
     from: 0
     to: 1
 
-    Behavior on value {
-        SmoothedAnimation {
-            velocity: Animations.durations.small
-        }
-    }
-
-    Behavior on handleMargins {
-        FAnim {}
-    }
-
     MouseArea {
         anchors.fill: parent
-        onPressed: mouse => mouse.accepted = false
+        onPressed: (mouse) => {
+            return mouse.accepted = false;
+        }
         cursorShape: root.pressed ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-
         // Add wheel event handler
-        onWheel: wheel => {
-            var delta = wheel.angleDelta.y / 120;  // Normalize to clicks
+        onWheel: (wheel) => {
+            var delta = wheel.angleDelta.y / 120; // Normalize to clicks
             var newValue = root.value + (delta * root.wheelStepSize);
             root.value = Math.max(root.from, Math.min(root.to, newValue));
             wheel.accepted = true;
         }
+    }
+
+    Behavior on value {
+        SmoothedAnimation {
+            velocity: Animations.durations.small
+        }
+
+    }
+
+    Behavior on handleMargins {
+        FAnim {
+        }
+
     }
 
     background: Item {
@@ -99,10 +104,12 @@ Slider {
             radius: Rounding.full
             color: root.handleColor
         }
+
     }
 
     handle: Rectangle {
         id: handle
+
         x: root.leftPadding + root.handleLimit + root.visualPosition * root.limitedHandleRangeWidth
         y: root.topPadding + root.availableHeight / 2 - height / 2
         implicitWidth: root.handleWidth
@@ -110,13 +117,17 @@ Slider {
         radius: Rounding.full
         color: root.handleColor
 
-        Behavior on implicitWidth {
-            FAnim {}
-        }
-
         StyledToolTip {
             extraVisibleCondition: root.enableTooltip && root.pressed
             content: root.tooltipContent
         }
+
+        Behavior on implicitWidth {
+            FAnim {
+            }
+
+        }
+
     }
+
 }

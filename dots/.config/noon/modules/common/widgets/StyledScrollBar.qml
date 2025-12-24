@@ -18,7 +18,11 @@ ScrollBar {
         opacity: root.policy === ScrollBar.AlwaysOn || (root.active && root.size < 1) ? 0.5 : 0
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+            }
+
         }
+
     }
+
 }

@@ -125,7 +125,9 @@ SpinBox {
         }
 
         Behavior on color {
-            CAnim {}
+            CAnim {
+            }
+
         }
 
     }
@@ -159,7 +161,9 @@ SpinBox {
         }
 
         Behavior on color {
-            CAnim {}
+            CAnim {
+            }
+
         }
 
     }

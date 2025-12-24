@@ -133,8 +133,8 @@ Rectangle {
     onValueChanged: function(newValue) {
         if (reloadOnChange && _ready)
             Qt.callLater(() => {
-                return Quickshell.reload(true);
-            });
+            return Quickshell.reload(true);
+        });
 
     }
     Component.onCompleted: {

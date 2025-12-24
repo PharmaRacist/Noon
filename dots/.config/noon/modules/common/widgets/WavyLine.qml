@@ -1,8 +1,9 @@
-import qs.modules.common
 import QtQuick
+import qs.modules.common
 
 Canvas {
     id: root
+
     property real amplitudeMultiplier: 0.5
     property real frequency: 6
     property color color: Colors.colPrimary ?? "#685496"
@@ -12,12 +13,10 @@ Canvas {
     onPaint: {
         var ctx = getContext("2d");
         ctx.clearRect(0, 0, width, height);
-
         var amplitude = root.lineWidth * root.amplitudeMultiplier;
         var frequency = root.frequency;
-        var phase = Date.now() / 400.0;
+        var phase = Date.now() / 400;
         var centerY = height / 2;
-
         ctx.strokeStyle = root.color;
         ctx.lineWidth = root.lineWidth;
         ctx.lineCap = "round";

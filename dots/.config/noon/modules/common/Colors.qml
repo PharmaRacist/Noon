@@ -1,10 +1,10 @@
-pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.modules.common
 import qs.modules.common.functions
 import qs.services
+pragma Singleton
 
 Singleton {
     property QtObject m3
@@ -170,4 +170,5 @@ Singleton {
         property color term14: "#8D76AD"
         property color term15: "#221A1A"
     }
+
 }

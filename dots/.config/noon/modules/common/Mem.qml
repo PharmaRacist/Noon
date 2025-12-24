@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Widgets
-import qs.modules.common.widgets
+import qs.modules.common.utils
 import qs.services
 import qs.store
 pragma Singleton
