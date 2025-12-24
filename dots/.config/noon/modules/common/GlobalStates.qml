@@ -48,7 +48,7 @@ Singleton {
         }
     }
     function handle_init() {
-        MaterialThemeLoader.reapplyTheme();
+        ColorsService.reapplyTheme();
         NightLightService.applyTemperature();
         KeyringStorage.fetchKeyringData();
         Noon.playSound("device_unlocked");
