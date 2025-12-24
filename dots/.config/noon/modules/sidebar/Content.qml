@@ -215,7 +215,7 @@ FocusScope {
                 event.accepted = true;
                 return true;
             } else if (key === Qt.Key_R && selectedCategory === "History") {
-                Cliphist.wipe();
+                ClipboardService.wipe();
                 delayedRefresh.restart();
                 event.accepted = true;
                 return true;

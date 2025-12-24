@@ -266,17 +266,17 @@ Singleton {
     }
 
     function generateHistory(query) {
-        const allResults = Cliphist.entries || [];
+        const allResults = ClipboardService.entries || [];
         if (!allResults?.length) return [];
         
         const mapped = allResults.map(str => {
             const id = Number(str.split("\t")[0]);
-            const isImage = Cliphist.entryIsImage(str);
+            const isImage = ClipboardService.entryIsImage(str);
             const content = StringUtils.cleanCliphistEntry(str);
             let displayName = content, imagePath = "";
 
             if (isImage) {
-                imagePath = Cliphist.decodeImageEntry(str);
+                imagePath = ClipboardService.decodeImageEntry(str);
                 displayName = content.split("]]")[1]?.trim() || "Image";
             }
 
@@ -354,7 +354,7 @@ Singleton {
             hideIfNotAux();
             break;
         case "History":
-            Cliphist.copy(app.cliphistRawString);
+            ClipboardService.copy(app.cliphistRawString);
             hideIfNotAux();
             break;
         case "Bookmarks":

@@ -230,8 +230,8 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
         messageListView.positionViewAtEnd();
     }
     function decodeImageAndAttach(entry) {
-        if (entry && Cliphist.entryIsImage(entry)) {
-            const filePath = Cliphist.decodeImageEntry(entry);
+        if (entry && ClipboardService.entryIsImage(entry)) {
+            const filePath = ClipboardService.decodeImageEntry(entry);
             Ai.attachFile(filePath);
         }
     }
@@ -654,9 +654,9 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                                 return;
                             }
                             // Try image paste first
-                            const currentClipboardEntry = Cliphist.entries[0];
+                            const currentClipboardEntry = ClipboardService.entries[0];
                             const cleanCliphistEntry = StringUtils.cleanCliphistEntry(currentClipboardEntry);
-                            if (Cliphist.entryIsImage(currentClipboardEntry)) {
+                            if (ClipboardService.entryIsImage(currentClipboardEntry)) {
                                 decodeImageAndAttach(currentClipboardEntry);
                                 event.accepted = true;
                                 return;

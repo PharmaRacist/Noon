@@ -52,6 +52,6 @@ Singleton {
         NightLightService.applyTemperature();
         KeyringStorage.fetchKeyringData();
         Noon.playSound("device_unlocked");
-        Cliphist.refresh()
+        ClipboardService.refresh()
     }
 }

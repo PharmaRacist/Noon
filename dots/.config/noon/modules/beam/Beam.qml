@@ -217,13 +217,13 @@ Scope {
             Connections {
                 target: ScreenShotService
                 function onScreenshotCompleted() {
-                    Cliphist.refresh();
+                    ClipboardService.refresh();
                     screenshotProcessTimer.start();
                 }
             }
 
             Connections {
-                target: Cliphist
+                target: ClipboardService
                 function onImageDecoded(path) {
                     if (path && path !== "") {
                         root.revealSidebar();
@@ -283,7 +283,7 @@ Scope {
                 }
             }
             function processScreenshot(autoSend) {
-                Cliphist.getLatestImage();
+                ClipboardService.getLatestImage();
             }
 
             function revealSidebar() {
@@ -393,7 +393,7 @@ Scope {
                 case "calc":
                     if (cleanQuery.length > 0) {
                         QalcService.calculate(cleanQuery)
-                        Cliphist.copy(QalcService.result)
+                        ClipboardService.copy(QalcService.result)
                     }
                     break;
                 case "ipc":
@@ -417,7 +417,7 @@ Scope {
                     break;
                 case "translate":
                     if (cleanQuery.length > 0) {
-                        Cliphist.copy(hintText.text);
+                        ClipboardService.copy(hintText.text);
                     }
                     break;
                 case "note":

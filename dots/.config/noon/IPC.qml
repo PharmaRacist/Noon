@@ -31,10 +31,10 @@ Scope {
             onPressed: Brightness.decreaseBrightness();
         }
         function clear_clipboard(): void {
-            Cliphist.wipe();
+            ClipboardService.wipe();
         }
         function update_clipboard(): void {
-            Cliphist.refresh();
+            ClipboardService.refresh();
         }
         function refresh_appearance() {
             WallpaperService.refreshTheme();

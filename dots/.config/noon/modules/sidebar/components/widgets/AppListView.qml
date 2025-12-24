@@ -256,8 +256,8 @@ StyledListView {
         colBackground: Colors.colSecondaryContainer
 
         releaseAction: () => {
-            Cliphist.wipe()
-            Cliphist.refresh()
+            ClipboardService.wipe()
+            ClipboardService.refresh()
         }
 
         materialIcon: switch (selectedCategory) {
