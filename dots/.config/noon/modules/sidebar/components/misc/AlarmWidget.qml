@@ -51,6 +51,7 @@ FocusScope {
                 shown: !AlarmService.hasAlarms
                 icon: "timer"
                 title: "No active alarms"
+                description: "Swipe Below to add new Alarm"
             }
 
             delegate: AlarmItem {

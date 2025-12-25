@@ -40,6 +40,7 @@ Item {
                 shown: TimerService.uiTimers.length === 0
                 icon: "hourglass"
                 title: "No active timers"
+                description: "Swipe Below to add new Pomodoro"
             }
         }
     }
