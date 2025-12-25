@@ -211,8 +211,6 @@ JsonAdapter {
             property bool games: false
             property bool gallery: false
             property bool scripts: false
-            property bool movies: false
-            property bool documents: false
         }
 
         behavior: JsonObject {

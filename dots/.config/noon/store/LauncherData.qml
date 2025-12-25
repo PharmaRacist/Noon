@@ -64,14 +64,6 @@ Singleton {
           preExpand: true, searchable: true, customSize: sizePresets.half, enabled: Mem.options.sidebar.content.games },
         { id: "Tweaks", name: "Tweaks", icon: "tune", component: "Tweaks", expandable: true, searchable: true, 
           customSize: sizePresets.threeQuarter, enabled: Mem.options.sidebar.content.tweaks },
-        { id: "Docs", name: "Docs", icon: "description", placeholder: qsTr("Search docs..."), 
-          component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter, 
-          folderPath: Qt.resolvedUrl(Directories.notes), nameFilters: ["*.pdf", "*.docx", "*.md", "*.txt", "*.rtf", "*.odt"], 
-          enabled: Mem.options.sidebar.content.documents },
-        { id: "Movies", name: "Movies", icon: "movie", placeholder: qsTr("Search movies..."), 
-          component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter, 
-          folderPath: Directories.movies, nameFilters: ["*.mp4", "*.mkv", "*.avi", "*.mov", "*.wmv", "*.flv"], 
-          enabled: Mem.options.sidebar.content.movies },
         { id: "Bookmarks", name: "Bookmarks", icon: "bookmark", placeholder: qsTr("Search bookmarks..."), 
           component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter, 
           enabled: Mem.options.sidebar.content.bookmarks ?? true },
@@ -361,8 +353,6 @@ Singleton {
             FirefoxBookmarksService.openUrl(app.url);
             hideIfNotAux();
             break;
-        case "Docs":
-        case "Movies":
         case "Gallery":
         case "Gallary":
             if (app.path) Noon.exec(`xdg-open "${app.path}"`);

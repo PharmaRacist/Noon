@@ -280,14 +280,6 @@ QtObject {
                 "icon": "stylus",
                 "name": "Notes",
                 "key": "sidebar.content.notes"
-            }, {
-                "icon": "movie",
-                "name": "Movies",
-                "key": "sidebar.content.movies"
-            }, {
-                "icon": "folder",
-                "name": "Documents",
-                "key": "sidebar.content.documents"
             }]
         }, {
             "section": "AI Instructions",
