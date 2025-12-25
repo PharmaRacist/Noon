@@ -70,11 +70,6 @@ StyledPanel {
         Mem.states.sidebar.behavior.pinned = !pinned;
     }
     
-    Binding {
-        target: GlobalStates
-        property: "sidebarHovered"
-        value: reveal
-    }
     
     Binding {
         target: SidebarData

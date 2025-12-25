@@ -9,16 +9,31 @@ RowLayout {
     id: root
 
     property alias title: titleArea.text
+    property alias subTitle: subTitleArea.text
 
     Layout.fillWidth: true
     Layout.preferredHeight: 50
     Layout.margins: Padding.large
 
-    StyledText {
-        id: titleArea
+    ColumnLayout {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        spacing: Padding.small
 
-        font.pixelSize: Fonts.sizes.subTitle
-        color: Colors.colOnLayer2
+        StyledText {
+            id: titleArea
+
+            font.pixelSize: Fonts.sizes.subTitle
+            color: Colors.colOnLayer2
+        }
+
+        StyledText {
+            id: subTitleArea
+
+            font.pixelSize: Fonts.sizes.normal
+            color: Colors.colSubtext
+        }
+
     }
 
     Item {

@@ -14,7 +14,7 @@ Item {
     property int gridItemHeight: gridItemWidth * (9 / 16)
     property bool expanded: false
 
-    readonly property int itemSpacing: 8
+    readonly property int itemSpacing: Padding.large
 
     signal searchFocusRequested
     signal contentFocusRequested

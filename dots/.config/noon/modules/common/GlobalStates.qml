@@ -54,5 +54,6 @@ Singleton {
         KeyringStorage.fetchKeyringData();
         ClipboardService.refresh()
         Noon.playSound("device_unlocked");
+        AmbientSoundsService.init()
     }
 }

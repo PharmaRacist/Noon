@@ -9,5 +9,5 @@ Separator {
     visible: extraVisibleCondition && parent.children.length > 2
     Layout.leftMargin: Padding.large
     Layout.rightMargin: Padding.large
-    Layout.bottomMargin: Padding.verylarge
+    Layout.bottomMargin: Padding.large
 }
