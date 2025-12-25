@@ -1,420 +1,135 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
-
-// Took many bits from https://github.com/caelestia-dots/shell (GPLv3)
-
+import QtQuick
 import Quickshell
 import Quickshell.Io
-import QtQuick
-import "./network"
+import qs.modules.common
 
-/**
- * Network service with nmcli.
- */
 Singleton {
-    id: root
+    property var stats: ({
+        wifi_enabled: false,
+        ethernet: false,
+        wifi: false,
+        wifi_status: "disconnected",
+        network_name: "",
+        signal_strength: 0,
+        signal_strength_text: "0%",
+        material_icon: "signal_wifi_bad",
+        wifi_networks: [],
+        download_speed: 0,
+        upload_speed: 0,
+        download_speed_text: "0 B/s",
+        upload_speed_text: "0 B/s"
+    })
 
-    property bool wifi: true
-    property bool ethernet: false
-
-    property bool wifiEnabled: false
-    property bool wifiScanning: false
-    property bool wifiConnecting: connectProc.running
-    property WifiAccessPoint wifiConnectTarget
-    readonly property list<WifiAccessPoint> wifiNetworks: []
-    readonly property WifiAccessPoint active: wifiNetworks.find(n => n.active) ?? null
-    property string wifiStatus: "disconnected"
-
-    property string networkName: ""
-    property int networkStrength
+    // Convenience properties for direct access
+    property bool wifiEnabled: stats.wifi_enabled
+    property bool ethernet: stats.ethernet
+    property bool wifi: stats.wifi
+    property string wifiStatus: stats.wifi_status
+    property string networkName: stats.network_name
+    property int networkStrength: stats.signal_strength
+    property string networkStrengthText: stats.signal_strength_text
+    property string materialSymbol: stats.material_icon
+    property real downloadSpeed: stats.download_speed
+    property real uploadSpeed: stats.upload_speed
+    property string downloadSpeedText: stats.download_speed_text
+    property string uploadSpeedText: stats.upload_speed_text
     
-    // Network speed properties
-    property real downloadSpeed: 0  // bytes per second
-    property real uploadSpeed: 0    // bytes per second
-    
-    property string materialSymbol: root.ethernet
-        ? "lan"
-        : root.wifiEnabled
-            ? (
-                NetworkService.networkStrength > 83 ? "signal_wifi_4_bar" :
-                NetworkService.networkStrength > 67 ? "network_wifi" :
-                NetworkService.networkStrength > 50 ? "network_wifi_3_bar" :
-                NetworkService.networkStrength > 33 ? "network_wifi_2_bar" :
-                NetworkService.networkStrength > 17 ? "network_wifi_1_bar" :
-                "signal_wifi_0_bar"
-            )
-            : (root.wifiStatus === "connecting")
-                ? "signal_wifi_statusbar_not_connected"
-                : (root.wifiStatus === "disconnected")
-                    ? "wifi_find"
-                    : (root.wifiStatus === "disabled")
-                        ? "signal_wifi_off"
-                        : "signal_wifi_bad"
+    readonly property var wifiNetworks: stats.wifi_networks
+    readonly property var active: wifiNetworks.find(n => n.active) ?? null
 
-    // Format speed for display
-    function formatSpeed(bytesPerSecond: real): string {
-        if (bytesPerSecond < 1024)
-            return `${bytesPerSecond.toFixed(0)} B/s`;
-        else if (bytesPerSecond < 1024 * 1024)
-            return `${(bytesPerSecond / 1024).toFixed(1)} KB/s`;
-        else if (bytesPerSecond < 1024 * 1024 * 1024)
-            return `${(bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
-        else
-            return `${(bytesPerSecond / (1024 * 1024 * 1024)).toFixed(2)} GB/s`;
+    // Send command to Python daemon via stdin
+    function sendCommand(cmd) {
+        networkMonitor.write(JSON.stringify(cmd) + "\n");
     }
 
-    // Control
-    function enableWifi(enabled = true): void {
-        const cmd = enabled ? "on" : "off";
-        enableWifiProc.exec(["nmcli", "radio", "wifi", cmd]);
+    // Control functions
+    function enableWifi(enabled) {
+        sendCommand({"action": "enable_wifi", "enabled": enabled});
     }
 
-    function toggleWifi(): void {
-        enableWifi(!wifiEnabled);
+    function toggleWifi() {
+        sendCommand({"action": "toggle_wifi"});
     }
 
-    function rescanWifi(): void {
-        wifiScanning = true;
-        rescanProcess.running = true;
+    function rescanWifi() {
+        sendCommand({"action": "rescan_wifi"});
     }
 
-    function connectToWifiNetwork(accessPoint: WifiAccessPoint): void {
-        accessPoint.askingPassword = false;
-        root.wifiConnectTarget = accessPoint;
-        // We use this instead of `nmcli connection up SSID` because this also creates a connection profile
-        connectProc.exec(["nmcli", "dev", "wifi", "connect", accessPoint.ssid])
-
+    function connectToWifiNetwork(ssid, password) {
+        sendCommand({
+            "action": "connect",
+            "ssid": ssid,
+            "password": password || ""
+        });
     }
 
-    function disconnectWifiNetwork(): void {
-        if (active) disconnectProc.exec(["nmcli", "connection", "down", active.ssid]);
-    }
-
-    function openPublicWifiPortal() {
-        Noon.exec("xdg-open https://nmcheck.gnome.org/") // From some StackExchange thread, seems to work
-    }
-
-    function changePassword(network: WifiAccessPoint, password: string, username = ""): void {
-        // TODO: enterprise wifi with username
-        network.askingPassword = false;
-        changePasswordProc.exec({
-            "environment": {
-                "PASSWORD": password
-            },
-            "command": ["bash", "-c", `nmcli connection modify ${network.ssid} wifi-sec.psk "$PASSWORD"`]
-        })
-    }
-
-    Process {
-        id: enableWifiProc
-    }
-
-    Process {
-        id: connectProc
-        environment: ({
-            LANG: "C",
-            LC_ALL: "C"
-        })
-        stdout: SplitParser {
-            onRead: line => {
-                // print(line)
-                getNetworks.running = true
-            }
-        }
-        stderr: SplitParser {
-            onRead: line => {
-                // print("err:", line)
-                if (line.includes("Secrets were required")) {
-                    root.wifiConnectTarget.askingPassword = true
-                }
-            }
-        }
-        onExited: (exitCode, exitStatus) => {
-            root.wifiConnectTarget.askingPassword = (exitCode !== 0)
-            root.wifiConnectTarget = null
-        }
-    }
-
-    Process {
-        id: disconnectProc
-        stdout: SplitParser {
-            onRead: getNetworks.running = true
-        }
-    }
-
-    Process {
-        id: changePasswordProc
-        onExited: { // Re-attempt connection after changing password
-            connectProc.running = false
-            connectProc.running = true
-        }
-    }
-
-    Process {
-        id: rescanProcess
-        command: ["nmcli", "dev", "wifi", "list", "--rescan", "yes"]
-        stdout: SplitParser {
-            onRead: {
-                wifiScanning = false;
-                getNetworks.running = true;
-            }
-        }
-    }
-
-    // Status update
-    function update() {
-        updateConnectionType.startCheck();
-        wifiStatusProcess.running = true
-        updateNetworkName.running = true;
-        updateNetworkStrength.running = true;
-    }
-
-    Process {
-        id: subscriber
-        running: true
-        command: ["nmcli", "monitor"]
-        stdout: SplitParser {
-            onRead: root.update()
-        }
-    }
-
-    Process {
-        id: updateConnectionType
-        property string buffer
-        command: ["sh", "-c", "nmcli -t -f TYPE,STATE d status && nmcli -t -f CONNECTIVITY g"]
-        running: true
-        function startCheck() {
-            buffer = "";
-            updateConnectionType.running = true;
-        }
-        stdout: SplitParser {
-            onRead: data => {
-                updateConnectionType.buffer += data + "\n";
-            }
-        }
-        onExited: (exitCode, exitStatus) => {
-            const lines = updateConnectionType.buffer.trim().split('\n');
-            const connectivity = lines.pop() // none, limited, full
-            let hasEthernet = false;
-            let hasWifi = false;
-            let wifiStatus = "disconnected";
-            lines.forEach(line => {
-                if (line.includes("ethernet") && line.includes("connected"))
-                    hasEthernet = true;
-                else if (line.includes("wifi:")) {
-                    if (line.includes("disconnected")) {
-                        wifiStatus = "disconnected"
-                    }
-                    else if (line.includes("connected")) {
-                        hasWifi = true;
-                        wifiStatus = "connected"
-
-                        if (connectivity === "limited") {
-                            hasWifi = false;
-                            wifiStatus = "limited"
-                        }
-                    }
-                    else if (line.includes("connecting")) {
-                        wifiStatus = "connecting"
-                    }
-                    else if (line.includes("unavailable")) {
-                        wifiStatus = "disabled"
-                    }
-                }
+    function disconnectWifiNetwork() {
+        if (active && active.ssid) {
+            sendCommand({
+                "action": "disconnect",
+                "ssid": active.ssid
             });
-            root.wifiStatus = wifiStatus;
-            root.ethernet = hasEthernet;
-            root.wifi = hasWifi;
         }
     }
 
+    function forgetWifiNetwork(ssid) {
+        sendCommand({
+            "action": "forget",
+            "ssid": ssid
+        });
+    }
+
     Process {
-        id: updateNetworkName
-        command: ["sh", "-c", "nmcli -t -f NAME c show --active | head -1"]
+        id: networkMonitor
         running: true
-        stdout: SplitParser {
-            onRead: data => {
-                root.networkName = data;
-            }
-        }
-    }
-
-    Process {
-        id: updateNetworkStrength
-        running: true
-        command: ["sh", "-c", "nmcli -f IN-USE,SIGNAL,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'"]
-        stdout: SplitParser {
-            onRead: data => {
-                root.networkStrength = parseInt(data);
-            }
-        }
-    }
-
-    Process {
-        id: wifiStatusProcess
-        command: ["nmcli", "radio", "wifi"]
-        Component.onCompleted: running = true
-        environment: ({
-            LANG: "C",
-            LC_ALL: "C"
-        })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                root.wifiEnabled = text.trim() === "enabled";
-            }
-        }
-    }
-
-    // Network speed monitoring
-    Process {
-        id: updateNetworkSpeed
-        property var lastRx: 0
-        property var lastTx: 0
-        property var lastTime: 0
-        property string activeInterface: ""
-        
-        command: ["sh", "-c", `
-            # Find active network interface
-            IFACE=$(ip route | grep default | awk '{print $5}' | head -1)
-            if [ -z "$IFACE" ]; then
-                echo "no-interface"
-                exit 0
-            fi
-            # Get RX and TX bytes
-            cat /sys/class/net/$IFACE/statistics/rx_bytes 2>/dev/null || echo "0"
-            cat /sys/class/net/$IFACE/statistics/tx_bytes 2>/dev/null || echo "0"
-            echo "$IFACE"
-        `]
-        
-        property int lineCount: 0
-        property var rxBytes: 0
-        property var txBytes: 0
+        command: ["python3", Directories.scriptsDir + "/network_service.py"]
         
         stdout: SplitParser {
             onRead: data => {
-                if (data === "no-interface") {
-                    root.downloadSpeed = 0;
-                    root.uploadSpeed = 0;
-                    updateNetworkSpeed.lineCount = 0;
-                    return;
-                }
-                
-                if (updateNetworkSpeed.lineCount === 0) {
-                    updateNetworkSpeed.rxBytes = parseInt(data) || 0;
-                    updateNetworkSpeed.lineCount++;
-                } else if (updateNetworkSpeed.lineCount === 1) {
-                    updateNetworkSpeed.txBytes = parseInt(data) || 0;
-                    updateNetworkSpeed.lineCount++;
-                } else if (updateNetworkSpeed.lineCount === 2) {
-                    updateNetworkSpeed.activeInterface = data;
-                    updateNetworkSpeed.lineCount = 0;
+                try {
+                    const result = JSON.parse(data.toString());
                     
-                    const now = Date.now();
-                    
-                    if (updateNetworkSpeed.lastTime > 0) {
-                        const timeDiff = (now - updateNetworkSpeed.lastTime) / 1000; // seconds
-                        
-                        if (timeDiff > 0) {
-                            const rxDiff = updateNetworkSpeed.rxBytes - updateNetworkSpeed.lastRx;
-                            const txDiff = updateNetworkSpeed.txBytes - updateNetworkSpeed.lastTx;
-                            
-                            // Only update if values are reasonable (prevent negative or huge spikes)
-                            if (rxDiff >= 0 && txDiff >= 0) {
-                                root.downloadSpeed = rxDiff / timeDiff;
-                                root.uploadSpeed = txDiff / timeDiff;
-                            }
-                        }
+                    // Skip startup message
+                    if (result.status === "started") {
+                        console.log("Network service started");
+                        return;
                     }
                     
-                    updateNetworkSpeed.lastRx = updateNetworkSpeed.rxBytes;
-                    updateNetworkSpeed.lastTx = updateNetworkSpeed.txBytes;
-                    updateNetworkSpeed.lastTime = now;
+                    // Log errors but don't update stats
+                    if (result.error) {
+                        console.error("Network service error:", result.error);
+                        return;
+                    }
+                    
+                    // Update stats with valid data
+                    stats = result;
+                    
+                } catch (e) {
+                    console.error("Failed to parse network stats:", e);
                 }
             }
         }
+        
+        stderr: SplitParser {
+            onRead: data => {
+                console.error("Network service stderr:", data.toString());
+            }
+        }
+        
+        onExited: (exitCode, exitStatus) => {
+            console.error("Network service exited with code:", exitCode);
+            restartTimer.running = true;
+        }
     }
-
+    
     Timer {
-        interval: 1000  // Update speed every second
-        running: true
-        repeat: true
+        id: restartTimer
+        interval: 2000
         onTriggered: {
-            updateNetworkSpeed.lineCount = 0;
-            updateNetworkSpeed.running = true;
+            console.log("Restarting network service...");
+            networkMonitor.running = true;
         }
-    }
-
-    Process {
-        id: getNetworks
-        running: true
-        command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
-        environment: ({
-            LANG: "C",
-            LC_ALL: "C"
-        })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const PLACEHOLDER = "STRINGWHICHHOPEFULLYWONTBEUSED";
-                const rep = new RegExp("\\\\:", "g");
-                const rep2 = new RegExp(PLACEHOLDER, "g");
-
-                const allNetworks = text.trim().split("\n").map(n => {
-                    const net = n.replace(rep, PLACEHOLDER).split(":");
-                    return {
-                        active: net[0] === "yes",
-                        strength: parseInt(net[1]),
-                        frequency: parseInt(net[2]),
-                        ssid: net[3],
-                        bssid: net[4]?.replace(rep2, ":") ?? "",
-                        security: net[5] || ""
-                    };
-                }).filter(n => n.ssid && n.ssid.length > 0);
-
-                // Group networks by SSID and prioritize connected ones
-                const networkMap = new Map();
-                for (const network of allNetworks) {
-                    const existing = networkMap.get(network.ssid);
-                    if (!existing) {
-                        networkMap.set(network.ssid, network);
-                    } else {
-                        // Prioritize active/connected networks
-                        if (network.active && !existing.active) {
-                            networkMap.set(network.ssid, network);
-                        } else if (!network.active && !existing.active) {
-                            // If both are inactive, keep the one with better signal
-                            if (network.strength > existing.strength) {
-                                networkMap.set(network.ssid, network);
-                            }
-                        }
-                        // If existing is active and new is not, keep existing
-                    }
-                }
-
-                const wifiNetworks = Array.from(networkMap.values());
-
-                const rNetworks = root.wifiNetworks;
-
-                const destroyed = rNetworks.filter(rn => !wifiNetworks.find(n => n.frequency === rn.frequency && n.ssid === rn.ssid && n.bssid === rn.bssid));
-                for (const network of destroyed)
-                    rNetworks.splice(rNetworks.indexOf(network), 1).forEach(n => n.destroy());
-
-                for (const network of wifiNetworks) {
-                    const match = rNetworks.find(n => n.frequency === network.frequency && n.ssid === network.ssid && n.bssid === network.bssid);
-                    if (match) {
-                        match.lastIpcObject = network;
-                    } else {
-                        rNetworks.push(apComp.createObject(root, {
-                            lastIpcObject: network
-                        }));
-                    }
-                }
-            }
-        }
-    }
-
-    Component {
-        id: apComp
-
-        WifiAccessPoint {}
     }
 }

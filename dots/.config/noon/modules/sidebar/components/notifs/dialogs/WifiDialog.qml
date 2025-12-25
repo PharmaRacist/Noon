@@ -1,18 +1,32 @@
 import qs.services
-import qs.services.network
 import qs.modules.common
 import qs.modules.common.widgets
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
 
-
 BottomDialog {
     id: root
     
     collapsedHeight: parent.height * 0.65
-    show:GlobalStates.showWifiDialog
-    finishAction:GlobalStates.showWifiDialog = reveal
+    show: GlobalStates.showWifiDialog
+    finishAction: GlobalStates.showWifiDialog = reveal
+    
+    property bool isScanning: false
+    
+    onShowChanged: {
+        if (show && NetworkService.wifiEnabled) {
+            isScanning = true;
+            NetworkService.rescanWifi();
+            scanTimer.restart();
+        }
+    }
+    
+    Timer {
+        id: scanTimer
+        interval: 3000
+        onTriggered: isScanning = false
+    }
     
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -22,10 +36,11 @@ BottomDialog {
         BottomDialogHeader {
             title: "Connect to Wi-Fi"
         }
+        
         BottomDialogSeparator {}
 
         StyledIndeterminateProgressBar {
-            visible: NetworkService.wifiScanning
+            visible: root.isScanning
             Layout.fillWidth: true
         }
 
@@ -33,33 +48,41 @@ BottomDialog {
             Layout.fillHeight: true
             Layout.fillWidth: true
             clip: true
-            spacing: 0
+            spacing: 4  // Add spacing between items
 
-            model: ScriptModel {
-                values: [...NetworkService.wifiNetworks].sort((a, b) => {
+            model: {
+                const networks = [...NetworkService.wifiNetworks];
+                return networks.sort((a, b) => {
                     if (a.active && !b.active) return -1;
                     if (!a.active && b.active) return 1;
                     return b.strength - a.strength;
-                })
+                });
             }
 
             delegate: WifiNetworkItem {
-                required property WifiAccessPoint modelData
-                wifiNetwork: modelData
-                anchors {
-                    left: parent?.left
-                    right: parent?.right
-                }
+                required property var modelData
+                required property int index
+                
+                width: ListView.view.width
+                network: modelData
             }
         }
 
-        
         RowLayout {
             Layout.preferredHeight: 50
             Layout.fillWidth: true
             
             Item {
-                Layout.fillWidth:true
+                Layout.fillWidth: true
+            }
+            
+            DialogButton {
+                buttonText: qsTr("Refresh")
+                onClicked: {
+                    root.isScanning = true;
+                    NetworkService.rescanWifi();
+                    scanTimer.restart();
+                }
             }
             
             DialogButton {

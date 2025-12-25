@@ -1,18 +1,38 @@
 import qs.modules.common
 import qs.modules.common.widgets
 import qs.services
-import qs.services.network
 import QtQuick
 import QtQuick.Layouts
 
 DialogListItem {
     id: root
-    required property WifiAccessPoint wifiNetwork
-    enabled: !(NetworkService.wifiConnectTarget === root.wifiNetwork && !wifiNetwork?.active)
-
-    active: (wifiNetwork?.askingPassword || wifiNetwork?.active) ?? false
+    required property var network
+    
+    property bool showPasswordPrompt: false
+    
+    active: network?.active ?? false
+    
+    // Reset password prompt when network changes
+    onNetworkChanged: {
+        showPasswordPrompt = false;
+    }
+    
     onClicked: {
-        NetworkService.connectToWifiNetwork(wifiNetwork);
+        if (network.active) {
+            // Disconnect if already connected
+            NetworkService.disconnectWifiNetwork();
+        } else {
+            const isSecured = network.security && network.security.length > 0;
+            const isSaved = network.saved ?? false;
+            
+            if (isSecured && !isSaved) {
+                // Show password prompt only for unsaved secured networks
+                showPasswordPrompt = true;
+            } else {
+                // Connect directly (saved networks or open networks)
+                NetworkService.connectToWifiNetwork(network.ssid, "");
+            }
+        }
     }
 
     contentItem: ColumnLayout {
@@ -23,52 +43,72 @@ DialogListItem {
             leftMargin: root.horizontalPadding
             rightMargin: root.horizontalPadding
         }
-        spacing: 0
+        spacing: 8
 
         RowLayout {
-            // Name
+            Layout.fillWidth: true
             spacing: 10
+            
             MaterialSymbol {
                 font.pixelSize: Fonts.sizes.verylarge
-                property int strength: root.wifiNetwork?.strength ?? 0
-                text: strength > 80 ? "signal_wifi_4_bar" : strength > 60 ? "network_wifi_3_bar" : strength > 40 ? "network_wifi_2_bar" : strength > 20 ? "network_wifi_1_bar" : "signal_wifi_0_bar"
+                text: {
+                    const s = root.network?.strength ?? 0;
+                    if (s > 80) return "signal_wifi_4_bar";
+                    if (s > 60) return "network_wifi_3_bar";
+                    if (s > 40) return "network_wifi_2_bar";
+                    if (s > 20) return "network_wifi_1_bar";
+                    return "signal_wifi_0_bar";
+                }
                 color: Colors.colOnSurfaceVariant
             }
+            
             StyledText {
                 Layout.fillWidth: true
                 color: Colors.colOnSurfaceVariant
                 elide: Text.ElideRight
-                text: root.wifiNetwork?.ssid ?? qsTr("Unknown")
+                text: root.network?.ssid ?? qsTr("Unknown")
             }
+            
             MaterialSymbol {
-                visible: (root.wifiNetwork?.isSecure || root.wifiNetwork?.active) ?? false
-                text: root.wifiNetwork?.active ? "check" : NetworkService.wifiConnectTarget === root.wifiNetwork ? "settings_ethernet" : "lock"
+                visible: {
+                    const hasSecurity = root.network?.security && root.network.security.length > 0;
+                    const isActive = root.network?.active ?? false;
+                    return hasSecurity || isActive;
+                }
+                text: {
+                    if (root.network?.active) return "check";
+                    if (root.network?.saved) return "lock_open";
+                    return "lock";
+                }
                 font.pixelSize: Fonts.sizes.verylarge
-                color: Colors.colOnSurfaceVariant
+                color: root.network?.active ? Colors.m3.m3primary : Colors.colOnSurfaceVariant
             }
         }
 
-        ColumnLayout { // Password
-            id: passwordPrompt
-            Layout.topMargin: 8
-            visible: root.wifiNetwork?.askingPassword ?? false
+        // Password prompt
+        ColumnLayout {
+            Layout.fillWidth: true
+            visible: root.showPasswordPrompt
+            spacing: 8
 
             MaterialTextField {
                 id: passwordField
                 Layout.fillWidth: true
                 placeholderText: qsTr("Password")
-
-                // Password
                 echoMode: TextInput.Password
                 inputMethodHints: Qt.ImhSensitiveData
-
+                focus: root.showPasswordPrompt
+                
                 onAccepted: {
-                    NetworkService.changePassword(root.wifiNetwork, passwordField.text);
+                    NetworkService.connectToWifiNetwork(root.network.ssid, text);
+                    root.showPasswordPrompt = false;
+                    text = "";
                 }
             }
 
             RowLayout {
                 Layout.fillWidth: true
+                spacing: 8
 
                 Item {
                     Layout.fillWidth: true
@@ -77,41 +117,42 @@ DialogListItem {
                 DialogButton {
                     buttonText: qsTr("Cancel")
                     onClicked: {
-                        root.wifiNetwork.askingPassword = false;
+                        root.showPasswordPrompt = false;
+                        passwordField.text = "";
                     }
                 }
 
                 DialogButton {
                     buttonText: qsTr("Connect")
                     onClicked: {
-                        NetworkService.changePassword(root.wifiNetwork, passwordField.text);
+                        NetworkService.connectToWifiNetwork(root.network.ssid, passwordField.text);
+                        root.showPasswordPrompt = false;
+                        passwordField.text = "";
                     }
                 }
             }
         }
 
-        ColumnLayout { // Public wifi login page
-            id: publicWifiPortal
-            Layout.topMargin: 8
-            visible: (root.wifiNetwork?.active && (root.wifiNetwork?.security ?? "").trim().length === 0) ?? false
+        // Public wifi portal (for active open networks)
+        ColumnLayout {
+            Layout.fillWidth: true
+            visible: {
+                const isActive = root.network?.active ?? false;
+                const isOpen = !root.network?.security || root.network.security.length === 0;
+                return isActive && isOpen;
+            }
 
-            RowLayout {
-                DialogButton {
-                    Layout.fillWidth: true
-                    buttonText: qsTr("Open network portal")
-                    colBackground: Colors.colLayer4
-                    colBackgroundHover: Colors.colLayer4Hover
-                    colRipple: Colors.colLayer4Active
-                    onClicked: {
-                        NetworkService.openPublicWifiPortal();
-                        GlobalStates.sidebarRightOpen = false;
-                    }
+            DialogButton {
+                Layout.fillWidth: true
+                buttonText: qsTr("Open network portal")
+                colBackground: Colors.colLayer4
+                colBackgroundHover: Colors.colLayer4Hover
+                colRipple: Colors.colLayer4Active
+                onClicked: {
+                    Qt.openUrlExternally("http://nmcheck.gnome.org/");
+                    GlobalStates.sidebarRightOpen = false;
                 }
             }
-        }
-
-        Item {
-            Layout.fillHeight: true
         }
     }
 }

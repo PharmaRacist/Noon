@@ -9,18 +9,13 @@ StyledPopup {
     id: root
 
     ColumnLayout {
-        id: columnLayout
-
         anchors.centerIn: parent
-        spacing: 4
-        implicitWidth: 400
-        implicitHeight: 400
+        spacing: 8
+        implicitWidth: 350
 
         // Header
         Row {
-            id: header
-
-            spacing: 5
+            spacing: 6
 
             MaterialSymbol {
                 anchors.verticalCenter: parent.verticalCenter
@@ -35,17 +30,13 @@ StyledPopup {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Network"
                 color: Colors.m3.m3onSurfaceVariant
-
-                font {
-                    weight: Font.Medium
-                    pixelSize: Fonts.sizes.normal
-                }
-
+                font.weight: Font.Medium
+                font.pixelSize: Fonts.sizes.large
             }
 
         }
 
-        // Connection Type Row
+        // Connection Type
         RowLayout {
             spacing: 5
             Layout.fillWidth: true
@@ -65,19 +56,16 @@ StyledPopup {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.ethernet ? "Ethernet" : "Wi-Fi"
+                text: NetworkService.ethernet ? "Ethernet" : NetworkService.wifi ? "Wi-Fi" : "Disconnected"
             }
 
         }
 
-        // Network Name Row
+        // Network Name
         RowLayout {
-            property bool rowVisible: NetworkService.networkName.length > 0 && NetworkService.networkName != "lo"
-
             spacing: 5
             Layout.fillWidth: true
-            visible: rowVisible
-            opacity: rowVisible ? 1 : 0
+            visible: NetworkService.networkName.length > 0
 
             MaterialSymbol {
                 text: "router"
@@ -98,22 +86,13 @@ StyledPopup {
                 elide: Text.ElideRight
             }
 
-            Behavior on opacity {
-                FAnim {
-                }
-
-            }
-
         }
 
-        // Signal Strength Row (Wi-Fi only)
+        // Signal Strength (Wi-Fi only)
         RowLayout {
-            property bool rowVisible: NetworkService.wifi && !NetworkService.ethernet && NetworkService.networkStrength > 0
-
             spacing: 5
             Layout.fillWidth: true
-            visible: rowVisible
-            opacity: rowVisible ? 1 : 0
+            visible: NetworkService.wifi && NetworkService.networkStrength > 0
 
             MaterialSymbol {
                 text: "signal_cellular_alt"
@@ -130,18 +109,12 @@ StyledPopup {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: `${NetworkService.networkStrength}%`
-            }
-
-            Behavior on opacity {
-                FAnim {
-                }
-
+                text: NetworkService.networkStrengthText
             }
 
         }
 
-        // Download Speed Row
+        // Download Speed
         RowLayout {
             spacing: 5
             Layout.fillWidth: true
@@ -161,12 +134,12 @@ StyledPopup {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.formatSpeed(NetworkService.downloadSpeed)
+                text: NetworkService.downloadSpeedText
             }
 
         }
 
-        // Upload Speed Row - MOVED INSIDE ColumnLayout!
+        // Upload Speed
         RowLayout {
             spacing: 5
             Layout.fillWidth: true
@@ -186,7 +159,7 @@ StyledPopup {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.formatSpeed(NetworkService.uploadSpeed)
+                text: NetworkService.uploadSpeedText
             }
 
         }
