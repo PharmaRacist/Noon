@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 
 StyledRect {
@@ -138,7 +138,7 @@ StyledRect {
                         model: modelData.bubbles
 
                         RippleButtonWithIcon {
-                            visible: modelData.extraVisibleCondition
+                            visible: modelData?.extraVisibleCondition ?? true
                             Layout.fillWidth: true
                             enabled: modelData.enabled !== undefined ? modelData.enabled : true
                             materialIcon: modelData.icon

@@ -7,9 +7,9 @@ import QtQuick.Effects
 import Quickshell.Hyprland
 import Quickshell.Widgets
 import qs.modules.bar.components
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 import qs.services
 import qs.store
 

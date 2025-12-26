@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell
-import qs.modules.common.utils
+import qs.common.utils
 pragma Singleton
 
 /**

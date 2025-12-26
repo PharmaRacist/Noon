@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell
-import qs.modules.common
+import qs.common
 
 QuickToggleButton {
     id: root

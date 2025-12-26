@@ -1,6 +1,6 @@
 pragma Singleton
 
-import qs.modules.common
+import qs.common
 import Quickshell
 
 Singleton {

@@ -1,9 +1,9 @@
 pragma Singleton
 import QtQuick
 import Quickshell
-import qs.modules.common.utils
-import qs.modules.common.functions
-import qs.modules.common
+import qs.common.utils
+import qs.common.functions
+import qs.common
 
 /**
  * Singleton service for translation using the `trans` commandline tool.

@@ -3,8 +3,8 @@ import QtQuick.Window
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Services.Pam
-import Quickshell.Wayland
-import qs.modules.common
+import qs.common
+import qs.common.utils
 import qs.services
 
 Scope {

@@ -5,8 +5,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
 import Quickshell.Widgets
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 
 Item {
@@ -42,6 +42,7 @@ Item {
                         return media != undefined ? `${app} • ${media}` : app;
                     }
                 }
+
             }
 
             RowLayout {
@@ -71,7 +72,11 @@ Item {
                     value: root.node.audio.volume
                     onValueChanged: root.node.audio.volume = value
                 }
+
             }
+
         }
+
     }
+
 }

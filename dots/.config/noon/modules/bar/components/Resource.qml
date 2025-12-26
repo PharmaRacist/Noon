@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 
 Item {
     required property string iconName

@@ -1,8 +1,8 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import qs.modules.common.functions
-import qs.modules.common
+import qs.common.functions
+import qs.common
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland

@@ -4,16 +4,18 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 
 StyledRect {
     id: root
+
     color: Colors.colLayer1
     radius: Rounding.verylarge
     anchors.margins: Padding.normal
     clip: false
+
     // Scrollable window
     NotificationListView {
         id: listview
@@ -33,7 +35,9 @@ StyledRect {
                 height: listview.height
                 radius: Rounding.normal
             }
+
         }
+
     }
 
     // Placeholder when list is empty
@@ -49,8 +53,11 @@ StyledRect {
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+            }
+
         }
+
     }
 
     Item {
@@ -74,8 +81,11 @@ StyledRect {
             visible: opacity > 0
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                }
+
             }
+
         }
 
         ButtonGroup {
@@ -85,11 +95,14 @@ StyledRect {
             anchors.verticalCenter: parent.verticalCenter
             anchors.rightMargin: Padding.large
             anchors.verticalCenterOffset: -Padding.large
+
             NotificationStatusButton {
                 buttonIcon: "notifications_paused"
                 buttonText: qsTr("Silent")
                 toggled: Notifications.silent
-                onClicked: () => Mem.options.services.notifications.silent = !Notifications.silent
+                onClicked: () => {
+                    return Mem.options.services.notifications.silent = !Notifications.silent;
+                }
             }
 
             NotificationStatusButton {
@@ -99,6 +112,9 @@ StyledRect {
                     Notifications.discardAllNotifications();
                 }
             }
+
         }
+
     }
+
 }

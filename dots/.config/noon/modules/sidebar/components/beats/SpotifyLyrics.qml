@@ -3,10 +3,10 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import QtQuick.Effects
-import qs.modules.common.widgets
+import qs.common.widgets
 import qs.services
-import qs.modules.common
-import qs.modules.common.functions
+import qs.common
+import qs.common.functions
 
 
 Item {

@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common
+import qs.common.utils
 import qs.store
 pragma Singleton
 
@@ -36,7 +36,7 @@ Singleton {
         colors.darkmode = (colors.m3background.hslLightness < 0.5);
     }
 
-    function relaod() {
+    function reload() {
         themeFileView.reload();
     }
 

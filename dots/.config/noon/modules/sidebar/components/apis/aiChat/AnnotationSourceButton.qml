@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 import qs.services
 
 RippleButton {

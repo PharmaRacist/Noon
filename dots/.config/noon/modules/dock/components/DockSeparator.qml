@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.modules.common
+import qs.common
 
 Rectangle {
     Layout.topMargin: Sizes.elevationMargin + Rounding.normal

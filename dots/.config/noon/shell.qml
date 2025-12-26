@@ -7,12 +7,11 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Wayland
 import qs.modules.view
 import qs.modules.bar
 import qs.modules.desktop.bg
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common
+import qs.common.utils
 import qs.modules.dock
 import qs.modules.lock
 import qs.modules.notificationPopup

@@ -1,6 +1,6 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
-import qs.modules.common
+import qs.common
 import Quickshell
 import Quickshell.Hyprland
 import Qt.labs.platform
@@ -17,7 +17,7 @@ Singleton {
     id: root
 
     property var list: []
-    property string todoistApiToken: KeyringStorage?.keyringData.todoistApiKey
+    property string todoistApiToken: KeyringStorage?.keyringData.todoistApiKey || ""
     property bool todoistEnabled: Mem.options.services.todo.enableTodoist ?? false
     property bool syncEnabled: todoistEnabled && todoistApiToken.length > 0
     property int syncInterval: 10000

@@ -1,16 +1,12 @@
-import Qt5Compat.GraphicalEffects
+import "./layouts"
+import "./verticalBar"
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Services.Mpris
 import Quickshell.Wayland
-import qs.modules.bar
-import qs.modules.bar.layouts
-import qs.modules.bar.verticalBar
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.utils
+import qs.common.widgets
 import qs.services
 import qs.store
 

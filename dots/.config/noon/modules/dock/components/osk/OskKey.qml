@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 import qs.services
 
 RippleButton {
@@ -49,14 +49,14 @@ RippleButton {
 
     }
     releaseAction: () => {
+        // Caps lock mode
+
         if (root.type == "normal") {
             Ydotool.release(root.keycode);
             if (Ydotool.shiftMode == 1)
                 Ydotool.releaseShiftKeys();
 
         } else if (isShift) {
-            // Caps lock mode
-
             if (Ydotool.shiftMode == 1) {
                 if (!capsLockTimer.hasStarted) {
                     capsLockTimer.startWaiting();

@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import Quickshell.Hyprland
 import Quickshell.Services.UPower
 import Quickshell
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 import qs.modules.bar.components
 

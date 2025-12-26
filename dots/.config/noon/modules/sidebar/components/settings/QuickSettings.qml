@@ -6,8 +6,8 @@ import QtQuick.Layouts
 import Quickshell
 import qs.store
 import qs.services
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 
 StyledRect {
     id: root

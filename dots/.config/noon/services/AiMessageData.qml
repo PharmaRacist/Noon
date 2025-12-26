@@ -1,5 +1,5 @@
-import qs.modules.common
-import QtQuick;
+import QtQuick
+import qs.common
 
 /**
  * Represents a message in an AI conversation. (Kind of) follows the OpenAI API message structure.

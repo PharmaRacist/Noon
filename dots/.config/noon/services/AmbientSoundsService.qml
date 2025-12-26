@@ -3,8 +3,8 @@ import QtQuick
 import QtMultimedia
 import Quickshell
 import Qt.labs.folderlistmodel
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common
+import qs.common.utils
 
 Singleton {
     id: root

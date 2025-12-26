@@ -2,8 +2,8 @@ import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 import qs.modules.sidebar.components.apis.medicalDictionary
 import qs.modules.sidebar.components.apis.translator

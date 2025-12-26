@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 
 import Quickshell
 import QtQuick
-import qs.modules.common.utils
+import qs.common.utils
 
 Singleton {
     id: root

@@ -3,10 +3,9 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Wayland
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 import qs.modules.desktop.bg
 import qs.services
 import qs.store

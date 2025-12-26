@@ -2,11 +2,11 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Wayland
 import Quickshell.Hyprland
 import Qt5Compat.GraphicalEffects
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.utils
+import qs.common.widgets
 
 Item {
     id: thumbContainer
@@ -192,7 +192,7 @@ Item {
             id: thumbLoader
             anchors.fill: parent
             active: root.isActive && !!thumbContainer.wHandle
-            sourceComponent: ScreencopyView {
+            sourceComponent: StyledScreencopyView {
                 id: thumb
                 anchors.fill: parent
                 captureSource: thumbContainer.wHandle

@@ -6,8 +6,8 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Services.UPower
 import qs.modules.bar.components
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 import qs.store
 

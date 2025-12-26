@@ -6,11 +6,10 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Wayland
 import Quickshell.Widgets
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 import qs.services
 
 Menu {

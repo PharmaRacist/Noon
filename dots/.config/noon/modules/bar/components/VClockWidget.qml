@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
+import qs.common
+import qs.common.widgets
 import qs.modules.bar.components
-import qs.modules.common
-import qs.modules.common.widgets
 import qs.services
 import qs.store
 

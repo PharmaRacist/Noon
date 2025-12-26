@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Pam
-import qs.modules.common
+import qs.common
 
 Scope {
     id: root

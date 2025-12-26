@@ -1,12 +1,11 @@
 import qs.services
-import qs.modules.common
-import qs.modules.common.utils
-import qs.modules.common.widgets
+import qs.common
+import qs.common.utils
+import qs.common.widgets
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Hyprland
 
 Scope {

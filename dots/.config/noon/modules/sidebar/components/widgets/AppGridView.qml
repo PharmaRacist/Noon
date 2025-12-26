@@ -3,9 +3,9 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import QtQuick.Effects
 import Quickshell
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 import qs.services
 
 StyledGridView {

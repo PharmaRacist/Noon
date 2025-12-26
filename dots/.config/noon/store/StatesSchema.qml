@@ -1,4 +1,4 @@
-import qs.modules.common.utils
+import qs.common.utils
 
 JsonAdapter {
     property JsonObject desktop: JsonObject {

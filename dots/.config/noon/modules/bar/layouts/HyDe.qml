@@ -5,9 +5,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Services.UPower
+import qs.common
+import qs.common.widgets
 import qs.modules.bar.components as Components
-import qs.modules.common
-import qs.modules.common.widgets
 import qs.services
 
 Item {

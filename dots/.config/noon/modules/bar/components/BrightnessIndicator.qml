@@ -3,8 +3,8 @@ import Quickshell
 import Quickshell.Hyprland
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 import qs.store
 

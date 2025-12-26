@@ -1,8 +1,8 @@
 import QtQuick
 import Quickshell
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 pragma Singleton
 
 Singleton {

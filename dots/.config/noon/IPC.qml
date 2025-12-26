@@ -1,11 +1,11 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Mpris
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common
+import qs.common.utils
 import qs.modules.view
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common.functions
+import qs.common.widgets
 import qs.services
 import qs.store
 

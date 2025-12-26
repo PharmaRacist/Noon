@@ -2,20 +2,20 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 
 Rectangle {
     id: timerDock
 
     property int contentWidth: timerContent.implicitWidth + 36
+    property bool extraVisibleCondition
 
     function requestOverlayMode() {
         Mem.options.desktop.timerOverlayMode = !Mem.options.desktop.timerOverlayMode;
     }
 
-    property bool extraVisibleCondition
     // Auto-hide when no timers
     visible: TimerService.uiTimers.length >= 1 && extraVisibleCondition
     width: visible ? contentWidth : 0
@@ -69,6 +69,7 @@ Rectangle {
                                 opacity: 0.7
                                 font.weight: Font.DemiBold
                             }
+
                         }
 
                         Item {
@@ -93,9 +94,13 @@ Rectangle {
 
                             // Smooth progress animation to reduce flickering
                             Behavior on value {
-                                Anim {}
+                                Anim {
+                                }
+
                             }
+
                         }
+
                     }
 
                     // Individual timer click area for pause/resume/delete
@@ -104,7 +109,7 @@ Rectangle {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-                        onClicked: mouse => {
+                        onClicked: (mouse) => {
                             if (mouse.button === Qt.RightButton) {
                                 timerDock.requestOverlayMode();
                             } else if (mouse.button === Qt.MiddleButton) {
@@ -117,6 +122,7 @@ Rectangle {
                             }
                         }
                     }
+
                 }
 
                 // Separator - only show if not the last item
@@ -131,8 +137,11 @@ Rectangle {
                     Layout.leftMargin: 12
                     Layout.rightMargin: 12
                 }
+
             }
+
         }
+
     }
 
     // Pulsing animation when any timer is about to finish (last 10 seconds)
@@ -141,6 +150,7 @@ Rectangle {
             for (let i = 0; i < TimerService.uiTimers.length; i++) {
                 if (TimerService.uiTimers[i].isRunning && TimerService.uiTimers[i].remainingTime <= 10 && TimerService.uiTimers[i].remainingTime > 0)
                     return true;
+
             }
             return false;
         }
@@ -159,6 +169,7 @@ Rectangle {
             from: 0.6
             to: 1
         }
+
     }
 
     // Optional: Click handler for the dock background (if clicking outside individual timers)
@@ -175,10 +186,14 @@ Rectangle {
         ColorAnimation {
             duration: 300
         }
+
     }
 
     // Smooth width animation
     Behavior on width {
-        Anim {}
+        Anim {
+        }
+
     }
+
 }

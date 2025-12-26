@@ -8,10 +8,9 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Services.Mpris
 import Quickshell.Services.UPower
-import Quickshell.Wayland
 import Quickshell.Widgets
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 
 RowLayout {
     id: batteryLayout

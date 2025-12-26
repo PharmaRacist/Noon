@@ -1,7 +1,7 @@
 import qs.services
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.widgets
+import qs.common
+import qs.common.functions
+import qs.common.widgets
 
 import Qt5Compat.GraphicalEffects
 import QtQuick
@@ -10,7 +10,6 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Wayland
 import Quickshell.Hyprland
 
 Item {

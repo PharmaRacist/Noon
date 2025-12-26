@@ -1,5 +1,5 @@
 import Quickshell
-import qs.modules.common
+import qs.common
 import qs.services
 
 QuickToggleButton {

@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common
+import qs.common.utils
 pragma Singleton
 
 Singleton {
@@ -74,9 +74,9 @@ Singleton {
     function disconnectWifiNetwork() {
         if (active && active.ssid)
             sendCommand({
-                "action": "disconnect",
-                "ssid": active.ssid
-            });
+            "action": "disconnect",
+            "ssid": active.ssid
+        });
 
     }
 

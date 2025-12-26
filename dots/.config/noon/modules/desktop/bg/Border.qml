@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Wayland
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.utils
+import qs.common.widgets
 
 StyledPanel {
     id: root

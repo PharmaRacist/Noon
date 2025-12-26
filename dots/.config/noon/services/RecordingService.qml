@@ -1,13 +1,15 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.utils
+import qs.common
+import qs.common.functions
+import qs.common.utils
 pragma Singleton
 
 Singleton {
     // Replace the startRecording() function with this corrected version:
+    // Poll the process list (this is a simplified check)
+    // In a real implementation, you'd want a more robust check
 
     id: root
 
@@ -45,22 +47,7 @@ Singleton {
     // Internal
     property Process recordingProcess: null
     property Timer stateCheckTimer
-
-    stateCheckTimer: Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: checkRecordingState()
-    }
-
     property Timer durationTimer
-
-    durationTimer: Timer {
-        interval: 1000
-        running: root.isRecording
-        repeat: true
-        onTriggered: root.recordingDuration++
-    }
 
     // Signals
     signal recordingStarted()
@@ -69,9 +56,6 @@ Singleton {
 
     // Check if wf-recorder is running
     function checkRecordingState() {
-        // Poll the process list (this is a simplified check)
-        // In a real implementation, you'd want a more robust check
-
         const wasRecording = root.isRecording;
         // Simple check using pidof
         const result = Noon.exec("pidof wf-recorder");
@@ -318,16 +302,31 @@ Singleton {
     Component.onCompleted: {
         if (!Mem.options.services)
             Mem.options.services = {
-            };
+        };
 
         if (!Mem.options.services.recording)
             Mem.options.services.recording = {
-                "recordingMode": RecordingService.RecordingMode.FullScreen,
-                "audioMode": RecordingService.AudioMode.SystemAudio,
-                "quality": RecordingService.Quality.Medium,
-                "showCursor": true,
-                "customFramerate": 0
-            };
+            "recordingMode": RecordingService.RecordingMode.FullScreen,
+            "audioMode": RecordingService.AudioMode.SystemAudio,
+            "quality": RecordingService.Quality.Medium,
+            "showCursor": true,
+            "customFramerate": 0
+        };
 
     }
+
+    stateCheckTimer: Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        onTriggered: checkRecordingState()
+    }
+
+    durationTimer: Timer {
+        interval: 1000
+        running: root.isRecording
+        repeat: true
+        onTriggered: root.recordingDuration++
+    }
+
 }

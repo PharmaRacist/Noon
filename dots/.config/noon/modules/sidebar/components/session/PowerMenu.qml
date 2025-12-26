@@ -3,8 +3,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Hyprland
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 
 Item {
     id: root

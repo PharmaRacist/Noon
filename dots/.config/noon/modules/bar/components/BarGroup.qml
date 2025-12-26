@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 
 StyledRect {
     property real padding: 0.85

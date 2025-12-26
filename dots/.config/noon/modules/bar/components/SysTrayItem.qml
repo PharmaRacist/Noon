@@ -3,10 +3,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Services.SystemTray
-import Quickshell.Wayland
 import Quickshell.Widgets
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.store
 
 MouseArea {

@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 
 BottomDialog {
@@ -32,7 +32,9 @@ BottomDialog {
                     return bottomDialog.expand = false;
                 }
             }
+
         }
+
         SearchBar {
             Layout.fillWidth: true
             implicitHeight: 40
@@ -48,6 +50,7 @@ BottomDialog {
                 interval: 200
                 onTriggered: BeatsService.updateSearchFilter(searchText)
             }
+
         }
 
         StyledListView {
@@ -86,7 +89,11 @@ BottomDialog {
                     trackName: parent.title
                     parentButton: parent
                 }
+
             }
+
         }
+
     }
+
 }

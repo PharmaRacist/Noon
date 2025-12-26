@@ -1,11 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Wayland
 import Quickshell
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.utils
-import qs.modules.common.widgets
+import Quickshell.Wayland
+import qs.common
+import qs.common.functions
+import qs.common.utils
+import qs.common.widgets
 import qs.services
 import qs.store
 
@@ -27,7 +27,7 @@ StyledPanel {
     exclusiveZone: !barMode && pinned ? implicitWidth - visualContainer.rounding : noExlusiveZone ? -1 : 0
     aboveWindows: true
     kbFocus: GlobalStates.sidebarOpen && !barMode
-    WlrLayershell.layer: SidebarData?.isOverlay(sidebarContent.selectedCategory) ? WlrLayer.Overlay : WlrLayer.Top
+    WlrLayershell.layer: SidebarData?.isOverlay(sidebarContent.selectedCategory) ? WlrLayer.Overlay : WlrLayer.Normal
     
     anchors {
         left: !visualContainer.rightMode || !pinned

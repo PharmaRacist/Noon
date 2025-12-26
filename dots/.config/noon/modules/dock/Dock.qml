@@ -1,15 +1,14 @@
 import qs.services
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.modules.dock.components
 import qs.modules.dock.components.osk
 import qs.modules.dock
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Hyprland
-
+import Quickshell.Wayland
 Scope {
     id: root
 

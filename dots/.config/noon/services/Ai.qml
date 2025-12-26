@@ -1,11 +1,10 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import qs.modules.common.functions as CF
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common.functions as CF
+import qs.common
+import qs.common.utils
 import Quickshell
-import Quickshell.Wayland
 import QtQuick
 import qs.services.ai
 

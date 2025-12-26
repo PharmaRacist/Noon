@@ -7,8 +7,8 @@ pragma ComponentBehavior: Bound
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common
+import qs.common.utils
 
 /**
  * For managing brightness of monitors. Supports both brightnessctl and ddcutil.

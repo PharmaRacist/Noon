@@ -4,8 +4,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import qs.modules.common
-import qs.modules.common.utils
+import qs.common
+import qs.common.utils
 /**
  * Provides access to some Hyprland data not available in Quickshell.Hyprland.
  */

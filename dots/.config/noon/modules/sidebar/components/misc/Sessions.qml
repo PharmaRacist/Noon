@@ -1,14 +1,54 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import qs.modules.common.widgets
+import qs.common.widgets
 
 Rectangle {
+    // In real usage, connect to LoginctlData:
+    // sessionModel.clear();
+    // for (var i = 0; i < LoginctlData.sessions.length; i++) {
+    //     sessionModel.append(LoginctlData.sessions[i]);
+    // }
+
     id: root
+
+    function loadMockData() {
+        sessionModel.clear();
+        sessionModel.append({
+            "session": "1",
+            "uid": "1000",
+            "user": "john",
+            "seat": "seat0"
+        });
+        sessionModel.append({
+            "session": "2",
+            "uid": "1001",
+            "user": "jane",
+            "seat": "seat0"
+        });
+        sessionModel.append({
+            "session": "c3",
+            "uid": "1000",
+            "user": "john",
+            "seat": ""
+        });
+    }
+
+    function removeSession(sessionId) {
+        for (var i = 0; i < sessionModel.count; i++) {
+            if (sessionModel.get(i).session === sessionId) {
+                sessionModel.remove(i);
+                break;
+            }
+        }
+    }
 
     width: 600
     height: 400
     color: "#1e1e2e"
+    Component.onCompleted: {
+        loadMockData();
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -31,6 +71,10 @@ Rectangle {
             Button {
                 text: "Add Session"
                 font.pixelSize: 14
+                onClicked: {
+                    console.log("Add session clicked");
+                    addDialog.visible = true;
+                }
 
                 contentItem: Text {
                     text: parent.text
@@ -45,15 +89,16 @@ Rectangle {
                     radius: 6
                 }
 
-                onClicked: {
-                    console.log("Add session clicked");
-                    addDialog.visible = true;
-                }
             }
 
             Button {
                 text: "Refresh"
                 font.pixelSize: 14
+                onClicked: {
+                    // LoginctlData.updateSessions();
+                    console.log("Refresh clicked");
+                    loadMockData();
+                }
 
                 contentItem: Text {
                     text: parent.text
@@ -68,28 +113,32 @@ Rectangle {
                     radius: 6
                 }
 
-                onClicked: {
-                    // LoginctlData.updateSessions();
-                    console.log("Refresh clicked");
-                    loadMockData();
-                }
             }
+
         }
 
         // Session List
         StyledListView {
             id: sessionListView
+
             Layout.fillWidth: true
             Layout.fillHeight: true
-
             spacing: 8
             clip: true
             colBackground: "#181825"
             radius: 8
             animateMovement: false
             popin: true
-
             model: sessionModel
+
+            // Empty state
+            Label {
+                anchors.centerIn: parent
+                text: "No active sessions"
+                font.pixelSize: 16
+                color: "#6c7086"
+                visible: sessionListView.count === 0
+            }
 
             delegate: Rectangle {
                 width: sessionListView.width - 20
@@ -128,6 +177,7 @@ Rectangle {
                             font.pixelSize: 13
                             color: "#a6adc8"
                         }
+
                     }
 
                     // Terminate Button
@@ -135,6 +185,10 @@ Rectangle {
                         text: "Terminate"
                         font.pixelSize: 13
                         Layout.preferredWidth: 100
+                        onClicked: {
+                            confirmDialog.sessionId = model.session;
+                            confirmDialog.visible = true;
+                        }
 
                         contentItem: Text {
                             text: parent.text
@@ -149,28 +203,22 @@ Rectangle {
                             radius: 6
                         }
 
-                        onClicked: {
-                            confirmDialog.sessionId = model.session;
-                            confirmDialog.visible = true;
-                        }
                     }
+
                 }
+
             }
 
-            // Empty state
-            Label {
-                anchors.centerIn: parent
-                text: "No active sessions"
-                font.pixelSize: 16
-                color: "#6c7086"
-                visible: sessionListView.count === 0
-            }
         }
+
     }
 
     // Confirmation Dialog
     Rectangle {
         id: confirmDialog
+
+        property string sessionId: ""
+
         anchors.centerIn: parent
         width: 400
         height: 180
@@ -180,8 +228,6 @@ Rectangle {
         border.width: 2
         visible: false
         z: 100
-
-        property string sessionId: ""
 
         ColumnLayout {
             anchors.fill: parent
@@ -212,6 +258,7 @@ Rectangle {
                 Button {
                     text: "Cancel"
                     Layout.fillWidth: true
+                    onClicked: confirmDialog.visible = false
 
                     contentItem: Text {
                         text: parent.text
@@ -226,12 +273,17 @@ Rectangle {
                         radius: 6
                     }
 
-                    onClicked: confirmDialog.visible = false
                 }
 
                 Button {
                     text: "Terminate"
                     Layout.fillWidth: true
+                    onClicked: {
+                        console.log("Terminating session:", confirmDialog.sessionId);
+                        // LoginctlData.terminateSession(confirmDialog.sessionId);
+                        removeSession(confirmDialog.sessionId);
+                        confirmDialog.visible = false;
+                    }
 
                     contentItem: Text {
                         text: parent.text
@@ -246,20 +298,18 @@ Rectangle {
                         radius: 6
                     }
 
-                    onClicked: {
-                        console.log("Terminating session:", confirmDialog.sessionId);
-                        // LoginctlData.terminateSession(confirmDialog.sessionId);
-                        removeSession(confirmDialog.sessionId);
-                        confirmDialog.visible = false;
-                    }
                 }
+
             }
+
         }
+
     }
 
     // Add Session Dialog
     Rectangle {
         id: addDialog
+
         anchors.centerIn: parent
         width: 400
         height: 200
@@ -296,6 +346,7 @@ Rectangle {
                 text: "Close"
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 100
+                onClicked: addDialog.visible = false
 
                 contentItem: Text {
                     text: parent.text
@@ -310,9 +361,10 @@ Rectangle {
                     radius: 6
                 }
 
-                onClicked: addDialog.visible = false
             }
+
         }
+
     }
 
     // Mock Data Model
@@ -320,43 +372,4 @@ Rectangle {
         id: sessionModel
     }
 
-    Component.onCompleted: {
-        loadMockData();
-        // In real usage, connect to LoginctlData:
-        // sessionModel.clear();
-        // for (var i = 0; i < LoginctlData.sessions.length; i++) {
-        //     sessionModel.append(LoginctlData.sessions[i]);
-        // }
-    }
-
-    function loadMockData() {
-        sessionModel.clear();
-        sessionModel.append({
-            session: "1",
-            uid: "1000",
-            user: "john",
-            seat: "seat0"
-        });
-        sessionModel.append({
-            session: "2",
-            uid: "1001",
-            user: "jane",
-            seat: "seat0"
-        });
-        sessionModel.append({
-            session: "c3",
-            uid: "1000",
-            user: "john",
-            seat: ""
-        });
-    }
-
-    function removeSession(sessionId) {
-        for (var i = 0; i < sessionModel.count; i++) {
-            if (sessionModel.get(i).session === sessionId) {
-                sessionModel.remove(i);
-                break;
-            }
-        }
-    }
 }

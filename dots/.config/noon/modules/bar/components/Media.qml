@@ -1,8 +1,8 @@
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 import qs.services
 import qs.store
-import qs.modules.common.functions
+import qs.common.functions
 import QtQuick
 import QtQuick.Layouts
 import Quickshell

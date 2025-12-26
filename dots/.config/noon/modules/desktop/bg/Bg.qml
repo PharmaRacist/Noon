@@ -4,12 +4,12 @@ import QtQuick.Controls
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import Quickshell.Widgets
-import qs.modules.common
-import qs.modules.common.widgets
-import qs.modules.common.functions
+import qs.common
+import qs.common.widgets
+import qs.common.functions
 import qs.services
 import qs.store
 

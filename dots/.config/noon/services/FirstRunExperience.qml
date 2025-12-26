@@ -1,7 +1,7 @@
 import Quickshell
-import qs.modules.common
-import qs.modules.common.functions
-import qs.modules.common.utils
+import qs.common
+import qs.common.functions
+import qs.common.utils
 pragma Singleton
 
 Singleton {

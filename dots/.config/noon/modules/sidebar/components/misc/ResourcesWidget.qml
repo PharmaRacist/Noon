@@ -5,8 +5,8 @@ import Quickshell
 import Quickshell.Hyprland
 import Qt5Compat.GraphicalEffects
 import qs.services
-import qs.modules.common
-import qs.modules.common.widgets
+import qs.common
+import qs.common.widgets
 
 ColumnLayout {
     id: root

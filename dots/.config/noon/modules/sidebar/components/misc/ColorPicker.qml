@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import qs.modules.common
+import qs.common
 
 Item {
     // readonly property color onPrimaryContainer: "#21005d"
