@@ -13,14 +13,12 @@
 ### Install
 
 ```bash
-  # Adds Noon_Repo
-  echo -e "\n[Noon_Repo]\nSigLevel = Optional TrustAll\nServer = https://pharmaracist.github.io/Noon_Repo/\$arch" | sudo tee -a /etc/pacman.conf
-  # Install noon-main 
-  yay -S noon-main
-  # for nvidia patches
-  yay -S noon-nvidia
-  # for nvidia legacy
-  yay -S noon-nvidia-legacy
+  # Install noon-main from the aur 
+  noon-main install
+  # for new nvidia patches
+  install noon-nvidia package 
+  # for legacy nvidia
+  install noon-nvidia-legacy package
 ```
 
 ## Some Screenshots
