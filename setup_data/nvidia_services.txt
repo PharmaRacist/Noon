@@ -1,6 +1,0 @@
-nvidia-resume
-nvidia-suspend
-nvidia-persistenced
-nvidia-powerd
-nvidia-suspend-then-hibernate
-nvidia-hibernate
