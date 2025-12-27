@@ -30,6 +30,8 @@ Singleton {
     function handle_init() {
         if (Mem.ready) {
             ColorsService.reload();
+            TimerService.reload();
+            AlarmService.reload();
             ClipboardService.reload();
             AmbientSoundsService.reload();
             KeyringStorage.reload();

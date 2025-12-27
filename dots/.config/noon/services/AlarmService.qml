@@ -7,13 +7,10 @@ import qs.common
 Singleton {
     id: root
 
-    // Direct binding to JsonAdapter
-    property var alarms: Mem.timers.alarms ?? []
-
+    property var alarms: Mem.timers.alarms
     property bool hasAlarms: alarms.length > 0
     property int timeUntilNext: getTimeUntil()
 
-    // Check for ringing alarms every second
     Timer {
         interval: 1000
         repeat: true
@@ -34,7 +31,6 @@ Singleton {
             const alarmTime = new Date(alarm.time);
 
             if (alarm.active && !alarm.ringed && now >= alarmTime) {
-                // Alarm should ring
                 updated.push({
                     time: alarm.time,
                     message: alarm.message,
@@ -43,14 +39,11 @@ Singleton {
                     remindInterval: alarm.remindInterval,
                     lastRemind: now.toISOString()
                 });
-                
                 Noon.wake(alarm.message);
                 changed = true;
             } else if (alarm.ringed && alarm.remindInterval) {
-                // Check if we need to remind again
                 const lastRemind = new Date(alarm.lastRemind || alarm.time);
                 const elapsed = Math.floor((now - lastRemind) / 1000);
-                
                 if (elapsed >= alarm.remindInterval) {
                     updated.push({
                         time: alarm.time,
@@ -60,7 +53,6 @@ Singleton {
                         remindInterval: alarm.remindInterval,
                         lastRemind: now.toISOString()
                     });
-                    
                     Noon.wake(alarm.message);
                     changed = true;
                 } else {
@@ -107,7 +99,6 @@ Singleton {
                 lastRemind: a.lastRemind
             };
         });
-        
         Mem.timers.alarms = updated;
     }
 
@@ -125,46 +116,34 @@ Singleton {
         const now = new Date();
         let alarmTime = new Date();
 
-        // Check if it's an ISO string or relative time
         if (timeStr.includes("T") || timeStr.includes("-")) {
-            // ISO format
             alarmTime = new Date(timeStr);
         } else if (timeStr.includes(":")) {
-            // Time format like "14:30" or "2:30 PM"
             const isPM = timeStr.toLowerCase().includes("pm");
             const isAM = timeStr.toLowerCase().includes("am");
             const timeOnly = timeStr.replace(/[ap]m/gi, "").trim();
             const [hours, minutes] = timeOnly.split(":").map(Number);
-
             let hour = hours;
             if (isPM && hour !== 12) hour += 12;
             if (isAM && hour === 12) hour = 0;
-
             alarmTime.setHours(hour, minutes || 0, 0, 0);
-
-            // If time is in the past, set for tomorrow
             if (alarmTime <= now) {
                 alarmTime.setDate(alarmTime.getDate() + 1);
             }
         } else if (/^\d+$/.test(timeStr)) {
-            // Just a number - treat as minutes from now
             const minutes = parseInt(timeStr);
             alarmTime = new Date(now.getTime() + minutes * 60000);
         } else {
-            // Try to parse relative time like "30m", "2h", "1h30m"
             const regex = /(\d+)([hms])/g;
             let totalMs = 0;
             let match;
-
             while ((match = regex.exec(timeStr)) !== null) {
                 const value = parseInt(match[1]);
                 const unit = match[2];
-
                 if (unit === "h") totalMs += value * 3600000;
                 else if (unit === "m") totalMs += value * 60000;
                 else if (unit === "s") totalMs += value * 1000;
             }
-
             if (totalMs > 0) {
                 alarmTime = new Date(now.getTime() + totalMs);
             } else {
@@ -185,29 +164,38 @@ Singleton {
     function getTimeUntil() {
         const now = new Date();
         const active = alarms.filter(a => a.active && !a.ringed && new Date(a.time) > now);
-        
         if (active.length === 0) return -1;
-
         const next = active.reduce((n, a) => {
             return new Date(a.time) < new Date(n.time) ? a : n;
         });
-        
         return Math.floor((new Date(next.time) - now) / 1000);
     }
 
     function formatUntil(seconds) {
         if (seconds < 0) return "Passed";
         if (seconds < 60) return `${seconds}s`;
-
         const min = Math.floor(seconds / 60);
         if (min < 60) return `${min}min`;
-
         return `${Math.floor(min / 60)}h ${min % 60}min`;
     }
 
     function reload() {
-        // Force property refresh
         root.alarmsChanged();
         root.timeUntilNext = root.getTimeUntil();
+    }
+
+    function describeAlarms() {
+        if (alarms.length === 0) return "No alarms set.";
+        let text = "Alarms:\n";
+        for (let i = 0; i < alarms.length; i++) {
+            const a = alarms[i];
+            const active = a.active ? "Active" : "Inactive";
+            const ringed = a.ringed ? " (Rung)" : "";
+            text += `${i+1}. ${formatTime(a.time)}: ${a.message} (${active}${ringed})\n`;
+        }
+        if (timeUntilNext >= 0) {
+            text += `\nNext alarm in: ${formatUntil(timeUntilNext)}`;
+        }
+        return text;
     }
 }
