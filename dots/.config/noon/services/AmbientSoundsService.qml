@@ -89,13 +89,15 @@ Singleton {
 
         if (!player) return
 
-        masterPaused ? player.pause() : player.play()
+        const shouldPlay = !masterPaused
+        shouldPlay ? player.play() : player.pause()
         players[soundId] = player
 
         Mem.states.services.ambientSounds.activeSounds.push({
             id: soundId,
             volume: vol,
-            name: sound.name
+            name: sound.name,
+            isPlaying: shouldPlay
         })
     }
 
@@ -119,12 +121,29 @@ Singleton {
         activeSounds.find(s => s.id === soundId) ? stopSound(soundId) : playSound(soundId, volume)
     }
 
+    function toggleSoundPlayback(soundId) {
+        const index = activeSounds.findIndex(s => s.id === soundId)
+        if (index === -1) return
+
+        const soundData = activeSounds[index]
+        const player = players[soundId]
+        if (!player) return
+
+        if (soundData.isPlaying) {
+            player.pause()
+            Mem.states.services.ambientSounds.activeSounds[index].isPlaying = false
+        } else {
+            player.play()
+            Mem.states.services.ambientSounds.activeSounds[index].isPlaying = true
+        }
+    }
+
     function setSoundVolume(soundId, volume) {
-        const soundData = activeSounds.find(s => s.id === soundId)
-        if (!soundData) return
+        const index = activeSounds.findIndex(s => s.id === soundId)
+        if (index === -1) return
 
         const clampedVolume = Math.max(0, Math.min(1, volume))
-        soundData.volume = clampedVolume
+        Mem.states.services.ambientSounds.activeSounds[index].volume = clampedVolume
         
         const player = players[soundId]
         if (player) {
@@ -148,7 +167,8 @@ Singleton {
     }
 
     function isPlaying(soundId) {
-        return !!players[soundId]
+        const soundData = activeSounds.find(s => s.id === soundId)
+        return soundData?.isPlaying ?? false
     }
 
     function getSoundVolume(soundId) {
@@ -189,7 +209,11 @@ Singleton {
                 })
 
                 if (player) {
-                    masterPaused ? player.pause() : player.play()
+                    if (soundData.isPlaying && !masterPaused) {
+                        player.play()
+                    } else {
+                        player.pause()
+                    }
                     players[soundData.id] = player
                 }
             }
@@ -249,8 +273,12 @@ Singleton {
         for (let i = 0; i < activeSounds.length; i++) {
             const soundData = activeSounds[i]
             const player = players[soundData.id]
-            if (player) {
-                masterPaused ? player.pause() : player.play()
+            if (player && soundData.isPlaying) {
+                if (masterPaused) {
+                    player.pause()
+                } else {
+                    player.play()
+                }
             }
         }
     }

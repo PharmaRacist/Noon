@@ -1,7 +1,6 @@
 import "./ambientSounds"
 import QtQuick
 import QtQuick.Controls
-import QtMultimedia
 import QtQuick.Layouts
 import Quickshell
 import qs.common
@@ -51,13 +50,19 @@ Item {
                 model: AmbientSoundsService.activeSounds
                 
                 SoundItemContainer {
+                    required property var modelData
+                    required property int index
+                    
+                    property var _soundInfo: AmbientSoundsService.availableSounds.find((s) => s.id === modelData.id)
+                    
                     soundId: modelData.id
                     soundVolume: modelData.volume
-                    playerPlaying: modelData.player?.playbackState === MediaPlayer.PlayingState
-                    effectivePlaying: (modelData.player?.playbackState === MediaPlayer.PlayingState) && !AmbientSoundsService.masterPaused
-                    soundInfo: AmbientSoundsService.availableSounds.find((s) => s.id === modelData.id)
+                    playerPlaying: AmbientSoundsService.activeSounds[index]?.isPlaying ?? false
+                    effectivePlaying: (AmbientSoundsService.activeSounds[index]?.isPlaying ?? false) && !AmbientSoundsService.masterPaused
+                    soundInfo: _soundInfo ?? null
                     isMaster: false
                     isActive: true
+                    visible: _soundInfo !== null && _soundInfo !== undefined
                 }
             }
         }
