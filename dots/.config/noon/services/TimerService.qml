@@ -1,412 +1,225 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 import Quickshell
-import Quickshell.Hyprland
-import qs.common
 import QtQuick
+import qs.common
 
-/**
- * Timer service with persistent state management
- * Storage: Uses Mem.states.services.timer.timers and Mem.states.services.timer.nextTimerId
- */
 Singleton {
     id: root
-    readonly property var uiTimers: timers
-    property var timers: []
-    property int nextTimerId: 1
-    property bool needsSave: false
-    property bool isLoaded: false
+
+    // Direct binding to JsonAdapter
+    property var timers: Mem.timers.timers
+    property int nextTimerId: Mem.timers.nextTimerId
 
     signal timerFinished(int timerId, string name)
-    signal timersLoaded
-
-    Component.onCompleted: {
-        if (Mem.ready) {
-            Qt.callLater(loadFromConfig);
-        }
-    }
-
-    // Debounced save timer - saves at most once per 10 seconds
-    Timer {
-        id: autoSaveTimer
-        interval: 10000
-        repeat: false
-        onTriggered: {
-            if (needsSave) {
-                saveToConfig();
-                needsSave = false;
-            }
-        }
-    }
 
     readonly property list<var> presets: [
-        {
-            "duration": 1500,
-            "icon": "timer",
-            "name": "Pomodoro"
-        },
-        {
-            "duration": 300,
-            "icon": "coffee",
-            "name": "Short Break"
-        },
-        {
-            "duration": 900,
-            "icon": "bed",
-            "name": "Long Break"
-        },
-        {
-            "duration": 5400,
-            "icon": "mindfulness",
-            "name": "Deep Work"
-        },
-        {
-            "duration": 1800,
-            "icon": "fitness_center",
-            "name": "Exercise"
-        },
-        {
-            "duration": 600,
-            "icon": "self_improvement",
-            "name": "Meditation"
-        },
-        {
-            "duration": 900,
-            "icon": "flash_on",
-            "name": "Quick Task"
-        },
-        {
-            "duration": 3600,
-            "icon": "groups",
-            "name": "Meeting"
-        }
+        { "duration": 1500, "icon": "timer", "name": "Pomodoro" },
+        { "duration": 300, "icon": "coffee", "name": "Short Break" },
+        { "duration": 900, "icon": "bed", "name": "Long Break" },
+        { "duration": 5400, "icon": "mindfulness", "name": "Deep Work" },
+        { "duration": 1800, "icon": "fitness_center", "name": "Exercise" },
+        { "duration": 600, "icon": "self_improvement", "name": "Meditation" },
+        { "duration": 900, "icon": "flash_on", "name": "Quick Task" },
+        { "duration": 3600, "icon": "groups", "name": "Meeting" }
     ]
 
-    // Storage Operations
-    function saveToConfig() {
-        if (!Mem.statesReady) {
-            return;
-        }
+    property var uiTimers: timers
 
-        const saveData = timers.map(timer => {
-            let actualRemainingTime = timer.remainingTime;
-
-            // If timer is running, calculate actual remaining time
-            if (timer.isRunning && timer.startTime > 0) {
-                const elapsed = Math.floor((Date.now() - timer.startTime) / 1000);
-                actualRemainingTime = Math.max(0, timer.originalDuration - elapsed);
-            }
-
-            return {
-                id: timer.id,
-                name: timer.name,
-                originalDuration: timer.originalDuration,
-                remainingTime: actualRemainingTime,
-                isRunning: timer.isRunning,
-                isPaused: actualRemainingTime < timer.originalDuration && actualRemainingTime > 0,
-                preset: timer.preset,
-                icon: timer.icon
-            };
-        });
-
-        Mem.states.services.timer.timers = saveData;
-        Mem.states.services.timer.nextTimerId = nextTimerId;
+    Timer {
+        interval: 1000
+        repeat: true
+        running: timers.some(t => t?.isRunning)
+        onTriggered: tick()
     }
 
-    function scheduleSave() {
-        needsSave = true;
-        if (!autoSaveTimer.running) {
-            autoSaveTimer.start();
-        }
-    }
+    function tick() {
+        const now = Date.now();
+        const updated = [];
+        let changed = false;
 
-    function loadFromConfig() {
-        if (!Mem.statesReady) {
-            return;
-        }
-
-        let savedTimers = Mem.states.services.timer.timers;
-        const savedNextId = Mem.states.services.timer.nextTimerId;
-
-        // Convert QML list to JS array if needed
-        if (savedTimers && !Array.isArray(savedTimers)) {
-            const tempArray = [];
-            for (let i = 0; i < savedTimers.length; i++) {
-                tempArray.push(savedTimers[i]);
+        for (let i = 0; i < timers.length; i++) {
+            const timer = timers[i];
+            if (!timer.isRunning) {
+                updated.push(timer);
+                continue;
             }
-            savedTimers = tempArray;
-        }
 
-        if (savedNextId !== undefined && savedNextId !== null && savedNextId > 0) {
-            nextTimerId = savedNextId;
-        }
+            const elapsed = Math.floor((now - timer.startTime) / 1000);
+            const remaining = Math.max(0, timer.originalDuration - elapsed);
 
-        if (savedTimers && savedTimers.length > 0) {
-            // Clear existing timers
-            timers = [];
-            root.timers = [];
-
-            // Build timers array directly
-            for (let i = 0; i < savedTimers.length; i++) {
-                const timerData = savedTimers[i];
-
-                const loadedTimer = {
-                    id: timerData.id,
-                    name: timerData.name,
-                    originalDuration: timerData.originalDuration,
-                    remainingTime: timerData.remainingTime,
-                    isRunning: timerData.isRunning || false,
-                    isPaused: timerData.isPaused || false,
+            if (remaining === 0) {
+                updated.push({
+                    id: timer.id,
+                    name: timer.name,
+                    originalDuration: timer.originalDuration,
+                    remainingTime: 0,
+                    isRunning: false,
                     startTime: 0,
-                    pausedTime: 0,
-                    preset: timerData.preset,
-                    icon: timerData.icon || "timer",
-                    qtTimer: null,
-                    lastSaveTime: 0
-                };
-
-                timers.push(loadedTimer);
+                    preset: timer.preset,
+                    icon: timer.icon
+                });
+                playSound("finish");
+                Noon.notify(`'⏰ Timer Complete , ${timer.name} finished!'`);
+                timerFinished(timer.id, timer.name);
+                changed = true;
+            } else {
+                updated.push({
+                    id: timer.id,
+                    name: timer.name,
+                    originalDuration: timer.originalDuration,
+                    remainingTime: remaining,
+                    isRunning: true,
+                    startTime: timer.startTime,
+                    preset: timer.preset,
+                    icon: timer.icon
+                });
+                changed = true;
             }
-
-            // Force property update
-            root.timers = timers.slice(0);
-            root.timersChanged();
-            root.isLoaded = true;
-            root.timersLoaded();
-
-            // Automatically restart timers that were running before restart
-            Qt.callLater(() => {
-                for (let i = 0; i < timers.length; i++) {
-                    const t = timers[i];
-                    if (t.isRunning && t.remainingTime > 0) {
-                        startTimer(t.id);
-                    }
-                }
-            });
-        } else {
-            timers = [];
-            root.timers = [];
-            root.isLoaded = true;
-            root.timersLoaded();
-        }
-    }
-
-    // Sounds via external commands (if supported)
-    function playSound(name) {
-        let sound = "";
-        if (name === "start")
-            sound = "alarm_endded";
-        if (name === "finish")
-            sound = "alarm_started";
-        if (sound !== "") {
-            Noon.playSound(sound);
-        }
-    }
-
-    function showNotification(title, message) {
-        Noon.notify(`'${title} , ${message}'`);
-    }
-
-    function parseTimeString(input) {
-        if (!input || typeof input !== "string")
-            return 0;
-
-        input = input.trim().toLowerCase();
-
-        // Match things like "1h30m", "45m", "10s", "2h10m5s"
-        const regex = /(\d+)([hms])/g;
-        let totalSeconds = 0;
-        let match;
-
-        while ((match = regex.exec(input)) !== null) {
-            const value = parseInt(match[1]);
-            const unit = match[2];
-
-            if (unit === "h")
-                totalSeconds += value * 3600;
-            else if (unit === "m")
-                totalSeconds += value * 60;
-            else if (unit === "s")
-                totalSeconds += value;
         }
 
-        // If no unit is specified and input is numeric → assume minutes
-        if (totalSeconds === 0 && /^\d+$/.test(input))
-            totalSeconds = parseInt(input) * 60;
-
-        return totalSeconds;
+        if (changed) {
+            Mem.timers.timers = updated;
+        }
     }
 
     function addTimer(name, duration, preset) {
-        const timer = {
-            id: nextTimerId++,
+        const newTimer = {
+            id: nextTimerId,
             name: name,
             originalDuration: duration,
             remainingTime: duration,
             isRunning: false,
-            isPaused: false,
             startTime: 0,
-            pausedTime: 0,
             preset: preset || null,
-            icon: preset ? preset.icon : "timer",
-            qtTimer: null
+            icon: preset ? preset.icon : "timer"
         };
-
-        timers.push(timer);
-        root.timers = timers.slice(0);
-        saveToConfig();
-        return timer.id;
+        
+        Mem.timers.nextTimerId = nextTimerId + 1;
+        Mem.timers.timers = timers.concat([newTimer]);
+        return newTimer.id;
     }
 
     function removeTimer(timerId) {
-        const index = timers.findIndex(t => t.id === timerId);
-        if (index !== -1) {
-            const timer = timers[index];
-            if (timer.qtTimer)
-                timer.qtTimer.destroy();
-            timers.splice(index, 1);
-            root.timers = timers.slice(0);
-            saveToConfig();
-        }
+        Mem.timers.timers = timers.filter(t => t.id !== timerId);
     }
 
     function startTimer(timerId) {
-        const timer = timers.find(t => t.id === timerId);
-        if (!timer || timer.remainingTime <= 0)
-            return;
-
-        if (!timer.qtTimer) {
-            timer.qtTimer = timerComponent.createObject(root, {
-                "timerId": timerId,
-                "interval": 1000,
-                "repeat": true
-            });
-        }
-
-        timer.isRunning = true;
-        timer.isPaused = false;
-        timer.startTime = Date.now() - (timer.originalDuration - timer.remainingTime) * 1000;
-        timer.qtTimer.start();
-        root.playSound("start");
-        root.timers = timers.slice(0);
-        scheduleSave();
+        const updated = timers.map(t => {
+            if (t.id !== timerId || t.remainingTime <= 0) return t;
+            return {
+                id: t.id,
+                name: t.name,
+                originalDuration: t.originalDuration,
+                remainingTime: t.remainingTime,
+                isRunning: true,
+                startTime: Date.now() - (t.originalDuration - t.remainingTime) * 1000,
+                preset: t.preset,
+                icon: t.icon
+            };
+        });
+        
+        Mem.timers.timers = updated;
+        playSound("start");
     }
 
     function pauseTimer(timerId) {
-        const timer = timers.find(t => t.id === timerId);
-        if (!timer || !timer.qtTimer)
-            return;
-
-        // Update remaining time before pausing
-        if (timer.isRunning && timer.startTime > 0) {
-            const elapsed = Math.floor((Date.now() - timer.startTime) / 1000);
-            timer.remainingTime = Math.max(0, timer.originalDuration - elapsed);
-        }
-
-        timer.isRunning = false;
-        timer.isPaused = true;
-        timer.qtTimer.stop();
-        root.timers = timers.slice(0);
-        saveToConfig();
+        const updated = timers.map(t => {
+            if (t.id !== timerId) return t;
+            
+            let remaining = t.remainingTime;
+            if (t.isRunning && t.startTime > 0) {
+                const elapsed = Math.floor((Date.now() - t.startTime) / 1000);
+                remaining = Math.max(0, t.originalDuration - elapsed);
+            }
+            
+            return {
+                id: t.id,
+                name: t.name,
+                originalDuration: t.originalDuration,
+                remainingTime: remaining,
+                isRunning: false,
+                startTime: 0,
+                preset: t.preset,
+                icon: t.icon
+            };
+        });
+        
+        Mem.timers.timers = updated;
     }
 
     function resetTimer(timerId) {
-        const timer = timers.find(t => t.id === timerId);
-        if (!timer)
-            return;
-
-        if (timer.qtTimer)
-            timer.qtTimer.stop();
-
-        timer.isRunning = false;
-        timer.isPaused = false;
-        timer.remainingTime = timer.originalDuration;
-        timer.startTime = 0;
-        timer.pausedTime = 0;
-        root.timers = timers.slice(0);
-        saveToConfig();
+        const updated = timers.map(t => {
+            if (t.id !== timerId) return t;
+            return {
+                id: t.id,
+                name: t.name,
+                originalDuration: t.originalDuration,
+                remainingTime: t.originalDuration,
+                isRunning: false,
+                startTime: 0,
+                preset: t.preset,
+                icon: t.icon
+            };
+        });
+        
+        Mem.timers.timers = updated;
     }
 
     function updateTimer(timerId, newDuration) {
         const timer = timers.find(t => t.id === timerId);
-        if (!timer)
-            return;
+        if (!timer) return;
 
         const wasRunning = timer.isRunning;
-        if (wasRunning)
-            pauseTimer(timerId);
+        if (wasRunning) pauseTimer(timerId);
 
-        timer.originalDuration = newDuration;
-        timer.remainingTime = newDuration;
-        root.timers = timers.slice(0);
-        saveToConfig();
-
-        if (wasRunning)
-            startTimer(timerId);
+        const updated = timers.map(t => {
+            if (t.id !== timerId) return t;
+            return {
+                id: t.id,
+                name: t.name,
+                originalDuration: newDuration,
+                remainingTime: newDuration,
+                isRunning: false,
+                startTime: 0,
+                preset: t.preset,
+                icon: t.icon
+            };
+        });
+        
+        Mem.timers.timers = updated;
+        if (wasRunning) Qt.callLater(() => startTimer(timerId));
     }
 
     function formatTime(seconds) {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-
-        if (hours > 0) {
-            return hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (secs < 10 ? "0" : "") + secs;
-        } else {
-            return minutes + ":" + (secs < 10 ? "0" : "") + secs;
-        }
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${m}:${String(s).padStart(2, '0')}`;
     }
 
-    function getProgressPercentage(timerId) {
-        const timer = timers.find(t => t.id === timerId);
-        if (!timer)
-            return 0;
+    function parseTimeString(input) {
+        if (!input) return 0;
+        input = String(input).trim().toLowerCase();
 
-        let actualRemainingTime = timer.remainingTime;
+        const regex = /(\d+)([hms])/g;
+        let total = 0;
+        let match;
 
-        // If timer is running, calculate actual remaining time for accurate progress
-        if (timer.isRunning && timer.startTime > 0) {
-            const elapsed = Math.floor((Date.now() - timer.startTime) / 1000);
-            actualRemainingTime = Math.max(0, timer.originalDuration - elapsed);
+        while ((match = regex.exec(input)) !== null) {
+            const val = parseInt(match[1]);
+            const unit = match[2];
+            if (unit === "h") total += val * 3600;
+            else if (unit === "m") total += val * 60;
+            else if (unit === "s") total += val;
         }
 
-        return ((timer.originalDuration - actualRemainingTime) / timer.originalDuration) * 100;
+        if (total === 0 && /^\d+$/.test(input)) total = parseInt(input) * 60;
+        return total;
     }
 
-    function handleTimerTick(timerId) {
-        const timer = timers.find(t => t.id === timerId);
-        if (!timer || !timer.isRunning)
-            return;
-
-        const elapsed = Math.floor((Date.now() - timer.startTime) / 1000);
-        timer.remainingTime = Math.max(0, timer.originalDuration - elapsed);
-
-        if (timer.remainingTime <= 0) {
-            timer.isRunning = false;
-            timer.isPaused = false;
-            if (timer.qtTimer)
-                timer.qtTimer.stop();
-
-            root.playSound("finish");
-            showNotification("⏰ Timer Complete", `${timer.name} finished!`);
-            timerFinished(timer.id, timer.name);
-            saveToConfig();
-        } else {
-            scheduleSave();
-        }
-
-        root.timers = timers.slice(0);
-    }
-
-    function refresh() {
-        loadFromConfig();
-    }
-
-    Component {
-        id: timerComponent
-        Timer {
-            property int timerId: -1
-            onTriggered: root.handleTimerTick(timerId)
-        }
+    function playSound(name) {
+        const sound = name === "start" ? "alarm_endded" : name === "finish" ? "alarm_started" : "";
+        if (sound) Noon.playSound(sound);
     }
 }
