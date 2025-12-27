@@ -29,7 +29,7 @@ Item {
     property var finishAction
 
     onRevealChanged: {
-        if (!reveal)
+        if (!reveal && finishAction)
             return finishAction();
 
     }

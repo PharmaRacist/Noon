@@ -136,28 +136,22 @@ StyledRect {
         Material.roundedScale: Rounding.normal
         Material.elevation: 8
 
-        MenuItem {
+        MItem {
+            text: "Favorite"
+            onTriggered: {
+                if (wallpaperItem.fileUrl)
+                    FileUtils.moveItem(wallpaperItem.fileUrl, Directories.favoriteWallpapers);
+
+            }
+        }
+
+        MItem {
             text: "Delete"
-            Material.foreground: Colors.colOnLayer2
             onTriggered: {
                 if (wallpaperItem.fileUrl)
                     FileUtils.deleteItem(wallpaperItem.fileUrl);
 
             }
-
-            background: Rectangle {
-                color: parent.hovered ? Colors.colOnSurface : "transparent"
-                radius: Rounding.verylarge
-                opacity: parent.hovered ? 0.08 : 0
-
-                anchors {
-                    leftMargin: Padding.normal
-                    rightMargin: Padding.normal
-                    fill: parent
-                }
-
-            }
-
         }
 
         background: StyledRect {
@@ -198,6 +192,24 @@ StyledRect {
                 from: 1
                 to: 0.95
                 duration: Animations.durations.small
+            }
+
+        }
+
+    }
+
+    component MItem: MenuItem {
+        Material.foreground: Colors.colOnLayer2
+
+        background: Rectangle {
+            color: parent.hovered ? Colors.colOnSurface : "transparent"
+            radius: Rounding.verylarge
+            opacity: parent.hovered ? 0.08 : 0
+
+            anchors {
+                leftMargin: Padding.normal
+                rightMargin: Padding.normal
+                fill: parent
             }
 
         }

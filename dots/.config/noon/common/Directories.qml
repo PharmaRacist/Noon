@@ -2,6 +2,7 @@ import Qt.labs.platform
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Io
 import qs.common.functions
 pragma Singleton
 
@@ -33,6 +34,7 @@ Singleton {
     readonly property string depthCache: FileUtils.trimFileProtocol(`${cache}/user/generated/depth/`)
     readonly property string gowallCache: FileUtils.trimFileProtocol(`${cache}/user/generated/gowall/`)
     readonly property string favicons: FileUtils.trimFileProtocol(`${cache}/media/favicons`)
+    readonly property string favoriteWallpapers: FileUtils.trimFileProtocol(`${pictures}/favourite`)
     readonly property string coverArt: FileUtils.trimFileProtocol(`${cache}/media/coverart`)
     readonly property string latexOutput: FileUtils.trimFileProtocol(`${cache}/media/latex`)
     readonly property string cliphistDecode: FileUtils.trimFileProtocol(`/tmp/noon/media/cliphist`)
@@ -47,15 +49,16 @@ Singleton {
 
     // Cleanup on init
     Component.onCompleted: {
-        Noon.execDetached(`mkdir -p '${aiChats}'`);
-        Noon.execDetached(`mkdir -p '${lyrics}'`);
-        Noon.execDetached(`mkdir -p '${gallery}'`);
-        Noon.execDetached(`mkdir -p '${notes}'`);
-        Noon.execDetached(`mkdir -p '${favicons}'`);
-        Noon.execDetached(`mkdir -p '${coverArt}'`);
-        Noon.execDetached(`mkdir -p '${latexOutput}'`);
-        Noon.execDetached(`mkdir -p '${cliphistDecode}'`);
-        Noon.execDetached(`mkdir -p '${gowallCache}'`);
-        Noon.execDetached(`mkdir -p '${depthCache}'`);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${favoriteWallpapers}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${aiChats}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${lyrics}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${gallery}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${notes}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${favicons}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${coverArt}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${latexOutput}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${cliphistDecode}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${gowallCache}'`]);
+        Quickshell.execDetached(["bash", "-c", `mkdir -p '${depthCache}'`]);
     }
 }

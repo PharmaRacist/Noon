@@ -192,6 +192,9 @@ Item {
         }
 
         WallpaperControls {
+            finishAction:()=> {
+                root.searchFocusRequested()
+            }
         }
     }
 
