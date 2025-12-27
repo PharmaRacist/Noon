@@ -353,4 +353,27 @@ Singleton {
              syncWithTodoist();
         }
     }
+    // Ai Helpers
+    function formatTasks() {
+        if (!TodoService.list || TodoService.list.length === 0) {
+            return "No tasks currently";
+        }
+
+        let output = "Current tasks:\n\n";
+
+        for (let status = TodoService.status_todo; status <= TodoService.status_done; status++) {
+            const tasks = TodoService.getTasksByStatus(status);
+            if (tasks.length > 0) {
+                output += `## ${TodoService.getStatusName(status)} (${tasks.length})\n`;
+                tasks.forEach((task, idx) => {
+                    const globalIndex = TodoService.list.indexOf(task);
+                    output += `${globalIndex}. ${task.content}\n`;
+                });
+                output += "\n";
+            }
+        }
+
+        return output;
+    }
+
 }

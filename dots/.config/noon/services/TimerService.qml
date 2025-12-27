@@ -222,4 +222,30 @@ Singleton {
         const sound = name === "start" ? "alarm_endded" : name === "finish" ? "alarm_started" : "";
         if (sound) Noon.playSound(sound);
     }
+    // Ai Helpers
+    function formatTimers() {
+        if (TimerService.uiTimers.length === 0) {
+            return "No timers currently";
+        }
+
+        let output = "Current timers:\n\n";
+
+        TimerService.uiTimers.forEach(timer => {
+            const status = timer.isRunning ? "Running" : timer.isPaused ? "Paused" : "Stopped";
+
+            const remaining = TimerService.formatTime(timer.remainingTime);
+            const total = TimerService.formatTime(timer.originalDuration);
+            const progress = (total - remaining) / total 
+
+            output += `ID: ${timer.id}\n`;
+            output += `Name: ${timer.name}\n`;
+            output += `Status: ${status}\n`;
+            output += `Time: ${remaining} / ${total} (${progress}% complete)\n`;
+            output += `Icon: ${timer.icon}\n`;
+            output += `\n`;
+        });
+
+        return output;
+    }
+
 }
