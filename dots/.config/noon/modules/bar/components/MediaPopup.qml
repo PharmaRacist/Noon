@@ -1,23 +1,15 @@
-import Qt5Compat.GraphicalEffects
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import qs.common
-import qs.common.functions
 import qs.common.widgets
 import qs.services
-import qs.store
 
 StyledPopup {
     id: root
 
     Visualizer {
-        id: visualizer
-
         z: 99
-        mode: "filled"
-        active: true
     }
 
     StyledRect {
@@ -46,7 +38,7 @@ StyledPopup {
             anchors.margins: Padding.large
             anchors.leftMargin: Padding.huge
             anchors.rightMargin: Padding.huge
-            spacing: Padding.large
+            spacing: Padding.massive
 
             // Cover Art
             MusicCoverArt {
@@ -58,13 +50,17 @@ StyledPopup {
             // Track Info
             Column {
                 z: 2
-                spacing: Padding.normal
+                spacing: 0
 
                 StyledText {
-                    font.pixelSize: Fonts.sizes.title
+                    font.pixelSize: Fonts.sizes.huge
+                    font.variableAxes: Fonts.variableAxes.title
                     color: Colors.colOnLayer0
                     text: BeatsService.title
                     elide: Text.ElideRight
+                    maximumLineCount: 1
+                    Layout.fillWidth: true
+                    Layout.rightMargin: Padding.massive
 
                     MouseArea {
                         anchors.fill: parent
@@ -74,7 +70,11 @@ StyledPopup {
                 }
 
                 StyledText {
+                    Layout.fillWidth: true
+                    Layout.rightMargin: Padding.massive
+                    maximumLineCount: 1
                     font.pixelSize: Fonts.sizes.large
+                    font.variableAxes: Fonts.variableAxes.main
                     color: Colors.colSubtext
                     text: BeatsService.artist
                     elide: Text.ElideRight
