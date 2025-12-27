@@ -25,7 +25,6 @@ Singleton {
     property Component openaiApiStrategy: OpenAiApiStrategy {}
     property Component claudeApiStrategy: ClaudeApiStrategy {}
     property Component mistralApiStrategy: MistralApiStrategy {}
-    
     readonly property string interfaceRole: "interface"
     readonly property string apiKeyEnvVarName: "API_KEY"
 
@@ -44,9 +43,9 @@ Singleton {
     property var postResponseHook
     property real temperature: Mem.options.ai?.temperature ?? 0.5
     property QtObject tokenCount: QtObject {
-        property int input: -1
-        property int output: -1
-        property int total: -1
+        property int input:Mem.states.services.ai.tokenCount.input ?? -1
+        property int output: Mem.states.services.ai.tokenCount.output ?? -1
+        property int total: Mem.states.services.ai.tokenCount.total ?? -1
     }
     readonly property bool currentModelHasApiKey: {
         const model = models[currentModelId];
@@ -328,9 +327,9 @@ Singleton {
     function clearMessages() {
         root.messageIDs = [];
         root.messageByID = ({});
-        root.tokenCount.input = -1;
-        root.tokenCount.output = -1;
-        root.tokenCount.total = -1;
+        // root.tokenCount.input = -1;
+        // root.tokenCount.output = -1;
+        // root.tokenCount.total = -1;
     }
 
     FileView {
@@ -432,9 +431,9 @@ Singleton {
                         root.handleFunctionCall(result.functionCall.name, result.functionCall.args, requester.message);
                     }
                     if (result.tokenUsage) {
-                        root.tokenCount.input = result.tokenUsage.input;
-                        root.tokenCount.output = result.tokenUsage.output;
-                        root.tokenCount.total = result.tokenUsage.total;
+                        Mem.states.services.ai.tokenCount.output = result.tokenUsage.output
+                        Mem.states.services.ai.tokenCount.input = result.tokenUsage.input
+                        Mem.states.services.ai.tokenCount.total = result.tokenUsage.total
                     }
                     if (result.finished) {
                         requester.markDone();
@@ -527,7 +526,6 @@ Singleton {
         commandExecutionProc.shellCommand = message.functionCall.args.command;
         commandExecutionProc.running = true; // Start the command execution
     }
-
     Process {
         id: commandExecutionProc
         property string shellCommand: ""
@@ -548,13 +546,197 @@ Singleton {
         }
     }
     
+    property var executors: {
+        "switch_to_search_mode": function(args, message) {
+            root.currentTool = "search";
+            root.postResponseHook = () => { root.currentTool = "functions"; };
+            addFunctionOutputMessage("switch_to_search_mode", qsTr("Switched to search mode. Continue with the user's request."));
+            requester.makeRequest();
+        },
+        "get_shell_config": function(args, message) {
+            const configJson = Utils.ObjectUtils.toPlainObject(Mem.options);
+            addFunctionOutputMessage("get_shell_config", JSON.stringify(configJson));
+            requester.makeRequest();
+        },
+        "set_shell_config": function(args, message) {
+            if (!args.key || !args.value) {
+                addFunctionOutputMessage("set_shell_config", qsTr("Invalid arguments. Must provide `key` and `value`."));
+                return;
+            }
+            Mem.options.setNestedValue(args.key, args.value);
+        },
+        "run_shell_command": function(args, message) {
+            if (!args.command || args.command.length === 0) {
+                addFunctionOutputMessage("run_shell_command", qsTr("Invalid arguments. Must provide `command`."));
+                return;
+            }
+            const contentToAppend = `\n\n**Command execution request**\n\n\`\`\`command\n${args.command}\n\`\`\``;
+            message.rawContent += contentToAppend;
+            message.content += contentToAppend;
+            message.functionPending = true;
+        },
+        "get_tasks": function(args, message) {
+            addFunctionOutputMessage("get_tasks", TodoService.formatTasks());
+            requester.makeRequest();
+        },
+        "add_task": function(args, message) {
+            if (!args.content || args.content.trim().length === 0) {
+                addFunctionOutputMessage("add_task", qsTr("Invalid arguments. Must provide non-empty `content`."));
+                return;
+            }
+            TodoService.addTask(args.content.trim());
+            addFunctionOutputMessage("add_task", qsTr("Task added: %1").arg(args.content));
+            requester.makeRequest();
+        },
+        "update_task_status": function(args, message) {
+            if (args.index === undefined || args.status === undefined) {
+                addFunctionOutputMessage("update_task_status", qsTr("Invalid arguments. Must provide `index` and `status`."));
+                return;
+            }
+            if (args.index < 0 || args.index >= TodoService.list.length) {
+                addFunctionOutputMessage("update_task_status", qsTr("Invalid task index: %1. Valid range: 0-%2").arg(args.index).arg(TodoService.list.length - 1));
+                return;
+            }
+            if (args.status < TodoService.status_todo || args.status > TodoService.status_done) {
+                addFunctionOutputMessage("update_task_status", qsTr("Invalid status: %1. Valid range: 0-3").arg(args.status));
+                return;
+            }
+            TodoService.setStatus(args.index, args.status);
+            addFunctionOutputMessage("update_task_status", qsTr("Task %1 status updated to %2").arg(args.index).arg(TodoService.getStatusName(args.status)));
+            requester.makeRequest();
+        },
+        "delete_task": function(args, message) {
+            if (args.index === undefined) {
+                addFunctionOutputMessage("delete_task", qsTr("Invalid arguments. Must provide `index`."));
+                return;
+            }
+            if (args.index < 0 || args.index >= TodoService.list.length) {
+                addFunctionOutputMessage("delete_task", qsTr("Invalid task index: %1. Valid range: 0-%2").arg(args.index).arg(TodoService.list.length - 1));
+                return;
+            }
+            const taskContent = TodoService.getItemContent(args.index);
+            TodoService.deleteItem(args.index);
+            addFunctionOutputMessage("delete_task", qsTr("Task deleted: %1").arg(taskContent));
+            requester.makeRequest();
+        },
+        "edit_task": function(args, message) {
+            if (args.index === undefined || !args.content) {
+                addFunctionOutputMessage("edit_task", qsTr("Invalid arguments. Must provide `index` and `content`."));
+                return;
+            }
+            if (args.index < 0 || args.index >= TodoService.list.length) {
+                addFunctionOutputMessage("edit_task", qsTr("Invalid task index: %1. Valid range: 0-%2").arg(args.index).arg(TodoService.list.length - 1));
+                return;
+            }
+            const success = TodoService.editItem(args.index, args.content);
+            const output = success 
+                ? qsTr("Task %1 updated to: %2").arg(args.index).arg(args.content)
+                : qsTr("Failed to update task %1").arg(args.index);
+            addFunctionOutputMessage("edit_task", output);
+            requester.makeRequest();
+        },
+        "get_alarms": function(args, message) {
+            addFunctionOutputMessage("get_alarms", AlarmService.describeAlarms());
+            requester.makeRequest();
+        },
+        "add_alarm": function(args, message) {
+            if (!args.name || !args.time) {
+                addFunctionOutputMessage("add_alarm", qsTr("Invalid arguments. Must provide 'name' and 'time'."));
+                return;
+            }
+            AlarmService.addTimer(args, message)
+            addFunctionOutputMessage("add_timer", qsTr("Timer created with ID %1: %2 (%3)").arg(timerId).arg(args.name).arg(TimerService.formatTime(durationSeconds)));
+            requester.makeRequest();
+        },
+        "get_timers": function(args, message) {
+            addFunctionOutputMessage("get_timers", TimerService.formatTimers());
+            requester.makeRequest();
+        },
+        "add_timer": function(args, message) {
+            if (!args.name || !args.duration) {
+                addFunctionOutputMessage("add_timer", qsTr("Invalid arguments. Must provide 'name' and 'duration'."));
+                return;
+            }
+            const durationSeconds = TimerService.parseTimeString(args.duration);
+            if (durationSeconds <= 0) {
+                addFunctionOutputMessage("add_timer", qsTr("Invalid duration format. Use formats like '25m', '1h30m', or '45'."));
+                return;
+            }
+            const timerId = TimerService.addTimer(args.name, durationSeconds, null);
+            addFunctionOutputMessage("add_timer", qsTr("Timer created with ID %1: %2 (%3)").arg(timerId).arg(args.name).arg(TimerService.formatTime(durationSeconds)));
+            requester.makeRequest();
+        },
+        "start_timer": function(args, message) {
+            if (args.timer_id === undefined) {
+                addFunctionOutputMessage("start_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
+                return;
+            }
+            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            if (!timer) {
+                addFunctionOutputMessage("start_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
+                return;
+            }
+            TimerService.startTimer(args.timer_id);
+            addFunctionOutputMessage("start_timer", qsTr("Timer %1 started: %2").arg(args.timer_id).arg(timer.name));
+            requester.makeRequest();
+        },
+        "pause_timer": function(args, message) {
+            if (args.timer_id === undefined) {
+                addFunctionOutputMessage("pause_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
+                return;
+            }
+            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            if (!timer) {
+                addFunctionOutputMessage("pause_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
+                return;
+            }
+            TimerService.pauseTimer(args.timer_id);
+            addFunctionOutputMessage("pause_timer", qsTr("Timer %1 paused: %2").arg(args.timer_id).arg(timer.name));
+            requester.makeRequest();
+        },
+        "reset_timer": function(args, message) {
+            if (args.timer_id === undefined) {
+                addFunctionOutputMessage("reset_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
+                return;
+            }
+            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            if (!timer) {
+                addFunctionOutputMessage("reset_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
+                return;
+            }
+            TimerService.resetTimer(args.timer_id);
+            addFunctionOutputMessage("reset_timer", qsTr("Timer %1 reset: %2").arg(args.timer_id).arg(timer.name));
+            requester.makeRequest();
+        },
+        "delete_timer": function(args, message) {
+            if (args.timer_id === undefined) {
+                addFunctionOutputMessage("delete_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
+                return;
+            }
+            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            if (!timer) {
+                addFunctionOutputMessage("delete_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
+                return;
+            }
+            const timerName = timer.name;
+            TimerService.removeTimer(args.timer_id);
+            addFunctionOutputMessage("delete_timer", qsTr("Timer %1 deleted: %2").arg(args.timer_id).arg(timerName));
+            requester.makeRequest();
+        },
+        "search_online_inbrowser": function(args, message) {
+            if (!args.query || args.query.trim().length === 0) {
+                addFunctionOutputMessage("search_online_inbrowser", qsTr("Invalid arguments. Must provide non-empty 'query'."));
+                return;
+            }
+            Quickshell.execDetached(["xdg-open", args.query]);
+        }
+    }
     function handleFunctionCall(name, args, message) {
-        const executor = AiStore.executors[name];
+        const executor = executors[name];
         if (executor) {
             try {
                 executor(args, message);
             } catch (e) {
-                console.log(`Error executing function ${name}:`, e);
                 root.addMessage(qsTr("Error executing function: %1").arg(name), "assistant");
             }
         } else {

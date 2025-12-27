@@ -158,9 +158,6 @@ Rectangle {
                         color: Colors.colSubtext
                         text: "visibility_off"
                     }
-                    StyledToolTip {
-                        text: qsTr("Not visible to model")
-                    }
                 }
 
                 ButtonGroup {
@@ -173,10 +170,6 @@ Rectangle {
 
                         onClicked: {
                             Ai.regenerate(root.messageIndex);
-                        }
-
-                        StyledToolTip {
-                            text: qsTr("Regenerate")
                         }
                     }
 
@@ -199,9 +192,6 @@ Rectangle {
                             }
                         }
 
-                        StyledToolTip {
-                            text: qsTr("Copy")
-                        }
                     }
                     AiMessageControlButton {
                         id: editButton
@@ -215,9 +205,6 @@ Rectangle {
                                 root.saveMessage();
                             }
                         }
-                        StyledToolTip {
-                            text: root.editing ? qsTr("Save") : qsTr("Edit")
-                        }
                     }
                     AiMessageControlButton {
                         id: toggleMarkdownButton
@@ -226,18 +213,12 @@ Rectangle {
                         onClicked: {
                             root.renderMarkdown = !root.renderMarkdown;
                         }
-                        StyledToolTip {
-                            text: qsTr("View Markdown source")
-                        }
                     }
                     AiMessageControlButton {
                         id: deleteButton
                         buttonIcon: "close"
                         onClicked: {
                             Ai.removeMessage(root.messageIndex);
-                        }
-                        StyledToolTip {
-                            text: qsTr("Delete")
                         }
                     }
                 }

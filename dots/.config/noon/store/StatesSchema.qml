@@ -43,12 +43,20 @@ JsonAdapter {
         property JsonObject kdeconnect
         property JsonObject bookmarks
         property JsonObject wm
+        property JsonObject ai
         property JsonObject emojis
         property JsonObject nightLight
         property JsonObject ambientSounds
         property JsonObject mediaPlayer
         property JsonObject power
 
+        ai:JsonObject {
+            property JsonObject tokenCount:JsonObject {
+                property int input
+                property int output
+                property int total
+            }
+        }
         power: JsonObject {
             property string controller: ""
             property string mode: ""
