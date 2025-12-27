@@ -20,18 +20,19 @@ Scope {
             }
         }
 
-        function inc_brightness() {
-            onPressed: BrightnessService.increaseBrightness();
+        function inc_brightness(){
+            BrightnessService.increaseBrightness();
         }
 
         function dec_brightness() {
-            onPressed: BrightnessService.decreaseBrightness();
+             BrightnessService.decreaseBrightness();
         }
-        function clear_clipboard(): void {
+        function clear_clipboard() {
             ClipboardService.wipe();
         }
-        function update_clipboard(): void {
+        function update_clipboard() {
             ClipboardService.reload();
+            SidebarData.generateHistory()
         }
         function refresh_appearance() {
             WallpaperService.refreshTheme();
