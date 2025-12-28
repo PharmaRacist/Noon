@@ -10,7 +10,7 @@ import qs.store
 Singleton {
     id: root
     property int sidebarWidth
-    
+
     readonly property var sizePresets: ({
         bar: Sizes.collapsedSideBarWidth ?? 50,
         contentQuarter: Math.round(Screen.width * 0.235) - Sizes.collapsedSideBarWidth,
@@ -24,52 +24,50 @@ Singleton {
 
     property var _categoryMap: ({})
     property var _enabledCategories: []
-    property var _appCache: null
-    property bool _appCacheValid: false
-    
+
     readonly property var categories: [
-        { id: "Apps", name: "Apps", icon: "apps", placeholder: qsTr("Search applications..."), 
-          component: Mem.options.sidebar.appearance.useAppListView ? "AppListView" : "AppGridView", 
+        { id: "Apps", name: "Apps", icon: "apps", placeholder: qsTr("Search applications..."),
+          component: Mem.options.sidebar.appearance.useAppListView ? "AppListView" : "AppGridView",
           searchable: true, hasModel: true, customSize: sizePresets.quarter, enabled: true },
-        { id: "API", name: "APIs", icon: "neurology", component: "API", expandable: true, overlay: true, 
+        { id: "API", name: "APIs", icon: "neurology", component: "API", expandable: true, overlay: true,
           customSize: sizePresets.half, enabled: true },
-        { id: "Notifs", name: "Notifs", icon: "notifications_active", component: "StyledNotifications", 
+        { id: "Notifs", name: "Notifs", icon: "notifications_active", component: "StyledNotifications",
           customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.notifs },
-        { id: "Walls", name: "Walls", icon: "image", placeholder: qsTr("Search Wallpapers..."), 
-          component: "WallpaperSelector", expandable: true, searchable: true, customSize: sizePresets.threeQuarter, 
+        { id: "Walls", name: "Walls", icon: "image", placeholder: qsTr("Search Wallpapers..."),
+          component: "WallpaperSelector", expandable: true, searchable: true, customSize: sizePresets.threeQuarter,
           enabled: Mem.options.sidebar.content.wallpapers },
-        { id: "Gallery", name: "Gallery", icon: "photo_library", placeholder: qsTr("Search gallery..."), 
-          component: "GalleryWidget", expandable: true, customSize: sizePresets.threeQuarter, searchable: true, 
-          hasModel: true, folderPath: Qt.resolvedUrl(Directories.gallery), 
+        { id: "Gallery", name: "Gallery", icon: "photo_library", placeholder: qsTr("Search gallery..."),
+          component: "GalleryWidget", expandable: true, customSize: sizePresets.threeQuarter, searchable: true,
+          hasModel: true, folderPath: Qt.resolvedUrl(Directories.gallery),
           nameFilters: ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp"], enabled: Mem.options.sidebar.content.gallery ?? true },
-        { id: "Tasks", name: "Tasks", icon: "task_alt", component: "KanbanWidget", expandable: true, 
+        { id: "Tasks", name: "Tasks", icon: "task_alt", component: "KanbanWidget", expandable: true,
           preExpand: false, customSize: sizePresets.half, enabled: Mem.options.sidebar.content.tasks },
-        { id: "Notes", name: "Notes", icon: "stylus", component: "Notes", expandable: true, 
+        { id: "Notes", name: "Notes", icon: "stylus", component: "Notes", expandable: true,
           customSize: sizePresets.half, enabled: Mem.options.sidebar.content.notes },
-        { id: "View", name: "View", icon: "ad", component: "OverviewWidget", expandable: true, preExpand: true, 
+        { id: "View", name: "View", icon: "ad", component: "OverviewWidget", expandable: true, preExpand: true,
           customSize: sizePresets.overview, enabled: Mem.options.sidebar.content.overview },
         { id: "Beats", name: "Beats", icon: "music_note", component: "Beats", expandable: false, preExpand: false, enabled: Mem.options.sidebar.content.beats },
-        { id: "Bars", name: "Bars", icon: "format_paint", placeholder: qsTr("Search bar layouts..."), 
-          component: "AppListView", searchable: true, hasModel: true, useListView: true, 
+        { id: "Bars", name: "Bars", icon: "format_paint", placeholder: qsTr("Search bar layouts..."),
+          component: "AppListView", searchable: true, hasModel: true, useListView: true,
           customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.barSwitcher },
-        { id: "Emojis", name: "Emojis", icon: "emoji_emotions", placeholder: qsTr("Search emojis..."), 
-          component: "AppGridView", searchable: true, hasModel: true, customSize: sizePresets.quarter, 
+        { id: "Emojis", name: "Emojis", icon: "emoji_emotions", placeholder: qsTr("Search emojis..."),
+          component: "AppGridView", searchable: true, hasModel: true, customSize: sizePresets.quarter,
           enabled: Mem.options.sidebar.content.emojies },
-        { id: "History", name: "History", icon: "content_paste", placeholder: qsTr("Search history..."), 
-          component: "AppListView", searchable: true, hasModel: true, useListView: true, 
+        { id: "History", name: "History", icon: "content_paste", placeholder: qsTr("Search history..."),
+          component: "AppListView", searchable: true, hasModel: true, useListView: true,
           customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.history },
-        { id: "Games", name: "Games", icon: "stadia_controller", component: "Games", expandable: true, 
+        { id: "Games", name: "Games", icon: "stadia_controller", component: "Games", expandable: true,
           preExpand: true, searchable: true, customSize: sizePresets.half, enabled: Mem.options.sidebar.content.games },
-        { id: "Tweaks", name: "Tweaks", icon: "tune", component: "Tweaks", expandable: true, searchable: true, 
+        { id: "Tweaks", name: "Tweaks", icon: "tune", component: "Tweaks", expandable: true, searchable: true,
           customSize: sizePresets.threeQuarter, enabled: Mem.options.sidebar.content.tweaks },
-        { id: "Bookmarks", name: "Bookmarks", icon: "bookmark", placeholder: qsTr("Search bookmarks..."), 
-          component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter, 
+        { id: "Bookmarks", name: "Bookmarks", icon: "bookmark", placeholder: qsTr("Search bookmarks..."),
+          component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter,
           enabled: Mem.options.sidebar.content.bookmarks ?? true },
-        { id: "Misc", name: "Misc", icon: "more_horiz", component: "MiscComponent", overlay: true, 
+        { id: "Misc", name: "Misc", icon: "more_horiz", component: "MiscComponent", overlay: true,
           customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.misc },
-        { id: "Auth", name: "Auth", icon: "lock", component: "Auth", overlay: true, 
+        { id: "Auth", name: "Auth", icon: "lock", component: "Auth", overlay: true,
           customSize: sizePresets.quarter, enabled: false },
-        { id: "Session", name: "Session", icon: "power_settings_new", component: "PowerMenu", overlay: true, 
+        { id: "Session", name: "Session", icon: "power_settings_new", component: "PowerMenu", overlay: true,
           customSize: sizePresets.session, enabled: Mem.options.sidebar.content.session },
     ]
 
@@ -84,12 +82,6 @@ Singleton {
             _categoryMap = map;
             _enabledCategories = enabled;
         }
-    }
-
-    // Invalidate app cache when desktop entries change
-    Connections {
-        target: DesktopEntries.applications
-        function onValuesChanged() { _appCacheValid = false; }
     }
 
     readonly property var categoryMap: _categoryMap
@@ -135,14 +127,15 @@ Singleton {
         }
     }
 
-    function _buildAppCache() {
+    function generateApps(query) {
+        const q = query?.trim() || "";
         const allEntries = DesktopEntries.applications.values;
         if (!allEntries?.length) return [];
-        
+
         const sorted = Array.from(allEntries);
         sorted.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-        
-        return sorted.map(entry => ({
+
+        const apps = sorted.map(entry => ({
             id: entry.id,
             name: entry.name,
             command: Array.isArray(entry.command) ? entry.command.join(' ') : String(entry.command || ""),
@@ -152,27 +145,17 @@ Singleton {
             type: qsTr("App"),
             _entry: entry
         }));
-    }
 
-    function generateApps(query) {
-        const q = query?.trim() || "";
-        
-        if (!_appCacheValid || !_appCache) {
-            _appCache = _buildAppCache();
-            _appCacheValid = true;
-        }
-        
-        if (!_appCache.length) return [];
-        if (!q) return _appCache;
-        
-        const fuzzyResults = Fuzzy.go(q, _appCache.map(a => a._entry), {
+        if (!q) return apps;
+
+        const fuzzyResults = Fuzzy.go(q, allEntries, {
             keys: ['name', 'genericName', 'comment', 'keywords'],
             threshold: -10000,
             limit: 100
         });
-        
+
         const idSet = new Set(fuzzyResults.map(r => r.obj.id));
-        return _appCache.filter(app => idSet.has(app.id));
+        return apps.filter(app => idSet.has(app.id));
     }
 
     function generateBarLayouts(query, params) {
@@ -183,7 +166,7 @@ Singleton {
             if (!layouts) return;
             const isActiveCheck = isVert ? params.isVerticalBar : !params.isVerticalBar;
             const currentLayout = isVert ? params.currentVerticalLayout : params.currentHorizontalLayout;
-            
+
             for (let idx = 0; idx < layouts.length; idx++) {
                 const name = layouts[idx].replace('Layout', '');
                 const isActive = isActiveCheck && currentLayout === idx;
@@ -218,10 +201,10 @@ Singleton {
 
     function generateEmojis(query, params) {
         if (!params) return [];
-        
+
         const allEmojis = Emojis.list || [];
         if (!allEmojis.length) return [];
-        
+
         const mapped = allEmojis.map(e => {
             const emoji = e.match(/^\s*(\S+)/)?.[1] || "";
             const name = e.replace(/^\s*\S+\s+/, "");
@@ -240,7 +223,6 @@ Singleton {
 
         const q = query?.trim() || "";
         if (!q) {
-            // Return frequent emojis when no search
             const frequentSet = new Set(params.frequentEmojis || []);
             const frequent = mapped.filter(e => frequentSet.has(e.bigText));
             return frequent.length ? frequent : mapped.slice(0, 24);
@@ -258,7 +240,7 @@ Singleton {
     function generateHistory(query) {
         const allResults = ClipboardService.entries || [];
         if (!allResults?.length) return [];
-        
+
         const mapped = allResults.map(str => {
             const id = Number(str.split("\t")[0]);
             const isImage = ClipboardService.entryIsImage(str);
@@ -327,9 +309,9 @@ Singleton {
 
     function launch(catId, app, layoutSwitcher, isAux = false) {
         if (!app) return;
-        
+
         const hideIfNotAux = () => { if (!isAux) Noon.callIpc("sidebar hide"); };
-        
+
         switch (catId) {
         case "Apps":
             launchApp(app, isAux);
@@ -371,10 +353,10 @@ Singleton {
     function launchApp(app, isAux = false) {
         if (!app) return;
         const hideIfNotAux = () => { if (!isAux) Noon.callIpc("sidebar hide"); };
-        
+
         if (app.execute) { app.execute(); hideIfNotAux(); return; }
         if (app.onClick) { app.onClick(); hideIfNotAux(); return; }
-        
+
         const entry = DesktopEntries.byId(app.id);
         if (entry) {
             Noon.playSound("event_accepted");
