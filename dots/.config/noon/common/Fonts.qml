@@ -1,7 +1,7 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
-pragma Singleton
 
 Singleton {
     property QtObject family
@@ -13,6 +13,7 @@ Singleton {
         readonly property string reading: "Rubik"
         readonly property string numbers: "Roboto Flex"
         readonly property string monospace: "Iosevka"
+        readonly property string clock: "Google Sans Flex"
         readonly property string variable: "Roboto Flex"
         readonly property string iconMaterial: "Material Symbols Rounded"
     }
@@ -31,33 +32,32 @@ Singleton {
 
     variableAxes: QtObject {
         readonly property var main: ({
-            "wght": 450,
-            "wdth": 100
-        })
+                "wght": 450,
+                "wdth": 100
+            })
         readonly property var lyrics: ({
-            "wght": 600,
-            "wdth": 100
-        })
+                "wght": 600,
+                "wdth": 100
+            })
         readonly property var numbers: ({
-            "wght": 550,
-            "wdth": 100
-        })
+                "wght": 550,
+                "wdth": 100
+            })
         readonly property var title: ({
-            "wght": 650
-        })
+                "wght": 650
+            })
         readonly property var longNumbers: ({
-            "wght": 500,
-            "ytfi": 788,
-            "opsz": 144,
-            "wdth": 50
-        })
+                "wght": 500,
+                "ytfi": 788,
+                "opsz": 144,
+                "wdth": 50
+            })
         readonly property var display: ({
-            "wght": Mem.states.fonts.variableAxes.display.wght,
-            "wdth": Mem.states.fonts.variableAxes.display.wdth,
-            "ital": Mem.states.fonts.variableAxes.display.ital,
-            "slnt": Mem.states.fonts.variableAxes.display.slnt,
-            "opsz": Mem.states.fonts.variableAxes.display.opsz
-        })
+                "wght": Mem.states.fonts.variableAxes.display.wght,
+                "wdth": Mem.states.fonts.variableAxes.display.wdth,
+                "ital": Mem.states.fonts.variableAxes.display.ital,
+                "slnt": Mem.states.fonts.variableAxes.display.slnt,
+                "opsz": Mem.states.fonts.variableAxes.display.opsz
+            })
     }
-
 }

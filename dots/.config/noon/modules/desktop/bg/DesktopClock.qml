@@ -47,7 +47,7 @@ GridLayout {
         visible: root.verticalClock && !root.centerClock
         Layout.row: 3
         Layout.leftMargin: 3
-        font.family: Fonts.family.variable
+        font.family: Fonts.family.clock
         font.variableAxes: Fonts.variableAxes.display
         color: Colors.colOnLayer0
         font.pixelSize: 40 * Mem.states.desktop.clock.scale
@@ -59,29 +59,21 @@ GridLayout {
     Component {
         id: verticalClockComponent
 
-        VerticalClockComponent {
-        }
-
+        VerticalClockComponent {}
     }
 
     Component {
         id: horizontalClockComponent
 
-        HorizontalClockComponent {
-        }
-
+        HorizontalClockComponent {}
     }
 
     Behavior on anchors.leftMargin {
-        Anim {
-        }
-
+        Anim {}
     }
 
     Behavior on anchors.bottomMargin {
-        Anim {
-        }
-
+        Anim {}
     }
 
     transitions: Transition {
@@ -89,7 +81,6 @@ GridLayout {
             properties: "x,y"
             easing.type: Easing.InOutQuad
         }
-
     }
     // Clock loader
 
@@ -109,7 +100,6 @@ GridLayout {
             color: Colors.colOnLayer0
             text: DateTimeService.cleanMinute
         }
-
     }
 
     component HorizontalClockComponent: ColumnLayout {
@@ -118,7 +108,7 @@ GridLayout {
         StyledText {
             id: clockText
 
-            font.family: Fonts.family.variable
+            font.family: Fonts.family.clock
             font.variableAxes: Fonts.variableAxes.display
             color: Colors.colOnLayer0
             font.pixelSize: 100 * Mem.states.desktop.clock.scale
@@ -127,7 +117,7 @@ GridLayout {
 
         StyledText {
             Layout.leftMargin: 3
-            font.family: Fonts.family.variable
+            font.family: Fonts.family.clock
             font.variableAxes: Fonts.variableAxes.display
             color: clockText.color
             font.pixelSize: 40 * Mem.states.desktop.clock.scale
@@ -135,7 +125,6 @@ GridLayout {
             text: DateTimeService.date
             renderType: Text.NativeRendering
         }
-
     }
 
     component MediaIndicator: RowLayout {
@@ -157,7 +146,7 @@ GridLayout {
                 width: 340
                 font.weight: 600
                 font.pixelSize: 33
-                font.family: Fonts.family.variable
+                font.family: Fonts.family.clock
                 font.variableAxes: Fonts.variableAxes.display
                 color: Colors.colOnLayer0
                 text: BeatsService.title
@@ -171,32 +160,25 @@ GridLayout {
                     onPressed: Noon.callIpc("sidebar Beats")
                     cursorShape: Qt.PointingHandCursor
                 }
-
             }
 
             StyledText {
                 font.weight: 500
                 color: Colors.colSubtext
                 width: 200
-                font.family: Fonts.family.variable
+                font.family: Fonts.family.clock
                 font.variableAxes: Fonts.variableAxes.display
                 font.pixelSize: 20
                 text: BeatsService.artist
                 elide: Text.ElideRight
                 animateChange: true
             }
-
         }
 
-        Spacer {
-        }
+        Spacer {}
 
         Behavior on opacity {
-            Anim {
-            }
-
+            Anim {}
         }
-
     }
-
 }
