@@ -1,18 +1,10 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common.widgets
 import qs.services
-pragma Singleton
 
 Singleton {
-    // Connections {
-    //     target: Mem
-    //     onReadyChanged: {
-    //         if (ready) {
-    //         }
-    //     }
-    // }
-
     id: root
 
     property bool locked: false
@@ -63,5 +55,4 @@ Singleton {
             superHeld = false;
         }
     }
-
 }

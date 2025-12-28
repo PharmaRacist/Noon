@@ -4,6 +4,7 @@ import qs.common.widgets
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
+import Quickshell.Wayland
 
 MouseArea {
     id: root
@@ -12,14 +13,14 @@ MouseArea {
     readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
     readonly property int barHeight: BarData.currentBarExclusiveSize
     implicitHeight: BarData.currentBarExclusiveSize
-    implicitWidth:200
-    hoverEnabled:true
+    implicitWidth: 200
+    hoverEnabled: true
     WorkspacePopup {
-        hoverTarget:root
+        hoverTarget: root
     }
     ColumnLayout {
         id: colLayout
-        anchors.fill:parent
+        anchors.fill: parent
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         spacing: -5

@@ -23,14 +23,15 @@ Button {
     property var releaseAction // When left clicking (release)
     property var altAction // When right clicking
     property var middleClickAction // When middle clicking
-    property color colBackground: ColorUtils.transparentize(Colors.colLayer1Hover, 1) || "transparent"
-    property color colBackgroundHover: Colors.colLayer1Hover ?? "#E5DFED"
-    property color colBackgroundToggled: Colors.colPrimary ?? "#65558F"
-    property color colBackgroundToggledHover: Colors.colPrimaryHover ?? "#77699C"
-    property color colRipple: Colors.colLayer1Active ?? "#D6CEE2"
-    property color colRippleToggled: Colors.colPrimaryActive ?? "#D6CEE2"
+    property color colBackground: colors.colLayer1 || "transparent"
+    property color colBackgroundHover: colors.colLayer1Hover ?? "#E5DFED"
+    property color colBackgroundToggled: colors.colPrimary ?? "#65558F"
+    property color colBackgroundToggledHover: colors.colPrimaryHover ?? "#77699C"
+    property color colRipple: colors.colLayer1Active ?? "#D6CEE2"
+    property color colRippleToggled: colors.colPrimaryActive ?? "#D6CEE2"
     property color buttonColor: ColorUtils.transparentize(root.toggled ? (root.hovered ? colBackgroundToggledHover : colBackgroundToggled) : (root.hovered ? colBackgroundHover : colBackground), root.enabled ? 0 : 1)
     property color rippleColor: root.toggled ? colRippleToggled : colRipple
+    property QtObject colors: Colors
 
     function startRipple(x, y) {
         const stateY = buttonBackground.y;
@@ -51,25 +52,25 @@ Button {
         anchors.fill: parent
         cursorShape: root.pointingHandCursor ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-        onPressed: (event) => {
+        onPressed: event => {
             if (event.button === Qt.RightButton) {
                 if (root.altAction)
                     root.altAction(event);
 
-                return ;
+                return;
             }
             if (event.button === Qt.MiddleButton) {
                 if (root.middleClickAction)
                     root.middleClickAction();
 
-                return ;
+                return;
             }
             root.down = true;
             if (root.downAction)
                 root.downAction();
 
             if (!root.rippleEnabled)
-                return ;
+                return;
 
             const {
                 "x": x,
@@ -78,24 +79,24 @@ Button {
             Noon.playSound("event_accepted");
             startRipple(x, y);
         }
-        onReleased: (event) => {
+        onReleased: event => {
             root.down = false;
             if (event.button != Qt.LeftButton)
-                return ;
+                return;
 
             if (root.releaseAction)
                 root.releaseAction();
 
             root.click(); // Because the MouseArea already consumed the event
             if (!root.rippleEnabled)
-                return ;
+                return;
 
             rippleFadeAnim.restart();
         }
-        onCanceled: (event) => {
+        onCanceled: event => {
             root.down = false;
             if (!root.rippleEnabled)
-                return ;
+                return;
 
             rippleFadeAnim.restart();
         }
@@ -142,9 +143,7 @@ Button {
                 from: 0
                 to: rippleAnim.radius * 2
             }
-
         }
-
     }
 
     component RippleAnim: Anim {
@@ -190,28 +189,21 @@ Button {
                         position: 0.5
                         color: Qt.rgba(root.rippleColor.r, root.rippleColor.g, root.rippleColor.b, 0)
                     }
-
                 }
-
             }
 
             Behavior on opacity {
-                Anim {
-                }
-
+                Anim {}
             }
 
             transform: Translate {
                 x: -ripple.width / 2
                 y: -ripple.height / 2
             }
-
         }
 
         Behavior on color {
-            CAnim {
-            }
-
+            CAnim {}
         }
 
         layer.effect: OpacityMask {
@@ -221,13 +213,10 @@ Button {
                 height: buttonBackground.height
                 radius: root.buttonEffectiveRadius
             }
-
         }
-
     }
 
     contentItem: StyledText {
         text: root.buttonText
     }
-
 }

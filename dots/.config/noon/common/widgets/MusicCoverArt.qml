@@ -12,7 +12,7 @@ StyledRect {
     id: root
 
     radius: Rounding.large
-    color: TrackColorsService.colors.colSecondaryContainer
+    color: BeatsService.colors.colSecondaryContainer
     clip: true
     enableShadows: true
 
@@ -22,7 +22,7 @@ StyledRect {
         z: 99
         tint: true
         tintLevel: 0.8
-        tintColor: TrackColorsService.colors.colSecondaryContainer
+        tintColor: BeatsService.colors.colSecondaryContainer
         visible: true
         anchors.fill: parent
         source: BeatsService.artUrl
@@ -36,7 +36,6 @@ StyledRect {
         anchors.centerIn: parent
         text: "music_note"
         font.pixelSize: (parent.height + parent.width) / 2 - Padding.verylarge
-        color: TrackColorsService.colors.colSecondary
+        color: BeatsService.colors.colSecondary
     }
-
 }

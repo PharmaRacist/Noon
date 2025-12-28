@@ -3,72 +3,216 @@ import QtQuick
 import Qt.labs.folderlistmodel
 import Quickshell
 import qs.common
+import qs.common.utils
 import qs.common.functions
 import qs.services
-import qs.store
 
 Singleton {
     id: root
     property int sidebarWidth
 
     readonly property var sizePresets: ({
-        bar: Sizes.collapsedSideBarWidth ?? 50,
-        contentQuarter: Math.round(Screen.width * 0.235) - Sizes.collapsedSideBarWidth,
-        half: Math.round(Screen.width * 0.457),
-        full: Screen.width,
-        quarter: Math.round(Screen.width * 0.246),
-        threeQuarter: Math.round(Screen.width * 0.85),
-        session: 280,
-        overview: 1250
-    })
+            bar: Sizes.collapsedSideBarWidth ?? 50,
+            contentQuarter: Math.round(Screen.width * 0.235) - Sizes.collapsedSideBarWidth,
+            half: Math.round(Screen.width * 0.457),
+            full: Screen.width,
+            quarter: Math.round(Screen.width * 0.246),
+            threeQuarter: Math.round(Screen.width * 0.85),
+            session: 280,
+            overview: 1250
+        })
 
     property var _categoryMap: ({})
     property var _enabledCategories: []
 
     readonly property var categories: [
-        { id: "Apps", name: "Apps", icon: "apps", placeholder: qsTr("Search applications..."),
-          component: Mem.options.sidebar.appearance.useAppListView ? "AppListView" : "AppGridView",
-          searchable: true, hasModel: true, customSize: sizePresets.quarter, enabled: true },
-        { id: "API", name: "APIs", icon: "neurology", component: "API", expandable: true, overlay: true,
-          customSize: sizePresets.half, enabled: true },
-        { id: "Notifs", name: "Notifs", icon: "notifications_active", component: "StyledNotifications",
-          customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.notifs },
-        { id: "Walls", name: "Walls", icon: "image", placeholder: qsTr("Search Wallpapers..."),
-          component: "WallpaperSelector", expandable: true, searchable: true, customSize: sizePresets.threeQuarter,
-          enabled: Mem.options.sidebar.content.wallpapers },
-        { id: "Gallery", name: "Gallery", icon: "photo_library", placeholder: qsTr("Search gallery..."),
-          component: "GalleryWidget", expandable: true, customSize: sizePresets.threeQuarter, searchable: true,
-          hasModel: true, folderPath: Qt.resolvedUrl(Directories.gallery),
-          nameFilters: ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp"], enabled: Mem.options.sidebar.content.gallery ?? true },
-        { id: "Tasks", name: "Tasks", icon: "task_alt", component: "KanbanWidget", expandable: true,
-          preExpand: false, customSize: sizePresets.half, enabled: Mem.options.sidebar.content.tasks },
-        { id: "Notes", name: "Notes", icon: "stylus", component: "Notes", expandable: true,
-          customSize: sizePresets.half, enabled: Mem.options.sidebar.content.notes },
-        { id: "View", name: "View", icon: "ad", component: "OverviewWidget", expandable: true, preExpand: true,
-          customSize: sizePresets.overview, enabled: Mem.options.sidebar.content.overview },
-        { id: "Beats", name: "Beats", icon: "music_note", component: "Beats", expandable: false, preExpand: false, enabled: Mem.options.sidebar.content.beats },
-        { id: "Bars", name: "Bars", icon: "format_paint", placeholder: qsTr("Search bar layouts..."),
-          component: "AppListView", searchable: true, hasModel: true, useListView: true,
-          customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.barSwitcher },
-        { id: "Emojis", name: "Emojis", icon: "emoji_emotions", placeholder: qsTr("Search emojis..."),
-          component: "AppGridView", searchable: true, hasModel: true, customSize: sizePresets.quarter,
-          enabled: Mem.options.sidebar.content.emojies },
-        { id: "History", name: "History", icon: "content_paste", placeholder: qsTr("Search history..."),
-          component: "AppListView", searchable: true, hasModel: true, useListView: true,
-          customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.history },
-        { id: "Games", name: "Games", icon: "stadia_controller", component: "Games", expandable: true,
-          preExpand: true, searchable: true, customSize: sizePresets.half, enabled: Mem.options.sidebar.content.games },
-        { id: "Tweaks", name: "Tweaks", icon: "tune", component: "Tweaks", expandable: true, searchable: true,
-          customSize: sizePresets.threeQuarter, enabled: Mem.options.sidebar.content.tweaks },
-        { id: "Bookmarks", name: "Bookmarks", icon: "bookmark", placeholder: qsTr("Search bookmarks..."),
-          component: "AppListView", searchable: true, hasModel: true, useListView: true, customSize: sizePresets.quarter,
-          enabled: Mem.options.sidebar.content.bookmarks ?? true },
-        { id: "Misc", name: "Misc", icon: "more_horiz", component: "MiscComponent", overlay: true,
-          customSize: sizePresets.quarter, enabled: Mem.options.sidebar.content.misc },
-        { id: "Auth", name: "Auth", icon: "lock", component: "Auth", overlay: true,
-          customSize: sizePresets.quarter, enabled: false },
-        { id: "Session", name: "Session", icon: "power_settings_new", component: "PowerMenu", overlay: true,
-          customSize: sizePresets.session, enabled: Mem.options.sidebar.content.session },
+        {
+            id: "Apps",
+            name: "Apps",
+            icon: "apps",
+            placeholder: qsTr("Search applications..."),
+            component: Mem.options.sidebar.appearance.useAppListView ? "AppListView" : "AppGridView",
+            searchable: true,
+            hasModel: true,
+            customSize: sizePresets.quarter,
+            enabled: true
+        },
+        {
+            id: "API",
+            name: "APIs",
+            icon: "neurology",
+            component: "API",
+            expandable: true,
+            overlay: true,
+            customSize: sizePresets.half,
+            enabled: true
+        },
+        {
+            id: "Notifs",
+            name: "Notifs",
+            icon: "notifications_active",
+            component: "StyledNotifications",
+            customSize: sizePresets.quarter,
+            enabled: Mem.options.sidebar.content.notifs
+        },
+        {
+            id: "Walls",
+            name: "Walls",
+            icon: "image",
+            placeholder: qsTr("Search Wallpapers..."),
+            component: "WallpaperSelector",
+            expandable: true,
+            searchable: true,
+            customSize: sizePresets.threeQuarter,
+            enabled: Mem.options.sidebar.content.wallpapers
+        },
+        {
+            id: "Gallery",
+            name: "Gallery",
+            icon: "photo_library",
+            placeholder: qsTr("Search gallery..."),
+            component: "GalleryWidget",
+            expandable: true,
+            customSize: sizePresets.threeQuarter,
+            searchable: true,
+            hasModel: true,
+            folderPath: Qt.resolvedUrl(Directories.gallery),
+            nameFilters: NameFilters.picture,
+            enabled: Mem.options.sidebar.content.gallery ?? true
+        },
+        {
+            id: "Tasks",
+            name: "Tasks",
+            icon: "task_alt",
+            component: "KanbanWidget",
+            expandable: true,
+            preExpand: false,
+            customSize: sizePresets.half,
+            enabled: Mem.options.sidebar.content.tasks
+        },
+        {
+            id: "Notes",
+            name: "Notes",
+            icon: "stylus",
+            component: "Notes",
+            expandable: true,
+            customSize: sizePresets.half,
+            enabled: Mem.options.sidebar.content.notes
+        },
+        {
+            id: "View",
+            name: "View",
+            icon: "ad",
+            component: "OverviewWidget",
+            expandable: true,
+            preExpand: true,
+            customSize: sizePresets.overview,
+            enabled: Mem.options.sidebar.content.overview
+        },
+        {
+            id: "Beats",
+            name: "Beats",
+            icon: "music_note",
+            component: "Beats",
+            expandable: false,
+            preExpand: false,
+            enabled: Mem.options.sidebar.content.beats
+        },
+        {
+            id: "Bars",
+            name: "Bars",
+            icon: "format_paint",
+            placeholder: qsTr("Search bar layouts..."),
+            component: "AppListView",
+            searchable: true,
+            hasModel: true,
+            useListView: true,
+            customSize: sizePresets.quarter,
+            enabled: Mem.options.sidebar.content.barSwitcher
+        },
+        {
+            id: "Emojis",
+            name: "Emojis",
+            icon: "emoji_emotions",
+            placeholder: qsTr("Search emojis..."),
+            component: "AppGridView",
+            searchable: true,
+            hasModel: true,
+            customSize: sizePresets.quarter,
+            enabled: Mem.options.sidebar.content.emojies
+        },
+        {
+            id: "History",
+            name: "History",
+            icon: "content_paste",
+            placeholder: qsTr("Search history..."),
+            component: "AppListView",
+            searchable: true,
+            hasModel: true,
+            useListView: true,
+            customSize: sizePresets.quarter,
+            enabled: Mem.options.sidebar.content.history
+        },
+        {
+            id: "Games",
+            name: "Games",
+            icon: "stadia_controller",
+            component: "Games",
+            expandable: true,
+            preExpand: false,
+            searchable: true,
+            customSize: sizePresets.half - 80,
+            enabled: true
+        },
+        {
+            id: "Tweaks",
+            name: "Tweaks",
+            icon: "tune",
+            component: "Tweaks",
+            expandable: true,
+            searchable: true,
+            customSize: sizePresets.threeQuarter,
+            enabled: Mem.options.sidebar.content.tweaks
+        },
+        {
+            id: "Bookmarks",
+            name: "Bookmarks",
+            icon: "bookmark",
+            placeholder: qsTr("Search bookmarks..."),
+            component: "AppListView",
+            searchable: true,
+            hasModel: true,
+            useListView: true,
+            customSize: sizePresets.quarter,
+            enabled: Mem.options.sidebar.content.bookmarks ?? true
+        },
+        {
+            id: "Misc",
+            name: "Misc",
+            icon: "more_horiz",
+            component: "MiscComponent",
+            overlay: true,
+            customSize: sizePresets.quarter,
+            enabled: Mem.options.sidebar.content.misc
+        },
+        {
+            id: "Auth",
+            name: "Auth",
+            icon: "lock",
+            component: "Auth",
+            overlay: true,
+            customSize: sizePresets.quarter,
+            enabled: false
+        },
+        {
+            id: "Session",
+            name: "Session",
+            icon: "power_settings_new",
+            component: "PowerMenu",
+            overlay: true,
+            customSize: sizePresets.session,
+            enabled: Mem.options.sidebar.content.session
+        },
     ]
 
     Component.onCompleted: {
@@ -77,7 +221,8 @@ Singleton {
             for (let i = 0; i < categories.length; i++) {
                 const cat = categories[i];
                 map[cat.id] = cat;
-                if (cat.enabled) enabled.push(cat.id);
+                if (cat.enabled)
+                    enabled.push(cat.id);
             }
             _categoryMap = map;
             _enabledCategories = enabled;
@@ -88,20 +233,48 @@ Singleton {
     readonly property var enabledCategories: _enabledCategories
     readonly property var registry: _categoryMap
 
-    function getCategory(catId) { return _categoryMap[catId] || _categoryMap["Apps"]; }
-    function getIcon(catId) { const cat = _categoryMap[catId]; return cat ? cat.icon : "apps"; }
-    function getPlaceholder(catId) { const cat = _categoryMap[catId]; return cat ? (cat.placeholder || qsTr("Search...")) : qsTr("Search..."); }
-    function getComponent(catId) { const cat = _categoryMap[catId]; return cat ? (cat.component || "AppGridView") : "AppGridView"; }
-    function isSearchable(catId) { const cat = _categoryMap[catId]; return cat ? (cat.searchable ?? false) : false; }
-    function hasModel(catId) { const cat = _categoryMap[catId]; return cat ? (cat.hasModel ?? false) : false; }
-    function isExpandable(catId) { const cat = _categoryMap[catId]; return cat ? (cat.expandable ?? false) : false; }
-    function usePreExpand(catId) { const cat = _categoryMap[catId]; return cat ? (cat.preExpand ?? false) : false; }
-    function isOverlay(catId) { const cat = _categoryMap[catId]; return cat ? (cat.overlay ?? false) : false; }
+    function getCategory(catId) {
+        return _categoryMap[catId] || _categoryMap["Apps"];
+    }
+    function getIcon(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? cat.icon : "apps";
+    }
+    function getPlaceholder(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.placeholder || qsTr("Search...")) : qsTr("Search...");
+    }
+    function getComponent(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.component || "AppGridView") : "AppGridView";
+    }
+    function isSearchable(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.searchable ?? false) : false;
+    }
+    function hasModel(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.hasModel ?? false) : false;
+    }
+    function isExpandable(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.expandable ?? false) : false;
+    }
+    function usePreExpand(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.preExpand ?? false) : false;
+    }
+    function isOverlay(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.overlay ?? false) : false;
+    }
 
     function currentSize(barMode, expanded, selectedCategory) {
-        if (barMode) return sizePresets.bar + Padding.large;
+        if (barMode)
+            return sizePresets.bar + Padding.large;
         const cat = _categoryMap[selectedCategory];
-        if (expanded && cat?.expandable) return cat.customSize;
+        if (expanded && cat?.expandable)
+            return cat.customSize;
         return selectedCategory === "Session" ? sizePresets.session : sizePresets.quarter;
     }
 
@@ -116,37 +289,46 @@ Singleton {
     }
 
     function generateData(catId, searchText, params) {
-        if (!catId) return [];
+        if (!catId)
+            return [];
         switch (catId) {
-        case "Apps": return generateApps(searchText);
-        case "Bars": return generateBarLayouts(searchText, params);
-        case "Emojis": return generateEmojis(searchText, params);
-        case "History": return generateHistory(searchText);
-        case "Bookmarks": return generateBookmarks(searchText);
-        default: return [];
+        case "Apps":
+            return generateApps(searchText);
+        case "Bars":
+            return generateBarLayouts(searchText, params);
+        case "Emojis":
+            return generateEmojis(searchText, params);
+        case "History":
+            return generateHistory(searchText);
+        case "Bookmarks":
+            return generateBookmarks(searchText);
+        default:
+            return [];
         }
     }
 
     function generateApps(query) {
         const q = query?.trim() || "";
         const allEntries = DesktopEntries.applications.values;
-        if (!allEntries?.length) return [];
+        if (!allEntries?.length)
+            return [];
 
         const sorted = Array.from(allEntries);
         sorted.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
         const apps = sorted.map(entry => ({
-            id: entry.id,
-            name: entry.name,
-            command: Array.isArray(entry.command) ? entry.command.join(' ') : String(entry.command || ""),
-            execString: Array.isArray(entry.execString) ? entry.execString.join(' ') : String(entry.execString || ""),
-            iconImage: entry.icon || entry.genericIcon || "applications-system",
-            clickActionName: qsTr("Launch"),
-            type: qsTr("App"),
-            _entry: entry
-        }));
+                    id: entry.id,
+                    name: entry.name,
+                    command: Array.isArray(entry.command) ? entry.command.join(' ') : String(entry.command || ""),
+                    execString: Array.isArray(entry.execString) ? entry.execString.join(' ') : String(entry.execString || ""),
+                    iconImage: entry.icon || entry.genericIcon || "applications-system",
+                    clickActionName: qsTr("Launch"),
+                    type: qsTr("App"),
+                    _entry: entry
+                }));
 
-        if (!q) return apps;
+        if (!q)
+            return apps;
 
         const fuzzyResults = Fuzzy.go(q, allEntries, {
             keys: ['name', 'genericName', 'comment', 'keywords'],
@@ -159,18 +341,20 @@ Singleton {
     }
 
     function generateBarLayouts(query, params) {
-        if (!params) return [];
+        if (!params)
+            return [];
         const allLayouts = [];
 
         const addLayouts = (layouts, isVert) => {
-            if (!layouts) return;
+            if (!layouts)
+                return;
             const isActiveCheck = isVert ? params.isVerticalBar : !params.isVerticalBar;
             const currentLayout = isVert ? params.currentVerticalLayout : params.currentHorizontalLayout;
 
             for (let idx = 0; idx < layouts.length; idx++) {
                 const name = layouts[idx].replace('Layout', '');
                 const isActive = isActiveCheck && currentLayout === idx;
-                const icon = isActive ? 'check' : 'radio_button_unchecked';
+                const icon = isActive ? 'check' : ' ';
                 allLayouts.push({
                     name: `${name} (${isVert ? 'Vertical' : 'Horizontal'})`,
                     displayName: name,
@@ -189,7 +373,8 @@ Singleton {
         addLayouts(params.horizontalLayouts, false);
         addLayouts(params.verticalLayouts, true);
 
-        if (!query?.trim()) return allLayouts;
+        if (!query?.trim())
+            return allLayouts;
 
         const fuzzyResults = Fuzzy.go(query, allLayouts, {
             key: 'displayName',
@@ -200,34 +385,44 @@ Singleton {
     }
 
     function generateEmojis(query, params) {
-        if (!params) return [];
+        if (!params)
+            return [];
 
-        const allEmojis = Emojis.list || [];
-        if (!allEmojis.length) return [];
+        const allEmojis = EmojisService.list || [];
+        if (!allEmojis.length)
+            return [];
 
+        // Map the new emoji object structure
         const mapped = allEmojis.map(e => {
-            const emoji = e.match(/^\s*(\S+)/)?.[1] || "";
-            const name = e.replace(/^\s*\S+\s+/, "");
+            // Build searchable text from name, category, and subcategory
+            const searchText = `${e.name} ${e.category} ${e.subcategory}`.toLowerCase();
+
             return {
-                cliphistRawString: e,
-                bigText: emoji,
-                name: name,
-                searchName: name,
-                icon: emoji,
+                cliphistRawString: e.emoji + " " + e.name,
+                bigText: e.emoji,
+                name: e.name,
+                searchName: searchText,
+                icon: e.emoji,
                 clickActionName: qsTr("Copy"),
                 type: qsTr("Emoji"),
-                categories: ["Emojis"],
-                id: ""
+                categories: ["Emojis", e.category],
+                id: e.code.join("-"),
+                // Extra metadata if needed
+                category: e.category,
+                subcategory: e.subcategory
             };
         });
 
         const q = query?.trim() || "";
+
+        // No query: show frequent emojis or first 24
         if (!q) {
             const frequentSet = new Set(params.frequentEmojis || []);
             const frequent = mapped.filter(e => frequentSet.has(e.bigText));
             return frequent.length ? frequent : mapped.slice(0, 24);
         }
 
+        // Fuzzy search on the searchName field
         const fuzzyResults = Fuzzy.go(q, mapped, {
             key: 'searchName',
             threshold: -10000,
@@ -236,10 +431,10 @@ Singleton {
 
         return fuzzyResults.map(r => r.obj);
     }
-
     function generateHistory(query) {
         const allResults = ClipboardService.entries || [];
-        if (!allResults?.length) return [];
+        if (!allResults?.length)
+            return [];
 
         const mapped = allResults.map(str => {
             const id = Number(str.split("\t")[0]);
@@ -266,7 +461,8 @@ Singleton {
             };
         });
 
-        if (!query?.trim()) return mapped;
+        if (!query?.trim())
+            return mapped;
 
         const fuzzyResults = Fuzzy.go(query, mapped, {
             key: 'searchText',
@@ -279,24 +475,26 @@ Singleton {
 
     function generateBookmarks(query) {
         const bookmarks = FirefoxBookmarksService.bookmarks;
-        if (!bookmarks?.length) return [];
+        if (!bookmarks?.length)
+            return [];
 
         const mapped = bookmarks.map(b => ({
-            name: b.title || "Untitled",
-            searchTitle: b.title || "",
-            searchUrl: b.url || "",
-            icon: b.favicon_local || b.favicon_url || "bookmark",
-            materialSymbol: (b.favicon_local || b.favicon_url) ? "" : "bookmark",
-            faviconLocal: !!(b.favicon_local || b.favicon_url),
-            clickActionName: qsTr("Open"),
-            type: qsTr("Bookmark"),
-            categories: ["Bookmarks"],
-            url: b.url,
-            id: b.id?.toString() || "",
-            faviconUrl: b.favicon_url || ""
-        }));
+                    name: b.title || "Untitled",
+                    searchTitle: b.title || "",
+                    searchUrl: b.url || "",
+                    icon: b.favicon_local || b.favicon_url || "bookmark",
+                    materialSymbol: (b.favicon_local || b.favicon_url) ? "" : "bookmark",
+                    faviconLocal: !!(b.favicon_local || b.favicon_url),
+                    clickActionName: qsTr("Open"),
+                    type: qsTr("Bookmark"),
+                    categories: ["Bookmarks"],
+                    url: b.url,
+                    id: b.id?.toString() || "",
+                    faviconUrl: b.favicon_url || ""
+                }));
 
-        if (!query?.trim()) return mapped;
+        if (!query?.trim())
+            return mapped;
 
         const fuzzyResults = Fuzzy.go(query, mapped, {
             keys: ['searchTitle', 'searchUrl'],
@@ -308,20 +506,25 @@ Singleton {
     }
 
     function launch(catId, app, layoutSwitcher, isAux = false) {
-        if (!app) return;
+        if (!app)
+            return;
 
-        const hideIfNotAux = () => { if (!isAux) Noon.callIpc("sidebar hide"); };
+        const hideIfNotAux = () => {
+            if (!isAux)
+                Noon.callIpc("sidebar hide");
+        };
 
         switch (catId) {
         case "Apps":
             launchApp(app, isAux);
             break;
         case "Bars":
-            if (layoutSwitcher) layoutSwitcher(app.layoutIndex, app.isVertical);
+            if (layoutSwitcher)
+                layoutSwitcher(app.layoutIndex, app.isVertical);
             hideIfNotAux();
             break;
         case "Emojis":
-            Noon.exec(`wl-copy '${StringUtils.shellSingleQuoteEscape(app.bigText)}'`);
+            Noon.execDetached(`wl-copy '${StringUtils.shellSingleQuoteEscape(app.bigText)}'`);
             EmojisService.recordEmojiUse(app.cliphistRawString);
             hideIfNotAux();
             break;
@@ -335,27 +538,42 @@ Singleton {
             break;
         case "Gallery":
         case "Gallary":
-            if (app.path) Noon.exec(`xdg-open "${app.path}"`);
+            if (app.path)
+                Noon.execDetached(`xdg-open "${app.path}"`);
             hideIfNotAux();
             break;
         }
     }
 
     function altLaunch(app, isAux = false) {
-        if (!app) return;
+        if (!app)
+            return;
         const cat = _categoryMap[selectedCategory];
         if (cat?.altLaunch) {
             cat.altLaunch(app, switchToLayout);
-            if (!isAux) Noon.callIpc("sidebar hide");
+            if (!isAux)
+                Noon.callIpc("sidebar hide");
         }
     }
 
     function launchApp(app, isAux = false) {
-        if (!app) return;
-        const hideIfNotAux = () => { if (!isAux) Noon.callIpc("sidebar hide"); };
+        if (!app)
+            return;
+        const hideIfNotAux = () => {
+            if (!isAux)
+                Noon.callIpc("sidebar hide");
+        };
 
-        if (app.execute) { app.execute(); hideIfNotAux(); return; }
-        if (app.onClick) { app.onClick(); hideIfNotAux(); return; }
+        if (app.execute) {
+            app.execute();
+            hideIfNotAux();
+            return;
+        }
+        if (app.onClick) {
+            app.onClick();
+            hideIfNotAux();
+            return;
+        }
 
         const entry = DesktopEntries.byId(app.id);
         if (entry) {

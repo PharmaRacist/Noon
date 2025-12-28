@@ -9,16 +9,13 @@ JsonAdapter {
 
         icons: JsonObject {
             property string currentIconTheme: ""
-            property list<var> availableIconThemes: []
         }
-
         bg: JsonObject {
             property bool isLive: false
             property string currentVideo: ""
             property string currentBg: ""
             property string currentFolder: ""
         }
-
         appearance: JsonObject {
             property JsonObject colors
 
@@ -32,7 +29,6 @@ JsonAdapter {
                 property real tone: 1
             }
         }
-
         clock: JsonObject {
             property bool center
             property real scale: 1
@@ -42,7 +38,6 @@ JsonAdapter {
     property JsonObject services: JsonObject {
         property JsonObject kdeconnect
         property JsonObject bookmarks
-        property JsonObject wm
         property JsonObject ai
         property JsonObject emojis
         property JsonObject nightLight
@@ -50,8 +45,8 @@ JsonAdapter {
         property JsonObject mediaPlayer
         property JsonObject power
 
-        ai:JsonObject {
-            property JsonObject tokenCount:JsonObject {
+        ai: JsonObject {
+            property JsonObject tokenCount: JsonObject {
                 property int input
                 property int output
                 property int total
@@ -68,7 +63,7 @@ JsonAdapter {
             property string selectedDeviceId: ""
             property string myDeviceId: ""
         }
-        nightLight:JsonObject {
+        nightLight: JsonObject {
             property bool enabled: false
             property int temperature: 3600
         }
@@ -76,23 +71,15 @@ JsonAdapter {
             property list<var> firefoxBookmarks: []
         }
 
-        wm: JsonObject {
-            property bool hypr: true
-            property bool niri: true
-        }
-
         emojis: JsonObject {
             property list<var> frequentEmojies: []
         }
-
         ambientSounds: JsonObject {
             property real masterVolume: 1
             property bool masterPaused: false
             property bool muted: false
-            property list<var> availableSounds: []
             property list<var> activeSounds: []
         }
-
         mediaPlayer: JsonObject {
             // property string selectedPlayerDbusName: ""
             property int selectedPlayerIndex: 0
@@ -127,10 +114,6 @@ JsonAdapter {
         property bool pinned: false
         property list<var> pinnedApps: ["firefox", "dolphin"]
     }
-    property JsonObject misc: JsonObject {
-        property list<string> ipcCommands: []
-        property list<string> systemCommands: []
-    }
     property JsonObject sidebar: JsonObject {
         property JsonObject behavior
         property JsonObject misc
@@ -140,11 +123,9 @@ JsonAdapter {
             property bool expanded: false
             property bool pinned: false
         }
-
         misc: JsonObject {
             property int selectedTabIndex: 0
         }
-
         apis: JsonObject {
             property int selectedTab: 0
             property real fontScale: 1
@@ -154,4 +135,5 @@ JsonAdapter {
     property JsonObject mediaPlayer: JsonObject {
         property string currentTrackPath: ""
     }
+
 }

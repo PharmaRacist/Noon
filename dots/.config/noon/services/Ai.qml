@@ -175,12 +175,12 @@ Singleton {
     Process {
         id: getSavedChats
         running: true
-        command: ["ls", "-1", Directories.aiChats]
+        command: ["ls", "-1", Directories.services.aiChats]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (text.length === 0)
                     return;
-                root.savedChats = text.split("\n").filter(fileName => fileName.endsWith(".json")).map(fileName => `${Directories.aiChats}/${fileName}`);
+                root.savedChats = text.split("\n").filter(fileName => fileName.endsWith(".json")).map(fileName => `${Directories.services.aiChats}/${fileName}`);
             }
         }
     }
@@ -673,7 +673,7 @@ Singleton {
                 addFunctionOutputMessage("start_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
             }
-            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            const timer = TimerService.timers.find(t => t.id === args.timer_id);
             if (!timer) {
                 addFunctionOutputMessage("start_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
                 return;
@@ -687,7 +687,7 @@ Singleton {
                 addFunctionOutputMessage("pause_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
             }
-            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            const timer = TimerService.timers.find(t => t.id === args.timer_id);
             if (!timer) {
                 addFunctionOutputMessage("pause_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
                 return;
@@ -701,7 +701,7 @@ Singleton {
                 addFunctionOutputMessage("reset_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
             }
-            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            const timer = TimerService.timers.find(t => t.id === args.timer_id);
             if (!timer) {
                 addFunctionOutputMessage("reset_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
                 return;
@@ -715,7 +715,7 @@ Singleton {
                 addFunctionOutputMessage("delete_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
             }
-            const timer = TimerService.uiTimers.find(t => t.id === args.timer_id);
+            const timer = TimerService.timers.find(t => t.id === args.timer_id);
             if (!timer) {
                 addFunctionOutputMessage("delete_timer", qsTr("Timer with ID %1 not found").arg(args.timer_id));
                 return;
@@ -771,7 +771,7 @@ Singleton {
     FileView {
         id: chatSaveFile
         property string chatName: ""
-        path: chatName.length > 0 ? `${Directories.aiChats}/${chatName}.json` : ""
+        path: chatName.length > 0 ? `${Directories.services.aiChats}/${chatName}.json` : ""
         blockLoading: true // Prevent race conditions
     }
 

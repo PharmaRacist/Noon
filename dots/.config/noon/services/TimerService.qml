@@ -13,23 +13,49 @@ Singleton {
     signal timerFinished(int timerId, string name)
 
     readonly property list<var> presets: [
-        { "duration": 1500, "icon": "timer", "name": "Pomodoro" },
-        { "duration": 300, "icon": "coffee", "name": "Short Break" },
-        { "duration": 900, "icon": "bed", "name": "Long Break" },
-        { "duration": 5400, "icon": "mindfulness", "name": "Deep Work" },
-        { "duration": 1800, "icon": "fitness_center", "name": "Exercise" },
-        { "duration": 600, "icon": "self_improvement", "name": "Meditation" },
-        { "duration": 900, "icon": "flash_on", "name": "Quick Task" },
-        { "duration": 3600, "icon": "groups", "name": "Meeting" }
+        {
+            "duration": 1500,
+            "icon": "timer",
+            "name": "Pomodoro"
+        },
+        {
+            "duration": 300,
+            "icon": "coffee",
+            "name": "Short Break"
+        },
+        {
+            "duration": 900,
+            "icon": "bed",
+            "name": "Long Break"
+        },
+        {
+            "duration": 5400,
+            "icon": "mindfulness",
+            "name": "Deep Work"
+        },
+        {
+            "duration": 1800,
+            "icon": "fitness_center",
+            "name": "Exercise"
+        },
+        {
+            "duration": 600,
+            "icon": "self_improvement",
+            "name": "Meditation"
+        },
+        {
+            "duration": 900,
+            "icon": "flash_on",
+            "name": "Quick Task"
+        },
+        {
+            "duration": 3600,
+            "icon": "groups",
+            "name": "Meeting"
+        }
     ]
-
-    property var uiTimers: timers
-
-    Timer {
-        interval: 1000
-        repeat: true
-        running: timers.some(t => t?.isRunning)
-        onTriggered: tick()
+    function reload() {
+        tick();
     }
 
     function tick() {
@@ -58,7 +84,7 @@ Singleton {
                     preset: timer.preset,
                     icon: timer.icon
                 });
-                playSound("finish");
+                Noon.playSound("record_stopped");
                 Noon.notify(`'⏰ Timer Complete , ${timer.name} finished!'`);
                 timerFinished(timer.id, timer.name);
                 changed = true;
@@ -93,7 +119,7 @@ Singleton {
             preset: preset || null,
             icon: preset ? preset.icon : "timer"
         };
-        
+
         Mem.timers.nextTimerId = nextTimerId + 1;
         Mem.timers.timers = timers.concat([newTimer]);
         return newTimer.id;
@@ -105,7 +131,8 @@ Singleton {
 
     function startTimer(timerId) {
         const updated = timers.map(t => {
-            if (t.id !== timerId || t.remainingTime <= 0) return t;
+            if (t.id !== timerId || t.remainingTime <= 0)
+                return t;
             return {
                 id: t.id,
                 name: t.name,
@@ -117,21 +144,22 @@ Singleton {
                 icon: t.icon
             };
         });
-        
+
         Mem.timers.timers = updated;
-        playSound("start");
+        Noon.playSound("record_started");
     }
 
     function pauseTimer(timerId) {
         const updated = timers.map(t => {
-            if (t.id !== timerId) return t;
-            
+            if (t.id !== timerId)
+                return t;
+
             let remaining = t.remainingTime;
             if (t.isRunning && t.startTime > 0) {
                 const elapsed = Math.floor((Date.now() - t.startTime) / 1000);
                 remaining = Math.max(0, t.originalDuration - elapsed);
             }
-            
+
             return {
                 id: t.id,
                 name: t.name,
@@ -143,13 +171,14 @@ Singleton {
                 icon: t.icon
             };
         });
-        
+
         Mem.timers.timers = updated;
     }
 
     function resetTimer(timerId) {
         const updated = timers.map(t => {
-            if (t.id !== timerId) return t;
+            if (t.id !== timerId)
+                return t;
             return {
                 id: t.id,
                 name: t.name,
@@ -161,19 +190,22 @@ Singleton {
                 icon: t.icon
             };
         });
-        
+
         Mem.timers.timers = updated;
     }
 
     function updateTimer(timerId, newDuration) {
         const timer = timers.find(t => t.id === timerId);
-        if (!timer) return;
+        if (!timer)
+            return;
 
         const wasRunning = timer.isRunning;
-        if (wasRunning) pauseTimer(timerId);
+        if (wasRunning)
+            pauseTimer(timerId);
 
         const updated = timers.map(t => {
-            if (t.id !== timerId) return t;
+            if (t.id !== timerId)
+                return t;
             return {
                 id: t.id,
                 name: t.name,
@@ -185,9 +217,10 @@ Singleton {
                 icon: t.icon
             };
         });
-        
+
         Mem.timers.timers = updated;
-        if (wasRunning) Qt.callLater(() => startTimer(timerId));
+        if (wasRunning)
+            Qt.callLater(() => startTimer(timerId));
     }
 
     function formatTime(seconds) {
@@ -198,7 +231,8 @@ Singleton {
     }
 
     function parseTimeString(input) {
-        if (!input) return 0;
+        if (!input)
+            return 0;
         input = String(input).trim().toLowerCase();
 
         const regex = /(\d+)([hms])/g;
@@ -208,33 +242,39 @@ Singleton {
         while ((match = regex.exec(input)) !== null) {
             const val = parseInt(match[1]);
             const unit = match[2];
-            if (unit === "h") total += val * 3600;
-            else if (unit === "m") total += val * 60;
-            else if (unit === "s") total += val;
+            if (unit === "h")
+                total += val * 3600;
+            else if (unit === "m")
+                total += val * 60;
+            else if (unit === "s")
+                total += val;
         }
 
-        if (total === 0 && /^\d+$/.test(input)) total = parseInt(input) * 60;
+        if (total === 0 && /^\d+$/.test(input))
+            total = parseInt(input) * 60;
         return total;
     }
-
-    function playSound(name) {
-        const sound = name === "start" ? "alarm_endded" : name === "finish" ? "alarm_started" : "";
-        if (sound) Noon.playSound(sound);
+    Timer {
+        interval: 1000
+        repeat: true
+        running: timers.some(t => t?.isRunning)
+        onTriggered: tick()
     }
+
     // Ai Helpers
     function formatTimers() {
-        if (TimerService.uiTimers.length === 0) {
+        if (TimerService.timers.length === 0) {
             return "No timers currently";
         }
 
         let output = "Current timers:\n\n";
 
-        TimerService.uiTimers.forEach(timer => {
+        TimerService.timers.forEach(timer => {
             const status = timer.isRunning ? "Running" : timer.isPaused ? "Paused" : "Stopped";
 
             const remaining = TimerService.formatTime(timer.remainingTime);
             const total = TimerService.formatTime(timer.originalDuration);
-            const progress = (total - remaining) / total 
+            const progress = (total - remaining) / total;
 
             output += `ID: ${timer.id}\n`;
             output += `Name: ${timer.name}\n`;
@@ -246,5 +286,4 @@ Singleton {
 
         return output;
     }
-
 }

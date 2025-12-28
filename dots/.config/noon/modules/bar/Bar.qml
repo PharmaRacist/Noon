@@ -25,16 +25,14 @@ Scope {
     property bool hoverEnabled: Mem.options.bar.behavior.autoHide
     property int peekSize: 10
     property var horizontalLayoutComponents: {
-        let components = {
-        };
+        let components = {};
         for (let i = 0; i < horizontalLayouts.length; i++) {
             components[i] = Qt.createComponent(`./layouts/${horizontalLayouts[i]}.qml`);
         }
         return components;
     }
     property var verticalLayoutComponents: {
-        let components = {
-        };
+        let components = {};
         for (let i = 0; i < verticalLayouts.length; i++) {
             components[i] = Qt.createComponent(`./verticalBar/${verticalLayouts[i]}.qml`);
         }
@@ -113,12 +111,10 @@ Scope {
                 onEntered: {
                     if (bar.hoverEnabled)
                         barRoot.barHovered = true;
-
                 }
                 onExited: {
                     if (bar.hoverEnabled)
                         barRoot.barHovered = false;
-
                 }
 
                 // Container for bar content with margins
@@ -152,7 +148,6 @@ Scope {
                         onLoaded: {
                             if (item)
                                 item.barRoot = barRoot;
-
                         }
                     }
 
@@ -165,7 +160,6 @@ Scope {
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
 
                     Behavior on anchors.bottomMargin {
@@ -176,7 +170,6 @@ Scope {
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
 
                     Behavior on anchors.leftMargin {
@@ -187,7 +180,6 @@ Scope {
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
 
                     Behavior on anchors.rightMargin {
@@ -198,11 +190,8 @@ Scope {
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
-
                 }
-
             }
 
             mask: Region {
@@ -216,11 +205,7 @@ Scope {
                     height: isHorizontal ? barRoot.exclusiveZone : barRoot.height
                     visible: false
                 }
-
             }
-
         }
-
     }
-
 }

@@ -27,7 +27,7 @@ Rectangle {
 
         CircleUtilButton {
             Layout.alignment: Qt.AlignVCenter
-            onClicked: Noon.exec("hyprpicker -a -q")
+            onClicked: Noon.execDetached("hyprpicker -a -q")
 
             MaterialSymbol {
                 horizontalAlignment: Qt.AlignHCenter
@@ -41,7 +41,7 @@ Rectangle {
 
         CircleUtilButton {
             Layout.alignment: Qt.AlignVCenter
-            onClicked: Noon.exec("hyprshot --freeze --clipboard-only --mode region --silent")
+            onClicked: Noon.execDetached("hyprshot --freeze --clipboard-only --mode region --silent")
 
             MaterialSymbol {
                 horizontalAlignment: Qt.AlignHCenter

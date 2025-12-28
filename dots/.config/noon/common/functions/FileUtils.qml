@@ -1,5 +1,7 @@
 pragma Singleton
 import Quickshell
+import Quickshell.Io
+import qs.common
 
 Singleton {
     id: root
@@ -182,16 +184,20 @@ function fileExists(filePath) {
             return null;
         }
     }
-
+    function mkdir(directories:var){
+        if (!directories)
+            return;
+        Noon.execDetached( `mkdir -p '${directories.join("' '")}'`);
+    }
     function copyItem(item:string,target:string) {
-        Quickshell.execDetached(["bash","-c", `cp ${trimFileProtocol(item)} ${trimFileProtocol(target)}`]);
+        Noon.execDetached( `cp ${trimFileProtocol(item)} ${trimFileProtocol(target)}`);
     }
     // by its same name
     function moveItem(item:string,target:string) {
         const fileName = getEscapedFileName(item)
-        Quickshell.execDetached(["bash","-c", `mv ${trimFileProtocol(item)} ${trimFileProtocol(target)}/${fileName}`]);
+        Noon.execDetached( `mv ${trimFileProtocol(item)} ${trimFileProtocol(target)}/${fileName}`);
     }
     function deleteItem(path:string) {
-        Quickshell.execDetached(["bash","-c", `rm -rf ${trimFileProtocol(path)}`]);
+        Noon.execDetached( `rm -rf ${trimFileProtocol(path)}`);
     }
 }

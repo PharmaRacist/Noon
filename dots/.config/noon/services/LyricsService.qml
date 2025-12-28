@@ -5,7 +5,6 @@ import qs.common
 import qs.common.utils
 import qs.common.functions
 
-
 Singleton {
     id: root
 
@@ -21,27 +20,19 @@ Singleton {
     property int state: LyricsService.Idle
     property string lyrics: ""
     property var onlineLyricsData: null
-    
-    readonly property string cacheDir: Directories.lyrics
+
+    readonly property string cacheDir: Directories.beats.lyrics
     readonly property string userAgent: Mem.options.networking.userAgent
 
     property string _currentArtist: ""
     property string _currentTitle: ""
 
     function normalizeTitle(str) {
-        return str ? str.replace(/\s*[\(\[].*?[\)\]]\s*/g, ' ')
-            .replace(/\s*-\s*(Official|Lyric|Audio|Video|Music Video|Visualizer|Remaster(?:ed)?)\s*$/gi, '')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .toLowerCase() : "";
+        return str ? str.replace(/\s*[\(\[].*?[\)\]]\s*/g, ' ').replace(/\s*-\s*(Official|Lyric|Audio|Video|Music Video|Visualizer|Remaster(?:ed)?)\s*$/gi, '').replace(/\s+/g, ' ').trim().toLowerCase() : "";
     }
 
     function normalizeArtist(str) {
-        return str ? str.replace(/\s+(?:feat\.|featuring|ft\.|with|x|&)\s+.*/gi, '')
-            .replace(/\s*[\(\[].*?[\)\]]\s*/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .toLowerCase() : "";
+        return str ? str.replace(/\s+(?:feat\.|featuring|ft\.|with|x|&)\s+.*/gi, '').replace(/\s*[\(\[].*?[\)\]]\s*/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase() : "";
     }
 
     function sanitizeFilename(str) {
@@ -56,7 +47,7 @@ Singleton {
 
     function loadLyrics(data) {
         onlineLyricsData = data;
-        
+
         if (data.syncedLyrics) {
             state = LyricsService.HasSyncedLyrics;
             lyrics = "Synced lyrics ready";
@@ -72,10 +63,8 @@ Singleton {
     function saveToCache(artist, title, data) {
         const filePath = getCacheFilePath(artist, title);
         const jsonString = JSON.stringify(data);
-        
-        shellExec.execute(
-            `mkdir -p ${JSON.stringify(cacheDir)} && printf '%s' ${JSON.stringify(jsonString)} > ${JSON.stringify(filePath)}`
-        );
+
+        shellExec.execute(`mkdir -p ${JSON.stringify(cacheDir)} && printf '%s' ${JSON.stringify(jsonString)} > ${JSON.stringify(filePath)}`);
     }
 
     function fetchLyrics(artist, title) {
@@ -91,60 +80,53 @@ Singleton {
         lyrics = "Loading";
 
         const exactPath = getCacheFilePath(artist, title);
-        shellExec.execute(
-            `cat ${JSON.stringify(exactPath)} 2>/dev/null`,
-            (output) => {
-                if (output?.trim()) {
-                    try {
-                        loadLyrics(JSON.parse(output));
-                        return;
-                    } catch (e) {}
-                }
-                fetchFromAPI();
+        shellExec.execute(`cat ${JSON.stringify(exactPath)} 2>/dev/null`, output => {
+            if (output?.trim()) {
+                try {
+                    loadLyrics(JSON.parse(output));
+                    return;
+                } catch (e) {}
             }
-        );
+            fetchFromAPI();
+        });
     }
 
     function fetchFromAPI() {
         const normalizedArtist = normalizeArtist(_currentArtist);
         const normalizedTitle = normalizeTitle(_currentTitle);
         const url = `https://lrclib.net/api/search?artist_name=${encodeURI(normalizedArtist)}&track_name=${encodeURI(normalizedTitle)}`;
-        
-        shellExec.execute(
-            `curl -s -A ${JSON.stringify(userAgent)} -S ${JSON.stringify(url)}`,
-            (output) => {
-                try {
-                    const data = JSON.parse(output);
-                    
-                    if (data.statusCode) {
-                        state = LyricsService.NetworkError;
-                        lyrics = "Failed to connect to lyrics service";
-                        onlineLyricsData = null;
-                    } else if (Array.isArray(data)) {
-                        if (data.length > 0) {
-                            saveToCache(_currentArtist, _currentTitle, data[0]);
-                            loadLyrics(data[0]);
-                        } else {
-                            state = LyricsService.NoLyricsFound;
-                            lyrics = "No lyrics found for this song";
-                            onlineLyricsData = null;
-                        }
-                    } else {
-                        saveToCache(_currentArtist, _currentTitle, data);
-                        loadLyrics(data);
-                    }
-                } catch (e) {
+
+        shellExec.execute(`curl -s -A ${JSON.stringify(userAgent)} -S ${JSON.stringify(url)}`, output => {
+            try {
+                const data = JSON.parse(output);
+
+                if (data.statusCode) {
                     state = LyricsService.NetworkError;
-                    lyrics = "Failed to retrieve lyrics";
+                    lyrics = "Failed to connect to lyrics service";
                     onlineLyricsData = null;
+                } else if (Array.isArray(data)) {
+                    if (data.length > 0) {
+                        saveToCache(_currentArtist, _currentTitle, data[0]);
+                        loadLyrics(data[0]);
+                    } else {
+                        state = LyricsService.NoLyricsFound;
+                        lyrics = "No lyrics found for this song";
+                        onlineLyricsData = null;
+                    }
+                } else {
+                    saveToCache(_currentArtist, _currentTitle, data);
+                    loadLyrics(data);
                 }
-            },
-            () => {
+            } catch (e) {
                 state = LyricsService.NetworkError;
-                lyrics = "Network error occurred";
+                lyrics = "Failed to retrieve lyrics";
                 onlineLyricsData = null;
             }
-        );
+        }, () => {
+            state = LyricsService.NetworkError;
+            lyrics = "Network error occurred";
+            onlineLyricsData = null;
+        });
     }
 
     function getSyncedLyrics(position) {
@@ -172,21 +154,26 @@ Singleton {
 
     QtObject {
         id: shellExec
-        
+
         property var queue: []
         property bool busy: false
 
         function execute(command, onSuccess, onError) {
-            queue.push({ command, onSuccess, onError });
+            queue.push({
+                command,
+                onSuccess,
+                onError
+            });
             processQueue();
         }
 
         function processQueue() {
-            if (busy || queue.length === 0) return;
-            
+            if (busy || queue.length === 0)
+                return;
+
             busy = true;
             const task = queue.shift();
-            
+
             proc.command = ["sh", "-c", task.command];
             proc.userData = task;
             proc.running = true;
@@ -228,19 +215,10 @@ Singleton {
 
     Connections {
         target: BeatsService
-        
+
         function onTitleChanged() {
             if (BeatsService?.title) {
                 fetchDelayTimer.restart();
-            }
-        }
-
-        function onCurrentTrackProgressChanged() {
-            if (state === LyricsService.HasSyncedLyrics) {
-                const syncedLine = getSyncedLyrics(BeatsService.currentTrackProgress);
-                if (syncedLine && syncedLine !== lyrics) {
-                    lyrics = syncedLine;
-                }
             }
         }
     }

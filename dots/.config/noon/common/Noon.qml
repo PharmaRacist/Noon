@@ -12,8 +12,8 @@ import qs.common.widgets
 Singleton {
     id: root
     property string errStr: ""
-    readonly property var avilableSystemCommands: Mem.states.misc.systemCommands
-    readonly property var avilableIpcCommands: Mem.states.misc.ipcCommands
+    readonly property var avilableSystemCommands: Mem.store.misc.systemCommands
+    readonly property var avilableIpcCommands: Mem.store.misc.ipcCommands
     property bool ipcReady: false
     property bool commandsReady: false
 
@@ -75,6 +75,13 @@ Singleton {
     function exec(command: string) {
         execProc.command = ["bash", "-c", command];
         execProc.running = true;
+        // execProc.createObject(this,{
+        //     command:["bash", "-c", commandStr],
+        //     running: true,
+        //     onStarted:startBehavior,
+        //     onExited:exitBehavior
+        // })
+
     }
     function setHyprKey(key: string, value: string) {
         Quickshell.execDetached(["hyprctl", "keyword", key, value]);
@@ -82,7 +89,7 @@ Singleton {
     function installPkg(app: string) {
         const terminal = Mem.options.apps.terminal || "kitty";
         Quickshell.execDetached(["kitty", "-e", "fish", "-c", ` yay -S --noconfirm  ${app}`]);
-    }   
+    }
     function error(e:var) {
         console.log(e)
         // popupLoader.active = true
@@ -91,7 +98,7 @@ Singleton {
     function edit(filePath){
         if (!filePath) return;
         exec(
-            `${Quickshell.env('EDITOR')} ${Quickshell.env('SHELL_CONFIG_PATH')}` 
+            `${Quickshell.env('EDITOR')} ${Quickshell.env('SHELL_CONFIG_PATH')}`
         )
 
     }
@@ -109,7 +116,7 @@ Singleton {
     Process {
         id: ipcCommands
         running: false
-        command: ["bash", "-c", `qs -c ${FileUtils.trimFileProtocol(Directories.config)}/noon  ipc  show`]
+        command: ["bash", "-c", `qs -c ${FileUtils.trimFileProtocol(Directories.standard.config)}/noon  ipc  show`]
         stdout: StdioCollector {
             onStreamFinished: {
                 const out = text.trim();
@@ -129,7 +136,7 @@ Singleton {
                     }
                 }
 
-                Mem.states.misc.ipcCommands = parsed;
+                Mem.store.misc.ipcCommands = parsed;
                 root.commandsReady = true;
                 console.log("[Noon] fetched IPC commands");
             }
@@ -143,11 +150,11 @@ Singleton {
             onStreamFinished: {
                 const out = text.trim();
                 if (out.length === 0) {
-                    Mem.states.misc.systemCommands = [];
+                    Mem.store.misc.systemCommands = [];
                     root.commandsReady = true;
                     return;
                 }
-                Mem.states.misc.systemCommands = out.split("\n");
+                Mem.store.misc.systemCommands = out.split("\n");
                 root.commandsReady = true;
                 console.log("[Noon] fetched Bash commands");
             }

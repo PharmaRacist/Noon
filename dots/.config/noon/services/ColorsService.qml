@@ -1,24 +1,23 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.utils
 import qs.store
-pragma Singleton
 
 Singleton {
     id: root
 
-    property string filePath: currentThemePreset !== "auto" ? 'root:/store/colorPresets/' + currentThemePreset + '.json' : Directories.generatedMaterialThemePath
+    property string filePath: currentThemePreset !== "auto" ? 'root:/store/colorPresets/' + currentThemePreset + '.json' : Directories.services.m3path
     property string currentThemePreset: Mem.options.appearance.colors.palatteName
-    property var customColors: ({
-    })
+    property var customColors: ({})
 
     function applyColors(fileContent) {
         var json = JSON.parse(fileContent);
-        var colors = Colors.m3;
+        var colors = MColors;
         var key, camelCase, m3Key;
         for (key in json) {
-            camelCase = key.replace(/_([a-z])/g, function(g) {
+            camelCase = key.replace(/_([a-z])/g, function (g) {
                 return g[1].toUpperCase();
             });
             m3Key = 'm3' + camelCase;
@@ -26,13 +25,13 @@ Singleton {
         }
         for (key in customColors) {
             if (!json.hasOwnProperty(key)) {
-                camelCase = key.replace(/_([a-z])/g, function(g) {
+                camelCase = key.replace(/_([a-z])/g, function (g) {
                     return g[1].toUpperCase();
                 });
                 colors['m3' + camelCase] = customColors[key];
             }
         }
-        WallpaperService.changeAccentColor(colors.m3primaryFixed);
+        // WallpaperService.changeAccentColor(colors.m3primaryFixed);
         colors.darkmode = (colors.m3background.hslLightness < 0.5);
     }
 
@@ -43,7 +42,7 @@ Singleton {
     Timer {
         id: delayedFileRead
 
-        interval: 50
+        interval: 75
         onTriggered: root.applyColors(themeFileView.text())
     }
 
@@ -59,8 +58,6 @@ Singleton {
         onLoadedChanged: {
             if (loaded)
                 delayedFileRead.restart();
-
         }
     }
-
 }

@@ -13,8 +13,8 @@ QuickToggleButton {
     onClicked: {
         enabled = !enabled;
         if (enabled)
-            Noon.exec(`hyprctl keyword input:force_no_accel ${enabled ? 1 : 0}`);
+            Noon.execDetached(`hyprctl keyword input:force_no_accel ${enabled ? 1 : 0}`);
         else
-            Noon.exec(`hyprctl keyword input:force_no_accel ${enabled ? 1 : 0}`);
+            Noon.execDetached(`hyprctl keyword input:force_no_accel ${enabled ? 1 : 0}`);
     }
 }

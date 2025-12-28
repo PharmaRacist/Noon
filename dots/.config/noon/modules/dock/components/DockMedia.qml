@@ -19,12 +19,12 @@ StyledRect {
     property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex
     readonly property MprisPlayer player: meaningfulPlayers[selectedPlayerIndex]
     visible: player && player.trackTitle
-    radius:dockRoot.mainRounding
+    radius: dockRoot.mainRounding
     Layout.preferredHeight: bg.implicitHeight
     Layout.preferredWidth: 2.5 * height
     color: Colors.colLayer0
     enableShadows: true
-    enableBorders:true
+    enableBorders: true
     StyledRect {
         anchors.fill: parent
         color: "transparent"
@@ -36,15 +36,15 @@ StyledRect {
             blur: true
             retainWhileLoading: true
             anchors.fill: parent
-            source: BeatsService.activePlayer?.trackArtUrl ?? ""
+            source: BeatsService.player?.trackArtUrl ?? ""
             asynchronous: true
         }
         Controls {
             id: controls
             z: 9
-            accentColor: TrackColorsService.colors.colOnLayer0
+            accentColor: BeatsService.colors.colOnLayer0
             anchors.centerIn: parent
-            btnSize: parent.height /2
+            btnSize: parent.height / 2
         }
     }
 
@@ -52,7 +52,7 @@ StyledRect {
         id: root
         anchors.centerIn: parent
         property int btnSize: 30
-        readonly property var player: BeatsService.activePlayer
+        readonly property var player: BeatsService.player
         property color accentColor
         RowLayout {
             spacing: 8

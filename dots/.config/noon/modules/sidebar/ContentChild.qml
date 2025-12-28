@@ -22,7 +22,7 @@ Item {
     property real contentYOffset: 0
     property real contentOpacity: 1
     property string previousCategory: ""
-
+    property QtObject colors: Colors
     // Unified signals
     signal searchUpdated(string newText)
     signal contentFocusRequested()
@@ -183,13 +183,13 @@ Item {
             Layout.preferredHeight: effectiveSearchable ? 45 : 0
             Layout.margins: effectiveSearchable ? Padding.normal : 0
             radius: Rounding.normal
-            color: Colors.colLayer1
+            color: panel.colors.colLayer1
             opacity: effectiveSearchable ? contentOpacity : 0
 
             Rectangle {
                 id: sideRect
 
-                color: Colors.colSecondary
+                color: panel.colors.colSecondary
                 implicitWidth: 40
 
                 anchors {
@@ -203,7 +203,7 @@ Item {
                     anchors.horizontalCenterOffset: Padding.tiny
                     font.pixelSize: 20
                     text: SidebarData.getIcon(category) || "apps"
-                    color: Colors.colOnSecondary
+                    color: panel.colors.colOnSecondary
                     opacity: 0.6
                 }
 
@@ -231,10 +231,10 @@ Item {
                     text: searchText
                     placeholderText: SidebarData.getPlaceholder(category) || "Search..."
                     background: null
-                    selectionColor: Colors.colSecondaryContainer
-                    selectedTextColor: Colors.m3.m3onSecondaryContainer
-                    color: Colors.m3.m3onSurfaceVariant
-                    placeholderTextColor: Colors.m3.m3outline
+                    selectionColor: panel.colors.colSecondaryContainer
+                    selectedTextColor: Colors.colOnSecondaryContainer
+                    color: Colors.colOnLayer1
+                    placeholderTextColor: Colors.colOutline
                     selectByMouse: true
                     onTextChanged: {
                         panel.searchUpdated(text);
@@ -272,7 +272,7 @@ Item {
                         anchors.centerIn: parent
                         font.pixelSize: 16
                         text: "close"
-                        color: Colors.m3.m3onSurfaceVariant
+                        color: Colors.colOnLayer1
                     }
 
                 }
@@ -298,8 +298,8 @@ Item {
             Layout.preferredWidth: parent.width - Padding.veryhuge
             Layout.preferredHeight: 32
             buttonRadius: 16
-            colBackground: Colors.colError
-            colBackgroundHover: Colors.colErrorHover
+            colBackground: panel.colors.colError
+            colBackgroundHover: panel.colors.colErrorHover
             opacity: contentOpacity
             releaseAction: () => {
                 if (isAux && parentRoot)
@@ -313,12 +313,12 @@ Item {
                 MaterialSymbol {
                     font.pixelSize: 20
                     text: "close"
-                    color: Colors.m3.m3onError
+                    color: Colors.colOnError
                 }
 
                 StyledText {
                     text: "Dismiss"
-                    color: Colors.m3.m3onError
+                    color: Colors.colOnError
                 }
 
             }

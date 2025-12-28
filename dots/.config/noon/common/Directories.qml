@@ -1,55 +1,59 @@
-import Qt.labs.platform
+pragma Singleton
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
-import Quickshell.Io
+import Qt.labs.platform
 import qs.common.functions
-pragma Singleton
 
 Singleton {
-    id: root
-
-    // XDG Dirs, with "file://"
-    readonly property string config: StandardPaths.standardLocations(StandardPaths.ConfigLocation)[0]
-    readonly property string state: home + "/.local/state/noon"
-    readonly property string cache: home + "/.cache/noon" // StandardPaths.standardLocations(StandardPaths.CacheLocation)[0]
-    readonly property string pictures: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
-    readonly property string downloads: StandardPaths.standardLocations(StandardPaths.DownloadLocation)[0]
-    readonly property string music: StandardPaths.standardLocations(StandardPaths.MusicLocation)[0]
-    readonly property string documents: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
-    readonly property string videos: StandardPaths.standardLocations(StandardPaths.MoviesLocation)[0]
-    readonly property string home: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
-    // Other dirs used by the shell, without "file://"
-    // readonly property string shellStates: FileUtils.trimFileProtocol(`${root.state}/noon/`)
-    readonly property string shellPath: FileUtils.trimFileProtocol(`${root.config}/noon/`)
-    readonly property string shellConfigs: FileUtils.trimFileProtocol(`${root.config}/HyprNoon/`)
-    readonly property string assets: FileUtils.trimFileProtocol(`${root.config}/noon/assets`)
-    readonly property string scriptsDir: FileUtils.trimFileProtocol(`${root.config}/noon/scripts`)
-    readonly property string kittyConfPath: FileUtils.trimFileProtocol(`${root.config}/kitty/`)
-    readonly property string hyprlandConfPath: FileUtils.trimFileProtocol(`${root.config}/noon/hyprland/`)
-    readonly property string venv: state + "/.venv"
+    // Misc directories
+    readonly property string venv: Directories.standard.state + "/.venv"
     readonly property string sounds: FileUtils.trimFileProtocol(`${assets}/sounds/`)
-    readonly property string aiChats: FileUtils.trimFileProtocol(`${state}/user/generated/ai`)
-    readonly property string generatedMaterialThemePath: FileUtils.trimFileProtocol(`${state}/user/generated/colors.json`)
-    readonly property string depthCache: FileUtils.trimFileProtocol(`${cache}/user/generated/depth/`)
-    readonly property string gowallCache: FileUtils.trimFileProtocol(`${cache}/user/generated/gowall/`)
-    readonly property string favicons: FileUtils.trimFileProtocol(`${cache}/media/favicons`)
-    readonly property string favoriteWallpapers: FileUtils.trimFileProtocol(`${pictures}/favourite`)
-    readonly property string coverArt: FileUtils.trimFileProtocol(`${cache}/media/coverart`)
-    readonly property string latexOutput: FileUtils.trimFileProtocol(`${cache}/media/latex`)
-    readonly property string cliphistDecode: FileUtils.trimFileProtocol(`/tmp/noon/media/cliphist`)
-    readonly property string notificationsPath: FileUtils.trimFileProtocol(`${cache}/notifications/notifications.json`)
-    readonly property string wallpapers: FileUtils.trimFileProtocol(`${pictures}/Wallpapers/`)
-    readonly property string gallery: FileUtils.trimFileProtocol(`${pictures}/Gallary/`)
-    readonly property string lyrics: FileUtils.trimFileProtocol(`${music}/lyrics`)
-    readonly property string notes: FileUtils.trimFileProtocol(`${documents}/Notes/`)
-    readonly property string todoPath: FileUtils.trimFileProtocol(`${shellConfigs}/todo.json`)
-    readonly property string recordScriptPath: FileUtils.trimFileProtocol(`${scriptsDir}/record_service.sh`)
-    readonly property string wallpaperSwitchScriptPath: FileUtils.trimFileProtocol(`${scriptsDir}/appearance_service.py`)
+    readonly property string assets: FileUtils.trimFileProtocol(`${Directories.standard.config}/noon/assets`)
+    readonly property string gallery: FileUtils.trimFileProtocol(`${Directories.standard.pictures}/Gallary/`)
+    readonly property string scriptsDir: FileUtils.trimFileProtocol(`${Directories.standard.config}/noon/scripts`)
+    readonly property string shellConfigs: FileUtils.trimFileProtocol(`${Directories.standard.config}/HyprNoon/`)
+    readonly property string favicons: FileUtils.trimFileProtocol(`${Directories.standard.cache}/media/favicons`)
+    Component.onCompleted: FileUtils.mkdir([venv, assets, gallery, sounds, scriptsDir, shellConfigs, favicons])
 
-    // Cleanup on init
-    Component.onCompleted: {
-        var directories = [favoriteWallpapers, aiChats, lyrics, gallery, notes, favicons, coverArt, latexOutput, cliphistDecode, gowallCache, depthCache];
-        Noon.execDetached(`mkdir -p '${directories.join("' '")}'`);
+    // Bundled standard directories
+    readonly property QtObject standard: QtObject {
+        readonly property string config: StandardPaths.standardLocations(StandardPaths.ConfigLocation)[0]
+        readonly property string state: home + "/.local/state/noon"
+        readonly property string cache: home + "/.cache/noon"
+        readonly property string pictures: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+        readonly property string downloads: StandardPaths.standardLocations(StandardPaths.DownloadLocation)[0]
+        readonly property string music: StandardPaths.standardLocations(StandardPaths.MusicLocation)[0]
+        readonly property string documents: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
+        readonly property string videos: StandardPaths.standardLocations(StandardPaths.MoviesLocation)[0]
+        readonly property string home: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+        Component.onCompleted: FileUtils.mkdir([state, cache])
+    }
+
+    // Bundled services directories
+    readonly property QtObject services: QtObject {
+        readonly property string notifications: FileUtils.trimFileProtocol(`${Directories.standard.cache}/notifications/notifications.json`)
+        readonly property string latex: FileUtils.trimFileProtocol(`${Directories.standard.cache}/media/latex`)
+        readonly property string aiChats: FileUtils.trimFileProtocol(`${Directories.standard.state}/user/generated/ai`)
+        readonly property string m3path: FileUtils.trimFileProtocol(`${Directories.standard.state}/user/generated/colors.json`)
+        Component.onCompleted: FileUtils.mkdir([notifications, latex, aiChats, m3path])
+    }
+
+    // Bundled wallpapers directories
+    readonly property QtObject wallpapers: QtObject {
+        readonly property string switchScript: FileUtils.trimFileProtocol(`${scriptsDir}/appearance_service.py`)
+        readonly property string main: FileUtils.trimFileProtocol(`${Directories.standard.pictures}/Wallpapers/`)
+        readonly property string depthDir: FileUtils.trimFileProtocol(`${Directories.standard.cache}/user/generated/depth/`)
+        readonly property string gowallDir: FileUtils.trimFileProtocol(`${Directories.standard.cache}/user/generated/gowall/`)
+        readonly property string favorite: FileUtils.trimFileProtocol(`${Directories.standard.pictures}/favourite`)
+        Component.onCompleted: FileUtils.mkdir([main, switchScript, depthDir, gowallDir, favorite])
+    }
+
+    // Bundled beats directories
+    readonly property QtObject beats: QtObject {
+        readonly property string main: FileUtils.trimFileProtocol(`${Directories.standard.cache}/beats`)
+        readonly property string coverArt: FileUtils.trimFileProtocol(`${main}/coverart`)
+        readonly property string lyrics: FileUtils.trimFileProtocol(`${main}/lyrics`)
+        readonly property string tracks: FileUtils.trimFileProtocol(Directories.standard.music)
+        Component.onCompleted: FileUtils.mkdir([main, coverArt, lyrics, tracks])
     }
 }

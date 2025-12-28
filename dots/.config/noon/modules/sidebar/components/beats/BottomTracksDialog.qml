@@ -7,15 +7,43 @@ import qs.common.widgets
 import qs.services
 
 BottomDialog {
-    id: bottomDialog
-
+    id: root
     z: 99
-    expandedHeight: root.height * 0.76
-    collapsedHeight: root.height * 0.46
+    expandedHeight: root.height * 0.95
+    collapsedHeight: root.height * 0.65
     bottomAreaReveal: true
     hoverHeight: 200
     revealOnWheel: true
     enableStagedReveal: true
+    colors: parent.colors
+
+    property var filteredTracks: []
+    property string searchText: ""
+
+    function updateFilteredTracks() {
+        let tracks = [];
+        const model = BeatsService.tracksModel;
+        if (!model) {
+            filteredTracks = tracks;
+            return;
+        }
+
+        const count = model.count;
+        const search = searchText.toLowerCase();
+
+        for (let i = 0; i < count; i++) {
+            const trackInfo = BeatsService.getTrackInfo(i);
+            if (trackInfo && (search === "" || trackInfo.name.toLowerCase().includes(search))) {
+                tracks.push({
+                    index: i,
+                    info: trackInfo
+                });
+            }
+        }
+        filteredTracks = tracks;
+    }
+
+    Component.onCompleted: updateFilteredTracks()
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -24,18 +52,19 @@ BottomDialog {
 
         BottomDialogHeader {
             title: "Beats"
-            subTitle: `There is ${BeatsService.filteredIndices.length} Tracks in your playlist !`
+            subTitle: `There are ${root.filteredTracks.length} Tracks in your playlist !`
 
             RippleButtonWithIcon {
+                colors: root.colors
                 materialIcon: "close"
                 releaseAction: () => {
-                    return bottomDialog.show = false;
+                    return root.show = false;
                 }
             }
-
         }
 
         SearchBar {
+            id: search
             Layout.fillWidth: true
             implicitHeight: 40
             Layout.leftMargin: Padding.large
@@ -46,11 +75,12 @@ BottomDialog {
 
             Timer {
                 id: searchTimer
-
                 interval: 200
-                onTriggered: BeatsService.updateSearchFilter(searchText)
+                onTriggered: {
+                    root.searchText = search.searchText;
+                    root.updateFilteredTracks();
+                }
             }
-
         }
 
         StyledListView {
@@ -59,41 +89,40 @@ BottomDialog {
             Layout.margins: Padding.normal
             spacing: 8
             clip: true
-            model: BeatsService.filteredTracksCount
-            Component.onCompleted: BeatsService.initializeTracks()
+            model: root.filteredTracks
 
             delegate: StyledDelegateItem {
                 required property int index
-                readonly property var trackInfo: BeatsService.getFilteredTrackInfo(index)
+                required property var modelData
+
+                readonly property var trackInfo: modelData.info
                 readonly property string trackPath: trackInfo.path || ""
                 readonly property bool currentlyPlaying: trackPath === BeatsService.currentTrackPath
-
+                readonly property string fileExtension: trackInfo.fileName.includes('.') ? trackInfo.fileName.split('.').pop().toUpperCase() : ""
+                implicitHeight: 70
                 title: trackInfo.name || "Unknown Track"
-                subtext: trackInfo.extension ? `${trackInfo.extension} Audio` : ""
-                colActiveColor: currentlyPlaying ? TrackColorsService.colors.colSecondaryContainerActive : TrackColorsService.colors.colSecondaryContainer
-                colActiveItemColor: currentlyPlaying ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondary
-                colBackground: currentlyPlaying ? TrackColorsService.colors.colSecondaryContainerActive : TrackColorsService.colors.colLayer1
+                subtext: fileExtension ? `${fileExtension} Audio` : ""
+                colActiveColor: currentlyPlaying ? colors.colSecondaryContainerActive : colors.colSecondaryContainer
+                colActiveItemColor: currentlyPlaying ? colors.colPrimary : colors.colSecondary
+                colBackground: currentlyPlaying ? colors.colSecondaryContainerActive : colors.colLayer1
                 shape: MaterialShape.Bun
-                shapePadding: Padding.normal
+                shapePadding: Padding.small
+                colors: root.colors
                 releaseAction: () => {
                     return BeatsService.playTrackByPath(trackPath);
                 }
+
                 altAction: () => {
                     return trackContextMenu.showMenu();
                 }
 
                 TrackContextMenu {
                     id: trackContextMenu
-
                     trackPath: parent.trackPath
                     trackName: parent.title
                     parentButton: parent
                 }
-
             }
-
         }
-
     }
-
 }

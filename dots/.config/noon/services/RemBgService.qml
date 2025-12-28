@@ -128,7 +128,7 @@ Singleton {
     function process_current_bg(){
         const inputPath = FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentBg);
         const outputPath = FileUtils.trimFileProtocol(
-            Directories.depthCache +
+            Directories.wallpapers.depthDir +
             Qt.md5(inputPath) +
             ".png"
         );

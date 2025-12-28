@@ -1,12 +1,11 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import Quickshell.Io
 import qs.common
-pragma Singleton
 import qs.services
-
 
 Singleton {
     id: root
@@ -23,7 +22,7 @@ Singleton {
         "{USER}": SystemInfo.username,
         "{LOCATION}": Mem.options.services.location,
         "{NOTES}": NotesService.content,
-        "{PLAYING}": `title:${BeatsService.cleanedTitle}  artist:${BeatsService.artist}`,
+        "{PLAYING}": `title:${BeatsService.title}  artist:${BeatsService.artist}`,
         "{WEATHER}": WeatherService.weatherData.currentTemp,
         "{ALARMS}": Mem.timers.alarms
     }
@@ -32,7 +31,7 @@ Singleton {
             "functions": [
                 {
                     "functionDeclarations": [
-                        // Alarms 
+                        // Alarms
                         {
                             "name": "get_alarms",
                             "description": "Get all current alarms with their names, duration, and remaining time"
@@ -204,7 +203,7 @@ Singleton {
                                 "required": ["index", "content"]
                             }
                         },
-                        // Search 
+                        // Search
                         {
                             "name": "search_online_inbrowser",
                             "description": "Open Browser and search for a user request. The query should be valid https url will be used to search.",
@@ -379,8 +378,7 @@ Singleton {
         }
     }
 
-    property var models: Mem.options.policies.ai === 2 ? {
-    } : {
+    property var models: Mem.options.policies.ai === 2 ? {} : {
         "gemini-2.5-flash": aiModelComponent.createObject(this, {
             "name": "Gemini 2.5 Flash",
             "icon": "google-gemini-symbolic",

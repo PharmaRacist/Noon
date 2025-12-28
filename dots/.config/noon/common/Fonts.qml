@@ -9,12 +9,13 @@ Singleton {
     property QtObject variableAxes
 
     family: QtObject {
-        readonly property string main: Mem.options.appearance.fonts.main ?? "Roboto Flex"
-        readonly property string reading: "Rubik"
-        readonly property string numbers: "Roboto Flex"
+        readonly property string main: Mem.options.appearance.fonts.main ?? "Google Sans Flex"
+        readonly property string reading: Mem.options.appearance.fonts.main ?? "Rubik"
+        readonly property string numbers: Mem.options.appearance.fonts.main ?? "Google Sans Flex"
         readonly property string monospace: "Iosevka"
         readonly property string clock: "Google Sans Flex"
-        readonly property string variable: "Roboto Flex"
+        readonly property string variable: "Google Sans Flex"
+        readonly property string emoji: "Noto Color Emoj"
         readonly property string iconMaterial: "Material Symbols Rounded"
     }
 

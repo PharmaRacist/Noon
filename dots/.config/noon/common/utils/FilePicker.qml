@@ -1,8 +1,8 @@
 import QtQuick
 import Quickshell
-
+import qs.common.utils
 /**
- * Reusable KDialog file picker component with lazy loading
+ * KDialog file picker component
  * Process is only created when open() is called
  */
 Item {
@@ -12,35 +12,31 @@ Item {
     readonly property var filterPresets: ({
         "ALL": {
             "name": "All files",
-            "patterns": ["*"]
+            "patterns": NameFilters.all
         },
         "IMAGES": {
             "name": "Image files",
-            "patterns": ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.webp", "*.svg", "*.ico", "*.tiff", "*.tif"]
-        },
-        "DOCUMENTS": {
-            "name": "Document files",
-            "patterns": ["*.pdf", "*.doc", "*.docx", "*.txt", "*.rtf", "*.odt", "*.xls", "*.xlsx", "*.ppt", "*.pptx", "*.csv"]
+            "patterns":NameFilters.picture
         },
         "VIDEOS": {
             "name": "Video files",
-            "patterns": ["*.mp4", "*.mkv", "*.avi", "*.mov", "*.wmv", "*.flv", "*.webm", "*.m4v", "*.mpg", "*.mpeg"]
+            "patterns":NameFilters.video
         },
         "AUDIO": {
             "name": "Audio files",
-            "patterns": ["*.mp3", "*.wav", "*.ogg", "*.flac", "*.aac", "*.m4a", "*.wma", "*.opus", "*.oga"]
+            "patterns":NameFilters.audio
         },
         "ARCHIVES": {
             "name": "Archive files",
-            "patterns": ["*.zip", "*.tar", "*.gz", "*.bz2", "*.xz", "*.7z", "*.rar", "*.tar.gz", "*.tar.bz2", "*.tar.xz"]
+            "patterns":NameFilters.archive
         },
         "CODE": {
             "name": "Code files",
             "patterns": ["*.js", "*.py", "*.java", "*.cpp", "*.c", "*.h", "*.hpp", "*.cs", "*.go", "*.rs", "*.rb", "*.php", "*.html", "*.css", "*.qml"]
         },
-        "TEXT": {
+        "DOCUMENTS": {
             "name": "Text files",
-            "patterns": ["*.txt", "*.md", "*.log", "*.json", "*.xml", "*.yaml", "*.yml", "*.ini", "*.conf", "*.cfg"]
+            "patterns": NameFilters.document
         }
     })
     // Configurable properties

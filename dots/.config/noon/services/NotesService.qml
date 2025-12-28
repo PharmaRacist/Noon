@@ -7,7 +7,7 @@ import qs.common.utils
 Singleton {
     id: root
 
-    property string filePath: Directories.documents + "/Notes/noon_notes.md"
+    property string filePath: Directories.standard.documents + "/Notes/noon_notes.md"
     property string content: ""
     property bool isDirty: false
     property string lastSaved: ""

@@ -12,11 +12,12 @@ RippleButton {
     property int implicitSize: 36
     property alias iconColor: symbol.color
     property alias iconSize: symbol.font.pixelSize
+    property QtObject colors: Colors
 
     implicitWidth: implicitSize
     implicitHeight: implicitSize
     buttonRadius: Rounding.normal
-    colBackground: Colors.colLayer2
+    colBackground: colors.colLayer2
 
     MaterialSymbol {
         id: symbol
@@ -24,7 +25,7 @@ RippleButton {
         font.pixelSize: root.implicitSize / 2
         anchors.centerIn: parent
         text: materialIcon
-        color: Colors.colOnSecondaryContainer
+        color: colors.colOnSecondaryContainer
         fill: materialIconFill ? 1 : 0
     }
 

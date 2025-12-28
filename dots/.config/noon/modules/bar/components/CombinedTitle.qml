@@ -335,8 +335,9 @@ MouseArea {
             StyledText {
                 id: nameText
                 text: currentApp.name
+                font.variableAxes: Fonts.variableAxes.title
                 font.pixelSize: BarData.currentBarExclusiveSize * BarData.barPadding / 1.5
-                font.family: Fonts.family.monospace
+                font.family: Fonts.family.title
                 color: Colors.colOnLayer1
                 elide: Text.ElideRight
                 maximumLineCount: 1

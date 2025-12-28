@@ -1,28 +1,24 @@
 pragma Singleton
+import qs.store
 import qs.common
 import qs.common.utils
 import qs.common.widgets
 import qs.common.functions
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Services.Mpris
 import Qt.labs.folderlistmodel
 
 Singleton {
-    id: musicPlayerService
+    id: root
 
-    // Player management
-    property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex
-    property bool hasPlasmaIntegration: true
-    property bool filterPlayersEnabled: false
-    readonly property var meaningfulPlayers: filterDuplicatePlayers(realPlayers)
-
-    readonly property var realPlayers: {
-        let players = Mpris.players?.values ?? [];
-        return filterPlayersEnabled ? players.filter(player => isRealPlayer(player)) : players;
-    }
-
+    readonly property QtObject colors: palette.colors
+    readonly property bool filterPlayersEnabled: false
+    readonly property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex
+    readonly property string artUrl: StringUtils.cleanMusicTitle(player.trackArtUrl)
+    readonly property string title: StringUtils.cleanMusicTitle(player.trackTitle)
+    readonly property string artist: StringUtils.cleanMusicTitle(player.trackArtist)
+    readonly property bool _playing: player.playbackState === MprisPlaybackState.Playing
     readonly property MprisPlayer player: {
         if (!meaningfulPlayers || meaningfulPlayers.length === 0)
             return null;
@@ -30,24 +26,67 @@ Singleton {
         return meaningfulPlayers[validIndex];
     }
 
-    // Track management
+    readonly property var meaningfulPlayers: filterDuplicatePlayers(Mpris.players.values.filter(player => isRealPlayer(player)))
+    property list<string> excludedPlayers: [".mpd", "org.mpris.MediaPlayer2.", "org.mpris.MediaPlayer2.playerctld", "org.mpris.MediaPlayer2.firefox", "MediaPlayer2.mpd"]
+
     property string currentTrackPath: ""
-    readonly property string musicDirectory: Directories.music
-    readonly property string isolatedDirectory: FileUtils.trimFileProtocol(musicDirectory) + "/IsolatedTracks"
-    readonly property string downloadDir: FileUtils.trimFileProtocol(Directories.music)
+    readonly property alias tracksModel: tracksModel
 
-    // Filter & search state
-    property var filteredIndices: []
-    property var shuffledIndices: []
-    property bool shuffleEnabled: false
-    property string currentSearchText: ""
+    function isRealPlayer(player) {
+        if (!filterPlayersEnabled)
+            return true;
+        if (!player || !player.dbusName)
+            return false;
+        return !excludedPlayers.some(pattern => player.dbusName.includes(pattern));
+    }
 
-    // Exposed for UI binding
-    readonly property int filteredTracksCount: filteredIndices.length
+    function filterDuplicatePlayers(players) {
+        if (!players || players.length === 0)
+            return [];
 
-    // Player info
-    readonly property MprisPlayer activePlayer: player
-    readonly property real currentTrackProgressRatio: {
+        const trackMap = new Map();
+
+        // Group by track
+        for (let i = 0; i < players.length; i++) {
+            const p = players[i];
+            const key = `${p.trackTitle?.toLowerCase() || ''}|${p.trackArtist?.toLowerCase() || ''}`;
+
+            if (!trackMap.has(key)) {
+                trackMap.set(key, []);
+            }
+            trackMap.get(key).push(i);
+        }
+
+        // Choose best from each group
+        const filtered = [];
+        trackMap.forEach(indices => {
+            let best = indices.find(idx => players[idx].trackArtUrl?.length > 0) ?? indices[0];
+            filtered.push(players[best]);
+        });
+
+        return filtered;
+    }
+
+    // Track info functions
+    function getTrackInfo(index) {
+        if (index < 0 || index >= tracksModel.count) {
+            return null;
+        }
+
+        const fileName = tracksModel.get(index, "fileName") || "";
+        const fileUrl = tracksModel.get(index, "fileUrl") || "";
+        const baseName = tracksModel.get(index, "baseName") || "";
+        const fileUrlStr = fileUrl.toString();
+
+        return {
+            name: baseName || fileName.replace(/\.[^/.]+$/, ""),
+            path: fileUrlStr.startsWith("file://") ? decodeURIComponent(fileUrlStr.substring(7)) : fileUrlStr,
+            fileUrl: fileUrlStr,
+            fileName: fileName
+        };
+    }
+
+    function currentTrackProgressRatio() {
         const pos = player?.position ?? 0;
         const len = player?.length ?? 0;
         if (len <= 0)
@@ -55,201 +94,6 @@ Singleton {
         return Math.max(0.0, Math.min(1.0, pos / len));
     }
 
-    readonly property string artUrl: player ? player.trackArtUrl : ""
-    readonly property string title: player?.trackTitle ? StringUtils.cleanMusicTitle(player.trackTitle) : ""
-    readonly property string artist: player?.trackArtist ? StringUtils.cleanMusicTitle(player.trackArtist) : ""
-
-    readonly property string cleanedTitle: {
-        if (!player)
-            return "";
-        const titlePart = player.trackTitle ?? "";
-        const artistPart = player.trackArtist ?? "";
-        return StringUtils.cleanMusicTitle(titlePart + " " + artistPart);
-    }
-
-    readonly property real currentTrackProgress: player?.position ?? 0
-
-    // Tracks model
-    property alias tracksModel: tracksModel
-
-    FolderListModel {
-        id: tracksModel
-        folder: musicDirectory
-        nameFilters: ["*.mp3", "*.flac", "*.ogg", "*.wav", "*.m4a", "*.aac", "*.wma", "*.opus"]
-        showDirs: false
-        showFiles: true
-        sortField: FolderListModel.Name
-
-        onCountChanged: updateFilter()
-    }
-
-    // Player management functions
-    onSelectedPlayerIndexChanged: {
-        if (Mem.states.services.mediaPlayer.selectedPlayerIndex !== selectedPlayerIndex) {
-            Mem.states.services.mediaPlayer.selectedPlayerIndex = selectedPlayerIndex;
-        }
-    }
-
-    onMeaningfulPlayersChanged: {
-        if (meaningfulPlayers && meaningfulPlayers.length > 0) {
-            if (selectedPlayerIndex >= meaningfulPlayers.length) {
-                selectedPlayerIndex = 0;
-            }
-        }
-    }
-
-    function isRealPlayer(player) {
-        if (!player || !player.dbusName)
-            return false;
-
-        if (!player.dbusName.startsWith("org.mpris.MediaPlayer2."))
-            return false;
-
-        if (!filterPlayersEnabled)
-            return true;
-
-        if (player.dbusName.indexOf("kdeconnect") !== -1)
-            return false;
-
-        if (hasPlasmaIntegration && (player.dbusName.startsWith("org.mpris.MediaPlayer2.firefox") || player.dbusName.startsWith("org.mpris.MediaPlayer2.chromium")))
-            return false;
-
-        if (player.dbusName.startsWith("org.mpris.MediaPlayer2.playerctld"))
-            return false;
-
-        if (player.dbusName.endsWith(".mpd") && !player.dbusName.endsWith("MediaPlayer2.mpd"))
-            return false;
-
-        return true;
-    }
-
-    function filterDuplicatePlayers(players) {
-        if (!players || players.length === 0)
-            return [];
-        let filtered = [];
-        let used = new Set();
-
-        for (let i = 0; i < players.length; ++i) {
-            if (used.has(i))
-                continue;
-
-            let p1 = players[i];
-            let group = [i];
-
-            for (let j = i + 1; j < players.length; ++j) {
-                let p2 = players[j];
-                if (p1.trackTitle && p2.trackTitle && (p1.trackTitle.includes(p2.trackTitle) || p2.trackTitle.includes(p1.trackTitle))) {
-                    group.push(j);
-                }
-            }
-
-            let chosenIdx = group.find(idx => players[idx].trackArtUrl && players[idx].trackArtUrl.length > 0);
-            if (chosenIdx === undefined)
-                chosenIdx = group[0];
-
-            filtered.push(players[chosenIdx]);
-            group.forEach(idx => used.add(idx));
-        }
-        return filtered;
-    }
-
-    // Track info functions
-    function getTrackInfo(index) {
-        if (index < 0 || index >= tracksModel.count) {
-            return {
-                name: "",
-                path: "",
-                fileUrl: "",
-                extension: "",
-                fileName: ""
-            };
-        }
-
-        try {
-            const fileName = tracksModel.get(index, "fileName") || "";
-            const fileUrl = tracksModel.get(index, "fileUrl") || "";
-            const baseName = tracksModel.get(index, "baseName") || "";
-
-            let extension = fileName.includes('.') ? fileName.split('.').pop().toUpperCase() : "";
-            let filePath = fileUrl.toString().startsWith("file://") ? decodeURIComponent(fileUrl.toString().replace("file://", "")) : fileUrl.toString();
-
-            return {
-                name: baseName || fileName.replace(/\.[^/.]+$/, "") || "Unknown Track",
-                path: filePath,
-                fileUrl,
-                extension,
-                fileName
-            };
-        } catch (e) {
-            return {
-                name: "Unknown Track",
-                path: "",
-                fileUrl: "",
-                extension: "",
-                fileName: ""
-            };
-        }
-    }
-
-    function getFilteredTrackInfo(filteredIndex) {
-        if (filteredIndex < 0 || filteredIndex >= filteredIndices.length) {
-            return {
-                name: "Unknown Track",
-                path: "",
-                fileUrl: "",
-                extension: "",
-                fileName: ""
-            };
-        }
-        const originalIndex = filteredIndices[filteredIndex];
-        return getTrackInfo(originalIndex);
-    }
-
-    // Filter and search functions
-    function initializeTracks() {
-        shuffleTracks();
-    }
-
-    function updateFilter() {
-        filteredIndices = [];
-
-        for (let i = 0; i < tracksModel.count; i++) {
-            let trackInfo = getTrackInfo(i);
-            if (currentSearchText === "" || trackInfo.name.toLowerCase().includes(currentSearchText.toLowerCase())) {
-                filteredIndices.push(i);
-            }
-        }
-
-        if (shuffleEnabled) {
-            shuffleCurrentIndices();
-        }
-    }
-
-    function updateSearchFilter(searchText) {
-        currentSearchText = searchText;
-        updateFilter();
-    }
-
-    function shuffleCurrentIndices() {
-        shuffledIndices = filteredIndices.slice();
-        for (let i = shuffledIndices.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
-        }
-        filteredIndices = shuffledIndices;
-    }
-
-    function shuffleTracks() {
-        shuffleEnabled = true;
-        updateFilter();
-    }
-
-    function unshuffleTracks() {
-        shuffleEnabled = false;
-        updateFilter();
-    }
-
-    // Playback functions
     function playTrackByPath(filePath) {
         if (!filePath || tracksModel.count === 0)
             return;
@@ -258,8 +102,8 @@ Singleton {
         Mem.states.mediaPlayer.currentTrackPath = filePath;
 
         const allPaths = [];
-        for (let i = 0; i < filteredIndices.length; ++i) {
-            const url = tracksModel.get(filteredIndices[i], "fileUrl");
+        for (let i = 0; i < tracksModel.count; ++i) {
+            const url = tracksModel.get(i, "fileUrl");
             if (url && url.toString().startsWith("file://")) {
                 allPaths.push(decodeURIComponent(url.toString().substring(7)));
             }
@@ -271,39 +115,11 @@ Singleton {
 
         const reordered = allPaths.slice(startIndex).concat(allPaths.slice(0, startIndex));
         const joined = reordered.map(p => `'${p.replace(/'/g, `'\\''`)}'`).join(" ");
-        Noon.execDetached(`killall vlc && sleep 1 && cvlc --one-instance --play-and-exit ${joined}`)
-    }
-
-    function playFirstFilteredTrack() {
-        if (filteredIndices.length > 0) {
-            const info = getFilteredTrackInfo(0);
-            if (info?.path)
-                playTrackByPath(info.path);
-        }
-    }
-
-    function isolateTrack(filePath) {
-        if (!filePath)
-            return;
-
-        const cleanPath = FileUtils.trimFileProtocol(filePath);
-        const path = `'${cleanPath.replace(/'/g, `'\\''`)}'`;
-        Noon.exec(`mv ${path} "${isolatedDirectory}"`);
-
-        // Remove from filtered indices
-        const indexToRemove = filteredIndices.findIndex(idx => {
-            const info = getTrackInfo(idx);
-            return info.path === cleanPath;
-        });
-
-        if (indexToRemove !== -1) {
-            filteredIndices.splice(indexToRemove, 1);
-            filteredIndices = filteredIndices; // Trigger property change
-        }
+        Noon.execDetached(`killall vlc && sleep 1 && cvlc --one-instance --play-and-exit ${joined}`);
     }
 
     function cycleRepeat() {
-        const p = musicPlayerService.player;
+        const p = root.player;
         if (!p?.canControl)
             return;
 
@@ -324,54 +140,62 @@ Singleton {
         p.loopState = nextState;
     }
 
-    // YouTube integration functions
-    function formatTimeSeconds(seconds) {
-        if (!seconds || seconds < 0)
-            return "0:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? "0" + secs : secs}`;
-    }
-
-    function downloadCurrentSong() {
-        if (cleanedTitle)
-            downloadSong(cleanedTitle);
-    }
-
-    function playVideo(query) {
-        Noon.execDetached(`xdg-open https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`);
-    }
-
     function isCurrentPlayer() {
         return player && player.desktopEntry && player.desktopEntry.toLowerCase() === "vlc";
     }
-
     function stopPlayer() {
-        Noon.exec("killall vlc");
+        Noon.execDetached("killall vlc");
     }
-
+    function downloadCurrentSong() {
+        let cleanedTitle = root.title + " " + root.artist;
+        if (cleanedTitle)
+            downloadSong(cleanedTitle);
+    }
     function downloadSong(query) {
-        Noon.execDetached(`
-            notify-send "YouTube Music Downloader" "Downloading: ${query}...";
-            cd "${downloadDir}";
-            yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata "ytsearch1:${query}" &&
-            notify-send "YouTube Music Downloader" "Downloaded: ${query}"
-        `);
+        dlpProc.query = query;
+        dlpProc.running = true;
     }
 
-    function downloadVideo(query) {
-        Noon.execDetached(`
-            notify-send "YouTube Video Downloader" "Downloading: ${query}...";
-            yt-dlp -f "best[height<=720]" --embed-subs --add-metadata "ytsearch1:${query}" &&
-            notify-send "YouTube Video Downloader" "Downloaded: ${query}"
-        `);
+    Process {
+        id: dlpProc
+        property string query
+        command: ["bash", "-c", `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P ~/Music 'ytsearch1:${query}'`]
+        onStarted: {
+            Noon.notify(`Downloading: ${query}`);
+        }
+        onExited: exitCode => {
+            if (exitCode === 0) {
+                Noon.notify(`Downloaded: ${query}`);
+            } else {
+                Noon.notify(`Download failed: ${query}`);
+            }
+        }
+    }
+
+    FolderListModel {
+        id: tracksModel
+        folder: Qt.resolvedUrl(Directories.beats.tracks)
+        nameFilters: NameFilters.audio
+        showDirs: false
+        showFiles: true
+        sortField: FolderListModel.Name
     }
 
     Timer {
         id: positionTimer
         interval: 100
         repeat: true
-        running: musicPlayerService.player && player.playbackState === MprisPlaybackState.Playing
-        onTriggered: musicPlayerService.player.positionChanged()
+        running: root.player && root._playing
+        onTriggered: root.player.positionChanged()
+    }
+    SourceDownloader {
+        id: coverFetch
+        active: root.artUrl.startsWith("http") || root.artUrl.startsWith("https")
+        input: BeatsService.artUrl
+    }
+    PaletteGenerator {
+        id: palette
+        active: root._playing && Mem.options.mediaPlayer.adaptiveTheme
+        source: coverFetch.output || root.artUrl
     }
 }

@@ -8,27 +8,25 @@ import Quickshell.Services.Mpris
 
 ColumnLayout {
     id: root
-    
-    // Properties
+
     readonly property MprisPlayer player: BeatsService.player
     readonly property bool isPlaying: player?.playbackState === MprisPlaybackState.Playing
     readonly property bool hasLyrics: LyricsService.state !== LyricsService.NoLyricsFound
-    readonly property var trackColors: TrackColorsService.colors
-    
+    readonly property var trackColors: BeatsService.colors
+
     spacing: Padding.veryhuge
     Layout.fillWidth: true
-    
-    // Album art and track info section
+
     RowLayout {
         Layout.preferredHeight: 100
         Layout.fillWidth: true
         spacing: Padding.massive
-        
+
         Revealer {
             reveal: root.hasLyrics
             Layout.maximumWidth: 75
             Layout.maximumHeight: 75
-            
+
             CroppedImage {
                 visible: parent.reveal
                 anchors.centerIn: parent
@@ -42,11 +40,11 @@ ColumnLayout {
                 tintColor: root.trackColors.colSecondaryContainer
             }
         }
-        
+
         ColumnLayout {
             Layout.fillWidth: true
             spacing: 4
-            
+
             StyledText {
                 Layout.fillWidth: true
                 font.pixelSize: Fonts.sizes.huge
@@ -56,115 +54,133 @@ ColumnLayout {
                 text: root.player?.trackTitle || "No players available"
                 horizontalAlignment: Text.AlignLeft
             }
-            
+
             StyledText {
                 Layout.fillWidth: true
                 font.pixelSize: 17
-                color: root.trackColors.colSubtext
+                color: root.trackColors.colOnLayer2
                 elide: Text.ElideRight
                 text: root.player?.trackArtist || "No players available"
                 horizontalAlignment: Text.AlignLeft
             }
         }
     }
-    
+
     // Progress bar
     StyledProgressBar {
         sperm: true
-        value: BeatsService.currentTrackProgressRatio
+        value: BeatsService.currentTrackProgressRatio()
         highlightColor: root.trackColors.colPrimary
         trackColor: root.trackColors.colSecondaryContainer
         Layout.fillWidth: true
         Layout.preferredHeight: 18
-        
+
         MouseArea {
             anchors.fill: parent
             enabled: root.player?.canSeek && root.player?.length > 0
             hoverEnabled: true
-            
+
             property bool isDragging: false
-            
+
             onPressed: mouse => {
-                isDragging = true
-                seekTo(mouse.x)
+                isDragging = true;
+                seekTo(mouse.x);
             }
-            
+
             onPositionChanged: mouse => {
-                if (isDragging) seekTo(mouse.x)
+                if (isDragging)
+                    seekTo(mouse.x);
             }
-            
+
             onReleased: isDragging = false
-            
+
             function seekTo(x) {
-                if (!root.player?.canSeek || !root.player?.length) return
-                
-                const ratio = Math.max(0, Math.min(1, x / width))
-                root.player.position = ratio * root.player.length
+                if (!root.player?.canSeek || !root.player?.length)
+                    return;
+                const ratio = Math.max(0, Math.min(1, x / width));
+                root.player.position = ratio * root.player.length;
             }
         }
     }
-    
+
     // Media controls
     RowLayout {
         spacing: Padding.small
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
-        
+
         MediaButton {
             materialIcon: "shuffle"
             enabled: root.player?.canControl
-            opacity: root.player ? 1 : 0.5
             toggled: root.player?.shuffle ?? false
-            onClicked: {
-                if (root.player) root.player.shuffle = !root.player.shuffle
+            releaseAction: () => {
+                if (root.player)
+                    root.player.shuffle = !root.player.shuffle;
             }
         }
-        
+
         MediaButton {
             materialIcon: "skip_previous"
             enabled: root.player?.canGoPrevious
-            opacity: enabled ? 1 : 0.5
-            onClicked: root.player?.previous()
+            releaseAction: () => root.player?.previous()
         }
-        
-        MaterialShapeWrappedMaterialSymbol {
-            color: root.isPlaying ? root.trackColors.colPrimary : root.trackColors.colSecondaryContainer
-            shape: root.isPlaying ? MaterialShape.Shape.Cookie9Sided : MaterialShape.Shape.Cookie12Sided
-            text: root.isPlaying ? "pause" : "play_arrow"
-            padding: Padding.massive
-            colSymbol: root.isPlaying ? root.trackColors.colOnPrimary : root.trackColors.colOnSecondaryContainer
-            fill: 1
-            iconSize: 42
-            
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onClicked: root.player?.togglePlaying()
+        Item {
+            id:playButton
+            implicitHeight:playShape.implicitHeight
+            implicitWidth:playShape.implicitWidth
+            MaterialShapeWrappedMaterialSymbol {
+                id:playShape
+                color: root.isPlaying ? root.trackColors.colPrimary : root.trackColors.colSecondaryContainer
+                shape: root.isPlaying ? MaterialShape.Shape.Cookie9Sided : MaterialShape.Shape.Cookie6Sided
+                padding: Padding.massive
+                fill: 1
+                iconSize: 42
+                property double dummy: 0
+                property real progress: BeatsService.currentTrackProgressRatio()
+                rotation: dummy + progress * 360
+
+                RotationAnimation on dummy {
+                    running: true
+                    duration: 25000
+                    loops: Animation.Infinite
+                    from: 0
+                    to: 360
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: root.player.togglePlaying()
+                }
+            }
+            MaterialSymbol {
+                id:playSymbol
+                fill:1
+                text: root.isPlaying ? "pause" : "play_arrow"
+                color: root.isPlaying ? root.trackColors.colOnPrimary : root.trackColors.colOnSecondaryContainer
+                font.pixelSize:42
+                anchors.centerIn:playShape
             }
         }
-        
+
         MediaButton {
             materialIcon: "skip_next"
             enabled: root.player?.canGoNext
-            opacity: enabled ? 1 : 0.5
-            onClicked: root.player?.next()
+            releaseAction: () => root.player?.next()
         }
-        
+
         MediaButton {
             materialIcon: root.player?.loopState === MprisLoopState.Track ? "repeat_one" : "repeat"
-            enabled: root.player?.canControl
-            opacity: root.player ? 1 : 0.5
+            enabled: root.player && root.player.canControl
             toggled: root.player?.loopState !== MprisLoopState.None
-            onClicked: BeatsService.cycleRepeat()
+            releaseAction: () => BeatsService.cycleRepeat()
         }
     }
-    
-    // Inline component
+
     component MediaButton: RippleButtonWithIcon {
         implicitSize: 32
+        colors: BeatsService.colors
         buttonRadius: Rounding.full
-        colBackground: toggled ? root.trackColors.colPrimary : root.trackColors.colSecondaryContainer
-        colBackgroundHover: toggled ? root.trackColors.colPrimaryHover : root.trackColors.colSecondaryContainerHover
-        colRipple: toggled ? root.trackColors.colSecondaryContainer : root.trackColors.colSecondaryContainerActive
+        opacity: enabled ? 1 : 0.5
     }
 }

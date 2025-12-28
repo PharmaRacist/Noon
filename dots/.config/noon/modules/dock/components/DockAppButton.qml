@@ -65,7 +65,7 @@ RippleButton {
             if (root.desktopEntry) {
                 return root.desktopEntry.execute();
             } else {
-                return Noon.exec("gtk-launch", [appToplevel.appId]);
+                return Noon.execDetached("gtk-launch", [appToplevel.appId]);
             }
             return;
         }

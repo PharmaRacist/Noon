@@ -19,28 +19,30 @@ Item {
     property bool bottomAreaReveal: false
     property int hoverHeight: 100
     property var contentItem
-    property alias backgroundColor: bg.color
     property alias topRadius: bg.topRadius
+    property alias scrim: scrim.visible
     property alias enableShadows: bg.enableShadows
     property alias bgAnchors: bg.anchors
     property alias backgroundOpacity: bg.opacity
     readonly property bool reveal: show || bg.visible
     readonly property int targetHeight: show ? (expand && enableStagedReveal ? expandedHeight : collapsedHeight) : 0
     property var finishAction
+    property QtObject colors: Colors
 
     onRevealChanged: {
         if (!reveal && finishAction)
             return finishAction();
-
     }
     anchors.fill: parent
+    clip: true
 
     Rectangle {
+        id:scrim
         z: -1
         opacity: root.reveal ? 1 : 0
-        color: ColorUtils.transparentize(Colors.m3.m3surfaceDim, 0.24)
+        color: ColorUtils.transparentize(root.colors.colScrim, 0.24)
         anchors.fill: parent
-
+        radius: Rounding.verylarge
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
@@ -53,9 +55,7 @@ Item {
                 duration: Animations.durations.normal
                 easing.bezierCurve: Animations.curves.emphasized
             }
-
         }
-
     }
 
     MouseArea {
@@ -66,10 +66,10 @@ Item {
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
         scrollGestureEnabled: root.revealOnWheel
-        onWheel: (wheel) => {
+        onWheel: wheel => {
             if (!root.revealOnWheel) {
                 wheel.accepted = false;
-                return ;
+                return;
             }
             scrollSum += wheel.angleDelta.y;
             if (Math.abs(scrollSum) >= threshold) {
@@ -96,7 +96,6 @@ Item {
             right: parent.right
             bottom: parent.bottom
         }
-
     }
 
     StyledRect {
@@ -106,13 +105,12 @@ Item {
         visible: height > 0
         height: root.targetHeight
         topRadius: Rounding.verylarge
-        color: Colors.m3.m3surfaceContainerLow
+        color: root.colors.colLayer0
         enableShadows: true
         children: root.contentItem
         Component.onCompleted: {
             if (contentItem)
                 contentItem.anchors.fill = bg;
-
         }
 
         anchors {
@@ -122,15 +120,11 @@ Item {
         }
 
         Behavior on anchors.rightMargin {
-            Anim {
-            }
-
+            Anim {}
         }
 
         Behavior on anchors.leftMargin {
-            Anim {
-            }
-
+            Anim {}
         }
 
         Behavior on height {
@@ -138,9 +132,6 @@ Item {
                 duration: Animations.durations.normal
                 easing.bezierCurve: Animations.curves.emphasized
             }
-
         }
-
     }
-
 }

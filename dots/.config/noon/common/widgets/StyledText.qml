@@ -9,6 +9,8 @@ Text {
     property real animationDistanceX: 0
     property real animationDistanceY: 6
 
+    font.variableAxes: Fonts.variableAxes.main
+    font.family: Fonts.family.main
     renderType: Text.NativeRendering
     verticalAlignment: Text.AlignVCenter
     color: Colors.m3.m3onBackground ?? "black"
@@ -50,12 +52,10 @@ Text {
                     to: 0
                     easing.type: Easing.InSine
                 }
-
             }
             // Tie the text update to this point (we don't want it to happen during the first slide+fade)
 
-            PropertyAction {
-            }
+            PropertyAction {}
 
             PropertyAction {
                 target: root
@@ -90,11 +90,7 @@ Text {
                     to: 1
                     easing.type: Easing.OutSine
                 }
-
             }
-
         }
-
     }
-
 }

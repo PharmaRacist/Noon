@@ -9,7 +9,7 @@ Singleton {
     id: root
 
     // Properties
-    property var availableIconThemes: Mem.states.desktop.icons.availableIconThemes ?? []
+    property var availableIconThemes: Mem.store.services.icons.availableIconThemes ?? []
     property var availableIconThemeNames: availableIconThemes.map((theme) => {
         return theme.name;
     })
@@ -77,10 +77,10 @@ Singleton {
                 root.isLoading = false;
                 try {
                     const themes = JSON.parse(this.text.trim());
-                    Mem.states.desktop.icons.availableIconThemes = themes;
+                    Mem.store.services.icons.availableIconThemes = themes;
                 } catch (e) {
                     console.error("IconThemeService: Failed to parse themes list:", e);
-                    Mem.states.desktop.icons.availableIconThemes = [];
+                    Mem.store.services.icons.availableIconThemes = [];
                 }
             }
         }

@@ -11,6 +11,7 @@ StyledRect {
     property bool show
     property bool rightMode
     property string selectedCategory
+    property QtObject colors: Colors
     property var bubbles: [
         {
             "cat": "Walls",
@@ -124,11 +125,10 @@ StyledRect {
             ]
         }
     ]
-
     visible: width > 0 && !Mem.states.sidebar.behavior.pinned
     enableShadows: true
     radius: Rounding.verylarge
-    color: Colors.m3.m3surface
+    color: colors.colLayer0
     height: content.implicitHeight + 2 * Padding.large
     width: show ? 55 : 0
     clip: true
@@ -162,6 +162,7 @@ StyledRect {
                         model: modelData.bubbles
 
                         RippleButtonWithIcon {
+                            colors: root.colors
                             visible: modelData?.extraVisibleCondition ?? true
                             Layout.fillWidth: true
                             enabled: modelData.enabled !== undefined ? modelData.enabled : true
@@ -179,6 +180,7 @@ StyledRect {
 
         RippleButtonWithIcon {
             materialIcon: !root.rightMode && Mem.states.sidebar.behavior.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right"
+            colors: root.colors
             releaseAction: () => {
                 Mem.states.sidebar.behavior.expanded = !Mem.states.sidebar.behavior.expanded;
             }

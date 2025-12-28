@@ -6,8 +6,6 @@ import QtQuick.Layouts
 
 StyledRect {
     id: root
-    property int selectedPlayerIndex: BeatsService.selectedPlayerIndex
-    onSelectedPlayerIndexChanged: BeatsService.selectedPlayerIndex = selectedPlayerIndex
 
     Layout.alignment: Qt.AlignHCenter
     Layout.preferredWidth: playerSelector.width + 10
@@ -15,8 +13,9 @@ StyledRect {
     Layout.bottomMargin: -10
     radius: 15
     enableShadows: true
-    color: TrackColorsService.colors.colSecondaryContainer
+    color: root.colors.colSecondaryContainer
     visible: BeatsService.meaningfulPlayers.length > 1
+    property QtObject colors: BeatsService.colors
 
     function getPlayerIcon(dbus) {
         if (!dbus) return "music_note";
@@ -44,21 +43,20 @@ StyledRect {
             delegate: RippleButtonWithIcon {
                 implicitSize: 20
                 buttonRadius: Rounding.full
-                
-                readonly property bool isSelected: index === root.selectedPlayerIndex
+
+                readonly property bool isSelected: index === BeatsService.selectedPlayerIndex
 
                 toggled: isSelected
-                colBackground: isSelected ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainer
-                colBackgroundHover: isSelected ? TrackColorsService.colors.colPrimaryHover : TrackColorsService.colors.colSecondaryContainerHover
-                colRipple: isSelected ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainerActive
-                
+                colBackground: isSelected ? root.colors.colPrimary : root.colors.colSecondaryContainer
+                colBackgroundToggled: root.colors.colPrimaryActive
+                colBackgroundHover: isSelected ? root.colors.colPrimaryHover : root.colors.colSecondaryContainerHover
+                colRipple: isSelected ? root.colors.colPrimary : root.colors.colSecondaryContainerActive
+
                 materialIcon: root.getPlayerIcon(modelData?.dbusName)
-                iconColor: isSelected ? TrackColorsService.colors.colOnPrimary : TrackColorsService.colors.colOnSecondaryContainer
-                
-                onClicked: {
-                    root.selectedPlayerIndex = index;
-                    Mem.states.services.mediaPlayer.selectedPlayerIndex = index;
-                }
+                iconColor: isSelected ? root.colors.colOnPrimary : root.colors.colOnSecondaryContainer
+
+                onClicked: Mem.states.services.mediaPlayer.selectedPlayerIndex = index;
+
 
                 StyledToolTip {
                     extraVisibleCondition: hovered

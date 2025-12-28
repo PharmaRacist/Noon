@@ -10,13 +10,12 @@ BottomDialog {
     id: root
 
     property bool expanded: parent.expanded
-    property int comboWidth: 140
+    property int comboWidth: 240
 
     function findIndex(array, value, valueRole) {
         for (let i = 0; i < array.length; i++) {
             if (array[i][valueRole] === value)
                 return i;
-
         }
         return 0;
     }
@@ -50,46 +49,41 @@ BottomDialog {
             StyledComboBox {
                 Layout.preferredHeight: 40
                 Layout.fillWidth: true
-                model: ThemeData.themes
+                model: ThemeStore.themes
                 textRole: "name"
                 valueRole: "value"
-                currentIndex: root.findIndex(ThemeData.themes, Mem.states.desktop.appearance.theme, "value")
-                onActivated: (index) => {
-                    if (index >= 0 && index < ThemeData.themes.length)
-                        GowallService.convertTheme(ThemeData.themes[index].value);
-
+                currentIndex: root.findIndex(ThemeStore.themes, Mem.states.desktop.appearance.theme, "value")
+                onActivated: index => {
+                    if (index >= 0 && index < ThemeStore.themes.length)
+                        GowallService.convertTheme(ThemeStore.themes[index].value);
                 }
             }
 
             StyledComboBox {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
-                model: ThemeData.modes
+                model: ThemeStore.modes
                 textRole: "name"
                 valueRole: "value"
-                currentIndex: root.findIndex(ThemeData.modes, Mem.states.desktop.appearance.scheme, "value")
-                onActivated: (index) => {
-                    if (index >= 0 && index < ThemeData.modes.length)
-                        WallpaperService.updateScheme(ThemeData.modes[index].value);
-
+                currentIndex: root.findIndex(ThemeStore.modes, Mem.states.desktop.appearance.scheme, "value")
+                onActivated: index => {
+                    if (index >= 0 && index < ThemeStore.modes.length)
+                        WallpaperService.updateScheme(ThemeStore.modes[index].value);
                 }
             }
 
             StyledComboBox {
-                visible: Mem.options.appearance.colors.palatte
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
-                model: ThemeData.palettes
+                model: ThemeStore.palettes
                 textRole: "name"
                 valueRole: "name"
                 displayText: Mem.options.appearance.colors.palatteName
-                onActivated: (index) => {
-                    if (index >= 0 && index < ThemeData.palettes.length)
-                        Mem.options.appearance.colors.palatteName = ThemeData.palettes[index];
-
+                onActivated: index => {
+                    if (index >= 0 && index < ThemeStore.palettes.length)
+                        Mem.options.appearance.colors.palatteName = ThemeStore.palettes[index];
                 }
             }
-
         }
 
         StyledTextField {
@@ -102,7 +96,5 @@ BottomDialog {
             Keys.onEscapePressed: focus = false
             onAccepted: Mem.states.desktop.bg.currentFolder = text
         }
-
     }
-
 }

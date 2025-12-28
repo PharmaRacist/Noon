@@ -1,11 +1,8 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common.utils
-pragma Singleton
 
-/**
- * Provides some system info: distro, username.
- */
 Singleton {
     property string distroName: "Unknown"
     property string distroId: "unknown"
@@ -69,11 +66,10 @@ Singleton {
         command: ["whoami"]
 
         stdout: SplitParser {
-            onRead: (data) => {
+            onRead: data => {
                 username = data.trim();
             }
         }
-
     }
 
     FileView {
@@ -81,5 +77,4 @@ Singleton {
 
         path: "/etc/os-release"
     }
-
 }

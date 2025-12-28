@@ -3,6 +3,7 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import Quickshell
 import qs.common
+import qs.common.utils
 import qs.common.functions
 import qs.common.widgets
 import qs.services
@@ -13,12 +14,17 @@ StyledRect {
     property string fileUrl
     property bool isKeyboardSelected: false
     property bool isCurrentWallpaper: false
+
     readonly property bool isVideoFile: {
         if (!fileUrl)
             return false;
 
         const name = fileUrl.toString().toLowerCase();
-        return name.endsWith(".mp4") || name.endsWith(".mov") || name.endsWith(".m4v") || name.endsWith(".avi") || name.endsWith(".mkv") || name.endsWith(".webm");
+        for (let i = 0; i < NameFilters.video.length; i++) {
+            if (name.endsWith(NameFilters.video[i]))
+                return true;
+        }
+        return false;
     }
 
     signal clicked()
@@ -140,7 +146,7 @@ StyledRect {
             text: "Favorite"
             onTriggered: {
                 if (wallpaperItem.fileUrl)
-                    FileUtils.moveItem(wallpaperItem.fileUrl, Directories.favoriteWallpapers);
+                    FileUtils.moveItem(wallpaperItem.fileUrl, Directories.wallpapers.favorite);
 
             }
         }

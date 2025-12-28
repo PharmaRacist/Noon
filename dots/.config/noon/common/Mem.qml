@@ -1,6 +1,6 @@
+pragma Singleton
 import qs.common.utils
 import qs.store
-pragma Singleton
 
 Singleton {
     id: root
@@ -10,6 +10,8 @@ Singleton {
     property alias options: optionsView.data
     property alias timers: timersView.data
     property alias todo: todoView.data
+    // Loads Once On Start -- Contains Static Info -- Archive
+    property alias store: storeView.data
 
     ConfigFileView {
         id: optionsView
@@ -17,9 +19,7 @@ Singleton {
         state: false
         fileName: "options"
 
-        OptionsSchema {
-        }
-
+        OptionsSchema {}
     }
 
     ConfigFileView {
@@ -27,9 +27,7 @@ Singleton {
 
         fileName: "todo"
 
-        TodoSchema {
-        }
-
+        TodoSchema {}
     }
 
     ConfigFileView {
@@ -37,9 +35,7 @@ Singleton {
 
         fileName: "states"
 
-        StatesSchema {
-        }
-
+        StatesSchema {}
     }
 
     ConfigFileView {
@@ -47,9 +43,13 @@ Singleton {
 
         fileName: "timers"
 
-        TimersSchema {
-        }
-
+        TimersSchema {}
     }
 
+    ConfigFileView {
+        id: storeView
+        watchChanges: false
+        fileName: "timers"
+        StoreSchema {}
+    }
 }

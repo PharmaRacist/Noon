@@ -1,5 +1,5 @@
-import Quickshell
 pragma Singleton
+import Quickshell
 
 Singleton {
     /**
@@ -133,5 +133,4 @@ Singleton {
         var a = Math.max(0, Math.min(1, alpha));
         return Qt.rgba(c.r, c.g, c.b, a);
     }
-
 }

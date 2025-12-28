@@ -58,7 +58,7 @@ Singleton {
     function checkRecordingState() {
         const wasRecording = root.isRecording;
         // Simple check using pidof
-        const result = Noon.exec("pidof wf-recorder");
+        const result = Noon.execDetached("pidof wf-recorder");
         if (wasRecording && !root.isRecording) {
             root.recordingDuration = 0;
             root.recordingStopped();
@@ -101,7 +101,7 @@ Singleton {
     // Build output filename
     function getOutputPath() {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('.')[0];
-        return `${FileUtils.trimFileProtocol(Directories.videos)}/recordings/recording-${timestamp}.mp4`;
+        return `${FileUtils.trimFileProtocol(Directories.standard.videos)}/recordings/recording-${timestamp}.mp4`;
     }
 
     function startRecording() {
@@ -149,7 +149,7 @@ Singleton {
             console.log("RecordingService: Starting recording:", cmd.join(" "));
             // Execute via hyprland dispatch
             const fullCmd = cmd.join(" ");
-            Noon.exec(` ${fullCmd}`);
+            Noon.execDetached(` ${fullCmd}`);
             // Set recording state after a short delay to allow process to start
             Qt.callLater(() => {
                 root.isRecording = true;
@@ -185,7 +185,7 @@ Singleton {
         }
         try {
             // Send SIGINT to wf-recorder to stop gracefully
-            Noon.exec("pkill -SIGINT wf-recorder");
+            Noon.execDetached("pkill -SIGINT wf-recorder");
             root.isRecording = false;
             root.recordingDuration = 0;
             root.lastError = "";

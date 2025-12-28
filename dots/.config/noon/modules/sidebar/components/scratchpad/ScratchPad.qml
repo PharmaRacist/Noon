@@ -13,7 +13,7 @@ import Qt5Compat.GraphicalEffects
 Item {
     id: root
     // Configuration properties
-    property string notesDirectory: Directories.documents + "/Notes"
+    property string notesDirectory: Directories.standard.documents + "/Notes"
     property string currentFileName: "latex_notes.md"
     property string currentFilePath: notesDirectory + "/" + currentFileName
     property bool autoSave: true

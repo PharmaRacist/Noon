@@ -2,6 +2,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Qt.labs.folderlistmodel
+import qs.store
 import qs.common
 import qs.common.utils
 import qs.common.functions
@@ -12,15 +13,15 @@ Singleton {
 
     readonly property string currentWallpaper: Mem.states.desktop.bg.currentBg ?? "root:///assets/images/default_wallpaper.png"
     readonly property string shellMode: Mem.states.desktop.appearance.mode
-    readonly property string currentFolderPath: Qt.resolvedUrl(Directories.home + "/" + Mem.states.desktop.bg.currentFolder)
+    readonly property string currentFolderPath: Qt.resolvedUrl(Directories.standard.home + "/" + Mem.states.desktop.bg.currentFolder)
     readonly property FolderListModel wallpaperModel: _wallpaperModel
     property var _thumbnailCache: ({})
     property string thumbnailSize: "large"
     property alias _generatingThumbnails: thumbnailGenerator.running
     Component.onCompleted: refreshFolderDelayed()
-    
+
     onCurrentWallpaperChanged: Noon.playSound("pressed")
-    
+
     onCurrentFolderPathChanged: {
         refreshFolderDelayed()
         if (_thumbnailCache.length <= 0) generateThumbnailsForCurrentFolder()
@@ -48,7 +49,7 @@ Singleton {
         if (thumbnailGenerator.running) return false
 
         const cleanDir = FileUtils.trimFileProtocol(directory)
-        const cmd = ["python3", Directories.wallpaperSwitchScriptPath, "--gen-thumbnails", cleanDir, "--thumb-size", size, "--thumb-workers", (workers || 4).toString()]
+        const cmd = ["python3", Directories.wallpapers.switchScript, "--gen-thumbnails", cleanDir, "--thumb-size", size, "--thumb-workers", (workers || 4).toString()]
         console.log(cmd)
         if (recursive === false) cmd.push("--thumb-no-recursive")
 
@@ -69,7 +70,7 @@ Singleton {
         if (!cleanPath.startsWith("/")) cleanPath = "/" + cleanPath
 
         const hash = Qt.md5(`file://${cleanPath}`)
-        const thumbnailPath = `${FileUtils.trimFileProtocol(Directories.home)}/.cache/thumbnails/${thumbSize}/${hash}.png`
+        const thumbnailPath = `${FileUtils.trimFileProtocol(Directories.standard.home)}/.cache/thumbnails/${thumbSize}/${hash}.png`
 
         _thumbnailCache[cacheKey] = `file://${thumbnailPath}`
         return _thumbnailCache[cacheKey]
@@ -89,15 +90,15 @@ Singleton {
     }
 
     function updateShellMode(mode) {
-        Noon.exec(`python3 ${Directories.wallpaperSwitchScriptPath} --noswitch -f --mode '${mode}'`)
+        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --mode '${mode}'`)
     }
 
     function toggleShellMode() {
-        Noon.exec(`python3 ${Directories.wallpaperSwitchScriptPath} --noswitch -f --mode toggle`)
+        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --mode toggle`)
     }
 
     function updateScheme(selectedMode) {
-        Noon.exec(`python3 ${Directories.wallpaperSwitchScriptPath} --noswitch -f --scheme '${selectedMode}'`)
+        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --scheme '${selectedMode}'`)
     }
 
     function refreshFolderDelayed() {
@@ -109,35 +110,35 @@ Singleton {
     }
 
     function pickAccentColor() {
-        Noon.exec(`python3 ${Directories.wallpaperSwitchScriptPath} --pick`)
+        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --pick`)
     }
 
     function changeAccentColor(color: string) {
-        Noon.exec(`python3 ${Directories.wallpaperSwitchScriptPath} --color ${color}`)
+        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --color ${color}`)
     }
 
     function applyWallpaper(fileUrl) {
-        Noon.exec(`python3 ${Directories.wallpaperSwitchScriptPath} --image '${FileUtils.trimFileProtocol(fileUrl)}'`)
+        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --image '${FileUtils.trimFileProtocol(fileUrl)}'`)
     }
 
     function applyRandomWallpaper() {
-        Noon.exec(`python3 ${Directories.wallpaperSwitchScriptPath} --random-no-recursive -R '${FileUtils.trimFileProtocol(currentFolderPath)}'`)
+        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --random-no-recursive -R '${FileUtils.trimFileProtocol(currentFolderPath)}'`)
     }
 
     function shuffleWallpapers() {
         if (_wallpaperModel.count <= 0) return
-        
+
         let indices = []
         for (let i = 0; i < _wallpaperModel.count; i++) {
             indices.push(i)
         }
-        
+
         // Fisher-Yates shuffle
         for (let i = indices.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [indices[i], indices[j]] = [indices[j], indices[i]]
         }
-        
+
         _wallpaperModel.filteredIndices = indices
         _wallpaperModel.isFiltering = true
         _wallpaperModel.modelUpdated()
@@ -161,7 +162,7 @@ Singleton {
         signal modelUpdated
 
         folder: currentFolderPath
-        nameFilters: ["*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.mp4", "*.mov", "*.m4v", "*.avi", "*.mkv", "*.webm"]
+        nameFilters: NameFilters.picture
         showDirs: false
         showFiles: true
         sortField: FolderListModel.Name

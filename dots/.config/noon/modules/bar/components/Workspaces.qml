@@ -9,6 +9,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Wayland
 import Quickshell.Widgets
 import Qt5Compat.GraphicalEffects
 
@@ -152,10 +153,14 @@ Item {
             Anim {}
         }
         Behavior on idx1 {
-            Anim {duration:Animations.durations.small}
+            Anim {
+                duration: Animations.durations.small
+            }
         }
         Behavior on idx2 {
-            Anim {duration:Animations.durations.large}
+            Anim {
+                duration: Animations.durations.large
+            }
         }
     }
 
@@ -299,7 +304,7 @@ Item {
                         implicitWidth: targetSize.width - Padding.normal
                         implicitHeight: targetSize.height - Padding.normal
 
-                        ScreencopyView {
+                        StyledScreencopyView {
                             id: preview
                             z: 0
                             anchors.fill: parent

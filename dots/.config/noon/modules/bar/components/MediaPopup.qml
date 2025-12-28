@@ -42,6 +42,7 @@ StyledPopup {
 
             // Cover Art
             MusicCoverArt {
+                visible: BeatsService.artUrl.length > 1
                 radius: Rounding.verylarge - Padding.normal
                 Layout.preferredWidth: parent.height * 0.86
                 Layout.preferredHeight: parent.height * 0.86
@@ -58,7 +59,7 @@ StyledPopup {
                     font.pixelSize: Fonts.sizes.huge
                     font.variableAxes: Fonts.variableAxes.title
                     color: Colors.colOnLayer0
-                    text: BeatsService.title
+                    text: BeatsService.title || "No Media Playing"
                     elide: Text.ElideRight
                     maximumLineCount: 1
                     wrapMode: TextEdit.Wrap
@@ -71,13 +72,10 @@ StyledPopup {
                     font.pixelSize: Fonts.sizes.large
                     font.variableAxes: Fonts.variableAxes.main
                     color: Colors.colSubtext
-                    text: BeatsService.artist
+                    text: BeatsService.artist || "No Current Artist"
                     elide: Text.ElideRight
                 }
-
             }
         }
-
     }
-
 }

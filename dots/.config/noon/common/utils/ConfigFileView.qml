@@ -13,17 +13,16 @@ FileView {
     property bool state: true
     property Component timer
 
-    filePath: (state ? Directories.state + "/" : Directories.shellConfigs) + fileName + ".json"
+    filePath: (state ? Directories.standard.state + "/" : Directories.shellConfigs) + fileName + ".json"
     preload: true
     printErrors: true
     watchChanges: true
     path: filePath
     onFileChanged: reloadTimer.restart()
     onAdapterUpdated: root.writeAdapter()
-    onLoadFailed: function(error) {
+    onLoadFailed: function (error) {
         if (autoCreateOnError && error === FileViewError.FileNotFound)
             root.writeAdapter();
-
     }
     adapter: children[0] ?? null
 
@@ -33,5 +32,4 @@ FileView {
         interval: 100
         onTriggered: root.reload()
     }
-
 }

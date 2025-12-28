@@ -99,7 +99,7 @@ Item {
                     }
 
                     releaseAction: function () {
-                        modelData?.command === "" ? Noon.callIpc("global lock") : Noon.exec(modelData.command);
+                        modelData?.command === "" ? Noon.callIpc("global lock") : Noon.execDetached(modelData.command);
                     }
                 }
             }

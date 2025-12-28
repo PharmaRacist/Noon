@@ -64,7 +64,7 @@ Singleton {
     }
 
     property bool silent: Mem.options.services.notifications.silent
-    property var filePath: Directories.notificationsPath
+    property var filePath: Directories.services.notifications
     property list<Notif> list: []
     property var popupList: list.filter(notif => notif.popup)
     property bool popupInhibited: (GlobalStates?.sidebarRightOpen ?? false) || silent

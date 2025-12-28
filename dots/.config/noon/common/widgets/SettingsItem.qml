@@ -81,7 +81,7 @@ Rectangle {
     property string _pendingType: ""
 
     signal valueChanged(var newValue)
-    signal clicked()
+    signal clicked
 
     function debouncedSetValue(value, valueType) {
         _pendingValue = value;
@@ -111,31 +111,29 @@ Rectangle {
 
     function setConfigValue(value) {
         if (key === "" || !Mem || !_ready)
-            return ;
+            return;
 
         // Use ternary to select root object
         let root = useStates ? Mem.states : Mem.options;
         if (!root)
-            return ;
+            return;
 
         let keys = key.split('.');
         let current = root;
         for (let i = 0; i < keys.length - 1; i++) {
             if (!current[keys[i]])
-                current[keys[i]] = {
-            };
+                current[keys[i]] = {};
 
             current = current[keys[i]];
         }
         current[keys[keys.length - 1]] = value;
     }
 
-    onValueChanged: function(newValue) {
+    onValueChanged: function (newValue) {
         if (reloadOnChange && _ready)
             Qt.callLater(() => {
-            return Quickshell.reload(true);
-        });
-
+                return Quickshell.reload(true);
+            });
     }
     Component.onCompleted: {
         _ready = false; // Ensure it's false first
@@ -230,7 +228,6 @@ Rectangle {
             to: 1
             duration: 100
         }
-
     }
 
     Loader {
@@ -240,7 +237,6 @@ Rectangle {
             extraVisibleCondition: hint !== "" && mouseArea.containsMouse
             content: hint
         }
-
     }
 
     RowLayout {
@@ -298,25 +294,20 @@ Rectangle {
                         duration: 250
                         easing.type: Easing.OutQuad
                     }
-
                 }
 
                 Behavior on color {
                     ColorAnimation {
                         duration: 200
                     }
-
                 }
-
             }
 
             Behavior on color {
                 ColorAnimation {
                     duration: 200
                 }
-
             }
-
         }
 
         StyledText {
@@ -380,7 +371,6 @@ Rectangle {
                     }
                 }
             }
-
         }
 
         Component {
@@ -404,7 +394,6 @@ Rectangle {
                     }
                 }
             }
-
         }
 
         Component {
@@ -416,7 +405,7 @@ Rectangle {
                 enabled: root.enabled
                 model: root.comboBoxValues
                 currentIndex: root.comboBoxCurrentIndex
-                onActivated: function(index) {
+                onActivated: function (index) {
                     if (index >= 0 && index < root.comboBoxValues.length && index !== root.comboBoxCurrentIndex) {
                         root.comboBoxCurrentIndex = index;
                         root.comboBoxCurrentValue = root.comboBoxValues[index];
@@ -427,7 +416,6 @@ Rectangle {
                     }
                 }
             }
-
         }
 
         Component {
@@ -458,7 +446,6 @@ Rectangle {
                 }
                 Keys.onEscapePressed: focus = false
             }
-
         }
 
         Component {
@@ -491,7 +478,6 @@ Rectangle {
                     iconAnimation.start();
                 }
             }
-
         }
 
         Component {
@@ -501,7 +487,7 @@ Rectangle {
                 width: 45
                 height: width
                 colBackground: Colors.colLayer3
-                releaseAction: function() {
+                releaseAction: function () {
                     let cmd = Directories.scriptsDir + "/" + root.actionName;
                     Noon.execDetached(cmd);
                     Noon.callIpc("sidebar hide");
@@ -514,9 +500,7 @@ Rectangle {
                     text: "play_arrow"
                     color: Colors.colOnLayer1
                 }
-
             }
-
         }
 
         Component {
@@ -545,21 +529,14 @@ Rectangle {
                     }
                 }
             }
-
         }
-
     }
 
     Behavior on color {
-        CAnim {
-        }
-
+        CAnim {}
     }
 
     Behavior on opacity {
-        Anim {
-        }
-
+        Anim {}
     }
-
 }

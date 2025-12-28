@@ -364,6 +364,15 @@ QtObject {
                 "key": "mediaPlayer.visualizerMode"
             }]
         }, {
+            "section": "Games Launcher",
+            "icon": "stadia_controller",
+            "items": [{
+                "icon": "palette",
+                "name": "Adaptive Theme",
+                "key": "services.games.adaptiveTheme"
+            }
+            ]
+        }, {
             "section": "Desktop & Wallpaper",
             "icon": "wallpaper",
             "items": [{

@@ -18,8 +18,7 @@ StyledRect {
     radius: Rounding.verylarge
     visible: BeatsService.artist.length > 0
 
-    Visualizer {
-    }
+    Visualizer {}
 
     RowLayout {
         spacing: Padding.massive
@@ -74,9 +73,6 @@ StyledRect {
                         return "No players available";
                 }
             }
-
         }
-
     }
-
 }

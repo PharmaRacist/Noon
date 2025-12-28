@@ -129,7 +129,7 @@ GridLayout {
 
     component MediaIndicator: RowLayout {
         visible: opacity > 0.1
-        opacity: BeatsService.activePlayer ? 1 : 0
+        opacity: BeatsService.player ? 1 : 0
         spacing: Padding.huge
         Layout.leftMargin: 5
         Layout.preferredHeight: 120

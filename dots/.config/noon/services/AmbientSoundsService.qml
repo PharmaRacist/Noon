@@ -3,6 +3,7 @@ import QtQuick
 import QtMultimedia
 import Quickshell
 import Qt.labs.folderlistmodel
+import qs.store
 import qs.common
 import qs.common.utils
 
@@ -40,7 +41,7 @@ Singleton {
     })
 
     // State bindings
-    property var availableSounds: Mem.states.services.ambientSounds.availableSounds
+    property var availableSounds: Mem.store.services.ambientSounds.availableSounds
     property var activeSounds: Mem.states.services.ambientSounds.activeSounds
     property real masterVolume: Mem.states.services.ambientSounds.masterVolume
     property bool muted: Mem.states.services.ambientSounds.muted
@@ -53,7 +54,7 @@ Singleton {
     FolderListModel {
         id: audioFolderModel
         folder: Qt.resolvedUrl(root.audioDir)
-        nameFilters: ["*.mp3", "*.ogg", "*.wav", "*.flac", "*.m4a"]
+        nameFilters: NameFilters.audio
         showDirs: false
         onCountChanged: if (count > 0) scanAudioFiles()
     }
@@ -144,7 +145,7 @@ Singleton {
 
         const clampedVolume = Math.max(0, Math.min(1, volume))
         Mem.states.services.ambientSounds.activeSounds[index].volume = clampedVolume
-        
+
         const player = players[soundId]
         if (player) {
             player.audioOutput.volume = calculateVolume(clampedVolume)
@@ -237,7 +238,7 @@ Singleton {
             })
         }
 
-        Mem.states.services.ambientSounds.availableSounds = sounds
+        Mem.store.services.ambientSounds.availableSounds = sounds
         restorePlayers()
     }
 

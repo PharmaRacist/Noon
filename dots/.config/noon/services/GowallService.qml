@@ -13,7 +13,7 @@ Singleton {
 
     property bool isBusy: upscaleProc.running || themeProc.running
     property string inputPath: FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentBg)
-    property string current_processed_wall: Directories.gowallCache + Qt.md5(inputPath) + ".png"
+    property string current_processed_wall: Directories.wallpapers.gowallDir + Qt.md5(inputPath) + ".png"
     property string upscale_output: FileUtils.trimFileExt(inputPath) + "_upscaled.png"
 
     function upscaleCurrentWallpaper() {

@@ -1,6 +1,7 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 import qs.common
+import qs.common.widgets
 import qs.common.utils
 import Quickshell
 import Qt.labs.platform
@@ -9,27 +10,33 @@ import QtQuick
 Singleton {
     id: root
 
-    property var filePath: Directories.state + "/user/games.json"
+    property var currentGame: null
     property var gamesList: []
 
-    // Game status constants
     readonly property int status_not_installed: 0
     readonly property int status_installed: 1
     readonly property int status_playing: 2
     readonly property int status_completed: 3
-
     readonly property var statusNames: ["Not Installed", "Installed", "Playing", "Completed"]
+    property int selectedIndex: 0
+    property var selectedInfo: gamesList[selectedIndex]
+    property alias colors: colorsgen.colors
 
-    function addGame(name, executablePath, useWine = false, coverImage = "", description = "") {
+    Component.onCompleted: {
+        Noon.execDetached(`touch ${gameFileView.path}`);
+        reload();
+    }
+
+    function addGame(name, executablePath, coverImage = "", optimization, description = "") {
         const game = {
             "id": Date.now() + Math.random(),
             "name": name,
             "executablePath": executablePath,
-            "useWine": useWine,
             "coverImage": coverImage,
             "description": description,
             "status": status_installed,
             "lastPlayed": null,
+            "optimization": optimization,
             "playTime": 0,
             "dateAdded": new Date().toISOString()
         };
@@ -38,7 +45,6 @@ Singleton {
         root.gamesList = gamesList.slice(0);
         saveGames();
     }
-
     function deleteGame(gameId) {
         const index = gamesList.findIndex(game => game.id === gameId);
         if (index >= 0) {
@@ -47,7 +53,6 @@ Singleton {
             saveGames();
         }
     }
-
     function updateGameStatus(gameId, newStatus) {
         const game = gamesList.find(g => g.id === gameId);
         if (game && newStatus >= status_not_installed && newStatus <= status_completed) {
@@ -56,12 +61,10 @@ Singleton {
             saveGames();
         }
     }
-
-    property var currentGame: null
-
     function launchGame(gameId) {
         const game = gamesList.find(g => g.id === gameId);
-        if (!game) return false;
+        if (!game)
+            return false;
 
         game.lastPlayed = new Date().toISOString();
         if (game.status === status_installed) {
@@ -69,93 +72,52 @@ Singleton {
         }
         root.gamesList = gamesList.slice(0);
         saveGames();
-
-        if (Mem.options.games.launchWithGameMode) {
-            hyprctlProcess.running = true;
-        }
-
-        Noon.notify("Game Launched");
+        if (game.optimization)
+            optimizeSystem();
         currentGame = game;
         gameProcess.running = true;
         return true;
     }
-
     function saveGames() {
         gameFileView.setText(JSON.stringify(root.gamesList, null, 2));
     }
-
-    function refresh() {
+    function reload() {
         gameFileView.reload();
     }
-
     function getGamesByStatus(status) {
         return gamesList.filter(game => game.status === status);
     }
-
     function getGameCount() {
         return gamesList.length;
     }
-
     function getRecentlyPlayed(count = 5) {
-        return gamesList.filter(game => game.lastPlayed)
-            .sort((a, b) => new Date(b.lastPlayed) - new Date(a.lastPlayed))
-            .slice(0, count);
+        return gamesList.filter(game => game.lastPlayed).sort((a, b) => new Date(b.lastPlayed) - new Date(a.lastPlayed)).slice(0, count);
     }
-
     function searchGames(query) {
         const lowerQuery = query.toLowerCase();
-        return gamesList.filter(game =>
-            game.name.toLowerCase().includes(lowerQuery) ||
-            game.description.toLowerCase().includes(lowerQuery)
-        );
+        return gamesList.filter(game => game.name.toLowerCase().includes(lowerQuery) || game.description.toLowerCase().includes(lowerQuery));
     }
-
-    Component.onCompleted: {
-        refresh();
+    function optimizeSystem() {
+        Noon.execDetached("hyprctl --batch keyword animations:enabled 0; keyword decoration:shadow:enabled 0; keyword decoration:blur:enabled 0; keyword general:gaps_in 0; keyword general:gaps_out 0; keyword general:border_size 1; keyword input:sensitivity 0; keyword decoration:rounding 0; keyword general:allow_tearing 1");
     }
-
-    Process {
-        id: hyprctlProcess
-        command: ["hyprctl", "--batch",
-            "keyword animations:enabled 0; keyword decoration:shadow:enabled 0; keyword decoration:blur:enabled 0; keyword general:gaps_in 0; keyword general:gaps_out 0; keyword general:border_size 1; keyword input:sensitivity 0; keyword decoration:rounding 0; keyword general:allow_tearing 1"]
-        running: false
-    }
-
     Process {
         id: gameProcess
-        command: {
-            if (!root.currentGame) return [];
-
-            const gamePath = root.currentGame.executablePath;
-            const useWine = root.currentGame.useWine;
-            const useGameMode = Mem.options.games.launchWithGameMode;
-
-            if (useWine && useGameMode) {
-                return ["gamemoderun", "wine", gamePath];
-            } else if (useWine) {
-                return ["wine", gamePath];
-            } else if (useGameMode) {
-                return ["gamemoderun", gamePath];
-            } else {
-                return [gamePath];
-            }
-        }
+        command: ["gamemoderun", root.currentGame.executablePath]
+        running: false
+        environment: Mem.options.services.games.launchEnv ?? []
         workingDirectory: {
-            if (!root.currentGame) return "";
+            if (!root.currentGame)
+                return "";
             const path = root.currentGame.executablePath;
             return path.substring(0, path.lastIndexOf('/'));
         }
-        running: false
-
-        Component.onCompleted: {
-            gameProcess.environment["__NV_PRIME_RENDER_OFFLOAD"] = "1";
-            gameProcess.environment["__GLX_VENDOR_LIBRARY_NAME"] = "nvidia";
-        }
+        onStarted: Noon.notify("Game Launched")
+        onExited: Noon.execDetached("hyprctl reload")
     }
 
     FileView {
         id: gameFileView
-        path: Qt.resolvedUrl(root.filePath)
+        path: Directories.shellConfigs + "/games.json"
 
         onLoaded: {
             try {
@@ -173,5 +135,11 @@ Singleton {
                 saveGames();
             }
         }
+    }
+
+    PaletteGenerator {
+        id: colorsgen
+        active:Mem.options.services.games.adaptiveTheme
+        source: root.selectedInfo.coverImage
     }
 }

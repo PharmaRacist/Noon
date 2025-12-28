@@ -9,7 +9,7 @@ StyledRect {
     id: navContainer
 
     required property string selectedCategory
-
+    property QtObject colors: Colors
     implicitWidth: SidebarData.sizePresets.bar - Padding.large
     color: "transparent"
     Layout.fillHeight: true
@@ -38,18 +38,15 @@ StyledRect {
                 toggled: navContainer.selectedCategory === modelData && showContent
                 buttonIcon: SidebarData.getIcon(modelData)
                 buttonText: modelData
-                highlightColor: navContainer.selectedCategory === "Beats" ? TrackColorsService.colors.colSecondaryContainer : Colors.colSecondaryContainer
-                highlightColorHover: navContainer.selectedCategory === "Beats" ? TrackColorsService.colors.colSecondaryContainerHover : Colors.colSecondaryContainerHover
-                highlightColorActive: navContainer.selectedCategory === "Beats" ? TrackColorsService.colors.colSecondaryContainerActive : Colors.colSecondaryContainerActive
-                itemColorActive: navContainer.selectedCategory === "Beats" ? TrackColorsService.colors.colOnSecondaryContainer : Colors.colOnLayer0
+                highlightColor: navContainer.colors.colSecondaryContainer
+                highlightColorHover: navContainer.colors.colSecondaryContainerHover
+                highlightColorActive: navContainer.colors.colSecondaryContainerActive
+                itemColorActive: navContainer.colors.colOnLayer2
                 onClicked: {
                     Noon.playSound("pressed");
                     requestCategoryChange(modelData);
                 }
             }
-
         }
-
     }
-
 }

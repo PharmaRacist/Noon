@@ -31,30 +31,26 @@ StyledPopup {
 
             StyledText {
                 anchors.verticalCenter: parent.verticalCenter
-                text: root.currentDevice.name
+                text: root.currentDevice?.name || "No Current Device"
                 color: Colors.m3.m3onSurfaceVariant
 
                 font {
                     weight: Font.Medium
                     pixelSize: Fonts.sizes.small
                 }
-
             }
 
-            Spacer {
-            }
-
+            Spacer {}
         }
 
         StyledText {
-            text: "100" + " %"
+            text: root.currentDevice?.battery ? Math.round(root.currentDevice.battery * 100) + " %" : "100 %"
 
             font {
                 pixelSize: Fonts.sizes.title
                 family: Fonts.family.numbers
                 variableAxes: Fonts.variableAxes.longNumbers
             }
-
         }
 
         RowLayout {
@@ -73,9 +69,6 @@ StyledPopup {
                 }
                 color: Colors.m3.m3onSurfaceVariant
             }
-
         }
-
     }
-
 }

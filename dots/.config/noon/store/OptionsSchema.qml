@@ -119,10 +119,15 @@ JsonAdapter {
         property JsonObject notifications
         property JsonObject nightLight
         property JsonObject ambientSounds
-
+        property JsonObject games
         property string backlightDevice: ""
         property bool easyEffects: false
         property string location: "Cairo"
+
+        games: JsonObject {
+            property bool adaptiveTheme: false
+            property list<string> launchEnv: ["__NV_PRIME_RENDER_OFFLOAD=1","__GLX_VENDOR_LIBRARY_NAME=nvidia"]; // Nvidia Offloading
+        }
 
         idle: JsonObject {
             property int timeOut: 10000
@@ -170,10 +175,6 @@ JsonAdapter {
         property int low: 20
         property int critical: 5
         property int suspend: 2
-    }
-
-    property JsonObject games: JsonObject {
-        property bool launchWithGameMode: false
     }
 
     property JsonObject beam: JsonObject {
@@ -263,7 +264,6 @@ JsonAdapter {
         property bool showVisualizer: false
         property bool lyrics: false
     }
-
     property JsonObject desktop: JsonObject {
         property JsonObject bg
         property JsonObject clock

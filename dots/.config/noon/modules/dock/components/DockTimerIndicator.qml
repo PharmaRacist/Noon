@@ -8,7 +8,7 @@ import qs.store
 Item {
     id: root
 
-    property var activeTimers: TimerService.uiTimers.filter((timer) => {
+    property var activeTimers: TimerService.timers.filter(timer => {
         return timer.isRunning || timer.isPaused;
     })
     property int contentWidth: Math.max(timerDock.width + activeTimers.length * timerDock.width, implicitHeight)
@@ -90,7 +90,6 @@ Item {
                                     font.pixelSize: Fonts.sizes.large
                                     color: Colors.m3.m3onSecondaryContainer
                                 }
-
                             }
 
                             Revealer {
@@ -115,11 +114,8 @@ Item {
                                         text: TimerService.formatTime(modelData.remainingTime) + " remaining"
                                         font.pixelSize: Fonts.sizes.small
                                     }
-
                                 }
-
                             }
-
                         }
 
                         MouseArea {
@@ -129,7 +125,7 @@ Item {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-                            onClicked: (mouse) => {
+                            onClicked: mouse => {
                                 if (mouse.button === Qt.RightButton) {
                                     root.requestOverlayMode();
                                 } else if (mouse.button === Qt.MiddleButton) {
@@ -142,7 +138,6 @@ Item {
                                 }
                             }
                         }
-
                     }
 
                     Rectangle {
@@ -155,13 +150,8 @@ Item {
                         width: 2
                         color: Colors.colOutline
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }

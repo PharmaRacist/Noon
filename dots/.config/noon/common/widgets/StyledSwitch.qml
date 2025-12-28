@@ -10,22 +10,21 @@ import qs.common
 Switch {
     id: root
 
+    property QtObject colors: Colors
     property real scale: 0.6 // Default in m3 spec is huge af
     // Color properties - standardized across components
-    property color activeColor: Colors.colPrimary ?? "#685496"
-    property color inactiveColor: Colors.colSurfaceContainerHighest ?? "#45464F"
-    property color activeBorderColor: Colors.colPrimary ?? "#685496"
-    property color inactiveBorderColor: Colors.m3.m3outline
-    property color buttonActiveColor: Colors.m3.m3onPrimary
-    property color buttonColor: Colors.m3.m3outline
-    property color iconActiveColor: Colors.m3.m3primary
+    property color activeColor: colors.colPrimary ?? "#685496"
+    property color inactiveColor: colors.colSurfaceContainerHighest ?? "#45464F"
+    property color activeBorderColor: colors.colPrimary ?? "#685496"
+    property color inactiveBorderColor: colors.colOutline
+    property color buttonActiveColor: colors.colOnPrimary
+    property color buttonColor: colors.colOutline
+    property color iconActiveColor: colors.colPrimary
     property color iconColor: "transparent"
-
     implicitHeight: 32 * root.scale
     implicitWidth: 52 * root.scale
 
-    PointingHandInteraction {
-    }
+    PointingHandInteraction {}
 
     // Custom track styling
     background: Rectangle {
@@ -37,17 +36,12 @@ Switch {
         border.color: root.checked ? root.activeBorderColor : root.inactiveBorderColor
 
         Behavior on color {
-            CAnim {
-            }
-
+            CAnim {}
         }
 
         Behavior on border.color {
-            CAnim {
-            }
-
+            CAnim {}
         }
-
     }
 
     // Custom thumb styling
@@ -73,35 +67,23 @@ Switch {
                     duration: 750
                     easing.type: Easing.OutQuad
                 }
-
             }
-
         }
 
         Behavior on anchors.leftMargin {
-            Anim {
-            }
-
+            Anim {}
         }
 
         Behavior on width {
-            Anim {
-            }
-
+            Anim {}
         }
 
         Behavior on height {
-            Anim {
-            }
-
+            Anim {}
         }
 
         Behavior on color {
-            CAnim {
-            }
-
+            CAnim {}
         }
-
     }
-
 }

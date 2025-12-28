@@ -197,8 +197,8 @@ StyledPanel {
                 implicitHeight: 30
                 padding: 6
                 releaseAction: () => {
-                    let cmd = `${Quickshell.env("FILE_MANAGER")} ${Directories.home}/.cache/quickshell/crashes`;
-                    Noon.exec(cmd);
+                    let cmd = `${Quickshell.env("FILE_MANAGER")} ${Directories.standard.home}/.cache/quickshell/crashes`;
+                    Noon.execDetached(cmd);
                     root.visible = false;
                 }
             }

@@ -131,9 +131,7 @@ StyledGridView {
         }
 
         Behavior on color {
-            ColorAnimation {
-                duration: 150
-            }
+            CAnim {}
         }
 
         AppContextMenu {
@@ -151,6 +149,7 @@ StyledGridView {
                 Layout.preferredWidth: appGridView.iconSize
                 Layout.preferredHeight: appGridView.iconSize
                 text: model.icon || ""
+                font.family: Fonts.emoji
                 font.pixelSize: appGridView.iconSize
                 color: Colors.colOnLayer2
                 horizontalAlignment: Text.AlignHCenter

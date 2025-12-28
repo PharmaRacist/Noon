@@ -84,7 +84,7 @@ BottomDialog {
                 buttonText: qsTr("Details")
                 onClicked: {
                     root.show = false;
-                    Noon.exec(Mem.options.apps.bluetooth);
+                    Noon.execDetached(Mem.options.apps.bluetooth);
                     GlobalStates.sidebarRightOpen = false;
                 }
             }

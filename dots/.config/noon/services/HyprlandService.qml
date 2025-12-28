@@ -85,7 +85,7 @@ Singleton {
         }, null);
     }
     function switchKeyboardLayout() {
-        Noon.exec("hyprctl switchxkblayout current next");
+        Noon.execDetached("hyprctl switchxkblayout current next");
     }
     Component.onCompleted: updateAll()
 

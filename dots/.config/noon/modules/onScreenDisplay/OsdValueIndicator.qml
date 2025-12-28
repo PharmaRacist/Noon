@@ -15,8 +15,8 @@ StyledRect {
     property string icon
 
     signal valueModified(real newValue)
-    signal interactionStarted()
-    signal interactionEnded()
+    signal interactionStarted
+    signal interactionEnded
 
     implicitWidth: Sizes.osdWidth
     implicitHeight: Sizes.osdHeight
@@ -42,7 +42,7 @@ StyledRect {
         }
         onPositionChanged: {
             if (!dragging)
-                return ;
+                return;
 
             var h = valueProgressBar.height;
             var pos = Math.max(0, Math.min(h, mouseY));
@@ -85,9 +85,7 @@ StyledRect {
                 font.variableAxes: Fonts.variableAxes.numbers
                 font.pixelSize: Fonts.sizes.small
             }
-
         }
-
     }
 
     RowLayout {
@@ -113,7 +111,5 @@ StyledRect {
             value: root.value
             valueBarGap: parent.height / 3
         }
-
     }
-
 }

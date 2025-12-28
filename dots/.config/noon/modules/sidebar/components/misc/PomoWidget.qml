@@ -30,14 +30,14 @@ Item {
             spacing: Padding.normal
             clip: true
 
-            model: TimerService.uiTimers
+            model: TimerService.timers
             delegate: PomoItem {
                 width: listView.width
                 timer: modelData
             }
 
             PagePlaceholder {
-                shown: TimerService.uiTimers.length === 0
+                shown: TimerService.timers.length === 0
                 icon: "hourglass"
                 title: "No active timers"
                 description: "Swipe Below to add new Pomodoro"

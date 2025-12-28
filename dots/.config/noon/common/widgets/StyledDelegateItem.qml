@@ -12,10 +12,10 @@ import qs.modules.sidebar
 
 RippleButton {
     id: root
-    property alias shapePadding:m3shape.padding
-    property alias shape:m3shape.shape
-    property color colActiveColor:Colors.colPrimaryContainer
-    property color colActiveItemColor:Colors.colPrimary
+    property alias shapePadding: m3shape.padding
+    property alias shape: m3shape.shape
+    property color colActiveColor: Colors.colPrimaryContainer
+    property color colActiveItemColor: Colors.colPrimary
     property alias title: title.text
     property alias subtext: subtext.text  // Fixed: was pointing to title.text
     property color colSubtext: Colors.colSubtext
@@ -26,20 +26,20 @@ RippleButton {
     colBackground: Colors.colLayer2
     buttonRadius: Rounding.large
     MaterialShapeWrappedMaterialSymbol {
-        id:m3shape
+        id: m3shape
         anchors {
             left: parent.left
-            leftMargin:Padding.huge
-            verticalCenter:parent.verticalCenter
-
+            leftMargin: Padding.huge
+            verticalCenter: parent.verticalCenter
         }
-        shape:MaterialShape.Cookie6Sided
-        padding:Padding.large
-        iconSize:parent.height / 2.5
-        colSymbol:colActiveItemColor
-        text:root.materialIcon
+        colors: root.colors
+        shape: MaterialShape.Cookie6Sided
+        padding: Padding.large
+        iconSize: parent.height / 2.5
+        colSymbol: colActiveItemColor
+        text: root.materialIcon
     }
-    
+
     // Wrapper Item to handle anchors
     Item {
         anchors {
@@ -53,9 +53,10 @@ RippleButton {
 
         RowLayout {
             anchors.fill: parent
-            spacing: Padding.verylarge
+            spacing: Padding.massive
 
             ColumnLayout {
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 spacing: Padding.small
@@ -63,17 +64,18 @@ RippleButton {
                 StyledText {
                     id: title
                     maximumLineCount: 1
-                    Layout.preferredWidth:240
-                    horizontalAlignment:Text.AlignLeft
+                    wrapMode: TextEdit.Wrap
+                    elide: Text.ElideRight
+                    Layout.preferredWidth: 240
+                    horizontalAlignment: Text.AlignLeft
                     font.pixelSize: Fonts.sizes.normal
                     color: root.colTitle
-                    elide: Text.ElideRight
                 }
 
                 StyledText {
                     id: subtext
                     Layout.fillWidth: true
-                    horizontalAlignment:Text.AlignLeft
+                    horizontalAlignment: Text.AlignLeft
                     font.pixelSize: Fonts.sizes.small
                     color: root.colSubtext
                     visible: text !== ""

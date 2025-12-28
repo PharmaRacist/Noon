@@ -10,7 +10,7 @@ RowLayout {
 
     property alias title: titleArea.text
     property alias subTitle: subTitleArea.text
-
+    property QtObject colors: Colors
     Layout.fillWidth: true
     Layout.preferredHeight: 50
     Layout.margins: Padding.large
@@ -24,14 +24,14 @@ RowLayout {
             id: titleArea
 
             font.pixelSize: Fonts.sizes.subTitle
-            color: Colors.colOnLayer2
+            color: root.colors.colOnLayer2
         }
 
         StyledText {
             id: subTitleArea
 
             font.pixelSize: Fonts.sizes.normal
-            color: Colors.colSubtext
+            color: root.colors.colSubtext
         }
 
     }

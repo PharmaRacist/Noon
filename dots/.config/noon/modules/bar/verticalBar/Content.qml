@@ -149,8 +149,7 @@ ColumnLayout {
             Component {
                 id: kbComponent
 
-                KeyboardLayout {
-                }
+                KeyboardLayout {}
             }
 
             Component {
@@ -250,7 +249,7 @@ ColumnLayout {
             Component {
                 id: mediaComponent
 
-                IIMedia {}
+                VMedia {}
             }
 
             Component {

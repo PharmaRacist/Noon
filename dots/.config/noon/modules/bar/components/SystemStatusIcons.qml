@@ -102,7 +102,7 @@ Rectangle {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onClicked: Noon.exec(Mem.options.apps.networkEthernet)
+                onClicked: Noon.execDetached(Mem.options.apps.networkEthernet)
             }
         }
 

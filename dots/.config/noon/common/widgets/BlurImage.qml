@@ -13,6 +13,8 @@ Image {
     property color tintColor: Colors.m3.m3surfaceTint
     property bool tint: false
     property real tintLevel: 0.5
+    property int blurSize:1
+    property int blurMax:70
 
     retainWhileLoading: true
     visible: opacity > 0
@@ -37,8 +39,8 @@ Image {
         source: root
         saturation: 0.2
         blurEnabled: true
-        blurMax: 25
-        blur: 2
+        blurMax: root.blurMax
+        blur: root.blurSize
     }
 
 }

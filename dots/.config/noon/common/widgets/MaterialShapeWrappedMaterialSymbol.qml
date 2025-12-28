@@ -11,9 +11,9 @@ MaterialShape {
     property alias colSymbol: symbol.color
     property alias fill: symbol.fill
     property real padding: 6
-
-    color: Colors.colSecondaryContainer
-    colSymbol: Colors.colOnSecondaryContainer
+    property QtObject colors: Colors
+    color: colors.colSecondaryContainer
+    colSymbol: colors.colOnSecondaryContainer
     shape: MaterialShape.Shape.Clover4Leaf
     implicitSize: Math.max(symbol.implicitWidth, symbol.implicitHeight) + padding * 2
 
@@ -25,15 +25,10 @@ MaterialShape {
     }
 
     Behavior on colSymbol {
-        CAnim {
-        }
-
+        CAnim {}
     }
 
     Behavior on color {
-        CAnim {
-        }
-
+        CAnim {}
     }
-
 }

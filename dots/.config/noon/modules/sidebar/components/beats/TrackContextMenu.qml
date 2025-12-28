@@ -76,17 +76,17 @@ Menu {
     }
 
     background: StyledRect {
-        color: TrackColorsService.colors.colLayer2
+        color: BeatsService.colors.colLayer2
         radius: Rounding.large
         enableShadows: true
     }
 
     component TMItem:StyledMenuItem {
         id:root
-        colBackground:TrackColorsService.colors.colLayer1
-        colBackgroundHover:TrackColorsService.colors.colLayer1Hover
-        colBackgroundActive:TrackColorsService.colors.colSecondaryContainer
-        colContent:TrackColorsService.colors.colOnLayer1
-        colContentActive:TrackColorsService.colors.colOnSecondaryContainer
+        colBackground:BeatsService.colors.colLayer1
+        colBackgroundHover:BeatsService.colors.colLayer1Hover
+        colBackgroundActive:BeatsService.colors.colSecondaryContainer
+        colContent:BeatsService.colors.colOnLayer1
+        colContentActive:BeatsService.colors.colOnSecondaryContainer
     }
 }

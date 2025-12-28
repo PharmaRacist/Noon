@@ -43,7 +43,7 @@ Singleton {
 
     onIsSuspendingAndNotChargingChanged: {
         if (available && isSuspendingAndNotCharging) {
-            Noon.exec(`systemctl suspend || loginctl suspend`);
+            Noon.execDetached(`systemctl suspend || loginctl suspend`);
         }
     }
 }

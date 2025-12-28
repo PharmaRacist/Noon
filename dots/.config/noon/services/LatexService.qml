@@ -25,7 +25,7 @@ Singleton {
     property var renderedImagePaths: ({})
     property string microtexBinaryDir: "/opt/MicroTeX"
     property string microtexBinaryName: "LaTeX"
-    property string latexOutputPath: Directories.latexOutput
+    property string latexOutputPath: Directories.services.latex
 
     signal renderFinished(string hash, string imagePath)
 

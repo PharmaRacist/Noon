@@ -71,7 +71,6 @@ BarGroup {
             percentage: ResourcesService.stats.cpu_temp / 100
             itemSize: root.itemSize
         }
-
     }
 
     component Resource: Item {
@@ -112,7 +111,6 @@ BarGroup {
                     font.pixelSize: root.itemSize * BarData.barPadding
                     color: Colors.m3.m3onSecondaryContainer
                 }
-
             }
 
             Revealer {
@@ -126,17 +124,11 @@ BarGroup {
                     color: Colors.colOnLayer1
                     text: `${Math.round(percentage * 100)}`
                 }
-
             }
-
         }
 
         Behavior on implicitWidth {
-            Anim {
-            }
-
+            Anim {}
         }
-
     }
-
 }

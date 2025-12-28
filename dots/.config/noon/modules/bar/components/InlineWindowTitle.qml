@@ -10,7 +10,6 @@ StyledText {
     required property var bar
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar?.screen)
     readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
-    Layout.alignment: Qt.AlignVCenter
     WorkspacePopup {
         hoverTarget: mouse
     }
@@ -31,9 +30,9 @@ StyledText {
     }
 
     opacity: 1
-    font.weight: 600
     font.pixelSize: Fonts.sizes.normal
     color: Colors.m3.m3onSurfaceVariant
     text: activeWindow?.activated ? activeWindow?.appId : qsTr("HyprNoon")
     elide: Text.ElideLeft
+    Layout.alignment: Qt.AlignVCenter
 }
