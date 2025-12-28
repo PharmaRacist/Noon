@@ -1,6 +1,6 @@
 pragma Singleton
-pragma ComponentBehavior: Bound
 import qs.common
+import qs.common.utils
 import qs.common.widgets
 import qs.common.functions
 import QtQuick
@@ -11,7 +11,7 @@ import Qt.labs.folderlistmodel
 
 Singleton {
     id: musicPlayerService
-    
+
     // Player management
     property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex
     property bool hasPlasmaIntegration: true
@@ -271,7 +271,7 @@ Singleton {
 
         const reordered = allPaths.slice(startIndex).concat(allPaths.slice(0, startIndex));
         const joined = reordered.map(p => `'${p.replace(/'/g, `'\\''`)}'`).join(" ");
-        Noon.execDetached(`vlc --intf dummy --no-video '${joined}'`);
+        Noon.execDetached(`killall vlc && sleep 1 && cvlc --one-instance --play-and-exit ${joined}`)
     }
 
     function playFirstFilteredTrack() {
@@ -347,14 +347,7 @@ Singleton {
     }
 
     function stopPlayer() {
-        Noon.execDetached("killall vlc");
-    }
-
-    function playSong(query) {
-        Noon.execDetached(`
-            pkill vlc;
-            vlc --intf dummy --extraintf http --http-password vlcremote --no-video --audio-filter mpris2 "https://www.youtube.com/results?search_query=${encodeURIComponent(query)}" &
-        `);
+        Noon.exec("killall vlc");
     }
 
     function downloadSong(query) {

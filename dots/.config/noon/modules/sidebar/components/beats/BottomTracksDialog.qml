@@ -29,7 +29,7 @@ BottomDialog {
             RippleButtonWithIcon {
                 materialIcon: "close"
                 releaseAction: () => {
-                    return bottomDialog.expand = false;
+                    return bottomDialog.show = false;
                 }
             }
 

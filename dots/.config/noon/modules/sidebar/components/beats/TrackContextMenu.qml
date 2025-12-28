@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import Quickshell
 import qs.common
 import qs.common.widgets
@@ -41,158 +40,39 @@ Menu {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     // Play Track
-    MenuItem {
+    TMItem {
         text: qsTr("Play")
+        materialIcon: "play_arrow"
         height: 40
         onTriggered: () => {
             if (trackPath)
                 BeatsService.playTrack(trackPath, musicModel);
-
-        }
-
-        background: Rectangle {
-            color: parent.hovered ? TrackColorsService.colors.colLayer1Hover : "transparent"
-            radius: Rounding.small
-        }
-
-        contentItem: RowLayout {
-            spacing: Padding.normal
-            Layout.leftMargin: Padding.large
-            Layout.rightMargin: Padding.large
-
-            MaterialSymbol {
-                Layout.leftMargin: Padding.normal
-                text: "play_arrow"
-                font.pixelSize: 18
-                color: TrackColorsService.colors.colOnLayer2
-            }
-
-            StyledText {
-                text: qsTr("Play")
-                color: TrackColorsService.colors.colOnLayer2
-                font.pixelSize: Fonts.sizes.small
-                Layout.fillWidth: true
-            }
-
-        }
-
-    }
-
-    // Isolate Track
-    MenuItem {
-        text: qsTr("Isolate")
-        height: 40
-        onTriggered: {
-            if (trackPath && onRefresh)
-                BeatsService.isolateTrack(trackPath, onRefresh);
-
-        }
-
-        background: Rectangle {
-            color: parent.hovered ? TrackColorsService.colors.colLayer1Hover : "transparent"
-            radius: Rounding.small
-        }
-
-        contentItem: RowLayout {
-            spacing: Padding.normal
-            Layout.leftMargin: Padding.large
-            Layout.rightMargin: Padding.large
-
-            MaterialSymbol {
-                Layout.leftMargin: Padding.normal
-                text: "filter_alt"
-                font.pixelSize: 18
-                color: TrackColorsService.colors.colOnLayer2
-            }
-
-            StyledText {
-                text: qsTr("Isolate")
-                color: TrackColorsService.colors.colOnLayer2
-                font.pixelSize: Fonts.sizes.small
-                Layout.fillWidth: true
-            }
-
         }
 
     }
 
     // Share via KDE Connect
-    MenuItem {
+    TMItem {
         text: qsTr("Share")
-        height: 40
+        materialIcon: "share"
         enabled: KdeConnectService.selectedDeviceId !== ""
         onTriggered: {
             if (trackPath)
                 KdeConnectService.shareFile(KdeConnectService.selectedDeviceId, trackPath);
-
-        }
-
-        background: Rectangle {
-            color: parent.hovered ? TrackColorsService.colors.colLayer1Hover : "transparent"
-            radius: Rounding.small
-        }
-
-        contentItem: RowLayout {
-            spacing: Padding.normal
-            Layout.leftMargin: Padding.large
-            Layout.rightMargin: Padding.large
-
-            MaterialSymbol {
-                Layout.leftMargin: Padding.normal
-                text: "share"
-                font.pixelSize: 18
-                color: parent.parent.enabled ? TrackColorsService.colors.colOnLayer2 : TrackColorsService.colors.colSubtext
-            }
-
-            StyledText {
-                text: qsTr("Share")
-                color: parent.parent.enabled ? TrackColorsService.colors.colOnLayer2 : TrackColorsService.colors.colSubtext
-                font.pixelSize: Fonts.sizes.small
-                Layout.fillWidth: true
-                opacity: parent.parent.enabled ? 1 : 0.5
-            }
-
         }
 
     }
 
     // Show in File Manager
-    MenuItem {
+    TMItem {
         text: qsTr("Show in Files")
-        height: 40
+        materialIcon: "folder_open"
         onTriggered: {
             if (trackPath) {
                 const dirPath = trackPath.substring(0, trackPath.lastIndexOf('/'));
                 Qt.openUrlExternally("file://" + dirPath);
             }
         }
-
-        background: Rectangle {
-            color: parent.hovered ? TrackColorsService.colors.colLayer1Hover : "transparent"
-            radius: Rounding.small
-        }
-
-        contentItem: RowLayout {
-            spacing: Padding.normal
-            Layout.leftMargin: Padding.large
-            Layout.rightMargin: Padding.large
-
-            MaterialSymbol {
-                Layout.leftMargin: Padding.normal
-                text: "folder_open"
-                font.pixelSize: 18
-                color: TrackColorsService.colors.colOnLayer2
-            }
-
-            StyledText {
-                text: qsTr("Show in Files")
-                color: TrackColorsService.colors.colOnLayer2
-                font.pixelSize: Fonts.sizes.small
-                Layout.fillWidth: true
-            }
-
-        }
-
     }
 
     background: StyledRect {
@@ -201,4 +81,12 @@ Menu {
         enableShadows: true
     }
 
+    component TMItem:StyledMenuItem {
+        id:root
+        colBackground:TrackColorsService.colors.colLayer1
+        colBackgroundHover:TrackColorsService.colors.colLayer1Hover
+        colBackgroundActive:TrackColorsService.colors.colSecondaryContainer
+        colContent:TrackColorsService.colors.colOnLayer1
+        colContentActive:TrackColorsService.colors.colOnSecondaryContainer
+    }
 }

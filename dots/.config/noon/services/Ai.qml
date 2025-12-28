@@ -17,7 +17,7 @@ Singleton {
     id: root
 
     signal responseFinished
-    Component.onCompleted: setModel(currentModelId, false, false);
+    Component.onCompleted: setModel(currentModelId, false, false)
 
     property Component aiMessageComponent: AiMessageData {}
     property Component aiModelComponent: AiModel {}
@@ -43,7 +43,7 @@ Singleton {
     property var postResponseHook
     property real temperature: Mem.options.ai?.temperature ?? 0.5
     property QtObject tokenCount: QtObject {
-        property int input:Mem.states.services.ai.tokenCount.input ?? -1
+        property int input: Mem.states.services.ai.tokenCount.input ?? -1
         property int output: Mem.states.services.ai.tokenCount.output ?? -1
         property int total: Mem.states.services.ai.tokenCount.total ?? -1
     }
@@ -56,11 +56,11 @@ Singleton {
         const key = apiKeys[model.key_id];
         return (key?.length > 0);
     }
-    
+
     property ApiStrategy currentApiStrategy: apiStrategies[models[currentModelId]?.api_format || "openai"]
     property string requestScriptFilePath: "/tmp/noon/ai/request.sh"
     property string pendingFilePath: ""
-    property var models: AiStore.models 
+    property var models: AiStore.models
     property var modelList: Object.keys(root.models)
     property var currentModelId: Mem.options.ai?.model || modelList[0]
     property list<var> defaultPrompts: []
@@ -80,7 +80,7 @@ Singleton {
         "openai": openaiApiStrategy.createObject(this),
         "gemini": geminiApiStrategy.createObject(this),
         "mistral": mistralApiStrategy.createObject(this),
-        "claude":claudeApiStrategy.createObject(this)
+        "claude": claudeApiStrategy.createObject(this)
     }
 
     function guessModelLogo(model) {
@@ -327,9 +327,9 @@ Singleton {
     function clearMessages() {
         root.messageIDs = [];
         root.messageByID = ({});
-        // root.tokenCount.input = -1;
-        // root.tokenCount.output = -1;
-        // root.tokenCount.total = -1;
+    // root.tokenCount.input = -1;
+    // root.tokenCount.output = -1;
+    // root.tokenCount.total = -1;
     }
 
     FileView {
@@ -421,19 +421,19 @@ Singleton {
                     return;
                 if (requester.message.thinking)
                     requester.message.thinking = false;
-       
+
                 // Handle response line
                 try {
                     const result = requester.currentStrategy.parseResponseLine(data, requester.message);
-       
+
                     if (result.functionCall) {
                         requester.message.functionCall = result.functionCall;
                         root.handleFunctionCall(result.functionCall.name, result.functionCall.args, requester.message);
                     }
                     if (result.tokenUsage) {
-                        Mem.states.services.ai.tokenCount.output = result.tokenUsage.output
-                        Mem.states.services.ai.tokenCount.input = result.tokenUsage.input
-                        Mem.states.services.ai.tokenCount.total = result.tokenUsage.total
+                        Mem.states.services.ai.tokenCount.output = result.tokenUsage.output;
+                        Mem.states.services.ai.tokenCount.input = result.tokenUsage.input;
+                        Mem.states.services.ai.tokenCount.total = result.tokenUsage.total;
                     }
                     if (result.finished) {
                         requester.markDone();
@@ -474,10 +474,12 @@ Singleton {
     }
 
     function regenerate(messageIndex) {
-        if (messageIndex < 0 || messageIndex >= messageIDs.length) return;
+        if (messageIndex < 0 || messageIndex >= messageIDs.length)
+            return;
         const id = root.messageIDs[messageIndex];
         const message = root.messageByID[id];
-        if (message.role !== "assistant") return;
+        if (message.role !== "assistant")
+            return;
         for (let i = root.messageIDs.length - 1; i >= messageIndex; i--) {
             root.removeMessage(i);
         }
@@ -545,27 +547,29 @@ Singleton {
             requester.makeRequest(); // Continue
         }
     }
-    
+
     property var executors: {
-        "switch_to_search_mode": function(args, message) {
+        "switch_to_search_mode": function (args, message) {
             root.currentTool = "search";
-            root.postResponseHook = () => { root.currentTool = "functions"; };
+            root.postResponseHook = () => {
+                root.currentTool = "functions";
+            };
             addFunctionOutputMessage("switch_to_search_mode", qsTr("Switched to search mode. Continue with the user's request."));
             requester.makeRequest();
         },
-        "get_shell_config": function(args, message) {
+        "get_shell_config": function (args, message) {
             const configJson = Utils.ObjectUtils.toPlainObject(Mem.options);
             addFunctionOutputMessage("get_shell_config", JSON.stringify(configJson));
             requester.makeRequest();
         },
-        "set_shell_config": function(args, message) {
+        "set_shell_config": function (args, message) {
             if (!args.key || !args.value) {
                 addFunctionOutputMessage("set_shell_config", qsTr("Invalid arguments. Must provide `key` and `value`."));
                 return;
             }
             Mem.options.setNestedValue(args.key, args.value);
         },
-        "run_shell_command": function(args, message) {
+        "run_shell_command": function (args, message) {
             if (!args.command || args.command.length === 0) {
                 addFunctionOutputMessage("run_shell_command", qsTr("Invalid arguments. Must provide `command`."));
                 return;
@@ -575,11 +579,11 @@ Singleton {
             message.content += contentToAppend;
             message.functionPending = true;
         },
-        "get_tasks": function(args, message) {
+        "get_tasks": function (args, message) {
             addFunctionOutputMessage("get_tasks", TodoService.formatTasks());
             requester.makeRequest();
         },
-        "add_task": function(args, message) {
+        "add_task": function (args, message) {
             if (!args.content || args.content.trim().length === 0) {
                 addFunctionOutputMessage("add_task", qsTr("Invalid arguments. Must provide non-empty `content`."));
                 return;
@@ -588,7 +592,7 @@ Singleton {
             addFunctionOutputMessage("add_task", qsTr("Task added: %1").arg(args.content));
             requester.makeRequest();
         },
-        "update_task_status": function(args, message) {
+        "update_task_status": function (args, message) {
             if (args.index === undefined || args.status === undefined) {
                 addFunctionOutputMessage("update_task_status", qsTr("Invalid arguments. Must provide `index` and `status`."));
                 return;
@@ -605,7 +609,7 @@ Singleton {
             addFunctionOutputMessage("update_task_status", qsTr("Task %1 status updated to %2").arg(args.index).arg(TodoService.getStatusName(args.status)));
             requester.makeRequest();
         },
-        "delete_task": function(args, message) {
+        "delete_task": function (args, message) {
             if (args.index === undefined) {
                 addFunctionOutputMessage("delete_task", qsTr("Invalid arguments. Must provide `index`."));
                 return;
@@ -619,7 +623,7 @@ Singleton {
             addFunctionOutputMessage("delete_task", qsTr("Task deleted: %1").arg(taskContent));
             requester.makeRequest();
         },
-        "edit_task": function(args, message) {
+        "edit_task": function (args, message) {
             if (args.index === undefined || !args.content) {
                 addFunctionOutputMessage("edit_task", qsTr("Invalid arguments. Must provide `index` and `content`."));
                 return;
@@ -629,30 +633,28 @@ Singleton {
                 return;
             }
             const success = TodoService.editItem(args.index, args.content);
-            const output = success 
-                ? qsTr("Task %1 updated to: %2").arg(args.index).arg(args.content)
-                : qsTr("Failed to update task %1").arg(args.index);
+            const output = success ? qsTr("Task %1 updated to: %2").arg(args.index).arg(args.content) : qsTr("Failed to update task %1").arg(args.index);
             addFunctionOutputMessage("edit_task", output);
             requester.makeRequest();
         },
-        "get_alarms": function(args, message) {
+        "get_alarms": function (args, message) {
             addFunctionOutputMessage("get_alarms", AlarmService.describeAlarms());
             requester.makeRequest();
         },
-        "add_alarm": function(args, message) {
+        "add_alarm": function (args, message) {
             if (!args.name || !args.time) {
                 addFunctionOutputMessage("add_alarm", qsTr("Invalid arguments. Must provide 'name' and 'time'."));
                 return;
             }
-            AlarmService.addTimer(args, message)
+            AlarmService.addTimer(args, message);
             addFunctionOutputMessage("add_timer", qsTr("Timer created with ID %1: %2 (%3)").arg(timerId).arg(args.name).arg(TimerService.formatTime(durationSeconds)));
             requester.makeRequest();
         },
-        "get_timers": function(args, message) {
+        "get_timers": function (args, message) {
             addFunctionOutputMessage("get_timers", TimerService.formatTimers());
             requester.makeRequest();
         },
-        "add_timer": function(args, message) {
+        "add_timer": function (args, message) {
             if (!args.name || !args.duration) {
                 addFunctionOutputMessage("add_timer", qsTr("Invalid arguments. Must provide 'name' and 'duration'."));
                 return;
@@ -666,7 +668,7 @@ Singleton {
             addFunctionOutputMessage("add_timer", qsTr("Timer created with ID %1: %2 (%3)").arg(timerId).arg(args.name).arg(TimerService.formatTime(durationSeconds)));
             requester.makeRequest();
         },
-        "start_timer": function(args, message) {
+        "start_timer": function (args, message) {
             if (args.timer_id === undefined) {
                 addFunctionOutputMessage("start_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
@@ -680,7 +682,7 @@ Singleton {
             addFunctionOutputMessage("start_timer", qsTr("Timer %1 started: %2").arg(args.timer_id).arg(timer.name));
             requester.makeRequest();
         },
-        "pause_timer": function(args, message) {
+        "pause_timer": function (args, message) {
             if (args.timer_id === undefined) {
                 addFunctionOutputMessage("pause_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
@@ -694,7 +696,7 @@ Singleton {
             addFunctionOutputMessage("pause_timer", qsTr("Timer %1 paused: %2").arg(args.timer_id).arg(timer.name));
             requester.makeRequest();
         },
-        "reset_timer": function(args, message) {
+        "reset_timer": function (args, message) {
             if (args.timer_id === undefined) {
                 addFunctionOutputMessage("reset_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
@@ -708,7 +710,7 @@ Singleton {
             addFunctionOutputMessage("reset_timer", qsTr("Timer %1 reset: %2").arg(args.timer_id).arg(timer.name));
             requester.makeRequest();
         },
-        "delete_timer": function(args, message) {
+        "delete_timer": function (args, message) {
             if (args.timer_id === undefined) {
                 addFunctionOutputMessage("delete_timer", qsTr("Invalid arguments. Must provide 'timer_id'."));
                 return;
@@ -723,7 +725,7 @@ Singleton {
             addFunctionOutputMessage("delete_timer", qsTr("Timer %1 deleted: %2").arg(args.timer_id).arg(timerName));
             requester.makeRequest();
         },
-        "search_online_inbrowser": function(args, message) {
+        "search_online_inbrowser": function (args, message) {
             if (!args.query || args.query.trim().length === 0) {
                 addFunctionOutputMessage("search_online_inbrowser", qsTr("Invalid arguments. Must provide non-empty 'query'."));
                 return;
@@ -744,7 +746,6 @@ Singleton {
         }
     }
 
-    
     function chatToJson() {
         return root.messageIDs.map(id => {
             const message = root.messageByID[id];
@@ -773,7 +774,7 @@ Singleton {
         path: chatName.length > 0 ? `${Directories.aiChats}/${chatName}.json` : ""
         blockLoading: true // Prevent race conditions
     }
-    
+
     function idForMessage(message) {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
     }
@@ -825,5 +826,4 @@ Singleton {
             getSavedChats.running = true;
         }
     }
-
 }

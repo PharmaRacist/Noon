@@ -1,5 +1,4 @@
 pragma Singleton
-pragma ComponentBehavior: Bound
 import Quickshell
 import QtQuick
 import qs.common

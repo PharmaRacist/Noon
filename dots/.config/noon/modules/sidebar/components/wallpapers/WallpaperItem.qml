@@ -136,7 +136,7 @@ StyledRect {
         Material.roundedScale: Rounding.normal
         Material.elevation: 8
 
-        MItem {
+        StyledMenuItem {
             text: "Favorite"
             onTriggered: {
                 if (wallpaperItem.fileUrl)
@@ -145,7 +145,7 @@ StyledRect {
             }
         }
 
-        MItem {
+        StyledMenuItem {
             text: "Delete"
             onTriggered: {
                 if (wallpaperItem.fileUrl)
@@ -192,24 +192,6 @@ StyledRect {
                 from: 1
                 to: 0.95
                 duration: Animations.durations.small
-            }
-
-        }
-
-    }
-
-    component MItem: MenuItem {
-        Material.foreground: Colors.colOnLayer2
-
-        background: Rectangle {
-            color: parent.hovered ? Colors.colOnSurface : "transparent"
-            radius: Rounding.verylarge
-            opacity: parent.hovered ? 0.08 : 0
-
-            anchors {
-                leftMargin: Padding.normal
-                rightMargin: Padding.normal
-                fill: parent
             }
 
         }

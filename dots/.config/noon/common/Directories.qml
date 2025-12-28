@@ -49,16 +49,7 @@ Singleton {
 
     // Cleanup on init
     Component.onCompleted: {
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${favoriteWallpapers}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${aiChats}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${lyrics}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${gallery}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${notes}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${favicons}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${coverArt}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${latexOutput}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${cliphistDecode}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${gowallCache}'`]);
-        Quickshell.execDetached(["bash", "-c", `mkdir -p '${depthCache}'`]);
+        var directories = [favoriteWallpapers, aiChats, lyrics, gallery, notes, favicons, coverArt, latexOutput, cliphistDecode, gowallCache, depthCache];
+        Noon.execDetached(`mkdir -p '${directories.join("' '")}'`);
     }
 }

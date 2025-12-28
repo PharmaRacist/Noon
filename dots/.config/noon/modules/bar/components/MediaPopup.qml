@@ -36,8 +36,8 @@ StyledPopup {
             z: 2
             anchors.fill: parent
             anchors.margins: Padding.large
-            anchors.leftMargin: Padding.huge
-            anchors.rightMargin: Padding.huge
+            anchors.leftMargin: Padding.massive
+            anchors.rightMargin: Padding.massive
             spacing: Padding.massive
 
             // Cover Art
@@ -48,7 +48,9 @@ StyledPopup {
             }
 
             // Track Info
-            Column {
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.rightMargin: Padding.massive
                 z: 2
                 spacing: 0
 
@@ -59,20 +61,13 @@ StyledPopup {
                     text: BeatsService.title
                     elide: Text.ElideRight
                     maximumLineCount: 1
+                    wrapMode: TextEdit.Wrap
                     Layout.fillWidth: true
-                    Layout.rightMargin: Padding.massive
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onPressed: Noon.callIpc("global toggle_beats")
-                    }
-
                 }
 
                 StyledText {
-                    Layout.fillWidth: true
-                    Layout.rightMargin: Padding.massive
                     maximumLineCount: 1
+                    wrapMode: TextEdit.Wrap
                     font.pixelSize: Fonts.sizes.large
                     font.variableAxes: Fonts.variableAxes.main
                     color: Colors.colSubtext
@@ -81,10 +76,6 @@ StyledPopup {
                 }
 
             }
-
-            Spacer {
-            }
-
         }
 
     }

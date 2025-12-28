@@ -69,8 +69,8 @@ Singleton {
         const cmd = `qs -c ~/.config/noon ipc call ${request}`;
         Quickshell.execDetached(["bash", "-c", cmd]);
     }
-    function execDetached(command: var) {
-        Quickshell.execDetached(command);
+    function execDetached(command: string) {
+        Quickshell.execDetached(["bash","-c",command]);
     }
     function exec(command: string) {
         execProc.command = ["bash", "-c", command];

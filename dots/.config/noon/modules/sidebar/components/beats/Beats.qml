@@ -1,11 +1,9 @@
-import qs.services
-import qs.common
-import qs.common.widgets
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Widgets
 import Quickshell.Services.Mpris
+import qs.common
+import qs.common.widgets
+import qs.services
 
 StyledRect {
     id: root
@@ -88,71 +86,19 @@ StyledRect {
         mode: Mem.options.mediaPlayer.visualizerMode
         visualizerColor: TrackColorsService.colors.colPrimary
     }
+
     ColumnLayout {
+        id:content
+        spacing: Padding.massive
+        
         anchors {
             fill: parent
-            margins: Padding.large
+            margins: Padding.massive
         }
-        spacing: Padding.large
-
+        
         Spacer {}
         PlayerSelector {}
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            Layout.margins: Padding.large
-            spacing: Padding.massive
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: Padding.massive
-
-                Revealer {
-                    reveal: LyricsService.state !== LyricsService.NoLyricsFound
-                    Layout.maximumWidth: 75
-                    Layout.maximumHeight: 75
-
-                    CroppedImage {
-                        visible: parent.reveal
-                        anchors.centerIn: parent
-                        z: 99
-                        source: BeatsService.artUrl
-                        sourceSize: Qt.size(width, height)
-                        mipmap: true
-                        radius: Rounding.large
-                        tint: true
-                        tintLevel: 0.8
-                        tintColor: TrackColorsService.colors.colSecondaryContainer
-                    }
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 4
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        font.pixelSize: Fonts.sizes.huge
-                        font.weight: Font.Medium
-                        color: TrackColorsService.colors.colOnLayer0
-                        elide: Text.ElideRight
-                        text: BeatsService.player?.trackTitle || "No players available"
-                        horizontalAlignment:Text.AlignLeft
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        font.pixelSize: 17
-                        color: TrackColorsService.colors.colSubtext
-                        elide: Text.ElideRight
-                        text: BeatsService.player?.trackArtist || "No players available"
-                        horizontalAlignment:Text.AlignLeft
-
-                    }
-                }
-            }
-            MediaPlayerControls {}
-        }
+        MediaPlayerControls {}
     }
 
     SpotifyLyrics {}

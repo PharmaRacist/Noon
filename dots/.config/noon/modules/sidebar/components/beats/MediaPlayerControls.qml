@@ -8,87 +8,148 @@ import Quickshell.Services.Mpris
 
 ColumnLayout {
     id: root
+    
+    // Properties
     readonly property MprisPlayer player: BeatsService.player
     readonly property bool isPlaying: player?.playbackState === MprisPlaybackState.Playing
-    spacing: Padding.huge
+    readonly property bool hasLyrics: LyricsService.state !== LyricsService.NoLyricsFound
+    readonly property var trackColors: TrackColorsService.colors
+    
+    spacing: Padding.veryhuge
     Layout.fillWidth: true
-
-    StyledProgressBar {
-        sperm: true
-        value: BeatsService.currentTrackProgressRatio
-        highlightColor: TrackColorsService.colors.colPrimary
-        trackColor: TrackColorsService.colors.colSecondaryContainer
+    
+    // Album art and track info section
+    RowLayout {
+        Layout.preferredHeight: 100
         Layout.fillWidth: true
-        Layout.preferredHeight: 18
-        MouseArea {
-            anchors.fill: parent
-            enabled: BeatsService.player?.canSeek && BeatsService.player?.length > 0
-            hoverEnabled: true
-            property bool isDragging: false
-
-            onPressed: mouse => {
-                isDragging = true;
-                seekTo(mouse.x);
+        spacing: Padding.massive
+        
+        Revealer {
+            reveal: root.hasLyrics
+            Layout.maximumWidth: 75
+            Layout.maximumHeight: 75
+            
+            CroppedImage {
+                visible: parent.reveal
+                anchors.centerIn: parent
+                z: 99
+                source: BeatsService.artUrl
+                sourceSize: Qt.size(width, height)
+                mipmap: true
+                radius: Rounding.large
+                tint: true
+                tintLevel: 0.8
+                tintColor: root.trackColors.colSecondaryContainer
             }
-            onPositionChanged: mouse => isDragging && seekTo(mouse.x)
-            onReleased: isDragging = false
-
-            function seekTo(x) {
-                const player = BeatsService.player;
-                if (!player?.canSeek || !player?.length)
-                    return;
-                player.position = Math.max(0, Math.min(1, x / width)) * player.length;
+        }
+        
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 4
+            
+            StyledText {
+                Layout.fillWidth: true
+                font.pixelSize: Fonts.sizes.huge
+                font.weight: Font.Medium
+                color: root.trackColors.colOnLayer0
+                elide: Text.ElideRight
+                text: root.player?.trackTitle || "No players available"
+                horizontalAlignment: Text.AlignLeft
+            }
+            
+            StyledText {
+                Layout.fillWidth: true
+                font.pixelSize: 17
+                color: root.trackColors.colSubtext
+                elide: Text.ElideRight
+                text: root.player?.trackArtist || "No players available"
+                horizontalAlignment: Text.AlignLeft
             }
         }
     }
-
+    
+    // Progress bar
+    StyledProgressBar {
+        sperm: true
+        value: BeatsService.currentTrackProgressRatio
+        highlightColor: root.trackColors.colPrimary
+        trackColor: root.trackColors.colSecondaryContainer
+        Layout.fillWidth: true
+        Layout.preferredHeight: 18
+        
+        MouseArea {
+            anchors.fill: parent
+            enabled: root.player?.canSeek && root.player?.length > 0
+            hoverEnabled: true
+            
+            property bool isDragging: false
+            
+            onPressed: mouse => {
+                isDragging = true
+                seekTo(mouse.x)
+            }
+            
+            onPositionChanged: mouse => {
+                if (isDragging) seekTo(mouse.x)
+            }
+            
+            onReleased: isDragging = false
+            
+            function seekTo(x) {
+                if (!root.player?.canSeek || !root.player?.length) return
+                
+                const ratio = Math.max(0, Math.min(1, x / width))
+                root.player.position = ratio * root.player.length
+            }
+        }
+    }
+    
+    // Media controls
     RowLayout {
         spacing: Padding.small
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
+        
         MediaButton {
             materialIcon: "shuffle"
             enabled: root.player?.canControl
             opacity: root.player ? 1 : 0.5
             toggled: root.player?.shuffle ?? false
-            onClicked: root.player && (root.player.shuffle = !root.player.shuffle)
+            onClicked: {
+                if (root.player) root.player.shuffle = !root.player.shuffle
+            }
         }
-
+        
         MediaButton {
             materialIcon: "skip_previous"
             enabled: root.player?.canGoPrevious
             opacity: enabled ? 1 : 0.5
             onClicked: root.player?.previous()
         }
-
-        RippleButtonWithIcon {
-            toggled: root.isPlaying
-            enabled: root.player?.canPause
-
-            implicitWidth: toggled ? 80 : 40
-            implicitHeight: 40
-            buttonRadius: toggled ? Rounding.verylarge : Rounding.large
-
-            colBackground: toggled ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainer
-            colBackgroundHover: toggled ? TrackColorsService.colors.colPrimaryHover : TrackColorsService.colors.colSecondaryContainerHover
-            colRipple: toggled ? TrackColorsService.colors.colPrimaryActive : TrackColorsService.colors.colSecondaryContainerActive
-
-            onClicked: root.player?.canPause ? root.player.togglePlaying() : (GlobalStates.playlistOpen = true)
-            materialIcon: toggled ? "pause" : "play_arrow"
-            iconColor: toggled ? TrackColorsService.colors.colOnPrimary : TrackColorsService.colors.colOnSecondaryContainer
-
-            Behavior on implicitWidth {
-                Anim {}
+        
+        MaterialShapeWrappedMaterialSymbol {
+            color: root.isPlaying ? root.trackColors.colPrimary : root.trackColors.colSecondaryContainer
+            shape: root.isPlaying ? MaterialShape.Shape.Cookie9Sided : MaterialShape.Shape.Cookie12Sided
+            text: root.isPlaying ? "pause" : "play_arrow"
+            padding: Padding.massive
+            colSymbol: root.isPlaying ? root.trackColors.colOnPrimary : root.trackColors.colOnSecondaryContainer
+            fill: 1
+            iconSize: 42
+            
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: root.player?.togglePlaying()
             }
         }
-
+        
         MediaButton {
             materialIcon: "skip_next"
             enabled: root.player?.canGoNext
             opacity: enabled ? 1 : 0.5
             onClicked: root.player?.next()
         }
-
+        
         MediaButton {
             materialIcon: root.player?.loopState === MprisLoopState.Track ? "repeat_one" : "repeat"
             enabled: root.player?.canControl
@@ -97,11 +158,13 @@ ColumnLayout {
             onClicked: BeatsService.cycleRepeat()
         }
     }
+    
+    // Inline component
     component MediaButton: RippleButtonWithIcon {
-        implicitSize: 30
+        implicitSize: 32
         buttonRadius: Rounding.full
-        colBackground: toggled ? TrackColorsService.colors.colPrimary : TrackColorsService.colors.colSecondaryContainer
-        colBackgroundHover: toggled ? TrackColorsService.colors.colPrimaryHover : TrackColorsService.colors.colSecondaryContainerHover
-        colRipple: toggled ? TrackColorsService.colors.colSecondaryContainer : TrackColorsService.colors.colSecondaryContainerActive
+        colBackground: toggled ? root.trackColors.colPrimary : root.trackColors.colSecondaryContainer
+        colBackgroundHover: toggled ? root.trackColors.colPrimaryHover : root.trackColors.colSecondaryContainerHover
+        colRipple: toggled ? root.trackColors.colSecondaryContainer : root.trackColors.colSecondaryContainerActive
     }
 }
