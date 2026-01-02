@@ -1,24 +1,30 @@
 {
+
+  "workbench.activityBar.location": "hidden",
+  "window.titleBarStyle": "native", // Disables the Title Bar W Compositor Side Decorations 
+  "window.menuBarVisibility": "toggle", // Hide the menu bar 
+  "window.commandCenter": false,
+  "window.customTitleBarVisibility": "never",
+  "workbench.layoutControl.enabled": false,
   "workbench.colorTheme": "Noon",
   "editor.fontFamily": "Iosevka",
   "editor.fontSize": 18,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "Delgan.qml-format",
-  "window.menuBarVisibility": "compact",
-  "window.commandCenter": false,
-  "workbench.layoutControl.enabled": false,
-  "workbench.activityBar.location": "hidden",
   "git.enableSmartCommit": true,
   "git.confirmSync": false,
-  "window.titleBarStyle": "native",
-  "window.menuBarVisibility": "toggle",
-  "workbench.settings.applyToAllProfiles": [
-  ],
   "qt-core.additionalQtPaths": [
     {
       "name": "Qt-5.15.18-linux-g++_from_PATH",
       "path": "/usr/bin/qtpaths"
     }
   ],
-  "redhat.telemetry.enabled": false
+  "redhat.telemetry.enabled": false,
+  "qt-qml.doNotAskForQmllsDownload": true,
+  "workbench.productIconTheme": "material-product-icons",
+  "workbench.iconTheme": "material-icon-theme",
+  "window.zoomLevel": 1.5,
+  "workbench.startupEditor": "none",
+  "workbench.settings.applyToAllProfiles": [
+  ]
 }
