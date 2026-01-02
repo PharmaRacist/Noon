@@ -93,7 +93,7 @@ Singleton {
     property color colOutline: ColorUtils.transparentize(m3.m3outline, 0.85)
     property color colOutlineVariant: m3.m3outlineVariant
     property color colTooltip: m3.darkmode ? ColorUtils.mix(m3.m3background, "#3C4043", 0.5) : "#3C4043"
-    property color colOnTooltip: m3onBackground
+    property color colOnTooltip: m3.m3onBackground
     property color colScrim: ColorUtils.transparentize(m3.m3scrim, 0.45)
     property color colShadow: ColorUtils.transparentize(m3.m3surface, 0.7)
 }

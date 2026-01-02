@@ -406,12 +406,12 @@ Scope {
                         const subPrefix = currentData.prefix;
                         const searchQuery = cleanQuery.substring(subPrefix.length);
                         const cmd = currentData.searchQuery + encodeURIComponent(searchQuery);
-                        Noon.execDetached(["xdg-open", cmd]);
+                        Quickshell.execDetached(["xdg-open", cmd]);
                     }
                     break;
                 case "commands":
                     if (cleanQuery.length > 0) {
-                        Noon.execDetached(["bash", "-c", cleanQuery]);
+                        Quickshell.execDetached(["bash", "-c", cleanQuery]);
                     }
                     break;
                 case "translate":
@@ -577,7 +577,7 @@ Scope {
                                 Anim {
                                     properties: "anchors.margins,anchors.bottomMargin,radius,topLeftRadius,topRightRadius,bottomLeftRadius,bottomRightRadius"
                                 }
-                                
+
                                 Anim {
                                     properties: "anchors.topMargin,anchors.bottomMargin,opacity"
                                     targets: [c1, c2]

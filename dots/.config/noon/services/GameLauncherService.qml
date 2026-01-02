@@ -139,7 +139,7 @@ Singleton {
 
     PaletteGenerator {
         id: colorsgen
-        active:Mem.options.services.games.adaptiveTheme
+        active: Mem.options.services.games.adaptiveTheme
         source: root.selectedInfo.coverImage
     }
 }

@@ -93,8 +93,8 @@ StyledPanel {
             right: visualContainer.rightMode ? parent.right : undefined
         }
 
-        width: visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0)
-
+        /* Todo: Tidy -- change 2 > hyprland borders*/
+        width: root.barMode && !root.pinned ? Sizes.hyprlandGapsOut - 2  : visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0)
         StyledRect {
             id: visualContainer
 
