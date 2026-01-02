@@ -1,0 +1,28 @@
+{
+  "name": "hyprnoon",
+  "displayName": "Noon",
+  "description": "Automatically generated Material You (M3) dark theme",
+  "version": "1.0.0",
+  "publisher": "Pharmaracist",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "keywords": [
+    "theme",
+    "dark",
+    "material",
+    "m3"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Noon",
+        "uiTheme": "vs-dark",
+        "path": "./colors.json"
+      }
+    ]
+  }
+}
