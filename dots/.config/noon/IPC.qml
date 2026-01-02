@@ -3,7 +3,7 @@ import Quickshell
 import Quickshell.Services.Mpris
 import qs.common
 import qs.common.utils
-import qs.modules.view
+import qs.modules.main.view
 import qs.common.functions
 import qs.common.widgets
 import qs.services

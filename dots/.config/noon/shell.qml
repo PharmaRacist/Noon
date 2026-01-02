@@ -7,17 +7,17 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import qs.modules.view
-import qs.modules.bar
-import qs.modules.desktop.bg
+import qs.modules.main.view
+import qs.modules.main.bar
+import qs.modules.main.desktop.bg
 import qs.common
 import qs.common.utils
-import qs.modules.dock
-import qs.modules.lock
-import qs.modules.notificationPopup
-import qs.modules.onScreenDisplay
-import qs.modules.sidebar
-import qs.modules.beam
+import qs.modules.main.dock
+import qs.modules.main.lock
+import qs.modules.main.notificationPopup
+import qs.modules.main.onScreenDisplay
+import qs.modules.main.sidebar
+import qs.modules.main.beam
 
 ShellRoot {
     Component.onCompleted:GlobalStates.handle_init()

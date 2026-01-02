@@ -8,7 +8,7 @@ import qs.common
 import qs.common.widgets
 import qs.services
 import qs.common.functions
-import qs.modules.sidebar
+import qs.modules.main.sidebar
 
 RippleButton {
     id: root
