@@ -98,7 +98,7 @@ StyledPanel {
         StyledRect {
             id: visualContainer
 
-            property bool rightMode: Mem.options.bar?.behavior?.position === "left" ?? true
+            property bool rightMode: Mem.options.bar.behavior.position === "left" || Mem.options.bar.behavior.position === "top"
             property int mode: Mem.options.sidebar.appearance.mode
             property int rounding: Rounding.verylarge
 
