@@ -211,13 +211,13 @@ Singleton {
         if (!device)
             return "";
         if (isDeviceBusy(device))
-            return "Busy";
+            return "cached";
         if (device.connected)
-            return "Connected";
+            return "Bluetooth_connected";
         if (device.paired)
-            return "Paired";
+            return "link";
         if (device.trusted)
-            return "Trusted";
+            return "shield_with_heart";
         return "restart_alt";
     }
     function getDeviceStatus(device) {
