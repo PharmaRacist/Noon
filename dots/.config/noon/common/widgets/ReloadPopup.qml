@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
@@ -19,6 +20,13 @@ StyledPanel {
     name: "errorDialog"
     visible: true
     margins: Padding.massive
+    kbFocus: true
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_Escape) {
+            root.visible = false;
+            event.accepted = true;
+        }
+    }
 
     anchors {
         top: true

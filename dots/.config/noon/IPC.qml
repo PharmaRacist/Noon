@@ -114,6 +114,7 @@ Scope {
         }
         function toggle_ai_bar() {
             GlobalStates.showBeam = !GlobalStates.showBeam;
+            GlobalStates.xp.startMenu.visible = !GlobalStates.xp.startMenu.visible;
         }
     }
 }

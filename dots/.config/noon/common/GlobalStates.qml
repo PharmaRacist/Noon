@@ -1,12 +1,13 @@
-pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common.widgets
 import qs.services
+pragma Singleton
 
 Singleton {
     id: root
 
+    property QtObject xp
     property bool locked: false
     property bool playlistOpen: false
     property bool oskOpen: false
@@ -55,4 +56,21 @@ Singleton {
             superHeld = false;
         }
     }
+
+    xp: QtObject {
+        id: xp
+
+        property QtObject startMenu
+        property bool locked: false
+
+        function handle_init() {
+            Noon.playSound("init", "xp");
+        }
+
+        startMenu: QtObject {
+            property bool visible: false
+        }
+
+    }
+
 }
