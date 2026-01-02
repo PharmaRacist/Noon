@@ -29,9 +29,9 @@ Singleton {
     function sudoExec(content: var) {
         Quickshell.execDetached(["pkexec", contentorg.hyprnoon]);
     }
-    function playSound(name: string, volumeLevel, pack, repeat: int) {
+    function playSound(name: string, pack,volumeLevel, repeat: int) {
         if (Mem.ready && Mem.options.desktop.behavior.sounds.enabled && !Mem.options.services.notifications.silent) {
-            let packName = pack || "ui/";
+            let packName = pack + "/" || "ui/";
             let path = Directories.sounds + packName + name + ".ogg";
             let volume = (volumeLevel || Mem.options.desktop.behavior.sounds.level) * 65536;
             let repeats = repeat || 1;

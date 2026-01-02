@@ -265,6 +265,7 @@ JsonAdapter {
         property bool lyrics: false
     }
     property JsonObject desktop: JsonObject {
+        property JsonObject shell
         property JsonObject bg
         property JsonObject clock
         property JsonObject view
@@ -277,6 +278,9 @@ JsonAdapter {
         property bool desktopClock: true
         property int screenCorners: 1
         property bool timerOverlayMode: true
+        shell:JsonObject {
+            property string mode: "main"
+        }
         view: JsonObject {
             property string mode: "spiral"
         }
