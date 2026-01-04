@@ -11,7 +11,7 @@ Singleton {
     property real transparency: Mem.options.appearance.transparency.enabled ? Mem.options.appearance.transparency.scale : 0
     property real contentTransparency: Mem.options.appearance.transparency.scale
 
-    property color colOnBackground: M3Colors.darkmode ? colOnLayer0 : colLayer0
+    property color colOnBackground: m3.darkmode ? colOnLayer0 : colLayer0
     property color colSubtext: m3.m3outline
     property color colLayer0: ColorUtils.transparentize(m3.m3background, transparency)
     property color colOnLayer0: m3.m3onBackground

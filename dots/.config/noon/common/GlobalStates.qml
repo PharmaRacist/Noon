@@ -1,8 +1,8 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common.widgets
 import qs.services
-pragma Singleton
 
 Singleton {
     id: root
@@ -36,7 +36,7 @@ Singleton {
         AlarmService.reload();
         ClipboardService.reload();
         AmbientSoundsService.reload();
-        HyprlandParserService.reload();
+        HyprlandParserService.getAll();
         Noon.playSound("device_unlocked");
     }
 
@@ -71,7 +71,5 @@ Singleton {
         startMenu: QtObject {
             property bool visible: false
         }
-
     }
-
 }

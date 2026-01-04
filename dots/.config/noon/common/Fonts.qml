@@ -10,6 +10,7 @@ Singleton {
 
     family: QtObject {
         readonly property string main: Mem.options.appearance.fonts.main ?? "Google Sans Flex"
+        readonly property string title: "Rubik"
         readonly property string reading: Mem.options.appearance.fonts.main ?? "Rubik"
         readonly property string numbers: Mem.options.appearance.fonts.main ?? "Google Sans Flex"
         readonly property string monospace: "Iosevka"

@@ -29,7 +29,7 @@ Singleton {
     function sudoExec(content: var) {
         Quickshell.execDetached(["pkexec", contentorg.hyprnoon]);
     }
-    function playSound(name: string, pack,volumeLevel, repeat: int) {
+    function playSound(name: string, pack, volumeLevel, repeat: int) {
         if (Mem.ready && Mem.options.desktop.behavior.sounds.enabled && !Mem.options.services.notifications.silent) {
             let packName = pack + "/" || "ui/";
             let path = Directories.sounds + packName + name + ".ogg";
@@ -39,7 +39,7 @@ Singleton {
             // Loop with paplay for repeat > 1, single play otherwise
             let cmd = repeats > 1 ? `for i in {1..${repeats}}; do paplay --client-name "HyprNoon" --volume ${volume} ${path}; done` : `paplay --client-name "HyprNoon" --volume ${volume} ${path}`;
 
-            exec(cmd);
+            Noon.execDetached(cmd);
         }
     }
     function wake(name: string) {
@@ -48,7 +48,7 @@ Singleton {
         let volume = 1.0 * 65536;
         let cmd = `while true; do paplay --client-name "HyprNoon-Alarm" --volume ${volume} ${path}; done`;
 
-        exec(cmd);
+        Noon.execDetached(cmd);
 
         // Send notification with "Got it" button that stops the sound
         let icon = Directories.assets + "/icons/logo-symbolic.svg";
@@ -60,7 +60,7 @@ Singleton {
     function notify(content: string, title: string) {
         let icon = Directories.assets + "/icons/logo-symbolic.svg";
         let titleStr = title || "HyprNoon";
-        exec(`notify-send -i ${icon} -a ${titleStr} ${content}`);
+        Noon.execDetached(`notify-send -i ${icon} -a ${titleStr} ${content}`);
     }
     function notifyPhone(content: string) {
         KdeConnectService.pingSelectedDevice(content);
@@ -70,25 +70,23 @@ Singleton {
         Quickshell.execDetached(["bash", "-c", cmd]);
     }
     function execDetached(command: string) {
-        Quickshell.execDetached(["bash","-c",command]);
+        Quickshell.execDetached(["bash", "-c", command]);
     }
     // Atomic Changes
-    function setHyprKey(key:string, value) {
-        HyprlandParserService.set(key,value)
+    function setHyprKey(key: string, value) {
+        HyprlandParserService.set(key, value);
     }
     function installPkg(app: string) {
         const terminal = Mem.options.apps.terminal || "kitty";
         Quickshell.execDetached(["kitty", "-e", "fish", "-c", ` yay -S --noconfirm  ${app}`]);
     }
-  
-    function edit(filePath){
-        if (!filePath) return;
-        exec(
-            `${Quickshell.env('EDITOR')} ${Quickshell.env('SHELL_CONFIG_PATH')}`
-        )
 
+    function edit(filePath) {
+        if (!filePath)
+            return;
+        execDetached(`${Quickshell.env('EDITOR')} ${Quickshell.env('SHELL_CONFIG_PATH')}`);
     }
-    
+
     function fetchCommands() {
         if (!commandsReady)
             commandLoader.running = true;
@@ -152,11 +150,11 @@ Singleton {
     //     }
     // }
     // Connections {
-	// 	target: Quickshell
+    // 	target: Quickshell
     //     function onReloadFailed(error: string) {
     //         popupLoader.active = true;
     //         root.errStr = error;
     //     }
-	// }
+    // }
 
 }

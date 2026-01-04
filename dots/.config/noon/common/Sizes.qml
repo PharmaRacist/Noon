@@ -1,18 +1,18 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
 import qs.services
-pragma Singleton
 
 Singleton {
-    property real barElevation: hyprlandGapsOut / 4
+    property real barElevation: hyprland.gapsOut / 4
     property real osdWidth: 220
     property real osdHeight: 45
     property real collapsedSideBarWidth: 50
     property real notificationPopupWidth: 420
     property real elevationValue: Padding.verylarge
     property real frameThickness: Mem.options.desktop.bg.borderMultiplier * (hyprland.gapsOut - Padding.normal)
-    property real elevationMargin: frameThickness + elevationValue
+    property real elevationMargin: Math.round(frameThickness + elevationValue)
     property size beamSize: Qt.size(450, 60)
     property size beamSizeExpanded: Qt.size(800, 100)
     property size gameLauncherItemSize: Qt.size(225, 360) // Expanded
@@ -37,5 +37,4 @@ Singleton {
         property real blurPasses: HyprlandParserService.get("blur_passes") || 0
         property real shadowsRange: HyprlandParserService.get("shadows_range") || 0
     }
-
 }

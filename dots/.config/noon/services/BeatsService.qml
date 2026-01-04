@@ -14,11 +14,11 @@ Singleton {
 
     readonly property QtObject colors: palette.colors
     readonly property bool filterPlayersEnabled: false
-    readonly property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex
-    readonly property string artUrl: StringUtils.cleanMusicTitle(player.trackArtUrl)
-    readonly property string title: StringUtils.cleanMusicTitle(player.trackTitle)
-    readonly property string artist: StringUtils.cleanMusicTitle(player.trackArtist)
-    readonly property bool _playing: player.playbackState === MprisPlaybackState.Playing
+    readonly property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex || 0
+    readonly property string artUrl: player ? StringUtils.cleanMusicTitle(player.trackArtUrl) : ""
+    readonly property string title: player ? StringUtils.cleanMusicTitle(player.trackTitle) : ""
+    readonly property string artist: player ? StringUtils.cleanMusicTitle(player.trackArtist) : ""
+    readonly property bool _playing: player && player.playbackState === MprisPlaybackState.Playing
     readonly property MprisPlayer player: {
         if (!meaningfulPlayers || meaningfulPlayers.length === 0)
             return null;

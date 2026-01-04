@@ -1,25 +1,25 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.utils
-pragma Singleton
 
 Singleton {
     property var stats: ({
-        "wifi_enabled": false,
-        "ethernet": false,
-        "wifi": false,
-        "wifi_status": "disconnected",
-        "network_name": "",
-        "signal_strength": 0,
-        "signal_strength_text": "0%",
-        "material_icon": "signal_wifi_bad",
-        "wifi_networks": [],
-        "download_speed": 0,
-        "upload_speed": 0,
-        "download_speed_text": "0 B/s",
-        "upload_speed_text": "0 B/s"
-    })
+            "wifi_enabled": false,
+            "ethernet": false,
+            "wifi": false,
+            "wifi_status": "disconnected",
+            "network_name": "",
+            "signal_strength": 0,
+            "signal_strength_text": "0%",
+            "material_icon": "signal_wifi_bad",
+            "wifi_networks": [],
+            "download_speed": 0,
+            "upload_speed": 0,
+            "download_speed_text": "0 B/s",
+            "upload_speed_text": "0 B/s"
+        })
     // Convenience properties for direct access
     property bool wifiEnabled: stats.wifi_enabled
     property bool ethernet: stats.ethernet
@@ -34,7 +34,7 @@ Singleton {
     property string downloadSpeedText: stats.download_speed_text
     property string uploadSpeedText: stats.upload_speed_text
     readonly property var wifiNetworks: stats.wifi_networks
-    readonly property var active: wifiNetworks.find((n) => {
+    readonly property var active: wifiNetworks.find(n => {
         return n.active;
     }) ?? null
 
@@ -74,10 +74,9 @@ Singleton {
     function disconnectWifiNetwork() {
         if (active && active.ssid)
             sendCommand({
-            "action": "disconnect",
-            "ssid": active.ssid
-        });
-
+                "action": "disconnect",
+                "ssid": active.ssid
+            });
     }
 
     function forgetWifiNetwork(ssid) {
@@ -98,18 +97,17 @@ Singleton {
         }
 
         stdout: SplitParser {
-            onRead: (data) => {
+            onRead: data => {
                 try {
                     const result = JSON.parse(data.toString());
                     // Skip startup message
                     if (result.status === "started") {
-                        console.log("Network service started");
-                        return ;
+                        return;
                     }
                     // Log errors but don't update stats
                     if (result.error) {
                         console.error("Network service error:", result.error);
-                        return ;
+                        return;
                     }
                     // Update stats with valid data
                     stats = result;
@@ -120,11 +118,10 @@ Singleton {
         }
 
         stderr: SplitParser {
-            onRead: (data) => {
+            onRead: data => {
                 console.error("Network service stderr:", data.toString());
             }
         }
-
     }
 
     Timer {
@@ -136,5 +133,4 @@ Singleton {
             networkMonitor.running = true;
         }
     }
-
 }

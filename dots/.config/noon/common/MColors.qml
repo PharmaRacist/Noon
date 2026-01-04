@@ -2,7 +2,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 
-Singleton {
+QtObject {
     property bool darkmode: true
     property bool transparent: false
     property color m3background: "#141313"

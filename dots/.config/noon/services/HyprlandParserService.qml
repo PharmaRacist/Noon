@@ -3,17 +3,17 @@ import Quickshell
 import Quickshell.Io
 import qs.common
 pragma Singleton
-
 /*
     Simple Hyprland Parser to (read,write) to hyprland conf file
+    - [ ] Prevent useless writes
 */
+
 Singleton {
     id: root
-
     readonly property string configPath: Directories.standard.home + "/.config/noon/hypr/variables.conf"
-    property var variables: ({
-    })
+    property var variables: ({})
     property bool isLoaded: false
+    property bool initialLoadComplete: false
 
     function get(name) {
         return variables[name] !== undefined ? variables[name] : null;
@@ -22,7 +22,6 @@ Singleton {
     function set(name, value) {
         if (!variables.hasOwnProperty(name))
             return false;
-
         // Convert value to match original type
         const originalValue = variables[name];
         const originalType = typeof originalValue;
@@ -42,14 +41,13 @@ Singleton {
     }
 
     function save() {
-        if (!file.loaded) {
-            console.error("HyprlandParser: Cannot save - file not loaded");
+        if (!file.loaded || !initialLoadComplete) {
+            console.error("HyprlandParser: Cannot save - file not ready");
             return false;
         }
         const content = file.text();
         if (!content)
             return false;
-
         const lines = content.split('\n').map((line) => {
             const match = line.match(/^\$(\w+)\s*=/);
             if (match && variables.hasOwnProperty(match[1])) {
@@ -68,15 +66,12 @@ Singleton {
 
     function reload() {
         if (!file.loaded)
-            return ;
-
-        const parsed = {
-        };
+            return;
+        const parsed = {};
         file.text().split('\n').forEach((line) => {
             const match = line.match(/^\$(\w+)\s*=\s*(.+?)(?:\s+[#$].*)?$/);
             if (match)
                 parsed[match[1]] = parseValue(match[2].trim());
-
         });
         variables = parsed;
         isLoaded = true;
@@ -85,13 +80,10 @@ Singleton {
     function parseValue(str) {
         if (str.startsWith('"') && str.endsWith('"'))
             return str.slice(1, -1);
-
         if (str === 'true')
             return true;
-
         if (str === 'false')
             return false;
-
         const num = Number(str);
         return !isNaN(num) && !str.startsWith('$') ? num : str;
     }
@@ -99,31 +91,33 @@ Singleton {
     function formatValue(val) {
         if (typeof val === 'boolean')
             return val ? 'true' : 'false';
-
         if (typeof val === 'number')
             return String(val);
-
         return String(val).includes(' ') ? `"${val}"` : val;
     }
 
     FileView {
         id: file
-
         path: root.configPath
         watchChanges: true
         onLoadedChanged: {
             if (loaded)
                 reload();
-
         }
-        onTextChanged: reload()
+        onTextChanged: {
+            // Only reload on text changes after initial load
+            if (initialLoadComplete)
+                reload();
+        }
     }
 
     Timer {
         interval: 100
         running: true
         repeat: false
-        onTriggered: reload()
+        onTriggered: {
+            reload();
+            initialLoadComplete = true;
+        }
     }
-
 }

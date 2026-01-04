@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Hyprland
 import qs.common
 import qs.common.utils
+
 /**
  * Provides access to some Hyprland data not available in Quickshell.Hyprland.
  */
@@ -25,16 +26,15 @@ Singleton {
     // ===== Keyboard layout =====
     property string keyboardName: ""
     property string currentKeyboardLayout: ""
-        property var keyboardLayoutShortNames: Mem.options.bar.keyboard?.keyboardLayoutShortNames ?? ({
+    property var keyboardLayoutShortNames: Mem.options.bar.keyboard?.keyboardLayoutShortNames ?? ({
             "English (US)": "US",
             "Arabic": "AR"
-    })
-    readonly property string keyboardLayoutShortName: keyboardLayoutShortNames[currentKeyboardLayout]
-                                                      ?? currentKeyboardLayout.substring(0, 2).toUpperCase()
+        })
+    readonly property string keyboardLayoutShortName: keyboardLayoutShortNames[currentKeyboardLayout] ?? currentKeyboardLayout.substring(0, 2).toUpperCase()
 
     property string hyprlandLayout: Mem.options.desktop.hyprland.tilingLayout
     onHyprlandLayoutChanged: Noon.setHyprKey("layout", hyprlandLayout)
-    
+
     function updateWindowList() {
         getClients.running = true;
     }
@@ -47,12 +47,6 @@ Singleton {
         getMonitors.running = true;
     }
 
-    function updateHyprlandGapsOut() {
-        getHyprlandGapsOut.running = true;
-    }
-    function updateHyprlandBorderSize() {
-        getHyprlandBorderSize.running = true;
-    }
     function updateHyprlandLayout() {
         getHyprlandLayout.running = true;
     }

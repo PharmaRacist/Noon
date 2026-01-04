@@ -56,7 +56,6 @@ StyledRect {
                 target: c2
                 visible: false
             }
-
         },
         State {
             name: "docked"
@@ -82,7 +81,6 @@ StyledRect {
                 target: c2
                 visible: false
             }
-
         },
         State {
             name: "dockedCornered"
@@ -118,7 +116,6 @@ StyledRect {
                 anchors.right: rightMode ? barBackground.left : undefined
                 anchors.bottomMargin: Sizes.frameThickness
             }
-
         },
         State {
             name: "notch"
@@ -146,7 +143,6 @@ StyledRect {
                 target: c2
                 visible: false
             }
-
         }
     ]
     transitions: [
@@ -155,29 +151,26 @@ StyledRect {
                 properties: "radius,topLeftRadius,topRightRadius,bottomLeftRadius,bottomRightRadius,anchors.rightMargin,anchors.leftMargin,anchors.topMargin,anchors.bottomMargin,anchors.margins,anchors.leftMargin,anchors.rightMargin"
             }
 
-            Anim {
-                properties: "anchors.topMargin,anchors.bottomMargin"
-                target: [c1, c2]
-            }
-
+            // Anim {
+            //     properties: "anchors.topMargin,anchors.bottomMargin"
+            //     target: [c1, c2]
+            // }
         }
     ]
 
-    Content {
-    }
+    Content {}
 
     RoundCorner {
         id: c1
 
-        parent: barBackground.parent
+        parent: barBackground.parent || barRoot
         visible: false
     }
 
     RoundCorner {
         id: c2
 
-        parent: barBackground.parent
+        parent: barBackground.parent || barRoot
         visible: false
     }
-
 }
