@@ -6,6 +6,7 @@ import qs.common
 import qs.common.utils
 import "startMenu"
 import "wallpaper"
+import "controlPanel"
 import "bar"
 
 
@@ -19,6 +20,7 @@ import "bar"
     - [ ] Colors
         - [-] Support for 3 other palettes
         - [ ] Enhance Shadows
+    - [ ] Control Panel Window 
     - [ ] StartMenu
         - [-] Just A Dummy on Beam IPC
     - [ ] Desktop Shortcuts
@@ -37,7 +39,9 @@ Scope {
     WidgetLoader {
         StartMenu {}
     }
-
+    WidgetLoader {
+        ControlPanel {}
+    }
     WidgetLoader {
         enabled: Mem.options.desktop.bg.useQs && Mem.states.desktop.bg.currentBg.length > 1 && !ToplevelManager?.activeToplevel?.fullscreen && !Mem.states.desktop.bg.isLive
         Wallpaper {}
