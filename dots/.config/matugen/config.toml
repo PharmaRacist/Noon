@@ -64,11 +64,11 @@ output_path = '~/.config/onlyoffice/DesktopEditors/themes/noon.json'
 [templates.telegram]
 input_path = '~/.config/matugen/templates/applications/telegram.tdesktop-theme'
 output_path = '~/.cache/noon/user/generated/colors/noon.tdesktop-theme'
-post_hook = 'ln -sf ${{image}} ~/.cache/noon/user/generated/colors.jpg'
+# post_hook = 'ln -sf ${{image}} ~/.cache/noon/user/generated/colors.jpg'
 
 [templates.code]
 input_path = "~/.config/matugen/templates/applications/vscode.json"
-output_path = '~/.config/VSCodium/User/settings.json'
+output_path = '~/.vscode-oss/extensions/noon/colors.json'
 
 [templates.fuzzel]
 input_path = "~/.config/matugen/templates/applications/fuzzel.ini"
@@ -85,4 +85,4 @@ output_path = '~/.config/zathura/zathurarc'
 
 [templates.sddm]
 input_path = '~/.config/matugen/templates/sddm.conf'
-output_path = '/tmp/sddm_colors.conf'
+output_path = '/var/tmp/sddm_colors.conf'
