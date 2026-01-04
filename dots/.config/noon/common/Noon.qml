@@ -72,29 +72,15 @@ Singleton {
     function execDetached(command: string) {
         Quickshell.execDetached(["bash","-c",command]);
     }
-    function exec(command: string) {
-        execProc.command = ["bash", "-c", command];
-        execProc.running = true;
-        // execProc.createObject(this,{
-        //     command:["bash", "-c", commandStr],
-        //     running: true,
-        //     onStarted:startBehavior,
-        //     onExited:exitBehavior
-        // })
-
-    }
-    function setHyprKey(key: string, value: string) {
-        Quickshell.execDetached(["hyprctl", "keyword", key, value]);
+    // Atomic Changes
+    function setHyprKey(key:string, value) {
+        HyprlandParserService.set(key,value)
     }
     function installPkg(app: string) {
         const terminal = Mem.options.apps.terminal || "kitty";
         Quickshell.execDetached(["kitty", "-e", "fish", "-c", ` yay -S --noconfirm  ${app}`]);
     }
-    function error(e:var) {
-        console.log(e)
-        // popupLoader.active = true
-        // root.errStr = e[0]
-    }
+  
     function edit(filePath){
         if (!filePath) return;
         exec(
@@ -102,9 +88,7 @@ Singleton {
         )
 
     }
-    Process {
-        id: execProc
-    }
+    
     function fetchCommands() {
         if (!commandsReady)
             commandLoader.running = true;
@@ -160,19 +144,19 @@ Singleton {
             }
         }
     }
-    WidgetLoader {
-        id: popupLoader
-        active:false
-        ReloadPopup {
-            description:root.errStr
-        }
-    }
-    Connections {
-		target: Quickshell
-        function onReloadFailed(error: string) {
-            popupLoader.active = true;
-            root.errStr = error;
-        }
-	}
+    // WidgetLoader {
+    //     id: popupLoader
+    //     active:false
+    //     ReloadPopup {
+    //         description:root.errStr
+    //     }
+    // }
+    // Connections {
+	// 	target: Quickshell
+    //     function onReloadFailed(error: string) {
+    //         popupLoader.active = true;
+    //         root.errStr = error;
+    //     }
+	// }
 
 }

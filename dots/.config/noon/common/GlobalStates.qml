@@ -36,6 +36,7 @@ Singleton {
         AlarmService.reload();
         ClipboardService.reload();
         AmbientSoundsService.reload();
+        HyprlandParserService.reload();
         Noon.playSound("device_unlocked");
     }
 
