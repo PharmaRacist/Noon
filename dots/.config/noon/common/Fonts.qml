@@ -18,6 +18,9 @@ Singleton {
         readonly property string variable: "Google Sans Flex"
         readonly property string emoji: "Noto Color Emoj"
         readonly property string iconMaterial: "Material Symbols Rounded"
+        onMainChanged: {
+            Noon.setHyprKey("font_main", main);
+        }
     }
 
     sizes: QtObject {
