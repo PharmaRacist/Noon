@@ -94,7 +94,7 @@ StyledPanel {
         }
 
         /* Todo: Tidy -- change 2 > hyprland borders*/
-        width: root.barMode && !root.pinned ? Sizes.hyprlandGapsOut - 2  : visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0)
+        width: root.barMode && !root.pinned ? Sizes.hyprland.gapsOut - 2  : visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0)
         StyledRect {
             id: visualContainer
 

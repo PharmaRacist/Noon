@@ -11,17 +11,7 @@ Singleton {
     id: root
     property int sidebarWidth
 
-    readonly property var sizePresets: ({
-            bar: Sizes.collapsedSideBarWidth ?? 50,
-            contentQuarter: Math.round(Screen.width * 0.235) - Sizes.collapsedSideBarWidth,
-            half: Math.round(Screen.width * 0.457),
-            full: Screen.width,
-            quarter: Math.round(Screen.width * 0.246),
-            threeQuarter: Math.round(Screen.width * 0.85),
-            session: 280,
-            overview: 1250
-        })
-
+    property QtObject sizePresets:Sizes.sidebar    
     property var _categoryMap: ({})
     property var _enabledCategories: []
 

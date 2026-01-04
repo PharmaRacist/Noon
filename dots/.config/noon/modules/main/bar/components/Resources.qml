@@ -101,8 +101,6 @@ BarGroup {
                 Layout.alignment: Qt.AlignVCenter
                 value: percentage
                 implicitSize: root.itemSize
-                colSecondary: Colors.colSecondaryContainer
-                colPrimary: Colors.m3.m3onSecondaryContainer
 
                 MaterialSymbol {
                     anchors.centerIn: parent

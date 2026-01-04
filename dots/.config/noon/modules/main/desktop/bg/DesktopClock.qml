@@ -26,7 +26,7 @@ GridLayout {
     anchors {
         bottom: centerClock ? undefined : parent.bottom
         left: centerClock ? undefined : parent.left
-        leftMargin: Mem.options.bar.behavior.position === "left" ? BarData.currentBarSize + Sizes.elevationMargin + Sizes.hyprlandGapsOut : Sizes.hyprlandGapsOut
+        leftMargin: Mem.options.bar.behavior.position === "left" ? BarData.currentBarSize + Sizes.elevationMargin + Sizes.hyprland.gapsOut : Sizes.hyprland.gapsOut
         bottomMargin: Sizes.elevationMargin + (Mem.options.bar.behavior.position === "bottom" ? BarData.currentBarSize : 0)
     }
 

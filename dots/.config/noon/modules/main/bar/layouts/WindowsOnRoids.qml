@@ -21,7 +21,7 @@ Rectangle {
     anchors.fill: parent
 
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.rightMargin: Rounding.verylarge + Sizes.hyprlandGapsOut
+    anchors.rightMargin: Rounding.verylarge + Sizes.hyprland.gapsOut
     anchors.leftMargin: anchors.rightMargin
 
     color: Colors.colLayer0

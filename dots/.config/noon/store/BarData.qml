@@ -1,9 +1,9 @@
-pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.functions
 import qs.services
+pragma Singleton
 
 Singleton {
     readonly property var horizontalLayouts: ["Dynamic", "Minimal", "HyDe", "NovelKnocks", "Gnome-ish", "Sleek", "WindowsOnRoids"]
@@ -17,102 +17,93 @@ Singleton {
     readonly property int currentBarExclusiveSize: getEffectiveExclusiveZone(barData) * 0.9
     readonly property int currentBarSize: verticalBar ? barData.width : barData.height
     // Position control properties
-    readonly property int gaps: Sizes.hyprlandGapsOut
+    readonly property int gaps: Sizes.hyprland.gapsOut
     readonly property int defaultHeight: Mem.options.bar.appearance.height
     readonly property int defaultWidth: Mem.options.bar.appearance.width
     readonly property int corners: Mem.options.bar.appearance.mode === 2 ? Rounding.verylarge : 0
     readonly property int elevationValue: Mem.options.bar.appearance.mode === 0 ? Sizes.barElevation : 0
-    property var bars: [
-        {
-            "name": "Dynamic",
-            "height": defaultHeight,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 0
-        },
-        {
-            "name": "Minimal",
-            "height": 60,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 1
-        },
-        {
-            "name": "HyDe",
-            "height": defaultHeight,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 2
-        },
-        {
-            "name": "NovelKnocks",
-            "height": defaultHeight + 2 * elevationValue,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 3
-        },
-        {
-            "name": "Gnome-ish",
-            "height": defaultHeight,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 4
-        },
-        {
-            "name": "Sleek",
-            "height": 30,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 5
-        },
-        {
-            "name": "WindowsOnRoids",
-            "height": 45,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 6
-        },
-        {
-            "name": "Dynamic",
-            "height": 0,
-            "width": defaultWidth,
-            "vertical": true,
-            "layoutIndex": 0
-        }
-    ]
+    property var bars: [{
+        "name": "Dynamic",
+        "height": defaultHeight,
+        "width": 0,
+        "vertical": false,
+        "layoutIndex": 0
+    }, {
+        "name": "Minimal",
+        "height": 60,
+        "width": 0,
+        "vertical": false,
+        "layoutIndex": 1
+    }, {
+        "name": "HyDe",
+        "height": defaultHeight,
+        "width": 0,
+        "vertical": false,
+        "layoutIndex": 2
+    }, {
+        "name": "NovelKnocks",
+        "height": defaultHeight + 2 * elevationValue,
+        "width": 0,
+        "vertical": false,
+        "layoutIndex": 3
+    }, {
+        "name": "Gnome-ish",
+        "height": defaultHeight,
+        "width": 0,
+        "vertical": false,
+        "layoutIndex": 4
+    }, {
+        "name": "Sleek",
+        "height": 30,
+        "width": 0,
+        "vertical": false,
+        "layoutIndex": 5
+    }, {
+        "name": "WindowsOnRoids",
+        "height": 45,
+        "width": 0,
+        "vertical": false,
+        "layoutIndex": 6
+    }, {
+        "name": "Dynamic",
+        "height": 0,
+        "width": defaultWidth,
+        "vertical": true,
+        "layoutIndex": 0
+    }]
 
     function getByName(name) {
-        return bars.find(bar => {
+        return bars.find((bar) => {
             return bar.name === name;
         });
     }
 
     function getHorizontalBar(index) {
-        return bars.find(bar => {
+        return bars.find((bar) => {
             return !bar.vertical && bar.layoutIndex === index;
         }) || bars[0];
     }
 
     function getVerticalBar(index) {
-        return bars.find(bar => {
+        return bars.find((bar) => {
             return bar.vertical && bar.layoutIndex === index;
         }) || bars[0];
     }
 
     function getAllHorizontalBars() {
-        return bars.filter(bar => {
+        return bars.filter((bar) => {
             return !bar.vertical;
         });
     }
 
     function getAllVerticalBars() {
-        return bars.filter(bar => {
+        return bars.filter((bar) => {
             return bar.vertical;
         });
     }
 
     function getVisibleBars() {
-        return bars.filter(bar => {
+        return bars.filter((bar) => {
             return bar.visible;
         });
     }
@@ -120,18 +111,18 @@ Singleton {
     function getEffectiveAnchors(bar) {
         if (bar.vertical)
             return {
-                "left": position === "left",
-                "top": true,
-                "right": position === "right",
-                "bottom": true
-            };
+            "left": position === "left",
+            "top": true,
+            "right": position === "right",
+            "bottom": true
+        };
         else
             return {
-                "left": true,
-                "top": position === "top",
-                "right": true,
-                "bottom": position === "bottom"
-            };
+            "left": true,
+            "top": position === "top",
+            "right": true,
+            "bottom": position === "bottom"
+        };
     }
 
     function getEffectiveHeight(bar) {
@@ -180,4 +171,5 @@ Singleton {
         else
             Mem.options.bar.behavior.position = Mem.options.bar.behavior.position === "top" ? "bottom" : "top";
     }
+
 }
