@@ -115,7 +115,8 @@ Singleton {
 
         const reordered = allPaths.slice(startIndex).concat(allPaths.slice(0, startIndex));
         const joined = reordered.map(p => `'${p.replace(/'/g, `'\\''`)}'`).join(" ");
-        Noon.execDetached(`killall vlc && sleep 1 && cvlc --one-instance --play-and-exit ${joined}`);
+        // No Killall Needed ;)
+        Noon.execDetached(`cvlc --one-instance --play-and-exit ${joined}`);
     }
 
     function cycleRepeat() {

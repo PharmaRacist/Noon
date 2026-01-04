@@ -8,19 +8,29 @@ import qs.common.widgets
 TextField {
     id: folderPathField
 
-    property alias colBackground: rect.color
+    property QtObject colors: Colors
     property alias radius: rect.radius
 
-    placeholderTextColor: color
-    color: Colors.colOnLayer1
+    placeholderTextColor: colors.colOnLayer1
+    color: colors.colOnLayer1
     Keys.onEscapePressed: focus = false
+    objectName: "searchInput"
+    placeholderText: "Search..."
+    selectionColor: colors.colSecondaryContainer
+    selectedTextColor: colors.colOnSecondaryContainer
+    selectByMouse: true
+
+    font {
+        family: Fonts.family.main
+        pixelSize: Fonts.sizes.small
+    }
 
     background: StyledRect {
         id: rect
 
         enableShadows: true
-        color: Colors.colLayer2
-        radius: Rounding.normal
+        color: colors.colLayer2
+        radius: Rounding.large
     }
 
 }

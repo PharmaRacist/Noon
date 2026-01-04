@@ -28,7 +28,7 @@ Rectangle {
         dialogBackgroundHeightAnimation.easing.bezierCurve = (show ? Animations.curves.emphasizedDecel : Animations.curves.emphasizedAccel);
         dialogBackground.implicitHeight = show ? backgroundHeight : 0;
     }
-    radius: Rounding.verylarge - Sizes.hyprlandGapsOut + 1
+    radius: Rounding.verylarge - Sizes.hyprland.gapsOut + 1
 
     MouseArea {
         // Clicking outside the dialog should dismiss

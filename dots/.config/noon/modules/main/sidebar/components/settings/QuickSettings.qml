@@ -19,7 +19,7 @@ StyledRect {
     property int padding: Padding.normal
     property int minItemWidth: 300
     property int itemSpacing: Padding.normal
-
+    property QtObject colors: Colors
     property int columnNumber: {
         var availableWidth = width - (padding * 2);
         var effectiveItemWidth = minItemWidth + itemSpacing;
@@ -167,7 +167,7 @@ StyledRect {
                             leftPadding: 15
                             bottomPadding: 5
                             topPadding: index > 0 ? 10 : 0
-                            color: Colors.colSubtext
+                            color: root.colors.colSubtext
                             font.pixelSize: Fonts.sizes.small
                             font.weight: 600
                             visible: parent.hasVisibleItems
@@ -205,10 +205,10 @@ StyledRect {
                                     Layout.fillHeight: true
                                     visible: (modelData?.visible ?? true) && shouldShowItem(modelData)
                                     property bool isSearchMatch: root.searchText !== "" && matchesSearch(modelData.name)
-
+                                    colors:root.colors
                                     Rectangle {
                                         anchors.fill: parent
-                                        color: Colors.colPrimary
+                                        color: root.colors.colPrimary
                                         opacity: parent.isSearchMatch ? 0.1 : 0
                                         radius: 8
                                         z: -1

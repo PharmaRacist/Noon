@@ -83,8 +83,8 @@ Item {
             id: root
             implicitWidth: implicitHeight - topInset - bottomInset
             buttonRadius: Rounding.normal
-            topInset: Sizes.hyprlandGapsOut - 15
-            bottomInset: Sizes.hyprlandGapsOut - 15
+            topInset: Sizes.hyprland.gapsOut - 15
+            bottomInset: Sizes.hyprland.gapsOut - 15
             property var appToplevel
             property var appListRoot
             property int lastFocused: -1

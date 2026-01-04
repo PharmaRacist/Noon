@@ -12,7 +12,7 @@ StyledRect {
     readonly property int mode: Mem.options.bar.appearance.mode
     readonly property bool bottomMode: Mem.options.bar.behavior.position === "bottom"
     readonly property int barRadius: Rounding.verylarge
-    readonly property int barMargins: Sizes.hyprlandGapsOut
+    readonly property int barMargins: Sizes.hyprland.gapsOut
 
     enableBorders: mode === 0
     enableShadows: mode === 0

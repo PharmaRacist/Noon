@@ -370,12 +370,17 @@ QtObject {
                 "icon": "palette",
                 "name": "Adaptive Theme",
                 "key": "services.games.adaptiveTheme"
-            }
-            ]
+            }]
         }, {
             "section": "Desktop & Wallpaper",
             "icon": "wallpaper",
             "items": [{
+                "icon": "palette",
+                "name": "Shell Mode",
+                "type": "combobox",
+                "comboBoxValues": ["main", "xp"],
+                "key": "desktop.shell.mode"
+            }, {
                 "icon": "crop",
                 "name": "Depth Wallpaper",
                 "enableTooltip": false,

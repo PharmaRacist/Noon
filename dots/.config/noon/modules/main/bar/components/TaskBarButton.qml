@@ -7,6 +7,6 @@ import qs.common.widgets
 RippleButton {
     implicitWidth: implicitHeight - topInset - bottomInset
     buttonRadius: Rounding.normal
-    topInset: Sizes.hyprlandGapsOut - 15
-    bottomInset: Sizes.hyprlandGapsOut - 15
+    topInset: Sizes.hyprland.gapsOut - 15
+    bottomInset: Sizes.hyprland.gapsOut - 15
 }

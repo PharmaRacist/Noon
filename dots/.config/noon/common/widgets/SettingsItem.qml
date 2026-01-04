@@ -25,6 +25,7 @@ Rectangle {
     property string condition: ""
     property string dependsOn: ""
     property string id: ""
+    property QtObject colors: Colors
     // Values
     property int customItemHeight: 0
     property int itemValue: 0
@@ -45,43 +46,43 @@ Rectangle {
     property string textValue: ""
     property string textPlaceholder: "Enter text..."
     // Colors
-    property color backgroundColor: Colors.colLayer2
-    property color backgroundHoverColor: Colors.colLayer1Hover
-    property color backgroundDisabledColor: Qt.rgba(Colors.colLayer1.r, Colors.colLayer1.g, Colors.colLayer1.b, 0.5)
-    property color backgroundPressedColor: Qt.darker(Colors.colLayer1, 1.2)
-    property color iconBackgroundColor: Colors.colLayer3
-    property color iconBackgroundActiveColor: Colors.m3.m3primaryContainer
-    property color iconColor: Colors.colOnLayer2
-    property color iconActiveColor: Colors.m3.m3onPrimaryContainer
-    property color textColor: Colors.colOnLayer0
-    property color textDisabledColor: Qt.rgba(Colors.colOnLayer0.r, Colors.colOnLayer0.g, Colors.colOnLayer0.b, 0.5)
-    property color spinBoxBackgroundColor: Colors.colLayer2
-    property color spinBoxTextColor: Colors.colOnLayer2
-    property color spinBoxButtonColor: Colors.colLayer2
-    property color spinBoxButtonHoverColor: Colors.colLayer2Hover
-    property color spinBoxButtonActiveColor: Colors.colLayer2Active
-    property color sliderHighlightColor: Colors.colPrimary
-    property color sliderTrackColor: Colors.colSecondaryContainer
-    property color sliderHandleColor: Colors.m3.m3onSecondaryContainer
-    property color switchActiveColor: Colors.colPrimary
-    property color switchInactiveColor: Colors.colSurfaceContainerHighest
-    property color switchActiveBorderColor: Colors.colPrimary
-    property color switchInactiveBorderColor: Colors.m3.m3outline
-    property color switchButtonActiveColor: Colors.m3.m3onPrimary
-    property color switchButtonColor: Colors.m3.m3outline
-    property color switchIconActiveColor: Colors.m3.m3primary
+    property color backgroundColor: root.colors.colLayer2
+    property color backgroundHoverColor: root.colors.colLayer1Hover
+    property color backgroundDisabledColor: Qt.rgba(root.colors.colLayer1.r, root.colors.colLayer1.g, root.colors.colLayer1.b, 0.5)
+    property color backgroundPressedColor: Qt.darker(root.colors.colLayer1, 1.2)
+    property color iconBackgroundColor: root.colors.colLayer3
+    property color iconBackgroundActiveColor: root.colors.m3.m3primaryContainer
+    property color iconColor: root.colors.colOnLayer2
+    property color iconActiveColor: root.colors.m3.m3onPrimaryContainer
+    property color textColor: root.colors.colOnLayer0
+    property color textDisabledColor: Qt.rgba(root.colors.colOnLayer0.r, root.colors.colOnLayer0.g, root.colors.colOnLayer0.b, 0.5)
+    property color spinBoxBackgroundColor: root.colors.colLayer2
+    property color spinBoxTextColor: root.colors.colOnLayer2
+    property color spinBoxButtonColor: root.colors.colLayer2
+    property color spinBoxButtonHoverColor: root.colors.colLayer2Hover
+    property color spinBoxButtonActiveColor: root.colors.colLayer2Active
+    property color sliderHighlightColor: root.colors.colPrimary
+    property color sliderTrackColor: root.colors.colSecondaryContainer
+    property color sliderHandleColor: root.colors.m3.m3onSecondaryContainer
+    property color switchActiveColor: root.colors.colPrimary
+    property color switchInactiveColor: root.colors.colSurfaceContainerHighest
+    property color switchActiveBorderColor: root.colors.colPrimary
+    property color switchInactiveBorderColor: root.colors.m3.m3outline
+    property color switchButtonActiveColor: root.colors.m3.m3onPrimary
+    property color switchButtonColor: root.colors.m3.m3outline
+    property color switchIconActiveColor: root.colors.m3.m3primary
     property color switchIconColor: "transparent"
-    property color comboBoxBackgroundColor: Colors.colLayer2
-    property color comboBoxTextColor: Colors.colOnLayer2
-    property color comboBoxBorderColor: Colors.colOutline
-    property color comboBoxHoverColor: Colors.colLayer2Hover
-    property color comboBoxArrowColor: Colors.colOnLayer2
+    property color comboBoxBackgroundColor: root.colors.colLayer2
+    property color comboBoxTextColor: root.colors.colOnLayer2
+    property color comboBoxBorderColor: root.colors.colOutline
+    property color comboBoxHoverColor: root.colors.colLayer2Hover
+    property color comboBoxArrowColor: root.colors.colOnLayer2
     property bool _ready: false
     property var _pendingValue: null
     property string _pendingType: ""
 
     signal valueChanged(var newValue)
-    signal clicked
+    signal clicked()
 
     function debouncedSetValue(value, valueType) {
         _pendingValue = value;
@@ -111,29 +112,31 @@ Rectangle {
 
     function setConfigValue(value) {
         if (key === "" || !Mem || !_ready)
-            return;
+            return ;
 
         // Use ternary to select root object
         let root = useStates ? Mem.states : Mem.options;
         if (!root)
-            return;
+            return ;
 
         let keys = key.split('.');
         let current = root;
         for (let i = 0; i < keys.length - 1; i++) {
             if (!current[keys[i]])
-                current[keys[i]] = {};
+                current[keys[i]] = {
+            };
 
             current = current[keys[i]];
         }
         current[keys[keys.length - 1]] = value;
     }
 
-    onValueChanged: function (newValue) {
+    onValueChanged: function(newValue) {
         if (reloadOnChange && _ready)
             Qt.callLater(() => {
-                return Quickshell.reload(true);
-            });
+            return Quickshell.reload(true);
+        });
+
     }
     Component.onCompleted: {
         _ready = false; // Ensure it's false first
@@ -228,6 +231,7 @@ Rectangle {
             to: 1
             duration: 100
         }
+
     }
 
     Loader {
@@ -237,6 +241,7 @@ Rectangle {
             extraVisibleCondition: hint !== "" && mouseArea.containsMouse
             content: hint
         }
+
     }
 
     RowLayout {
@@ -294,20 +299,25 @@ Rectangle {
                         duration: 250
                         easing.type: Easing.OutQuad
                     }
+
                 }
 
                 Behavior on color {
                     ColorAnimation {
                         duration: 200
                     }
+
                 }
+
             }
 
             Behavior on color {
                 ColorAnimation {
                     duration: 200
                 }
+
             }
+
         }
 
         StyledText {
@@ -371,6 +381,7 @@ Rectangle {
                     }
                 }
             }
+
         }
 
         Component {
@@ -394,6 +405,7 @@ Rectangle {
                     }
                 }
             }
+
         }
 
         Component {
@@ -405,7 +417,7 @@ Rectangle {
                 enabled: root.enabled
                 model: root.comboBoxValues
                 currentIndex: root.comboBoxCurrentIndex
-                onActivated: function (index) {
+                onActivated: function(index) {
                     if (index >= 0 && index < root.comboBoxValues.length && index !== root.comboBoxCurrentIndex) {
                         root.comboBoxCurrentIndex = index;
                         root.comboBoxCurrentValue = root.comboBoxValues[index];
@@ -416,6 +428,7 @@ Rectangle {
                     }
                 }
             }
+
         }
 
         Component {
@@ -446,6 +459,7 @@ Rectangle {
                 }
                 Keys.onEscapePressed: focus = false
             }
+
         }
 
         Component {
@@ -478,6 +492,7 @@ Rectangle {
                     iconAnimation.start();
                 }
             }
+
         }
 
         Component {
@@ -486,8 +501,8 @@ Rectangle {
             RippleButton {
                 width: 45
                 height: width
-                colBackground: Colors.colLayer3
-                releaseAction: function () {
+                colBackground: root.colors.colLayer3
+                releaseAction: function() {
                     let cmd = Directories.scriptsDir + "/" + root.actionName;
                     Noon.execDetached(cmd);
                     Noon.callIpc("sidebar hide");
@@ -498,9 +513,11 @@ Rectangle {
                     fill: 1
                     anchors.centerIn: parent
                     text: "play_arrow"
-                    color: Colors.colOnLayer1
+                    color: root.colors.colOnLayer1
                 }
+
             }
+
         }
 
         Component {
@@ -529,14 +546,21 @@ Rectangle {
                     }
                 }
             }
+
         }
+
     }
 
     Behavior on color {
-        CAnim {}
+        CAnim {
+        }
+
     }
 
     Behavior on opacity {
-        Anim {}
+        Anim {
+        }
+
     }
+
 }
