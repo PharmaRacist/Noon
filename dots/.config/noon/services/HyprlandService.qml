@@ -20,9 +20,6 @@ Singleton {
     property var activeWorkspace: null
     property var monitors: []
     property var layers: ({})
-    property real hyprlandGapsOut: 0
-    property string hyprlandLayout: Mem.options.desktop.hyprland.tilingLayout
-    property string externalTrackedHyprlandLayout: "dwindle"
     readonly property bool isHyprland: Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE") !== ""
 
     // ===== Keyboard layout =====
@@ -35,8 +32,9 @@ Singleton {
     readonly property string keyboardLayoutShortName: keyboardLayoutShortNames[currentKeyboardLayout]
                                                       ?? currentKeyboardLayout.substring(0, 2).toUpperCase()
 
-    onHyprlandLayoutChanged: Qt.callLater(() => Noon.setHyprKey("general:layout", hyprlandLayout))
-
+    property string hyprlandLayout: Mem.options.desktop.hyprland.tilingLayout
+    onHyprlandLayoutChanged: Noon.setHyprKey("layout", hyprlandLayout)
+    
     function updateWindowList() {
         getClients.running = true;
     }
@@ -52,7 +50,9 @@ Singleton {
     function updateHyprlandGapsOut() {
         getHyprlandGapsOut.running = true;
     }
-
+    function updateHyprlandBorderSize() {
+        getHyprlandBorderSize.running = true;
+    }
     function updateHyprlandLayout() {
         getHyprlandLayout.running = true;
     }
@@ -71,8 +71,6 @@ Singleton {
         updateMonitors();
         updateLayers();
         updateWorkspaces();
-        updateHyprlandLayout();
-        updateHyprlandGapsOut();
         updateKeyboardLayout();
     }
 
@@ -163,32 +161,6 @@ Singleton {
             }
         }
     }
-
-    Process {
-        id: getHyprlandGapsOut
-        command: ["hyprctl", "getoption", "general:gaps_out", "-j"]
-        stdout: StdioCollector {
-            id: gapsOutCollector
-            onStreamFinished: {
-                const json = JSON.parse(gapsOutCollector.text);
-                const firstGap = json.custom.split(" ")[0];
-                root.hyprlandGapsOut = parseInt(firstGap);
-            }
-        }
-    }
-
-    Process {
-        id: getHyprlandLayout
-        command: ["hyprctl", "getoption", "general:layout", "-j"]
-        stdout: StdioCollector {
-            id: layoutCollector
-            onStreamFinished: {
-                const json = JSON.parse(layoutCollector.text);
-                root.externalTrackedHyprlandLayout = json.str;
-            }
-        }
-    }
-
     Process {
         id: getActiveWorkspace
         command: ["hyprctl", "activeworkspace", "-j"]
