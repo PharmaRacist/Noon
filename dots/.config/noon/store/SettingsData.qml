@@ -412,6 +412,12 @@ QtObject {
                 "name": "Faster Scrolling",
                 "key": "interactions.scrolling.fasterTouchpadScroll"
             }, {
+                "icon": "dashboard",
+                "name": "Expose Mode",
+                "type": "combobox",
+                "comboBoxValues": ['smartgrid', 'justified', 'bands', 'masonry', 'hero', 'spiral', 'satellite', 'staggered', 'columnar'],
+                "key": "desktop.view.mode"
+            }, {
                 "icon": "water_drop",
                 "name": "Tiling Layout",
                 "type": "combobox",

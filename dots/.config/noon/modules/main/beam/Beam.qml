@@ -1,11 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
 import QtQuick.Controls
 
 import qs.common
 import qs.common.widgets
+import qs.common.utils
 import qs.services
 import qs.store
 
@@ -23,7 +23,7 @@ Scope {
             property bool scrollReveal: Mem.options.beam.behavior.scrollToReveal
             property bool hoverReveal: Mem.options.beam.behavior.hoverToReveal
             property bool revealLauncherOnAction: true // For Revealing More Info panels if needed
-            property bool reveal: GlobalStates.showBeam || (hoverReveal && beamMouseArea.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !ToplevelManager.activeToplevel.activated)
+            property bool reveal: GlobalStates.showBeam || (hoverReveal && beamMouseArea.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !GlobalStates.topLevel.activated)
             property bool addSeparatorForNotes: true
             property int expandedLitterThreshhold: 10
             property int mainRounding: Rounding.huge

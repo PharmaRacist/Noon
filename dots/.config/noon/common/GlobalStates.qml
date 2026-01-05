@@ -1,8 +1,9 @@
-pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Wayland
 import qs.common.widgets
 import qs.services
+pragma Singleton
 
 Singleton {
     id: root
@@ -27,6 +28,7 @@ Singleton {
     property bool showTransparencyDialog: false
     property bool showTempDialog: false
     property bool showKdeConnectDialog: false
+    property var topLevel: ToplevelManager.activeToplevel
 
     function handle_init() {
         ColorsService.reload();
@@ -71,5 +73,7 @@ Singleton {
         startMenu: QtObject {
             property bool visible: false
         }
+
     }
+
 }

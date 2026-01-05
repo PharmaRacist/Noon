@@ -16,7 +16,7 @@ StyledPanel {
     id: root
 
     // --- SETTINGS ---
-    property string layoutAlgorithm: ""
+    property string layoutAlgorithm: "bands"
     property string lastLayoutAlgorithm: ""
     property bool liveCapture: true
     property bool moveCursorToActiveWindow: true

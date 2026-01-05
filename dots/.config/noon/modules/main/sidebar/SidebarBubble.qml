@@ -19,35 +19,35 @@ StyledRect {
                 {
                     "icon": "colorize",
                     "enabled": true,
-                    "action": function () {
+                    "action": () => {
                         WallpaperService.pickAccentColor();
                     }
                 },
                 {
                     "icon": "shuffle",
                     "enabled": true,
-                    "action": function () {
+                    "action": () => {
                         WallpaperService.shuffleWallpapers();
                     }
                 },
                 {
                     "icon": GowallService.isBusy ? "hourglass" : "auto_fix_high",
                     "enabled": !GowallService.isBusy,
-                    "action": function () {
+                    "action": () => {
                         GowallService.upscaleCurrentWallpaper();
                     }
                 },
                 {
                     "enabled": !RemBgService.isBusy,
                     "icon": RemBgService.isBusy ? "hourglass" : "content_cut",
-                    "action": function () {
+                    "action": () => {
                         RemBgService.process_current_bg();
                     }
                 },
                 {
                     "icon": WallpaperService._generatingThumbnails ? "hourglass" : "restart_alt",
                     "enabled": !WallpaperService._generatingThumbnails,
-                    "action": function () {
+                    "action": () => {
                         WallpaperService.generateThumbnailsForCurrentFolder();
                     }
                 }
@@ -59,25 +59,25 @@ StyledRect {
             "bubbles": [
                 {
                     "icon": "clear_all",
-                    "action": function () {
+                    "action": () => {
                         Ai.clearMessages();
                     }
                 },
                 {
                     "icon": "restart_alt",
-                    "action": function () {
+                    "action": () => {
                         Ai.regenerate(Ai.messageIDs.length - 1);
                     }
                 },
                 {
                     "icon": "save",
-                    "action": function () {
+                    "action": () => {
                         Ai.saveChat("lastSession");
                     }
                 },
                 {
                     "icon": "upload",
-                    "action": function () {
+                    "action": () => {
                         Ai.loadChat("lastSession");
                     }
                 }
@@ -88,7 +88,7 @@ StyledRect {
             "bubbles": [
                 {
                     "icon": "clear_all",
-                    "action": function () {
+                    "action": () => {
                         ClipboardService.wipe();
                     }
                 }
@@ -99,7 +99,7 @@ StyledRect {
             "bubbles": [
                 {
                     "icon": TodoService.SyncState.Offline ? "cloud_off" : TodoService.SyncState.Error ? "error" : "sync",
-                    "action": function () {
+                    "action": () => {
                         TodoService.syncWithTodoist();
                     }
                 }
@@ -111,14 +111,14 @@ StyledRect {
                 {
                     "icon": "download",
                     "extraVisibleCondition": !BeatsService.isCurrentPlayer(),
-                    "action": function () {
+                    "action": () => {
                         BeatsService.downloadCurrentSong();
                     }
                 },
                 {
                     "icon": "close",
                     "extraVisibleCondition": BeatsService.isCurrentPlayer(),
-                    "action": function () {
+                    "action": () => {
                         BeatsService.stopPlayer();
                     }
                 }

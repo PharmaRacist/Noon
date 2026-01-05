@@ -148,9 +148,7 @@ Singleton {
         Noon.execDetached("killall vlc");
     }
     function downloadCurrentSong() {
-        let cleanedTitle = root.title + " " + root.artist;
-        if (cleanedTitle)
-            downloadSong(cleanedTitle);
+        downloadSong(root.title + " " + root.artist);
     }
     function downloadSong(query) {
         dlpProc.query = query;
@@ -160,16 +158,11 @@ Singleton {
     Process {
         id: dlpProc
         property string query
-        command: ["bash", "-c", `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P ~/Music 'ytsearch1:${query}'`]
-        onStarted: {
-            Noon.notify(`Downloading: ${query}`);
-        }
+        command: ["bash", "-c", `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P ${Directories.beats.downloads} 'ytsearch1:${query.replace(/'/g, '')}'`]
+
+        onStarted: Noon.notify(`Started Downloading: ${query}`)
         onExited: exitCode => {
-            if (exitCode === 0) {
-                Noon.notify(`Downloaded: ${query}`);
-            } else {
-                Noon.notify(`Download failed: ${query}`);
-            }
+            exitCode === 0 ? Noon.notify(`Downloaded: ${query}`) : Noon.notify(`Download failed: ${query}`);
         }
     }
 

@@ -5,7 +5,7 @@ import Qt.labs.platform
 import qs.common.functions
 
 Singleton {
-    // Misc directories
+    // misc directories
     readonly property string venv: Directories.standard.state + "/.venv"
     readonly property string sounds: FileUtils.trimFileProtocol(`${assets}/sounds/`)
     readonly property string assets: FileUtils.trimFileProtocol(`${Directories.standard.config}/noon/assets`)
@@ -15,7 +15,7 @@ Singleton {
     readonly property string favicons: FileUtils.trimFileProtocol(`${Directories.standard.cache}/media/favicons`)
     Component.onCompleted: FileUtils.mkdir([venv, assets, gallery, sounds, scriptsDir, shellConfigs, favicons])
 
-    // Bundled standard directories
+    // standard directories
     readonly property QtObject standard: QtObject {
         readonly property string config: StandardPaths.standardLocations(StandardPaths.ConfigLocation)[0]
         readonly property string state: home + "/.local/state/noon"
@@ -29,7 +29,7 @@ Singleton {
         Component.onCompleted: FileUtils.mkdir([state, cache])
     }
 
-    // Bundled services directories
+    // services directories
     readonly property QtObject services: QtObject {
         readonly property string notifications: FileUtils.trimFileProtocol(`${Directories.standard.cache}/notifications/notifications.json`)
         readonly property string latex: FileUtils.trimFileProtocol(`${Directories.standard.cache}/media/latex`)
@@ -38,7 +38,7 @@ Singleton {
         Component.onCompleted: FileUtils.mkdir([notifications, latex, aiChats, m3path])
     }
 
-    // Bundled wallpapers directories
+    // wallpapers directories
     readonly property QtObject wallpapers: QtObject {
         readonly property string switchScript: FileUtils.trimFileProtocol(`${scriptsDir}/appearance_service.py`)
         readonly property string main: FileUtils.trimFileProtocol(`${Directories.standard.pictures}/Wallpapers/`)
@@ -48,9 +48,10 @@ Singleton {
         Component.onCompleted: FileUtils.mkdir([main, switchScript, depthDir, gowallDir, favorite])
     }
 
-    // Bundled beats directories
+    // beats directories
     readonly property QtObject beats: QtObject {
         readonly property string main: FileUtils.trimFileProtocol(`${Directories.standard.cache}/beats`)
+        readonly property string downloads: FileUtils.trimFileProtocol(`${Directories.standard.home}/Downloads`)
         readonly property string coverArt: FileUtils.trimFileProtocol(`${main}/coverart`)
         readonly property string lyrics: FileUtils.trimFileProtocol(`${main}/lyrics`)
         readonly property string tracks: FileUtils.trimFileProtocol(Directories.standard.music)

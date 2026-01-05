@@ -77,11 +77,6 @@ Item {
 
         syncedLines = data?.syncedLyrics ? parseLyrics(data.syncedLyrics, true) : [];
         plainLines = !syncedLines.length && data?.plainLyrics ? parseLyrics(data.plainLyrics, false) : [];
-
-        if (data) {
-            revealer.reveal = true;
-            revealTimer.restart();
-        }
     }
 
     Component.onCompleted: updateLyrics()
