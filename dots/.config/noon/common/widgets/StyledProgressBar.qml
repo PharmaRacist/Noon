@@ -23,7 +23,7 @@ ProgressBar {
     property bool animateSperm: true
     property real spermAmplitudeMultiplier: sperm ? 0.5 : 0
     property real spermFrequency: 6
-    property real spermFps: 45
+    property real spermFps: 60
     property bool vertical: false // If true, progress bar grows vertically to the top
 
     Behavior on spermAmplitudeMultiplier {

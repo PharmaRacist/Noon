@@ -7,7 +7,12 @@ import qs.services
 Loader {
     id: root
     asynchronous: true
-    source: Mem.options.desktop.osd.mode === "center_island" ? "variants/CenterIsland.qml" : "variants/BottomPill.qml"
+    source:switch (Mem.options.desktop.osd.mode) {
+        case "center_island": return "variants/CenterIsland.qml";
+        case "bottom_pill": return "variants/BottomPill.qml";
+        case "side_bay": return "variants/SideBay.qml";
+        default: return "variants/CenterIsland.qml";
+    }
 
     required property real value
     required property string icon

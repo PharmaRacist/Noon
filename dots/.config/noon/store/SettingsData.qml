@@ -71,7 +71,7 @@ QtObject {
                         "name": "OSD Mode",
                         "key": "desktop.osd.mode",
                         "type": "combobox",
-                        "comboBoxValues": ["bottom_pill", "center_island"]
+                        "comboBoxValues": ["bottom_pill", "center_island", "side_bay"]
                     }
                 ]
             },

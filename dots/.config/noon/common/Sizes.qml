@@ -23,6 +23,7 @@ Singleton {
     osd: QtObject {
         property size bottomPill: Qt.size(180, 42)
         property size centerIsland: Qt.size(145, 145)
+        property size sideBay: Qt.size(48, 200)
     }
 
     sidebar: QtObject {
