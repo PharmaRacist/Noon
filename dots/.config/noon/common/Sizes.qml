@@ -24,6 +24,7 @@ Singleton {
         property size bottomPill: Qt.size(180, 42)
         property size centerIsland: Qt.size(145, 145)
         property size sideBay: Qt.size(48, 200)
+        property size windows_10: Qt.size(85, 240)
     }
 
     sidebar: QtObject {

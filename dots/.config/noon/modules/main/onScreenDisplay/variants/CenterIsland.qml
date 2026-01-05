@@ -10,7 +10,7 @@ import qs.services
 
 StyledPanel {
     id: panelRoot
-    name: "center_layer_popup"
+    name: "fade_layer"
 
     property real value
     property string icon

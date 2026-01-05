@@ -24,8 +24,9 @@ ProgressBar {
     property real spermAmplitudeMultiplier: sperm ? 0.5 : 0
     property real spermFrequency: 6
     property real spermFps: 60
+    property real rounding: Rounding.full
     property bool vertical: false // If true, progress bar grows vertically to the top
-
+    property bool showDot: false // If true, a dot will be displayed at the end of the progress bar
     Behavior on spermAmplitudeMultiplier {
         FAnim {
         }
@@ -41,7 +42,7 @@ ProgressBar {
     background: Rectangle {
         anchors.fill: parent
         color: "transparent"
-        radius: Rounding.full
+        radius: root.rounding
         implicitHeight: vertical ? valueBarWidth : valueBarHeight
         implicitWidth: vertical ? valueBarHeight : valueBarWidth
     }
@@ -67,7 +68,7 @@ ProgressBar {
                     var centerX = width / 2;
                     ctx.strokeStyle = root.highlightColor;
                     ctx.lineWidth = parent.width;
-                    ctx.lineCap = "round";
+                    ctx.lineCap = root.rounding === 0 ? "butt" : "round";
                     ctx.beginPath();
                     for (var y = parent.height - ctx.lineWidth / 2; y >= parent.height - fillHeight; y -= 1) {
                         var waveX = centerX + amplitude * Math.sin(frequency * 2 * Math.PI * (parent.height - y) / parent.height + phase);
@@ -134,7 +135,7 @@ ProgressBar {
 
         Rectangle {
             // Right remaining part fill (horizontal) / Top remaining part fill (vertical)
-            radius: Rounding.full ?? 9999
+            radius: root.rounding
             color: root.trackColor
             visible: !vertical
             anchors.right: parent.right
@@ -144,7 +145,7 @@ ProgressBar {
 
         Rectangle {
             // Top remaining part fill (vertical mode only)
-            radius: Rounding.full ?? 9999
+            radius: root.rounding
             color: root.trackColor
             visible: vertical
             width: parent.width
@@ -159,6 +160,7 @@ ProgressBar {
         }
 
         Rectangle {
+            visible: root.showDot
             // Stop point (horizontal mode)
             anchors.right: vertical ? undefined : parent.right
             anchors.verticalCenter: vertical ? undefined : parent.verticalCenter
@@ -168,7 +170,7 @@ ProgressBar {
             anchors.topMargin: vertical ? 6 : 0
             width: valueBarHeight / 1.5
             height: width
-            radius: Rounding.full ?? 9999
+            radius: root.rounding
             color: root.highlightColor
         }
 

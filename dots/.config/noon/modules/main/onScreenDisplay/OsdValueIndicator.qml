@@ -11,6 +11,7 @@ Loader {
         case "center_island": return "variants/CenterIsland.qml";
         case "bottom_pill": return "variants/BottomPill.qml";
         case "side_bay": return "variants/SideBay.qml";
+        case "windows_10": return "variants/Windows_10.qml";
         default: return "variants/CenterIsland.qml";
     }
 
