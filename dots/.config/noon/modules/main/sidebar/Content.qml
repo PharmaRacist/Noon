@@ -34,14 +34,14 @@ FocusScope {
     property bool pinned: false
     property QtObject colors: {
         switch (selectedCategory) {
-            case "Beats":
-                return BeatsService.colors
+        case "Beats":
+            return BeatsService.colors;
             break;
-            case "Games":
-                return GameLauncherService.colors
+        case "Games":
+            return GameLauncherService.colors;
             break;
-            default:
-                return Colors
+        default:
+            return Colors;
         }
     }
     property color contentColor: colors.colLayer0
@@ -51,35 +51,36 @@ FocusScope {
     property string auxCategory: ""
     property string auxSearchText: ""
     readonly property var componentMap: ({
-            "WallpaperSelector": wallpaperselectorcomponent,
-            "OverviewWidget": overviewcomponent,
-            "KanbanWidget": kanbancomponent,
-            "PowerMenu": sessioncomponent,
-            "API": apicomponent,
-            "StyledNotifications": notificationscomponent,
-            "Beats": beatscomponent,
-            "AppListView": listviewcomponent,
-            "AppGridView": gridviewcomponent,
-            "Tweaks": tweakscomponent,
-            "Notes": notesComponent,
-            "GalleryWidget": gallerycomponent,
-            "MiscComponent": misccomponent,
-            "Auth": polkitComponent,
-            "Games": gamescomponent
-        })
+        "WallpaperSelector": wallpaperselectorcomponent,
+        "OverviewWidget": overviewcomponent,
+        "KanbanWidget": kanbancomponent,
+        "PowerMenu": sessioncomponent,
+        "API": apicomponent,
+        "StyledNotifications": notificationscomponent,
+        "Beats": beatscomponent,
+        "AppListView": listviewcomponent,
+        "AppGridView": gridviewcomponent,
+        "Tweaks": tweakscomponent,
+        "Notes": notesComponent,
+        "GalleryWidget": gallerycomponent,
+        "MiscComponent": misccomponent,
+        "Auth": polkitComponent,
+        "Games": gamescomponent
+    })
 
-    signal requestPin
+    signal requestPin()
     signal barLayoutChangeRequested(int layoutIndex, bool isVertical)
     signal appLaunched(var app)
-    signal contentToggleRequested
-    signal hideBarRequested
-    signal dismiss
+    signal contentToggleRequested()
+    signal hideBarRequested()
+    signal dismiss()
 
     // Helper to focus search input
     function focusSearchInput() {
         const mainPanel = panelRepeater.itemAt(0);
         if (mainPanel && mainPanel.searchInput && effectiveSearchable)
             mainPanel.searchInput.forceActiveFocus();
+
     }
 
     function updateAppList(isAux = false) {
@@ -88,17 +89,17 @@ FocusScope {
         const model = isAux ? auxModel : mainModel;
         if (!category || (isAux && !auxVisible)) {
             model.clear();
-            return;
+            return ;
         }
         if (!isAux && (!showContent || !GlobalStates.sidebarOpen)) {
             if (clearAppListOnHide)
                 model.clear();
 
-            return;
+            return ;
         }
         if (!SidebarData.hasModel(category)) {
             model.clear();
-            return;
+            return ;
         }
         const params = {
             "frequentEmojis": EmojisService.frequentEmojis,
@@ -118,17 +119,17 @@ FocusScope {
     function auxReveal(category) {
         if (!category || (category !== "Auth" && !SidebarData.enabledCategories.includes(category))) {
             console.warn("Category not enabled:", category);
-            return;
+            return ;
         }
         const isSameCategory = auxCategory === category;
         if (isSameCategory && auxVisible) {
             closeAuxPanel();
-            return;
+            return ;
         }
         // Guard: prevent duplicate content between main and aux panels
         if (category === selectedCategory && showContent) {
             console.warn("Category already displayed in main panel:", category);
-            return;
+            return ;
         }
         auxCategory = category;
         auxSearchText = "";
@@ -149,14 +150,14 @@ FocusScope {
     function requestCategoryChange(newCategory, initialQuery = "") {
         if (newCategory !== "Auth" && !SidebarData.enabledCategories.includes(newCategory)) {
             console.warn("Category not enabled:", newCategory);
-            return;
+            return ;
         }
         const isSameCategory = selectedCategory === newCategory;
         const isExpanded = showContent && GlobalStates.sidebarOpen;
         if (isSameCategory && isExpanded) {
             selectedCategory = "";
             dismiss();
-            return;
+            return ;
         }
         if (!GlobalStates.sidebarOpen)
             GlobalStates.sidebarOpen = true;
@@ -165,8 +166,9 @@ FocusScope {
         resetSearch(initialQuery);
         if (!showContent)
             Qt.callLater(() => {
-                contentToggleRequested();
-            });
+            contentToggleRequested();
+        });
+
     }
 
     function resetSearch(newQuery = "") {
@@ -273,24 +275,28 @@ FocusScope {
 
         if (!showContent && clearAppListOnHide)
             mainModel.clear();
+
     }
     onEffectiveSearchableChanged: {
         if (showContent && GlobalStates.sidebarOpen)
             Qt.callLater(focusSearchInput);
+
     }
     onSelectedCategoryChanged: {
         mainModel.clear();
         resetSearch("");
         if (SidebarData.hasModel(selectedCategory))
             delayedRefresh.restart();
+
     }
     onAuxCategoryChanged: {
         auxModel.clear();
         auxSearchText = "";
         if (auxCategory && SidebarData.hasModel(auxCategory))
             auxDelayedRefresh.restart();
+
     }
-    Keys.onPressed: event => {
+    Keys.onPressed: (event) => {
         return handleRootKeys(event);
     }
     anchors.fill: parent
@@ -309,6 +315,7 @@ FocusScope {
         function onSidebarOpenChanged() {
             if (GlobalStates.sidebarOpen && showContent)
                 Qt.callLater(root.focusSearchInput);
+
         }
 
         target: GlobalStates
@@ -346,6 +353,7 @@ FocusScope {
         onTriggered: {
             if (SidebarData.hasModel(selectedCategory))
                 updateAppList(false);
+
         }
     }
 
@@ -357,6 +365,7 @@ FocusScope {
         onTriggered: {
             if (auxCategory && SidebarData.hasModel(auxCategory))
                 updateAppList(true);
+
         }
     }
 
@@ -364,7 +373,7 @@ FocusScope {
         function onFlowChanged() {
             const authRegistry = SidebarData.registry["Auth"];
             if (!authRegistry)
-                return;
+                return ;
 
             if (PolkitService.flow !== null) {
                 authRegistry.enabled = true;
@@ -379,6 +388,7 @@ FocusScope {
                 authRegistry.enabled = false;
                 if (selectedCategory === "Auth")
                     dismiss();
+
             }
         }
 
@@ -398,7 +408,7 @@ FocusScope {
 
             SidebarNavigationRail {
                 selectedCategory: root.selectedCategory
-                colors:root.colors
+                colors: root.colors
             }
             // Panel Repeater - Main and Aux
 
@@ -411,7 +421,8 @@ FocusScope {
 
                 ContentChild {
                     required property int index
-                    colors:root.colors
+
+                    colors: root.colors
                     showContent: root.showContent
                     Layout.fillHeight: true
                     Layout.fillWidth: index === 0
@@ -432,7 +443,7 @@ FocusScope {
                     componentMap: root.componentMap
                     parentRoot: root
                     isAux: index === 1
-                    onSearchUpdated: newText => {
+                    onSearchUpdated: (newText) => {
                         if (index === 0) {
                             root.searchText = newText;
                             delayedRefresh.restart();
@@ -443,34 +454,48 @@ FocusScope {
                     }
 
                     Behavior on Layout.preferredWidth {
-                        Anim {}
+                        Anim {
+                        }
+
                     }
+
                 }
 
                 Behavior on opacity {
-                    Anim {}
+                    Anim {
+                    }
+
                 }
+
             }
+
         }
+
     }
 
     // Component definitions
     Component {
         id: notificationscomponent
 
-        Notifs {}
+        Notifs {
+        }
+
     }
 
     Component {
         id: polkitComponent
 
-        Polkit {}
+        Polkit {
+        }
+
     }
 
     Component {
         id: beatscomponent
 
-        Beats {}
+        Beats {
+        }
+
     }
 
     Component {
@@ -479,15 +504,15 @@ FocusScope {
         KanbanWidget {
             quarters: root.expanded
         }
+
     }
 
     Component {
         id: sessioncomponent
 
         PowerMenu {
-            buttonSize: 140
-            verticalMode: true
         }
+
     }
 
     Component {
@@ -498,6 +523,7 @@ FocusScope {
             sidebarMode: true
             searchText: root.searchText
         }
+
     }
 
     Component {
@@ -510,6 +536,7 @@ FocusScope {
             windowOffset: 0.043
             expanded: root.expanded
         }
+
     }
 
     Component {
@@ -517,8 +544,9 @@ FocusScope {
 
         GameLauncher {
             searchQuery: root.searchText
-            expanded:root.expanded
+            expanded: root.expanded
         }
+
     }
 
     Component {
@@ -528,18 +556,23 @@ FocusScope {
             expanded: root.expanded
             searchQuery: root.searchText
         }
+
     }
 
     Component {
         id: notesComponent
 
-        Notes {}
+        Notes {
+        }
+
     }
 
     Component {
         id: listviewcomponent
 
-        AppListView {}
+        AppListView {
+        }
+
     }
 
     Component {
@@ -548,23 +581,31 @@ FocusScope {
         ApisContent {
             onExpandRequested: root.expanded = !root.expanded
         }
+
     }
 
     Component {
         id: misccomponent
 
-        MiscWidget {}
+        MiscWidget {
+        }
+
     }
 
     Component {
         id: gridviewcomponent
 
-        AppGridView {}
+        AppGridView {
+        }
+
     }
 
     Component {
         id: gallerycomponent
 
-        GalleryWidget {}
+        GalleryWidget {
+        }
+
     }
+
 }

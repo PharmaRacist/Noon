@@ -32,17 +32,20 @@ Item {
     onRevealChanged: {
         if (!reveal && finishAction)
             return finishAction();
+
     }
     anchors.fill: parent
     clip: true
 
     Rectangle {
-        id:scrim
+        id: scrim
+
         z: -1
         opacity: root.reveal ? 1 : 0
         color: ColorUtils.transparentize(root.colors.colScrim, 0.24)
         anchors.fill: parent
         radius: Rounding.verylarge
+
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
@@ -55,7 +58,9 @@ Item {
                 duration: Animations.durations.normal
                 easing.bezierCurve: Animations.curves.emphasized
             }
+
         }
+
     }
 
     MouseArea {
@@ -66,10 +71,10 @@ Item {
         hoverEnabled: true
         acceptedButtons: Qt.NoButton
         scrollGestureEnabled: root.revealOnWheel
-        onWheel: wheel => {
+        onWheel: (wheel) => {
             if (!root.revealOnWheel) {
                 wheel.accepted = false;
-                return;
+                return ;
             }
             scrollSum += wheel.angleDelta.y;
             if (Math.abs(scrollSum) >= threshold) {
@@ -96,6 +101,7 @@ Item {
             right: parent.right
             bottom: parent.bottom
         }
+
     }
 
     StyledRect {
@@ -111,6 +117,7 @@ Item {
         Component.onCompleted: {
             if (contentItem)
                 contentItem.anchors.fill = bg;
+
         }
 
         anchors {
@@ -120,11 +127,15 @@ Item {
         }
 
         Behavior on anchors.rightMargin {
-            Anim {}
+            Anim {
+            }
+
         }
 
         Behavior on anchors.leftMargin {
-            Anim {}
+            Anim {
+            }
+
         }
 
         Behavior on height {
@@ -132,6 +143,9 @@ Item {
                 duration: Animations.durations.normal
                 easing.bezierCurve: Animations.curves.emphasized
             }
+
         }
+
     }
+
 }

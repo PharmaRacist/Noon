@@ -197,5 +197,8 @@ Item {
             }
         }
     }
+    ScrollEdgeFade {
+        target:parent 
+    }
 
 }

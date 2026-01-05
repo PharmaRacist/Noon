@@ -21,11 +21,10 @@ StyledGridView {
     // Grid configuration
     cellWidth: Math.floor(width / columns)
     cellHeight: cellWidth
-    reuseItems: false
+    cacheBuffer:Math.min(500, cellHeight * 3)
+    reuseItems: true
     clip: true
     currentIndex: -1
-    anchors.centerIn: parent
-
     // Focus handling
     Connections {
         target: appGridView
@@ -194,4 +193,9 @@ StyledGridView {
         color: Colors.colLayer1
         radius: Rounding.verylarge
     }
+
+    ScrollEdgeFade {
+        target:appGridView 
+    }
+
 }
