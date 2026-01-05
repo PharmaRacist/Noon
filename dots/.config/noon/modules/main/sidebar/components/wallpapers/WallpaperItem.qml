@@ -3,8 +3,8 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import Quickshell
 import qs.common
-import qs.common.utils
 import qs.common.functions
+import qs.common.utils
 import qs.common.widgets
 import qs.services
 
@@ -14,7 +14,6 @@ StyledRect {
     property string fileUrl
     property bool isKeyboardSelected: false
     property bool isCurrentWallpaper: false
-
     readonly property bool isVideoFile: {
         if (!fileUrl)
             return false;
@@ -23,6 +22,7 @@ StyledRect {
         for (let i = 0; i < NameFilters.video.length; i++) {
             if (name.endsWith(NameFilters.video[i]))
                 return true;
+
         }
         return false;
     }
@@ -133,75 +133,26 @@ StyledRect {
 
     }
 
-    Menu {
+    StyledMenu {
         id: wallpaperMenu
 
-        Material.theme: Material.Dark
-        Material.primary: Colors.colPrimaryContainer
-        Material.accent: Colors.colSecondaryContainer
-        Material.roundedScale: Rounding.normal
-        Material.elevation: 8
-
-        StyledMenuItem {
-            text: "Favorite"
-            onTriggered: {
+        content: [{
+            "text": "Favorite",
+            "materialIcon": "favorite",
+            "action": function() {
                 if (wallpaperItem.fileUrl)
                     FileUtils.moveItem(wallpaperItem.fileUrl, Directories.wallpapers.favorite);
 
             }
-        }
-
-        StyledMenuItem {
-            text: "Delete"
-            onTriggered: {
+        }, {
+            "text": "delete",
+            "materialIcon": "delete",
+            "action": function() {
                 if (wallpaperItem.fileUrl)
                     FileUtils.deleteItem(wallpaperItem.fileUrl);
 
             }
-        }
-
-        background: StyledRect {
-            implicitWidth: 240
-            implicitHeight: 26 * parent.contentItem.children.length
-            color: Colors.colLayer0
-            radius: Rounding.verylarge
-            enableShadows: true
-        }
-
-        enter: Transition {
-            Anim {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: Animations.durations.small
-            }
-
-            Anim {
-                property: "scale"
-                from: 0.95
-                to: 1
-                duration: Animations.durations.small
-            }
-
-        }
-
-        exit: Transition {
-            Anim {
-                property: "opacity"
-                from: 1
-                to: 0
-                duration: Animations.durations.small
-            }
-
-            Anim {
-                property: "scale"
-                from: 1
-                to: 0.95
-                duration: Animations.durations.small
-            }
-
-        }
-
+        }]
     }
 
 }

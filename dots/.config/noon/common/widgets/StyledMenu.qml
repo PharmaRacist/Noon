@@ -1,0 +1,67 @@
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import Quickshell
+import qs.common
+
+Menu {
+    id: wallpaperMenu
+
+    required property var content
+
+    Material.theme: Material.Dark
+    Material.primary: Colors.colPrimaryContainer
+    Material.accent: Colors.colSecondaryContainer
+    Material.roundedScale: Rounding.normal
+    Material.elevation: 8
+
+    Repeater {
+        model: content
+
+        StyledMenuItem {
+            materialIcon: modelData.materialIcon ?? ""
+            text: modelData.text ?? ""
+            onTriggered: modelData.action()
+        }
+    }
+
+    background: StyledRect {
+        implicitWidth: 240
+        implicitHeight: 26 * parent.contentItem.children.length
+        color: Colors.colLayer0
+        radius: Rounding.verylarge
+        enableShadows: true
+    }
+
+    enter: Transition {
+        Anim {
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: Animations.durations.small
+        }
+
+        Anim {
+            property: "scale"
+            from: 0.95
+            to: 1
+            duration: Animations.durations.small
+        }
+    }
+
+    exit: Transition {
+        Anim {
+            property: "opacity"
+            from: 1
+            to: 0
+            duration: Animations.durations.small
+        }
+
+        Anim {
+            property: "scale"
+            from: 1
+            to: 0.95
+            duration: Animations.durations.small
+        }
+    }
+}
