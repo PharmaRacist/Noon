@@ -1,0 +1,5 @@
+[soe][RNNoise#0]
+vadThres=21
+
+[soe][RNNoise#1]
+bypass=true
