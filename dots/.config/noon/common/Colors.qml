@@ -1,17 +1,17 @@
 pragma Singleton
 import QtQuick
 import Quickshell
-import qs.store
+import qs.common
+import qs.services
 import qs.common.functions
-
 Singleton {
     id: root
 
     property QtObject m3: MColors
     property real transparency: Mem.options.appearance.transparency.enabled ? Mem.options.appearance.transparency.scale : 0
     property real contentTransparency: Mem.options.appearance.transparency.scale
-
-    property color colOnBackground: m3.darkmode ? colOnLayer0 : colLayer0
+    property color colOnBackground: WallpaperService.isBright ? colLayer0 : colOnLayer0
+    property color colOnBackgroundSubtext:  ColorUtils.colorWithLightness(colOnBackground,0.25)
     property color colSubtext: m3.m3outline
     property color colLayer0: ColorUtils.transparentize(m3.m3background, transparency)
     property color colOnLayer0: m3.m3onBackground

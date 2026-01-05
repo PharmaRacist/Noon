@@ -60,7 +60,6 @@ Singleton {
         });
         const newContent = lines.join('\n');
         file.setText(newContent);
-        console.log("HyprlandParser: File saved successfully");
         return true;
     }
 

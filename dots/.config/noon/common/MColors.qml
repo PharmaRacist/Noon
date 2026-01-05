@@ -3,7 +3,8 @@ import QtQuick
 import Quickshell
 
 QtObject {
-    property bool darkmode: true
+    property bool brightWall: false
+    property bool darkmode: !brightWall
     property bool transparent: false
     property color m3background: "#141313"
     property color m3onBackground: "#e6e1e1"
@@ -58,20 +59,4 @@ QtObject {
     property color m3onSuccess: "#213528"
     property color m3successContainer: "#374B3E"
     property color m3onSuccessContainer: "#D1E9D6"
-    property color term0: "#EDE4E4"
-    property color term1: "#B52755"
-    property color term2: "#A97363"
-    property color term3: "#AF535D"
-    property color term4: "#A67F7C"
-    property color term5: "#B2416B"
-    property color term6: "#8D76AD"
-    property color term7: "#272022"
-    property color term8: "#0E0D0D"
-    property color term9: "#B52755"
-    property color term10: "#A97363"
-    property color term11: "#AF535D"
-    property color term12: "#A67F7C"
-    property color term13: "#B2416B"
-    property color term14: "#8D76AD"
-    property color term15: "#221A1A"
 }

@@ -31,8 +31,7 @@ Singleton {
                 colors['m3' + camelCase] = customColors[key];
             }
         }
-        // WallpaperService.changeAccentColor(colors.m3primaryFixed);
-        colors.darkmode = (colors.m3background.hslLightness < 0.5);
+        colors.brightWall = Mem.states.desktop.bg.isBright;
     }
 
     function reload() {

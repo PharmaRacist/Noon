@@ -49,7 +49,7 @@ GridLayout {
         Layout.leftMargin: 3
         font.family: Fonts.family.clock
         font.variableAxes: Fonts.variableAxes.display
-        color: Colors.colOnLayer0
+        color: Colors.colOnBackground
         font.pixelSize: 40 * Mem.states.desktop.clock.scale
         opacity: 0.75
         text: DateTimeService.date
@@ -99,14 +99,14 @@ GridLayout {
         StyledText {
             font.variableAxes: Fonts.variableAxes.display
             font.pixelSize: 100 * Mem.states.desktop.clock.scale
-            color: Colors.colOnLayer0
+            color: Colors.colOnBackground
             text: DateTimeService.cleanHour
         }
 
         StyledText {
             font.pixelSize: 100 * Mem.states.desktop.clock.scale
             font.variableAxes: Fonts.variableAxes.display
-            color: Colors.colOnLayer0
+            color: Colors.colOnBackground
             text: DateTimeService.cleanMinute
         }
 
@@ -120,7 +120,7 @@ GridLayout {
 
             font.family: Fonts.family.clock
             font.variableAxes: Fonts.variableAxes.display
-            color: Colors.colOnLayer0
+            color: Colors.colOnBackground
             font.pixelSize: 100 * Mem.states.desktop.clock.scale
             text: DateTimeService.time
         }
@@ -159,7 +159,7 @@ GridLayout {
                 font.pixelSize: 33
                 font.family: Fonts.family.clock
                 font.variableAxes: Fonts.variableAxes.display
-                color: Colors.colOnLayer0
+                color: Colors.colOnBackground
                 text: BeatsService.title
                 elide: Text.ElideRight
                 animateChange: true
@@ -176,7 +176,7 @@ GridLayout {
 
             StyledText {
                 font.weight: 500
-                color: Colors.colSubtext
+                color: Colors.colOnBackgroundSubtext
                 width: 200
                 font.family: Fonts.family.clock
                 font.variableAxes: Fonts.variableAxes.display

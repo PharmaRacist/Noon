@@ -11,6 +11,7 @@ JsonAdapter {
             property string currentIconTheme: ""
         }
         bg: JsonObject {
+            property bool isBright: false
             property bool isLive: false
             property string currentVideo: ""
             property string currentBg: ""

@@ -64,6 +64,7 @@ class WallpaperSwitcher:
                     "scheme": "scheme-tonal-spot",
                     "autoShellMode": False,
                     "autoSchemeSelection": False,
+                    "isBright": False,
                 },
                 "bg": {"currentBg": "", "currentVideo": "", "isLive": False},
                 "icons": {"currentIconTheme": "Tela"},
@@ -141,11 +142,20 @@ class WallpaperSwitcher:
             )
         )
 
+    def get_is_bright(self):
+        """Get isBright value from state"""
+        return bool(self._get_state_value("desktop.appearance.isBright", False))
+
     def set_shell_mode(self, mode):
         """Set shell mode explicitly"""
         if mode in ("dark", "light"):
             self.state_data["desktop"]["appearance"]["mode"] = mode
             self._save_state()
+
+    def set_is_bright(self, is_bright):
+        """Set isBright value in state"""
+        self.state_data["desktop"]["appearance"]["isBright"] = bool(is_bright)
+        self._save_state()
 
     def toggle_shell_mode(self):
         """Toggle between dark and light mode"""
@@ -154,12 +164,14 @@ class WallpaperSwitcher:
         self.set_shell_mode(new_mode)
         return new_mode
 
-    def update_appearance(self, mode=None, scheme=None):
+    def update_appearance(self, mode=None, scheme=None, is_bright=None):
         """Update appearance settings"""
         if mode:
             self.state_data["desktop"]["appearance"]["mode"] = mode
         if scheme:
             self.state_data["desktop"]["appearance"]["scheme"] = scheme
+        if is_bright is not None:
+            self.state_data["desktop"]["appearance"]["isBright"] = bool(is_bright)
         self._save_state()
 
     def update_colors(self, chroma=None, tone=None):
@@ -353,10 +365,13 @@ class WallpaperSwitcher:
             return False
 
     def detect_shell_mode_from_image(self, image_path):
-        """Guess 'light' or 'dark' shell mode from an image."""
+        """Detect brightness and return both mode and isBright value.
+
+        Returns tuple: (mode_string, is_bright_bool)
+        """
         path = Path(image_path)
         if not path.is_file():
-            return "dark"
+            return "dark", False
 
         # Try using Pillow if installed
         try:
@@ -367,7 +382,9 @@ class WallpaperSwitcher:
                 im = im.resize((64, 64))
                 pixels = list(im.getdata())
                 mean = sum(pixels) / len(pixels)
-                return "light" if mean >= 127 else "dark"
+                is_bright = mean >= 127
+                mode = "light" if is_bright else "dark"
+                return mode, is_bright
         except Exception:
             pass
 
@@ -382,13 +399,15 @@ class WallpaperSwitcher:
                 if out:
                     try:
                         mean = float(out)
-                        return "light" if mean >= 127 else "dark"
+                        is_bright = mean >= 127
+                        mode = "light" if is_bright else "dark"
+                        return mode, is_bright
                     except ValueError:
                         pass
         except Exception:
             pass
 
-        return "dark"
+        return "dark", False
 
     def analyze_image_color_properties(self, image_path):
         """
@@ -463,28 +482,46 @@ class WallpaperSwitcher:
     ):
         """
         Decide which shell mode to use, respecting autoShellMode.
+        Also sets isBright in state based on detection.
 
         requested_mode: explicit mode from CLI (--mode)
         color_source_path: image path used for colors (wallpaper or extracted frame)
         force_cli: if True, CLI args override auto settings
+
+        Returns: mode string
         """
         # Explicit CLI mode with -f flag always wins
         if force_cli and requested_mode in ("dark", "light"):
+            # Even with forced mode, still detect brightness for isBright
+            if color_source_path:
+                _, is_bright = self.detect_shell_mode_from_image(color_source_path)
+                self.set_is_bright(is_bright)
             return requested_mode
 
         # Explicit CLI mode always wins
         if requested_mode in ("dark", "light"):
+            # Still detect brightness for isBright
+            if color_source_path:
+                _, is_bright = self.detect_shell_mode_from_image(color_source_path)
+                self.set_is_bright(is_bright)
             return requested_mode
 
         if not self.get_auto_shell_mode_enabled():
             # Auto mode disabled: use stored mode
+            # But still update isBright if we have an image
+            if color_source_path:
+                _, is_bright = self.detect_shell_mode_from_image(color_source_path)
+                self.set_is_bright(is_bright)
             return self.get_current_shell_mode()
 
         # Auto mode enabled: try to infer from image
         if color_source_path:
-            detected = self.detect_shell_mode_from_image(color_source_path)
-            self.set_shell_mode(detected)
-            return detected
+            detected_mode, is_bright = self.detect_shell_mode_from_image(
+                color_source_path
+            )
+            self.set_shell_mode(detected_mode)
+            self.set_is_bright(is_bright)
+            return detected_mode
 
         # No color_source_path provided, try current wallpaper
         try:
@@ -492,9 +529,12 @@ class WallpaperSwitcher:
             if current_bg and current_bg.startswith("file://"):
                 bg_path = Path(current_bg.replace("file://", ""))
                 if bg_path.is_file() and self.is_image(bg_path):
-                    detected = self.detect_shell_mode_from_image(bg_path)
-                    self.set_shell_mode(detected)
-                    return detected
+                    detected_mode, is_bright = self.detect_shell_mode_from_image(
+                        bg_path
+                    )
+                    self.set_shell_mode(detected_mode)
+                    self.set_is_bright(is_bright)
+                    return detected_mode
         except Exception:
             pass
 
@@ -846,6 +886,9 @@ class WallpaperSwitcher:
                     force_cli=force_cli,
                 )
 
+                # Set isBright to False for color mode (no wallpaper to analyze)
+                self.set_is_bright(False)
+
                 print(f"Color: #{color}")
                 print(f"Mode: {current_mode} | Scheme: {current_scheme}")
                 self.generate_colors(
@@ -853,7 +896,7 @@ class WallpaperSwitcher:
                     current_mode,
                     current_scheme,
                 )
-                self.update_appearance(current_mode, current_scheme)
+                self.update_appearance(current_mode, current_scheme, is_bright=False)
                 time.sleep(0.3)
                 self.apply_kde_colors(color=color, scheme=current_scheme)
                 self.setup_gnome_theme(current_mode)
@@ -887,6 +930,7 @@ class WallpaperSwitcher:
                 self.update_bg(image_path=str(imgpath), is_live=False)
                 color_source = imgpath
 
+            # Get effective mode and scheme (this also sets isBright)
             current_mode = self.get_effective_shell_mode(
                 requested_mode=mode,
                 color_source_path=color_source,
@@ -898,14 +942,17 @@ class WallpaperSwitcher:
                 force_cli=force_cli,
             )
 
-            print(f"Mode: {current_mode} | Scheme: {current_scheme}")
+            is_bright = self.get_is_bright()
+            print(
+                f"Mode: {current_mode} | Scheme: {current_scheme} | Bright: {is_bright}"
+            )
 
             if not self.is_image(color_source):
                 print(f"ERROR: Invalid image: {color_source}")
                 return
 
             self.generate_colors(color_source, current_mode, current_scheme)
-            self.update_appearance(current_mode, current_scheme)
+            self.update_appearance(current_mode, current_scheme, is_bright=is_bright)
             self.apply_kde_colors(
                 source_path=str(color_source),
                 scheme=current_scheme,
@@ -995,6 +1042,7 @@ def main():
     )
     print(f"Current mode:           {switcher.get_current_shell_mode()}")
     print(f"Current scheme:         {switcher.get_current_scheme()}")
+    print(f"Current isBright:       {switcher.get_is_bright()}")
     print(f"Auto shell mode:        {auto_mode}")
     print(f"Auto scheme selection:  {auto_scheme}")
     if args.force:
