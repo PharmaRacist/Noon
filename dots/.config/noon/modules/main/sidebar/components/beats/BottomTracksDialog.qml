@@ -8,14 +8,6 @@ import qs.services
 
 BottomDialog {
     id: root
-    z: 99
-    expandedHeight: root.height * 0.95
-    collapsedHeight: root.height * 0.65
-    bottomAreaReveal: true
-    hoverHeight: 200
-    revealOnWheel: true
-    enableStagedReveal: true
-    colors: parent.colors
 
     property var filteredTracks: []
     property string searchText: ""
@@ -25,24 +17,30 @@ BottomDialog {
         const model = BeatsService.tracksModel;
         if (!model) {
             filteredTracks = tracks;
-            return;
+            return ;
         }
-
         const count = model.count;
         const search = searchText.toLowerCase();
-
         for (let i = 0; i < count; i++) {
             const trackInfo = BeatsService.getTrackInfo(i);
-            if (trackInfo && (search === "" || trackInfo.name.toLowerCase().includes(search))) {
+            if (trackInfo && (search === "" || trackInfo.name.toLowerCase().includes(search)))
                 tracks.push({
-                    index: i,
-                    info: trackInfo
-                });
-            }
+                "index": i,
+                "info": trackInfo
+            });
+
         }
         filteredTracks = tracks;
     }
 
+    z: 99
+    expandedHeight: root.height * 0.95
+    collapsedHeight: root.height * 0.65
+    bottomAreaReveal: true
+    hoverHeight: 200
+    revealOnWheel: true
+    enableStagedReveal: true
+    colors: parent.colors
     Component.onCompleted: updateFilteredTracks()
 
     contentItem: ColumnLayout {
@@ -61,10 +59,12 @@ BottomDialog {
                     return root.show = false;
                 }
             }
+
         }
 
         SearchBar {
             id: search
+
             Layout.fillWidth: true
             implicitHeight: 40
             Layout.leftMargin: Padding.large
@@ -75,12 +75,14 @@ BottomDialog {
 
             Timer {
                 id: searchTimer
+
                 interval: 200
                 onTriggered: {
                     root.searchText = search.searchText;
                     root.updateFilteredTracks();
                 }
             }
+
         }
 
         StyledListView {
@@ -94,11 +96,11 @@ BottomDialog {
             delegate: StyledDelegateItem {
                 required property int index
                 required property var modelData
-
                 readonly property var trackInfo: modelData.info
                 readonly property string trackPath: trackInfo.path || ""
                 readonly property bool currentlyPlaying: trackPath === BeatsService.currentTrackPath
                 readonly property string fileExtension: trackInfo.fileName.includes('.') ? trackInfo.fileName.split('.').pop().toUpperCase() : ""
+
                 implicitHeight: 70
                 title: trackInfo.name || "Unknown Track"
                 subtext: fileExtension ? `${fileExtension} Audio` : ""
@@ -111,18 +113,21 @@ BottomDialog {
                 releaseAction: () => {
                     return BeatsService.playTrackByPath(trackPath);
                 }
-
                 altAction: () => {
-                    return trackContextMenu.showMenu();
+                    return trackContextMenu.popup();
                 }
 
                 TrackContextMenu {
                     id: trackContextMenu
+
                     trackPath: parent.trackPath
                     trackName: parent.title
-                    parentButton: parent
                 }
+
             }
+
         }
+
     }
+
 }

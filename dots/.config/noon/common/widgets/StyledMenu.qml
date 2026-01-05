@@ -5,13 +5,14 @@ import Quickshell
 import qs.common
 
 Menu {
-    id: wallpaperMenu
+    id: root
 
     required property var content
+    property QtObject colors: Colors
 
-    Material.theme: Material.Dark
-    Material.primary: Colors.colPrimaryContainer
-    Material.accent: Colors.colSecondaryContainer
+    Material.theme: colors.m3.darkmode ? Material.Dark : Material.Light
+    Material.primary: colors.colPrimaryContainer
+    Material.accent: colors.colSecondaryContainer
     Material.roundedScale: Rounding.normal
     Material.elevation: 8
 
@@ -19,10 +20,12 @@ Menu {
         model: content
 
         StyledMenuItem {
+            colors: root.colors
             materialIcon: modelData.materialIcon ?? ""
             text: modelData.text ?? ""
             onTriggered: modelData.action()
         }
+
     }
 
     background: StyledRect {
@@ -47,6 +50,7 @@ Menu {
             to: 1
             duration: Animations.durations.small
         }
+
     }
 
     exit: Transition {
@@ -63,5 +67,7 @@ Menu {
             to: 0.95
             duration: Animations.durations.small
         }
+
     }
+
 }

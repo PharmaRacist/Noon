@@ -1,9 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import qs.common
-import qs.common.functions
-import qs.common.utils
 import qs.common.widgets
 import qs.services
 
@@ -15,8 +12,6 @@ StyledGridView {
     property string selectedCategory: ""
     property int columns: 3
     property int iconSize: 60
-    property var currentMenu: null
-    property int menuIndex: -1
 
     // Signals
     signal appLaunched(var app)
@@ -134,19 +129,14 @@ StyledGridView {
         releaseAction: () => appGridView.appLaunched(model)
 
         altAction: () => {
-            if (!appItem.isEmoji) {
-                if (appGridView.currentMenu && appGridView.currentMenu !== contextMenu) {
-                    appGridView.currentMenu.close();
-                }
-                appGridView.currentMenu = contextMenu;
-                appGridView.menuIndex = index;
-                appGridView.currentIndex = -1;
-                contextMenu.popup();
+            if (!appItem.isEmoji && loader.item && loader.item.contextMenu) {
+                loader.item.contextMenu.popup();
             }
         }
 
         // Content loader
         Loader {
+            id: loader
             anchors.centerIn: parent
             width: parent.width - 20
             sourceComponent: appItem.isEmoji ? emojiComponent : appComponent
@@ -156,6 +146,7 @@ StyledGridView {
             id: appComponent
             ColumnLayout {
                 spacing: Padding.small
+                property alias contextMenu: contextMenu
 
                 StyledIconImage {
                     source: Noon.iconPath(model?.iconImage || "")
@@ -176,6 +167,10 @@ StyledGridView {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
                 }
+
+                AppContextMenu {
+                    id: contextMenu
+                }
             }
         }
 
@@ -189,10 +184,6 @@ StyledGridView {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
-        }
-
-        AppContextMenu {
-            id: contextMenu
         }
     }
 

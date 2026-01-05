@@ -9,12 +9,13 @@ import qs.services
 MenuItem {
     id: root
 
-    property color colBackground: Colors.m3.m3surfaceContainer
-    property color colBackgroundHover: Colors.m3.m3surfaceContainerHigh
-    property color colBackgroundActive: Colors.m3.m3secondaryContainer
-    property color colContent: Colors.m3.m3onSurfaceVariant
-    property color colContentActive: Colors.m3.m3onSecondaryContainer
+    property color colBackground: colors.colLayer2
+    property color colBackgroundHover: colors.colLayer2Hover
+    property color colBackgroundActive: colors.colLayer2Active
+    property color colContent: colors.colOnLayer2
+    property color colContentActive: colors.colOnLayer2
     property alias materialIcon: symbol.text
+    property QtObject colors: Colors
 
     height: 40
 
