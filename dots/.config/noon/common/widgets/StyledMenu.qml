@@ -10,7 +10,7 @@ Menu {
     required property var content
     property QtObject colors: Colors
 
-    Material.theme: colors.m3.darkmode ? Material.Dark : Material.Light
+    Material.theme: Colors.m3.darkmode ? Material.Dark : Material.Light
     Material.primary: colors.colPrimaryContainer
     Material.accent: colors.colSecondaryContainer
     Material.roundedScale: Rounding.normal
