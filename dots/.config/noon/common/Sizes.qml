@@ -18,6 +18,12 @@ Singleton {
     property size gameLauncherItemSize: Qt.size(225, 360) // Expanded
     property QtObject hyprland
     property QtObject sidebar
+    property QtObject osd
+
+    osd: QtObject {
+        property size bottomPill: Qt.size(180, 42)
+        property size centerIsland: Qt.size(145, 145)
+    }
 
     sidebar: QtObject {
         property real bar: Sizes.collapsedSideBarWidth

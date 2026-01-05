@@ -33,12 +33,12 @@ Scope {
         property: "showOsdValues"
         value: showOsdValues
     }
+
     Timer {
         id: osdTimeout
         interval: Mem.options.osd.timeout
         repeat: false
         running: false
-
         onTriggered: {
             if (!userInteracting) {
                 root.showOsdValues = false;
@@ -57,51 +57,30 @@ Scope {
         }
     }
 
-    Loader {
-        id: osdLoader
+    Connections {
+        target: root
+        function onFocusedScreenChanged() {
+            if (osdIndicator.item)
+                osdIndicator.item.screen = root.focusedScreen;
+        }
+    }
+
+    OsdValueIndicator {
+        id: osdIndicator
         active: showOsdValues
 
-        sourceComponent: StyledPanel {
-            id: osdRoot
-            name: "osd"
+        value: root.brightnessMonitor?.brightness ?? 50
+        icon: BrightnessService.iconMaterial
+        targetScreen: root.focusedScreen
 
-            Connections {
-                target: root
-                function onFocusedScreenChanged() {
-                    osdRoot.screen = root.focusedScreen;
-                }
-            }
+        onInteractionStarted: {
+            root.userInteracting = true;
+            osdTimeout.stop();
+        }
 
-            anchors.bottom: true
-            margins: Sizes.elevationMargin * 4
-
-            mask: Region {
-                item: content
-            }
-
-            implicitWidth: content.implicitWidth
-            implicitHeight: content.implicitHeight + Sizes.elevationMargin * 2
-            visible: osdLoader.active
-
-            OsdValueIndicator {
-                id: content
-                anchors.centerIn: parent
-                implicitWidth: Sizes.osdWidth
-                implicitHeight: Sizes.osdHeight
-                value: root.brightnessMonitor?.brightness ?? 50
-                icon: BrightnessService.iconMaterial
-
-                // If interaction for brightness is added later (e.g. scroll/drag)
-                onInteractionStarted: {
-                    root.userInteracting = true;
-                    osdTimeout.stop();
-                }
-
-                onInteractionEnded: {
-                    root.userInteracting = false;
-                    root.restartTimeoutIfNotInteracting();
-                }
-            }
+        onInteractionEnded: {
+            root.userInteracting = false;
+            root.restartTimeoutIfNotInteracting();
         }
     }
 

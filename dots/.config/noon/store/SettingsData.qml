@@ -1,10 +1,10 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.functions
 import qs.common.widgets
 import qs.services
-pragma Singleton
 
 QtObject {
     id: settingsRoot
@@ -12,433 +12,551 @@ QtObject {
     property QtObject tweaks
 
     tweaks: QtObject {
-        property var settingsData: [{
-            "section": "Appearance",
-            "icon": "palette",
-            "items": [{
-                "icon": "rounded_corner",
-                "name": "Radius",
-                "key": "Rounding.scale",
-                "type": "slider",
-                "sliderMinValue": 0,
-                "sliderMaxValue": 3
-            }, {
-                "icon": "tune",
-                "name": "Border",
-                "key": "desktop.bg.borderMultiplier",
-                "type": "slider",
-                "sliderMinValue": 0,
-                "sliderMaxValue": 1
-            }, {
-                "icon": "rounded_corner",
-                "name": "Screen Corners",
-                "key": "desktop.screenCorners",
-                "type": "spin"
-            }, {
-                "icon": "stars_2",
-                "name": "Icon Theme",
-                "key": "desktop.icons.currentIconTheme",
-                "type": "combobox",
-                "reloadOnChange": true,
-                "state": true,
-                "comboBoxValues": IconThemesService.availableIconThemeIds
-            }]
-        }, {
-            "section": "Fonts & Typography",
-            "icon": "font_download",
-            "items": [{
+        property var settingsData: [
+            {
+                "section": "Appearance",
+                "icon": "palette",
+                "items": [
+                    {
+                        "icon": "rounded_corner",
+                        "name": "Radius",
+                        "key": "Rounding.scale",
+                        "type": "slider",
+                        "sliderMinValue": 0,
+                        "sliderMaxValue": 3
+                    },
+                    {
+                        "icon": "tune",
+                        "name": "Border",
+                        "key": "desktop.bg.borderMultiplier",
+                        "type": "slider",
+                        "sliderMinValue": 0,
+                        "sliderMaxValue": 1
+                    },
+                    {
+                        "icon": "rounded_corner",
+                        "name": "Screen Corners",
+                        "key": "desktop.screenCorners",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "stars_2",
+                        "name": "Icon Theme",
+                        "key": "desktop.icons.currentIconTheme",
+                        "type": "combobox",
+                        "reloadOnChange": true,
+                        "state": true,
+                        "comboBoxValues": IconThemesService.availableIconThemeIds
+                    }
+                ]
+            },
+            {
+                "section": "Fonts & Typography",
                 "icon": "font_download",
-                "name": "UI Font",
-                "key": "appearance.fonts.main",
-                "type": "text"
-            }]
-        }, {
-            "section": "Clock Settings",
-            "icon": "schedule",
-            "items": [{
-                "icon": "timer",
-                "name": "Center Clock",
-                "state": true,
-                "enableTooltip": false,
-                "key": "desktop.clock.center"
-            }, {
+                "items": [
+                    {
+                        "icon": "font_download",
+                        "name": "UI Font",
+                        "key": "appearance.fonts.main",
+                        "type": "text"
+                    }
+                ]
+            },
+            {
+                "section": "OSDs",
+                "icon": "notifications",
+                "items": [
+                    {
+                        "icon": "notifications",
+                        "name": "OSD Mode",
+                        "key": "desktop.osd.mode",
+                        "type": "combobox",
+                        "comboBoxValues": ["bottom_pill", "center_island"]
+                    }
+                ]
+            },
+            {
+                "section": "Clock Settings",
                 "icon": "schedule",
-                "name": "Clock Font",
-                "key": "desktop.clock.font",
-                "type": "combobox",
-                "comboBoxValues": ["Badeen Display", "Ndot 55", "Six Caps", "Alfa Slab One", "Notable", "Monoton", "Titan One", "Bebas Neue", "Rubik", "UnifrakturCook"]
-            }, {
-                "state": true,
-                "icon": "font_download",
-                "name": "Clock Weight",
-                "key": "fonts.variableAxes.display.wght",
-                "type": "slider",
-                "sliderMinValue": 100,
-                "sliderValue": 100,
-                "sliderMaxValue": 1000
-            }, {
-                "state": true,
-                "icon": "font_download",
-                "name": "Clock Width",
-                "key": "fonts.variableAxes.display.wdth",
-                "type": "slider",
-                "sliderMinValue": 0,
-                "sliderValue": 10,
-                "sliderMaxValue": 800
-            }, {
-                "icon": "schedule",
-                "name": "Clock Spacing",
-                "key": "desktop.clock.spacingMultiplier",
-                "type": "slider",
-                "sliderMinValue": -1,
-                "sliderMaxValue": 1
-            }, {
-                "icon": "height",
-                "name": "Vertical Mode",
-                "key": "desktop.clock.verticalMode"
-            }, {
-                "state": true,
-                "icon": "timer",
-                "name": "Clock Size",
-                "key": "desktop.clock.scale",
-                "type": "slider",
-                "sliderMinValue": 0.25,
-                "sliderValue": 0.25,
-                "sliderMaxValue": 4
-            }]
-        }, {
-            "section": "Modules",
-            "icon": "dashboard_customize",
-            "items": [{
-                "icon": "menu",
-                "name": "Bar",
-                "key": "bar.enabled"
-            }, {
+                "items": [
+                    {
+                        "icon": "timer",
+                        "name": "Center Clock",
+                        "state": true,
+                        "enableTooltip": false,
+                        "key": "desktop.clock.center"
+                    },
+                    {
+                        "icon": "schedule",
+                        "name": "Clock Font",
+                        "key": "desktop.clock.font",
+                        "type": "combobox",
+                        "comboBoxValues": ["Badeen Display", "Ndot 55", "Six Caps", "Alfa Slab One", "Notable", "Monoton", "Titan One", "Bebas Neue", "Rubik", "UnifrakturCook"]
+                    },
+                    {
+                        "state": true,
+                        "icon": "font_download",
+                        "name": "Clock Weight",
+                        "key": "fonts.variableAxes.display.wght",
+                        "type": "slider",
+                        "sliderMinValue": 100,
+                        "sliderValue": 100,
+                        "sliderMaxValue": 1000
+                    },
+                    {
+                        "state": true,
+                        "icon": "font_download",
+                        "name": "Clock Width",
+                        "key": "fonts.variableAxes.display.wdth",
+                        "type": "slider",
+                        "sliderMinValue": 0,
+                        "sliderValue": 10,
+                        "sliderMaxValue": 800
+                    },
+                    {
+                        "icon": "schedule",
+                        "name": "Clock Spacing",
+                        "key": "desktop.clock.spacingMultiplier",
+                        "type": "slider",
+                        "sliderMinValue": -1,
+                        "sliderMaxValue": 1
+                    },
+                    {
+                        "icon": "height",
+                        "name": "Vertical Mode",
+                        "key": "desktop.clock.verticalMode"
+                    },
+                    {
+                        "state": true,
+                        "icon": "timer",
+                        "name": "Clock Size",
+                        "key": "desktop.clock.scale",
+                        "type": "slider",
+                        "sliderMinValue": 0.25,
+                        "sliderValue": 0.25,
+                        "sliderMaxValue": 4
+                    }
+                ]
+            },
+            {
+                "section": "Modules",
+                "icon": "dashboard_customize",
+                "items": [
+                    {
+                        "icon": "menu",
+                        "name": "Bar",
+                        "key": "bar.enabled"
+                    },
+                    {
+                        "icon": "dock",
+                        "name": "Dock",
+                        "key": "dock.enabled"
+                    },
+                    {
+                        "icon": "notifications",
+                        "name": "OSD",
+                        "key": "osd.enabled"
+                    },
+                    {
+                        "icon": "lock",
+                        "name": "Lock Screen",
+                        "key": "desktop.lock.enabled"
+                    },
+                    {
+                        "icon": "shield",
+                        "name": "Greeter",
+                        "key": "desktop.greetd.enabled"
+                    }
+                ]
+            },
+            {
+                "section": "Bar",
+                "icon": "panel_top",
+                "items": [
+                    {
+                        "icon": "palette",
+                        "name": "Background",
+                        "key": "bar.appearance.useBg"
+                    },
+                    {
+                        "icon": "border_all",
+                        "name": "Borders",
+                        "key": "bar.appearance.modulesBg"
+                    },
+                    {
+                        "icon": "border_all",
+                        "name": "Outline",
+                        "key": "bar.appearance.outline"
+                    },
+                    {
+                        "icon": "tune",
+                        "name": "Bar Mode",
+                        "key": "bar.appearance.mode",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "width_full",
+                        "name": "Width",
+                        "key": "bar.appearance.width",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "height",
+                        "name": "Height",
+                        "key": "bar.appearance.height",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "visibility_off",
+                        "name": "Auto Hide",
+                        "key": "bar.behavior.autoHide"
+                    },
+                    {
+                        "icon": "tv",
+                        "name": "Show On All Monitors",
+                        "key": "bar.behavior.showOnAll"
+                    },
+                    {
+                        "icon": "graphic_eq",
+                        "name": "Visualizer",
+                        "key": "bar.modules.visualizer",
+                        "condition": "Mem.options.bar.currentLayout === 5"
+                    },
+                    {
+                        "icon": "graphic_eq",
+                        "name": "Workspaces Mode",
+                        "type": "combobox",
+                        "comboBoxValues": Mem.options.bar.workspaces.avilableModes,
+                        "key": "bar.workspaces.displayMode"
+                    }
+                ]
+            },
+            !Mem.options.dock.enabled ? {} : {
+                "section": "Dock",
                 "icon": "dock",
-                "name": "Dock",
-                "key": "dock.enabled"
-            }, {
-                "icon": "notifications",
-                "name": "OSD",
-                "key": "osd.enabled"
-            }, {
-                "icon": "lock",
-                "name": "Lock Screen",
-                "key": "desktop.lock.enabled"
-            }, {
-                "icon": "shield",
-                "name": "Greeter",
-                "key": "desktop.greetd.enabled"
-            }]
-        }, {
-            "section": "Bar",
-            "icon": "panel_top",
-            "items": [{
-                "icon": "palette",
-                "name": "Background",
-                "key": "bar.appearance.useBg"
-            }, {
-                "icon": "border_all",
-                "name": "Borders",
-                "key": "bar.appearance.modulesBg"
-            }, {
-                "icon": "border_all",
-                "name": "Outline",
-                "key": "bar.appearance.outline"
-            }, {
-                "icon": "tune",
-                "name": "Bar Mode",
-                "key": "bar.appearance.mode",
-                "type": "spin"
-            }, {
-                "icon": "width_full",
-                "name": "Width",
-                "key": "bar.appearance.width",
-                "type": "spin"
-            }, {
-                "icon": "height",
-                "name": "Height",
-                "key": "bar.appearance.height",
-                "type": "spin"
-            }, {
-                "icon": "visibility_off",
-                "name": "Auto Hide",
-                "key": "bar.behavior.autoHide"
-            }, {
-                "icon": "tv",
-                "name": "Show On All Monitors",
-                "key": "bar.behavior.showOnAll"
-            }, {
-                "icon": "graphic_eq",
-                "name": "Visualizer",
-                "key": "bar.modules.visualizer",
-                "condition": "Mem.options.bar.currentLayout === 5"
-            }, {
-                "icon": "graphic_eq",
-                "name": "Workspaces Mode",
-                "type": "combobox",
-                "comboBoxValues": Mem.options.bar.workspaces.avilableModes,
-                "key": "bar.workspaces.displayMode"
-            }]
-        }, !Mem.options.dock.enabled ? {
-        } : {
-            "section": "Dock",
-            "icon": "dock",
-            "items": [{
-                "icon": "straighten",
-                "name": "Icon Size",
-                "key": "dock.appearance.iconSizeMultiplier",
-                "type": "slider",
-                "sliderMinValue": 0.4,
-                "sliderMaxValue": 1
-            }]
-        }, {
-            "section": "Sidebar Launcher",
-            "icon": "view_sidebar",
-            "items": [{
-                "icon": "tune",
-                "name": "Mode",
-                "key": "sidebar.appearance.mode",
-                "type": "spin"
-            }, {
-                "icon": "width",
-                "name": "Overlay",
-                "key": "sidebar.behavior.overlay"
-            }, {
-                "icon": "width",
-                "name": "Pre-Expand",
-                "key": "sidebar.behavior.preExpand"
-            }, {
-                "icon": "keyboard_command_key",
-                "name": "Seek on Super",
-                "key": "sidebar.behavior.superHeldReveal"
-            }, {
-                "icon": "width",
-                "name": "List View for Apps",
-                "key": "sidebar.appearance.useAppListView"
-            }, {
-                "icon": "text_fields",
-                "name": "Show Nav Titles",
-                "key": "sidebar.appearance.showNavTitles"
-            }, {
-                "icon": "linear_scale",
-                "name": "Show Sliders",
-                "key": "sidebar.appearance.showSliders"
-            }]
-        }, {
-            "section": "Sidebar Content",
-            "icon": "dashboard",
-            "items": [{
-                "icon": "check_box",
-                "name": "Tasks",
-                "key": "sidebar.content.tasks"
-            }, {
-                "icon": "history",
-                "name": "History",
-                "key": "sidebar.content.history"
-            }, {
-                "icon": "notifications",
-                "name": "Notifications",
-                "key": "sidebar.content.notifs"
-            }, {
-                "icon": "emoji_emotions",
-                "name": "Emojis",
-                "key": "sidebar.content.emojies"
-            }, {
-                "icon": "widgets",
-                "name": "Bar Switcher",
-                "key": "sidebar.content.barSwitcher"
-            }, {
-                "icon": "music_note",
-                "name": "Beats",
-                "key": "sidebar.content.beats"
-            }, {
-                "icon": "tune",
-                "name": "Tweaks",
-                "key": "sidebar.content.tweaks"
-            }, {
-                "icon": "image",
-                "name": "Wallpapers",
-                "key": "sidebar.content.wallpapers"
-            }, {
-                "icon": "dashboard_2",
-                "name": "Overview",
-                "key": "sidebar.content.overview"
-            }, {
-                "icon": "account_circle",
-                "name": "Session",
-                "key": "sidebar.content.session"
-            }, {
-                "icon": "sports_esports",
-                "name": "Games",
-                "key": "sidebar.content.games"
-            }, {
-                "icon": "photo_library",
-                "name": "Gallery",
-                "key": "sidebar.content.gallery"
-            }, {
-                "icon": "stylus",
-                "name": "Notes",
-                "key": "sidebar.content.notes"
-            }]
-        }, {
-            "section": "AI Instructions",
-            "icon": "neurology",
-            "items": [{
-                "icon": "text_fields",
-                "name": "System Prompt",
-                "key": "ai.systemPrompt",
-                "type": "field",
-                "textPlaceholder": "",
-                "fillHeight": true
-            }]
-        }, {
-            "section": "AI",
-            "icon": "neurology",
-            "items": [{
-                "icon": "neurology",
-                "name": "AI Policy",
-                "key": "policies.ai",
-                "type": "spin"
-            }, {
-                "icon": "neurology",
-                "name": "Translator Policy",
-                "key": "policies.translator",
-                "type": "spin"
-            }, {
-                "icon": "neurology",
-                "name": "Medical Dictionary",
-                "key": "policies.medicalDictionary",
-                "type": "spin"
-            }]
-        }, {
-            "section": "Beam",
-            "icon": "api",
-            "items": [{
-                "icon": "palette",
-                "name": "Mode",
-                "state": true,
-                "type": "spin",
-                "key": "beam.appearance.mode"
-            }, {
-                "icon": "clear_all",
-                "name": "Clear Chat on Search",
-                "key": "beam.behavior.clearAiChatBeforeSearch"
-            }, {
-                "icon": "arrow_upward_alt",
-                "name": "Scroll to Reveal",
-                "key": "beam.behavior.scrollToReveal"
-            }, {
-                "icon": "height",
-                "name": "Hover to Reveal",
-                "key": "beam.behavior.hoverToReveal"
-            }, {
-                "icon": "height",
-                "name": "Reveal on Empty",
-                "key": "beam.behavior.revealOnEmpty"
-            }]
-        }, {
-            "section": "Media Player",
-            "icon": "music_note",
-            "items": [{
-                "icon": "palette",
-                "name": "Adaptive Theme",
-                "key": "mediaPlayer.adaptiveTheme"
-            }, {
-                "icon": "blur_off",
-                "name": "Blur Effect",
-                "key": "mediaPlayer.useBlur"
-            }, {
-                "icon": "palette",
-                "name": "Gradient Footer",
-                "key": "mediaPlayer.enableGrad"
-            }, {
-                "icon": "graphic_eq",
-                "name": "Show Visualizer",
-                "key": "mediaPlayer.showVisualizer"
-            }, {
-                "icon": "graphic_eq",
-                "name": "Visualizer Mode",
-                "type": "combobox",
-                "comboBoxValues": ["filled", "thickbars", "bars", "circular", "waveform", "particles", "gradient", "fluid", "neural", "ripple", "plasma", "crystal", "wave3d", "atom"],
-                "key": "mediaPlayer.visualizerMode"
-            }]
-        }, {
-            "section": "Games Launcher",
-            "icon": "stadia_controller",
-            "items": [{
-                "icon": "palette",
-                "name": "Adaptive Theme",
-                "key": "services.games.adaptiveTheme"
-            }]
-        }, {
-            "section": "Desktop & Wallpaper",
-            "icon": "wallpaper",
-            "items": [{
-                "icon": "palette",
-                "name": "Shell Mode",
-                "type": "combobox",
-                "comboBoxValues": ["main", "xp"],
-                "key": "desktop.shell.mode"
-            }, {
-                "icon": "crop",
-                "name": "Depth Wallpaper",
-                "enableTooltip": false,
-                "key": "desktop.bg.depthMode"
-            }, {
-                "icon": "width",
-                "name": "Parallax Effect",
-                "key": "desktop.bg.parallax.enabled"
-            }, {
-                "icon": "width",
-                "name": "Sidebar Parallax",
-                "key": "desktop.bg.parallax.widgetParallax"
-            }, {
-                "icon": "zoom_in_map",
-                "name": "Parallax Strength",
-                "type": "slider",
-                "sliderMaxValue": 1,
-                "key": "desktop.bg.parallax.parallaxStrength"
-            }]
-        }, {
-            "section": "System & Behavior",
-            "icon": "settings",
-            "items": [{
-                "icon": "hearing",
-                "name": "System Sounds",
-                "key": "desktop.behavior.sounds.enabled"
-            }, {
-                "icon": "mouse",
-                "name": "Faster Scrolling",
-                "key": "interactions.scrolling.fasterTouchpadScroll"
-            }, {
+                "items": [
+                    {
+                        "icon": "straighten",
+                        "name": "Icon Size",
+                        "key": "dock.appearance.iconSizeMultiplier",
+                        "type": "slider",
+                        "sliderMinValue": 0.4,
+                        "sliderMaxValue": 1
+                    }
+                ]
+            },
+            {
+                "section": "Sidebar Launcher",
+                "icon": "view_sidebar",
+                "items": [
+                    {
+                        "icon": "tune",
+                        "name": "Mode",
+                        "key": "sidebar.appearance.mode",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "width",
+                        "name": "Overlay",
+                        "key": "sidebar.behavior.overlay"
+                    },
+                    {
+                        "icon": "width",
+                        "name": "Pre-Expand",
+                        "key": "sidebar.behavior.preExpand"
+                    },
+                    {
+                        "icon": "keyboard_command_key",
+                        "name": "Seek on Super",
+                        "key": "sidebar.behavior.superHeldReveal"
+                    },
+                    {
+                        "icon": "width",
+                        "name": "List View for Apps",
+                        "key": "sidebar.appearance.useAppListView"
+                    },
+                    {
+                        "icon": "text_fields",
+                        "name": "Show Nav Titles",
+                        "key": "sidebar.appearance.showNavTitles"
+                    },
+                    {
+                        "icon": "linear_scale",
+                        "name": "Show Sliders",
+                        "key": "sidebar.appearance.showSliders"
+                    }
+                ]
+            },
+            {
+                "section": "Sidebar Content",
                 "icon": "dashboard",
-                "name": "Expose Mode",
-                "type": "combobox",
-                "comboBoxValues": ['smartgrid', 'justified', 'bands', 'masonry', 'hero', 'spiral', 'satellite', 'staggered', 'columnar'],
-                "key": "desktop.view.mode"
-            }, {
-                "icon": "water_drop",
-                "name": "Tiling Layout",
-                "type": "combobox",
-                "comboBoxValues": ["master", "dwindle", "scrolling", "hy3"],
-                "key": "desktop.hyprland.tilingLayout"
-            }, {
-                "icon": "location_on",
-                "name": "Location",
-                "key": "services.location",
-                "type": "text"
-            }]
-        }, {
-            "section": "User Profile",
-            "icon": "account_circle",
-            "items": [{
-                "icon": "folder",
-                "name": "Change Profile Picture",
-                "type": "action",
-                "actionName": "set_face.sh"
-            }]
-        }]
+                "items": [
+                    {
+                        "icon": "check_box",
+                        "name": "Tasks",
+                        "key": "sidebar.content.tasks"
+                    },
+                    {
+                        "icon": "history",
+                        "name": "History",
+                        "key": "sidebar.content.history"
+                    },
+                    {
+                        "icon": "notifications",
+                        "name": "Notifications",
+                        "key": "sidebar.content.notifs"
+                    },
+                    {
+                        "icon": "emoji_emotions",
+                        "name": "Emojis",
+                        "key": "sidebar.content.emojies"
+                    },
+                    {
+                        "icon": "widgets",
+                        "name": "Bar Switcher",
+                        "key": "sidebar.content.barSwitcher"
+                    },
+                    {
+                        "icon": "music_note",
+                        "name": "Beats",
+                        "key": "sidebar.content.beats"
+                    },
+                    {
+                        "icon": "tune",
+                        "name": "Tweaks",
+                        "key": "sidebar.content.tweaks"
+                    },
+                    {
+                        "icon": "image",
+                        "name": "Wallpapers",
+                        "key": "sidebar.content.wallpapers"
+                    },
+                    {
+                        "icon": "dashboard_2",
+                        "name": "Overview",
+                        "key": "sidebar.content.overview"
+                    },
+                    {
+                        "icon": "account_circle",
+                        "name": "Session",
+                        "key": "sidebar.content.session"
+                    },
+                    {
+                        "icon": "sports_esports",
+                        "name": "Games",
+                        "key": "sidebar.content.games"
+                    },
+                    {
+                        "icon": "photo_library",
+                        "name": "Gallery",
+                        "key": "sidebar.content.gallery"
+                    },
+                    {
+                        "icon": "stylus",
+                        "name": "Notes",
+                        "key": "sidebar.content.notes"
+                    }
+                ]
+            },
+            {
+                "section": "AI Instructions",
+                "icon": "neurology",
+                "items": [
+                    {
+                        "icon": "text_fields",
+                        "name": "System Prompt",
+                        "key": "ai.systemPrompt",
+                        "type": "field",
+                        "textPlaceholder": "",
+                        "fillHeight": true
+                    }
+                ]
+            },
+            {
+                "section": "AI",
+                "icon": "neurology",
+                "items": [
+                    {
+                        "icon": "neurology",
+                        "name": "AI Policy",
+                        "key": "policies.ai",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "neurology",
+                        "name": "Translator Policy",
+                        "key": "policies.translator",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "neurology",
+                        "name": "Medical Dictionary",
+                        "key": "policies.medicalDictionary",
+                        "type": "spin"
+                    }
+                ]
+            },
+            {
+                "section": "Beam",
+                "icon": "api",
+                "items": [
+                    {
+                        "icon": "palette",
+                        "name": "Mode",
+                        "state": true,
+                        "type": "spin",
+                        "key": "beam.appearance.mode"
+                    },
+                    {
+                        "icon": "clear_all",
+                        "name": "Clear Chat on Search",
+                        "key": "beam.behavior.clearAiChatBeforeSearch"
+                    },
+                    {
+                        "icon": "arrow_upward_alt",
+                        "name": "Scroll to Reveal",
+                        "key": "beam.behavior.scrollToReveal"
+                    },
+                    {
+                        "icon": "height",
+                        "name": "Hover to Reveal",
+                        "key": "beam.behavior.hoverToReveal"
+                    },
+                    {
+                        "icon": "height",
+                        "name": "Reveal on Empty",
+                        "key": "beam.behavior.revealOnEmpty"
+                    }
+                ]
+            },
+            {
+                "section": "Media Player",
+                "icon": "music_note",
+                "items": [
+                    {
+                        "icon": "palette",
+                        "name": "Adaptive Theme",
+                        "key": "mediaPlayer.adaptiveTheme"
+                    },
+                    {
+                        "icon": "blur_off",
+                        "name": "Blur Effect",
+                        "key": "mediaPlayer.useBlur"
+                    },
+                    {
+                        "icon": "palette",
+                        "name": "Gradient Footer",
+                        "key": "mediaPlayer.enableGrad"
+                    },
+                    {
+                        "icon": "graphic_eq",
+                        "name": "Show Visualizer",
+                        "key": "mediaPlayer.showVisualizer"
+                    },
+                    {
+                        "icon": "graphic_eq",
+                        "name": "Visualizer Mode",
+                        "type": "combobox",
+                        "comboBoxValues": ["filled", "thickbars", "bars", "circular", "waveform", "particles", "gradient", "fluid", "neural", "ripple", "plasma", "crystal", "wave3d", "atom"],
+                        "key": "mediaPlayer.visualizerMode"
+                    }
+                ]
+            },
+            {
+                "section": "Games Launcher",
+                "icon": "stadia_controller",
+                "items": [
+                    {
+                        "icon": "palette",
+                        "name": "Adaptive Theme",
+                        "key": "services.games.adaptiveTheme"
+                    }
+                ]
+            },
+            {
+                "section": "Desktop & Wallpaper",
+                "icon": "wallpaper",
+                "items": [
+                    {
+                        "icon": "palette",
+                        "name": "Shell Mode",
+                        "type": "combobox",
+                        "comboBoxValues": ["main", "xp"],
+                        "key": "desktop.shell.mode"
+                    },
+                    {
+                        "icon": "crop",
+                        "name": "Depth Wallpaper",
+                        "enableTooltip": false,
+                        "key": "desktop.bg.depthMode"
+                    },
+                    {
+                        "icon": "width",
+                        "name": "Parallax Effect",
+                        "key": "desktop.bg.parallax.enabled"
+                    },
+                    {
+                        "icon": "width",
+                        "name": "Sidebar Parallax",
+                        "key": "desktop.bg.parallax.widgetParallax"
+                    },
+                    {
+                        "icon": "zoom_in_map",
+                        "name": "Parallax Strength",
+                        "type": "slider",
+                        "sliderMaxValue": 1,
+                        "key": "desktop.bg.parallax.parallaxStrength"
+                    }
+                ]
+            },
+            {
+                "section": "System & Behavior",
+                "icon": "settings",
+                "items": [
+                    {
+                        "icon": "hearing",
+                        "name": "System Sounds",
+                        "key": "desktop.behavior.sounds.enabled"
+                    },
+                    {
+                        "icon": "mouse",
+                        "name": "Faster Scrolling",
+                        "key": "interactions.scrolling.fasterTouchpadScroll"
+                    },
+                    {
+                        "icon": "dashboard",
+                        "name": "Expose Mode",
+                        "type": "combobox",
+                        "comboBoxValues": ['smartgrid', 'justified', 'bands', 'masonry', 'hero', 'spiral', 'satellite', 'staggered', 'columnar'],
+                        "key": "desktop.view.mode"
+                    },
+                    {
+                        "icon": "water_drop",
+                        "name": "Tiling Layout",
+                        "type": "combobox",
+                        "comboBoxValues": ["master", "dwindle", "scrolling", "hy3"],
+                        "key": "desktop.hyprland.tilingLayout"
+                    },
+                    {
+                        "icon": "location_on",
+                        "name": "Location",
+                        "key": "services.location",
+                        "type": "text"
+                    }
+                ]
+            },
+            {
+                "section": "User Profile",
+                "icon": "account_circle",
+                "items": [
+                    {
+                        "icon": "folder",
+                        "name": "Change Profile Picture",
+                        "type": "action",
+                        "actionName": "set_face.sh"
+                    }
+                ]
+            }
+        ]
     }
-
 }

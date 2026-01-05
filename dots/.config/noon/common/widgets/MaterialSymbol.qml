@@ -7,7 +7,10 @@ StyledText {
     property real iconSize: Fonts.sizes.small ?? 16
     property real fill: 0
     property real truncatedFill: fill.toFixed(1) // Reduce memory consumption spikes from constant font remapping
-
+    property var variableAxes:{
+        "FILL": truncatedFill,
+        "opsz": iconSize
+    }
     renderType: Text.NativeRendering
 
     font {
@@ -18,10 +21,7 @@ StyledText {
         family: Fonts.family.iconMaterial ?? "Material Symbols Rounded"
         pixelSize: iconSize
         weight: Font.Normal + (Font.DemiBold - Font.Normal) * truncatedFill
-        variableAxes: {
-            "FILL": truncatedFill,
-            "opsz": iconSize
-        }
+        variableAxes: root.variableAxes
     }
 
     Behavior on opacity {

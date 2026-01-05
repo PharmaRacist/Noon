@@ -126,7 +126,7 @@ JsonAdapter {
 
         games: JsonObject {
             property bool adaptiveTheme: false
-            property list<string> launchEnv: ["__NV_PRIME_RENDER_OFFLOAD=1","__GLX_VENDOR_LIBRARY_NAME=nvidia"]; // Nvidia Offloading
+            property list<string> launchEnv: ["__NV_PRIME_RENDER_OFFLOAD=1", "__GLX_VENDOR_LIBRARY_NAME=nvidia"] // Nvidia Offloading
         }
 
         idle: JsonObject {
@@ -139,7 +139,6 @@ JsonAdapter {
         }
         nightLight: JsonObject {
             property bool autoNightLightCycle: false
-
         }
         time: JsonObject {
             property bool use12HourFormat: true
@@ -168,7 +167,6 @@ JsonAdapter {
 
         ambientSounds: JsonObject {}
     }
-
 
     property JsonObject battery: JsonObject {
         property bool automaticSuspend: true
@@ -266,6 +264,7 @@ JsonAdapter {
     }
     property JsonObject desktop: JsonObject {
         property JsonObject shell
+        property JsonObject osd
         property JsonObject bg
         property JsonObject clock
         property JsonObject view
@@ -278,8 +277,11 @@ JsonAdapter {
         property bool desktopClock: true
         property int screenCorners: 1
         property bool timerOverlayMode: true
-        shell:JsonObject {
+        shell: JsonObject {
             property string mode: "main"
+        }
+        osd: JsonObject {
+            property string mode: "bottom_pill"
         }
         view: JsonObject {
             property string mode: "spiral"
@@ -347,7 +349,7 @@ JsonAdapter {
         property int currentLayout: 0
         property int currentVerticalLayout: 0
         property list<string> vLayout: ["materialStatusIcons", "nightlight", "weather", "separator", "battery", "separator", "sysTray", "spacer", "title", "spacer", "media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
-        property list<string> hLayout: ["power", "title", "spacer", "spacer", "resources", "media", "workspaces", "clock",  "utilButtons",  "spacer", "spacer", "spacer", "sysTray","nightlight" ,"weather","battery","materialStatusIcons"]
+        property list<string> hLayout: ["power", "title", "spacer", "spacer", "resources", "media", "workspaces", "clock", "utilButtons", "spacer", "spacer", "spacer", "sysTray", "nightlight", "weather", "battery", "materialStatusIcons"]
 
         appearance: JsonObject {
             property int mode: 2
