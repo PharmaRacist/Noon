@@ -300,4 +300,14 @@ Singleton {
             }
         );
     }
+    /**
+     * Converts a string's First Letter to uppercase
+     * @param { string } str
+     * @returns { string }
+     */
+    function capitalizeFirstLetter(string) {
+      if (!string) return "";
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
 }
