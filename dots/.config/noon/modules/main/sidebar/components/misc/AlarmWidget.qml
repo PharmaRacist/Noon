@@ -12,7 +12,7 @@ FocusScope {
 
     property bool revealAddDialog: false
 
-    Keys.onPressed: (event) => {
+    Keys.onPressed: event => {
         if ((event.modifiers & Qt.ControlModifier)) {
             if (event.key === Qt.Key_L)
                 AlarmService.clearAll();
@@ -61,9 +61,7 @@ FocusScope {
                 alarmData: modelData
                 alarmIndex: index
             }
-
         }
-
     }
 
     BottomDialog {
@@ -115,8 +113,7 @@ FocusScope {
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     }
 
-                    Spacer {
-                    }
+                    Spacer {}
 
                     RippleButtonWithIcon {
                         materialIcon: "close"
@@ -125,11 +122,9 @@ FocusScope {
                             return bottomDialog.show = false;
                         }
                     }
-
                 }
 
-                Separator {
-                }
+                Separator {}
 
                 RowLayout {
                     id: nameArea
@@ -151,7 +146,6 @@ FocusScope {
                         selectByMouse: true
                         onAccepted: parent.parent.parent.addTimer()
                     }
-
                 }
 
                 TimePicker {
@@ -160,9 +154,7 @@ FocusScope {
                     clockPicker: true
                 }
 
-                Spacer {
-                }
-
+                Spacer {}
             }
 
             RippleButton {
@@ -199,13 +191,9 @@ FocusScope {
                         font.pixelSize: Fonts.sizes.normal
                         text: "Add"
                     }
-
                 }
-
             }
-
         }
-
     }
 
     component AlarmItem: RippleButton {
@@ -230,7 +218,6 @@ FocusScope {
         releaseAction: () => {
             if (alarmData)
                 toggleSwitch.checked = !toggleSwitch.checked;
-
         }
 
         RowLayout {
@@ -277,15 +264,19 @@ FocusScope {
                     }
 
                     StyledText {
+                        id: remainingTime
                         font.pixelSize: Fonts.sizes.small
                         color: Colors.colSubtext
-                        opacity: 0.6
                         text: AlarmService.formatUntil(alarmRoot.timeUntilSeconds)
                         Layout.alignment: Qt.AlignLeft
+                        Timer {
+                            interval: 60000
+                            running: true
+                            repeat: true
+                            onTriggered: remainingTime.text = AlarmService.formatUntil(alarmRoot.timeUntilSeconds)
+                        }
                     }
-
                 }
-
             }
 
             Item {
@@ -304,7 +295,6 @@ FocusScope {
                     onCheckedChanged: {
                         if (alarmData)
                             AlarmService.toggleAlarm(alarmRoot.alarmIndex, checked);
-
                     }
                 }
 
@@ -313,11 +303,7 @@ FocusScope {
                     enabled: alarmData !== null
                     onClicked: AlarmService.removeAlarm(alarmRoot.alarmIndex)
                 }
-
             }
-
         }
-
     }
-
 }

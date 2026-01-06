@@ -32,7 +32,6 @@ StyledRect {
     anchors.margins: isKeyboardSelected ? 3 * root.itemSpacing : root.itemSpacing
     radius: Rounding.large
     color: ColorUtils.transparentize(Colors.colLayer0, isKeyboardSelected ? 0 : 0.8)
-    enableShadows: isKeyboardSelected
     enableBorders: isKeyboardSelected
     clip: true
 

@@ -24,7 +24,6 @@ Item {
         color: Colors.colLayer0
         clip: true
         radius: parent.radius
-        enableShadows: true
 
         MouseArea {
             id: mouse
@@ -60,9 +59,8 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width / 2
                     height: parent.height / 2
-                    source: Qt.resolvedUrl(Quickshell.shellPath("assets/icons")) + "/" + SystemInfo.distroIcon
+                    source: Qt.resolvedUrl(Quickshell.shellPath("assets/icons")) + "/" + SysInfoService.distroIcon
                 }
-
             }
 
             Revealer {
@@ -78,17 +76,11 @@ Item {
                     color: Colors.colOnLayer1
                     text: "Pin \nDock"
                 }
-
             }
-
         }
 
         Behavior on width {
-            Anim {
-            }
-
+            Anim {}
         }
-
     }
-
 }

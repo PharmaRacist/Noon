@@ -5,10 +5,10 @@ import qs.common
 QuickToggleButton {
     id: root
 
-    signal requestTransparencyDialog()
+    signal requestTransparencyDialog
 
     hasDialog: true
-    onRequestDialog: GlobalStates.showTransparencyDialog = true
+    onRequestDialog: GlobalStates.main.dialogs.showTransparencyDialog = true
     buttonName: toggled ? "Clear" : "opaque"
     toggled: Mem.options.appearance.transparency.enabled
     buttonIcon: toggled ? "blur_on" : "blur_off"

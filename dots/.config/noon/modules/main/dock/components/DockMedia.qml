@@ -23,7 +23,6 @@ StyledRect {
     Layout.preferredHeight: bg.implicitHeight
     Layout.preferredWidth: 2.5 * height
     color: Colors.colLayer0
-    enableShadows: true
     enableBorders: true
     StyledRect {
         anchors.fill: parent

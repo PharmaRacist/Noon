@@ -126,8 +126,8 @@ RowLayout {
                     return logoComponent;
                 case "battery":
                     return batteryComponent;
-                    case "separator":
-                        return separatorComponent;
+                case "separator":
+                    return separatorComponent;
                 default:
                     return null;
                 }
@@ -262,9 +262,9 @@ RowLayout {
                 id: separatorComponent
 
                 VerticalSeparator {
-                    Layout.topMargin: Padding.normal
-                    Layout.bottomMargin:Padding.normal
-                    Layout.margins:Padding.small
+                    Layout.topMargin: Padding.large
+                    Layout.bottomMargin: Padding.large
+                    Layout.margins: Padding.small
                 }
             }
 

@@ -12,13 +12,13 @@ QuickToggleButton {
     id: root
 
     hasDialog: true
-    onRequestDialog: GlobalStates.showCaffaineDialog = true
+    onRequestDialog: GlobalStates.main.dialogs.showCaffaineDialog = true
     showButtonName: false
     toggled: IdleService.inhibited
     buttonIcon: "coffee"
     buttonName: toggled ? "Awake" : "Sleepy"
     onClicked: IdleService.toggleInhibit()
     altAction: () => {
-        return GlobalStates.showCaffaineDialog = true;
+        return GlobalStates.main.dialogs.showCaffaineDialog = true;
     }
 }

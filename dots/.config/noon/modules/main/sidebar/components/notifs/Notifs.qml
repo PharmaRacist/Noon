@@ -12,53 +12,53 @@ Item {
     id: root
 
     property var activeDialog: {
-        if (GlobalStates.showWifiDialog)
+        if (GlobalStates.main.dialogs.showWifiDialog)
             return {
-            "key": "wifi",
-            "component": wifiComponent
-        };
+                "key": "wifi",
+                "component": wifiComponent
+            };
 
-        if (GlobalStates.showRecordingDialog)
+        if (GlobalStates.main.dialogs.showRecordingDialog)
             return {
-            "key": "recording",
-            "component": recordingComponent
-        };
+                "key": "recording",
+                "component": recordingComponent
+            };
 
-        if (GlobalStates.showKdeConnectDialog)
+        if (GlobalStates.main.dialogs.showKdeConnectDialog)
             return {
-            "key": "kdeConnect",
-            "component": kdeComponent
-        };
+                "key": "kdeConnect",
+                "component": kdeComponent
+            };
 
-        if (GlobalStates.showCaffaineDialog)
+        if (GlobalStates.main.dialogs.showCaffaineDialog)
             return {
-            "key": "caffaine",
-            "component": caffaineComponent
-        };
+                "key": "caffaine",
+                "component": caffaineComponent
+            };
 
-        if (GlobalStates.showBluetoothDialog)
+        if (GlobalStates.main.dialogs.showBluetoothDialog)
             return {
-            "key": "bluetooth",
-            "component": bluetoothComponent
-        };
+                "key": "bluetooth",
+                "component": bluetoothComponent
+            };
 
-        if (GlobalStates.showAppearanceDialog)
+        if (GlobalStates.main.dialogs.showAppearanceDialog)
             return {
-            "key": "appearance",
-            "component": appearanceComponent
-        };
+                "key": "appearance",
+                "component": appearanceComponent
+            };
 
-        if (GlobalStates.showTransparencyDialog)
+        if (GlobalStates.main.dialogs.showTransparencyDialog)
             return {
-            "key": "transparency",
-            "component": transparencyComponent
-        };
+                "key": "transparency",
+                "component": transparencyComponent
+            };
 
-        if (GlobalStates.showTempDialog)
+        if (GlobalStates.main.dialogs.showTempDialog)
             return {
-            "key": "temp",
-            "component": tempComponent
-        };
+                "key": "temp",
+                "component": tempComponent
+            };
 
         return null;
     }
@@ -76,7 +76,6 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
         }
-
     }
 
     Loader {
@@ -113,77 +112,57 @@ Item {
                 onFinished: {
                     if (!root.showDialog)
                         unloadTimer.restart();
-
                 }
             }
-
         }
-
     }
 
     // Component definitions
     Component {
         id: wifiComponent
 
-        WifiDialog {
-        }
-
+        WifiDialog {}
     }
 
     Component {
         id: recordingComponent
 
-        RecordingDialog {
-        }
-
+        RecordingDialog {}
     }
 
     Component {
         id: caffaineComponent
 
-        CaffaineDialog {
-        }
-
+        CaffaineDialog {}
     }
 
     Component {
         id: bluetoothComponent
 
-        BluetoothDialog {
-        }
-
+        BluetoothDialog {}
     }
 
     Component {
         id: transparencyComponent
 
-        TransparencyDialog {
-        }
-
+        TransparencyDialog {}
     }
 
     Component {
         id: appearanceComponent
 
-        AppearanceDialog {
-        }
-
+        AppearanceDialog {}
     }
 
     Component {
         id: kdeComponent
 
-        KdeConnectDialog {
-        }
-
+        KdeConnectDialog {}
     }
 
     Component {
         id: tempComponent
 
-        TempDialog {
-        }
-
+        TempDialog {}
     }
-
 }

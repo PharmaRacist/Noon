@@ -52,8 +52,8 @@ MouseArea {
             trayItemMenuHandle: root.item.menu
             anchor {
                 item: root
-                edges: Mem.options.bar.behavior.position === "bottom" ? (Edges.Top | Edges.Left) : (Edges.Bottom | Edges.Right)
-                gravity: Mem.options.bar.behavior.position === "bottom" ? (Edges.Top | Edges.Left) : (Edges.Bottom | Edges.Right)
+                edges: Edges.Bottom
+                gravity: Edges.Bottom
             }
 
             onMenuOpened: window => root.menuOpened(window)

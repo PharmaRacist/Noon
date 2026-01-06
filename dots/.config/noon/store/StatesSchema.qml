@@ -113,86 +113,20 @@ JsonAdapter {
 
     property JsonObject dock: JsonObject {
         property bool pinned: false
-        property list<var> pinnedApps: ["firefox", "dolphin"]
     }
     property JsonObject sidebar: JsonObject {
         property JsonObject behavior
         property JsonObject misc
         property JsonObject apis
-        property list<var> widgets: [
-            {
-                "id": "resources",
-                "pill": false,
-                "enabled": true,
-                "expandable": true,
-                "pinned": false,
-                "component": "Resources"
-            },
-            {
-                "id": "battery",
-                "pill": true,
-                "enabled": true,
-                "expandable": false,
-                "pinned": false,
-                "component": "Battery"
-            },
-            {
-                "id": "simple_clock",
-                "pill": true,
-                "enabled": true,
-                "expandable": false,
-                "pinned": false,
-                "component": "Clock_Simple"
-            },
-            {
-                "id": "bluetooth",
-                "pill": true,
-                "enabled": true,
-                "expandable": false,
-                "pinned": false,
-                "component": "Bluetooth"
-            },
-            {
-                "id": "media",
-                "pill": false,
-                "enabled": true,
-                "expandable": true,
-                "pinned": false,
-                "component": "Media"
-            },
-            {
-                "id": "combo",
-                "enabled": true,
-                "expandable": true,
-                "pinned": false,
-                "pill": false,
-                "component": "ClockWeatherCombo"
-            },
-            {
-                "id": "net",
-                "pill": true,
-                "enabled": true,
-                "expandable": false,
-                "pinned": false,
-                "component": "NetworkSpeed"
-            },
-            {
-                "id": "cal",
-                "pill": false,
-                "enabled": true,
-                "expandable": true,
-                "pinned": false,
-                "component": "Calendar"
-            },
-            {
-                "id": "pill",
-                "enabled": true,
-                "expandable": false,
-                "pinned": false,
-                "pill": true,
-                "component": "Weather_Simple"
-            }
-        ]
+        property JsonObject widgets
+
+        widgets: JsonObject {
+            property list<string> enabled: []
+            property list<string> overlayed: []
+            property list<string> pilled: []
+            property list<string> pinned: []
+            property list<string> expanded: []
+        }
         behavior: JsonObject {
             property bool expanded: false
             property bool pinned: false
@@ -205,7 +139,11 @@ JsonAdapter {
             property real fontScale: 1
         }
     }
-
+    property JsonObject favorites: JsonObject {
+        property list<var> apps: ["firefox", "dolphin"]
+        property list<var> recentApps: ["vesktop", "kitty", "spotify", "heroic", "foot", "firefox"]
+        property list<var> fastLaunchApps: ["heroic", "codium", "steam"]
+    }
     property JsonObject mediaPlayer: JsonObject {
         property string currentTrackPath: ""
     }

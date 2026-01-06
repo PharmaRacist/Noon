@@ -12,6 +12,6 @@ QuickToggleButton {
     onClicked: {
         Mem.states.services.nightLight.enabled = !Mem.states.services.nightLight.enabled;
     }
-    onRequestDialog: GlobalStates.showTempDialog = true
+    onRequestDialog: GlobalStates.main.dialogs.showTempDialog = true
     hasDialog: true
 }

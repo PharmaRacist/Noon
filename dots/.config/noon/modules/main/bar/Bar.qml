@@ -25,16 +25,14 @@ Scope {
     property bool hoverEnabled: Mem.options.bar.behavior.autoHide
     property int peekSize: 10
     property var horizontalLayoutComponents: {
-        let components = {
-        };
+        let components = {};
         for (let i = 0; i < horizontalLayouts.length; i++) {
             components[i] = Qt.createComponent(`./layouts/${horizontalLayouts[i]}.qml`);
         }
         return components;
     }
     property var verticalLayoutComponents: {
-        let components = {
-        };
+        let components = {};
         for (let i = 0; i < verticalLayouts.length; i++) {
             components[i] = Qt.createComponent(`./verticalBar/${verticalLayouts[i]}.qml`);
         }
@@ -87,8 +85,9 @@ Scope {
             screen: modelData
             WlrLayershell.layer: WlrLayer.Top
             name: "bar"
-            implicitWidth: vertical ? BarData.getEffectiveWidth(currentBarData) : BarData.getEffectiveHeight(currentBarData)
-            implicitHeight: !vertical ? BarData.getEffectiveHeight(currentBarData) : Screen.height
+            property int shadowsAccounted: 100
+            implicitWidth: vertical ? BarData.getEffectiveWidth(currentBarData) + shadowsAccounted : Screen.width
+            implicitHeight: !vertical ? BarData.getEffectiveHeight(currentBarData) + shadowsAccounted : Screen.height
             exclusiveZone: {
                 if (!bar.hoverEnabled)
                     return BarData.getEffectiveExclusiveZone(currentBarData);
@@ -114,12 +113,10 @@ Scope {
                 onEntered: {
                     if (bar.hoverEnabled)
                         barRoot.barHovered = true;
-
                 }
                 onExited: {
                     if (bar.hoverEnabled)
                         barRoot.barHovered = false;
-
                 }
 
                 // Container for bar content with margins
@@ -135,13 +132,17 @@ Scope {
                     }
 
                     opacity: !bar.hoverEnabled || barRoot.barHovered ? 1 : 0
-
+                    implicitWidth: vertical ? BarData.getEffectiveWidth(currentBarData) : Screen.width
+                    implicitHeight: !vertical ? BarData.getEffectiveHeight(currentBarData) : Screen.height
                     anchors {
-                        fill: parent
-                        leftMargin: (Mem.options.bar.behavior.position === "left") ? hideMargin : 0
-                        rightMargin: (Mem.options.bar.behavior.position === "right") ? hideMargin : 0
-                        topMargin: (Mem.options.bar.behavior.position === "top") ? hideMargin : 0
-                        bottomMargin: (Mem.options.bar.behavior.position === "bottom") ? hideMargin : 0
+                        top: vertical || bar.currentPosition === "top" ? parent.top : undefined
+                        bottom: vertical || bar.currentPosition === "bottom" ? parent.bottom : undefined
+                        left: vertical && bar.currentPosition !== "right" ? parent.left : undefined
+                        right: vertical && bar.currentPosition !== "left" ? parent.right : undefined
+                        leftMargin: (bar.currentPosition === "left") ? hideMargin : 0
+                        rightMargin: (bar.currentPosition === "right") ? hideMargin : 0
+                        topMargin: (bar.currentPosition === "top") ? hideMargin : 0
+                        bottomMargin: (bar.currentPosition === "bottom") ? hideMargin : 0
                     }
 
                     // Unified layout loader
@@ -153,57 +154,50 @@ Scope {
                         onLoaded: {
                             if (item)
                                 item.barRoot = barRoot;
-
                         }
                     }
 
                     // Smooth transitions for margins
                     Behavior on anchors.topMargin {
-                        enabled: !vertical && Mem.options.bar.behavior.position === "top"
+                        enabled: !vertical && bar.currentPosition === "top"
 
                         Anim {
                             duration: Animations.durations.normal
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
 
                     Behavior on anchors.bottomMargin {
-                        enabled: !vertical && Mem.options.bar.behavior.position === "bottom"
+                        enabled: !vertical && bar.currentPosition === "bottom"
 
                         Anim {
                             duration: Animations.durations.normal
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
 
                     Behavior on anchors.leftMargin {
-                        enabled: vertical && Mem.options.bar.behavior.position === "left"
+                        enabled: vertical && bar.currentPosition === "left"
 
                         Anim {
                             duration: Animations.durations.normal
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
 
                     Behavior on anchors.rightMargin {
-                        enabled: vertical && Mem.options.bar.behavior.position === "right"
+                        enabled: vertical && bar.currentPosition === "right"
 
                         Anim {
                             duration: Animations.durations.normal
                             easing.type: Easing.BezierSpline
                             easing.bezierCurve: Animations.curves.expressiveFastSpatial
                         }
-
                     }
-
                 }
-
             }
 
             mask: Region {
@@ -211,17 +205,13 @@ Scope {
                 item: Rectangle {
                     property bool isHorizontal: !vertical
 
-                    x: isHorizontal ? 0 : (Mem.options.bar.behavior.position === "right" ? (barRoot.width - barRoot.exclusiveZone) : 0)
-                    y: isHorizontal ? (Mem.options.bar.behavior.position === "bottom" ? (barRoot.height - barRoot.exclusiveZone) : 0) : 0
+                    x: isHorizontal ? 0 : (bar.currentPosition === "right" ? (barRoot.width - barRoot.exclusiveZone) : 0)
+                    y: isHorizontal ? (bar.currentPosition === "bottom" ? (barRoot.height - barRoot.exclusiveZone) : 0) : 0
                     width: isHorizontal ? barRoot.width : barRoot.exclusiveZone
                     height: isHorizontal ? barRoot.exclusiveZone : barRoot.height
                     visible: false
                 }
-
             }
-
         }
-
     }
-
 }

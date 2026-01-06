@@ -27,7 +27,7 @@ GridLayout {
         bottom: centerClock ? undefined : parent.bottom
         left: centerClock ? undefined : parent.left
         leftMargin: Mem.options.bar.behavior.position === "left" ? BarData.currentBarSize + Sizes.elevationMargin + Sizes.hyprland.gapsOut : Sizes.hyprland.gapsOut
-        bottomMargin: Sizes.elevationMargin + (Mem.options.bar.behavior.position === "bottom" ? BarData.currentBarSize : 0)
+        bottomMargin: Math.max(Sizes.elevationMargin, Sizes.hyprland.gapsOut) + (Mem.options.bar.behavior.position === "bottom" ? BarData.currentBarSize : 0)
     }
 
     Loader {
@@ -38,7 +38,7 @@ GridLayout {
 
     // Media indicator
     MediaIndicator {
-        visible: !verticalClock
+        visible: !verticalClock && BeatsService._playing
         Layout.row: verticalClock ? 1 : 0
     }
 
@@ -59,29 +59,21 @@ GridLayout {
     Component {
         id: verticalClockComponent
 
-        VerticalClockComponent {
-        }
-
+        VerticalClockComponent {}
     }
 
     Component {
         id: horizontalClockComponent
 
-        HorizontalClockComponent {
-        }
-
+        HorizontalClockComponent {}
     }
 
     Behavior on anchors.leftMargin {
-        Anim {
-        }
-
+        Anim {}
     }
 
     Behavior on anchors.bottomMargin {
-        Anim {
-        }
-
+        Anim {}
     }
 
     transitions: Transition {
@@ -89,7 +81,6 @@ GridLayout {
             properties: "x,y"
             easing.type: Easing.InOutQuad
         }
-
     }
     // Clock loader
 
@@ -109,7 +100,6 @@ GridLayout {
             color: Colors.colOnBackground
             text: DateTimeService.cleanMinute
         }
-
     }
 
     component HorizontalClockComponent: ColumnLayout {
@@ -135,7 +125,6 @@ GridLayout {
             text: DateTimeService.date
             renderType: Text.NativeRendering
         }
-
     }
 
     component MediaIndicator: RowLayout {
@@ -171,7 +160,6 @@ GridLayout {
                     onPressed: Noon.callIpc("sidebar Beats")
                     cursorShape: Qt.PointingHandCursor
                 }
-
             }
 
             StyledText {
@@ -185,18 +173,12 @@ GridLayout {
                 elide: Text.ElideRight
                 animateChange: true
             }
-
         }
 
-        Spacer {
-        }
+        Spacer {}
 
         Behavior on opacity {
-            Anim {
-            }
-
+            Anim {}
         }
-
     }
-
 }

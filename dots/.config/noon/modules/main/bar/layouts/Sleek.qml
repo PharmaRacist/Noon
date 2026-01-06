@@ -197,7 +197,7 @@ StyledRect {
 
     component Levels: RowLayout {
         spacing: 10
-        property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+        property var focusedScreen: GlobalStates.focusedScreen
         property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
 
         Resource {

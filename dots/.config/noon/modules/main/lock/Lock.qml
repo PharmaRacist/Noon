@@ -15,37 +15,34 @@ Scope {
 
         onUnlocked: {
             lock.locked = false;
-            GlobalStates.locked = false;
+            GlobalStates.main.locked = false;
         }
     }
 
     Connections {
         function onLockedChanged() {
-            if (GlobalStates.locked) {
+            if (GlobalStates.main.locked) {
                 Noon.playSound("locked");
                 lock.locked = true;
-            } else if (!GlobalStates.locked) {
+            } else if (!GlobalStates.main.locked) {
                 Noon.playSound("unlocked");
                 lock.locked = false;
             }
         }
 
-        target: GlobalStates
+        target: GlobalStates.main
     }
 
     WlSessionLock {
         id: lock
 
-        locked: GlobalStates.locked
+        locked: GlobalStates.main.locked
 
         WlSessionLockSurface {
             LockSurface {
                 anchors.fill: parent
                 context: lockContext
             }
-
         }
-
     }
-
 }

@@ -10,7 +10,7 @@ import Quickshell.Hyprland
 StyledListView {
     id: root
     property bool popup: false
-    anchors.fill: parent
+    // anchors.fill: parent
     spacing: Padding.small
 
     model: ScriptModel {

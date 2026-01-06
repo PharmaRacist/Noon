@@ -10,17 +10,16 @@ import Quickshell.Bluetooth
 import Quickshell
 import Quickshell.Hyprland
 
-
 BottomDialog {
     id: root
-    expandedHeight:  parent.height * 0.65  
+    expandedHeight: parent.height * 0.65
     collapsedHeight: parent.height * 0.45
     enableStagedReveal: true
     bottomAreaReveal: true
     hoverHeight: 100
 
-    onShowChanged: GlobalStates.showBluetoothDialog = show
-    finishAction:GlobalStates.showBluetoothDialog = reveal
+    onShowChanged: GlobalStates.main.dialogs.showBluetoothDialog = show
+    finishAction: GlobalStates.main.dialogs.showBluetoothDialog = reveal
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -32,11 +31,11 @@ BottomDialog {
         }
 
         BottomDialogSeparator {
-            extraVisibleCondition:!loading.visible
+            extraVisibleCondition: !loading.visible
         }
 
         StyledIndeterminateProgressBar {
-            id:loading
+            id: loading
             visible: Bluetooth.defaultAdapter?.discovering ?? false
             Layout.fillWidth: true
         }
@@ -51,13 +50,15 @@ BottomDialog {
                 values: [...Bluetooth.devices.values].sort((a, b) => {
                     // Connected -> paired -> others
                     let conn = (b.connected - a.connected) || (b.paired - a.paired);
-                    if (conn !== 0) return conn;
+                    if (conn !== 0)
+                        return conn;
 
                     // Ones with meaningful names before MAC addresses
                     const macRegex = /^([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2}$/;
                     const aIsMac = macRegex.test(a.name);
                     const bIsMac = macRegex.test(b.name);
-                    if (aIsMac !== bIsMac) return aIsMac ? 1 : -1;
+                    if (aIsMac !== bIsMac)
+                        return aIsMac ? 1 : -1;
 
                     // Alphabetical by name
                     return a.name.localeCompare(b.name);
@@ -78,14 +79,16 @@ BottomDialog {
             Layout.preferredHeight: 50
             Layout.fillWidth: true
 
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+            }
 
             DialogButton {
                 buttonText: qsTr("Details")
                 onClicked: {
                     root.show = false;
                     Noon.execDetached(Mem.options.apps.bluetooth);
-                    GlobalStates.sidebarRightOpen = false;
+                    GlobalStates.main.sidebarOpen = false;
                 }
             }
 

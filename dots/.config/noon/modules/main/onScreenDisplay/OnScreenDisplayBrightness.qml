@@ -12,7 +12,7 @@ Scope {
     id: root
     property bool showOsdValues: false
     property bool userInteracting: false
-    property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+    property var focusedScreen: GlobalStates.focusedScreen
     property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
 
     function triggerOsd() {
@@ -29,7 +29,7 @@ Scope {
     }
 
     Binding {
-        target: GlobalStates
+        target: GlobalStates.main
         property: "showOsdValues"
         value: showOsdValues
     }

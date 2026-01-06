@@ -19,7 +19,6 @@ StyledRect {
     height: collapsed ? 125 : itemSize.height - Padding.verylarge
     radius: Rounding.verylarge
     color: colors.colLayer1
-    enableShadows: true
     property size coverArtSize: collapsed ? Qt.size(75, 75) : Qt.size(175, 175)
     signal gameStarted
     property QtObject colors: Colors

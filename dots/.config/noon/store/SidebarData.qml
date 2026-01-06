@@ -201,8 +201,8 @@ Singleton {
             icon: "dashboard",
             component: "WidgetsPanel",
             overlay: false,
-            preExpand: true,
-            customSize: sizePresets.half,
+            preExpand: false,
+            customSize: sizePresets.quarted,
             enabled: Mem.options.sidebar.content.widgets
         },
         {

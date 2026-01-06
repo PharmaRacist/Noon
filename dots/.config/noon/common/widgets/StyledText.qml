@@ -9,7 +9,7 @@ Text {
     property real animationDistanceX: 0
     property real animationDistanceY: 6
 
-    font.variableAxes: Fonts.variableAxes.main
+    font.variableAxes: Fonts.family.isMono ? ({}) : Fonts.variableAxes.main
     font.family: Fonts.family.main
     renderType: Text.NativeRendering
     verticalAlignment: Text.AlignVCenter

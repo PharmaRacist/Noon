@@ -15,7 +15,6 @@ StyledRect {
 
     signal dismiss()
 
-    enableShadows: true
     Keys.onPressed: (event) => {
         if (event.key === Qt.Key_Escape) {
             root.dismiss();

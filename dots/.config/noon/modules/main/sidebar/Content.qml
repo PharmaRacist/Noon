@@ -91,7 +91,7 @@ FocusScope {
             model.clear();
             return;
         }
-        if (!isAux && (!showContent || !GlobalStates.sidebarOpen)) {
+        if (!isAux && (!showContent || !GlobalStates.main.sidebarOpen)) {
             if (clearAppListOnHide)
                 model.clear();
 
@@ -153,14 +153,14 @@ FocusScope {
             return;
         }
         const isSameCategory = selectedCategory === newCategory;
-        const isExpanded = showContent && GlobalStates.sidebarOpen;
+        const isExpanded = showContent && GlobalStates.main.sidebarOpen;
         if (isSameCategory && isExpanded) {
             selectedCategory = "";
             dismiss();
             return;
         }
-        if (!GlobalStates.sidebarOpen)
-            GlobalStates.sidebarOpen = true;
+        if (!GlobalStates.main.sidebarOpen)
+            GlobalStates.main.sidebarOpen = true;
 
         selectedCategory = newCategory;
         resetSearch(initialQuery);
@@ -269,14 +269,14 @@ FocusScope {
     clip: true
     focus: true
     onShowContentChanged: {
-        if (showContent && GlobalStates.sidebarOpen)
+        if (showContent && GlobalStates.main.sidebarOpen)
             Qt.callLater(focusSearchInput);
 
         if (!showContent && clearAppListOnHide)
             mainModel.clear();
     }
     onEffectiveSearchableChanged: {
-        if (showContent && GlobalStates.sidebarOpen)
+        if (showContent && GlobalStates.main.sidebarOpen)
             Qt.callLater(focusSearchInput);
     }
     onSelectedCategoryChanged: {
@@ -308,11 +308,11 @@ FocusScope {
 
     Connections {
         function onSidebarOpenChanged() {
-            if (GlobalStates.sidebarOpen && showContent)
+            if (GlobalStates.main.sidebarOpen && showContent)
                 Qt.callLater(root.focusSearchInput);
         }
 
-        target: GlobalStates
+        target: GlobalStates.main
     }
 
     // Listen to searchFocusRequested from main panel
@@ -402,12 +402,11 @@ FocusScope {
                 colors: root.colors
             }
             // Panel Repeater - Main and Aux
-
             Repeater {
                 id: panelRepeater
 
                 model: 2
-                visible: root.showContent && GlobalStates.sidebarOpen
+                visible: root.showContent && GlobalStates.main.sidebarOpen
                 clip: true
 
                 ContentChild {

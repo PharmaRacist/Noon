@@ -14,7 +14,6 @@ StyledRect {
     implicitWidth: passwordBox.length > 5 ? Sizes.beamSizeExpanded.width : Sizes.beamSize.width
     radius: Rounding.large
     color: Colors.colLayer1
-    enableShadows: true
     enableBorders: false
 
     anchors {

@@ -11,8 +11,8 @@ BottomDialog {
     collapsedHeight: parent.height * 0.55
     revealOnWheel: false
     enableStagedReveal: false
-    onShowChanged: GlobalStates.showAppearanceDialog = show
-    finishAction: GlobalStates.showAppearanceDialog = reveal
+    onShowChanged: GlobalStates.main.dialogs.showAppearanceDialog = show
+    finishAction: GlobalStates.main.dialogs.showAppearanceDialog = reveal
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -23,8 +23,7 @@ BottomDialog {
             title: "Appearance"
         }
 
-        BottomDialogSeparator {
-        }
+        BottomDialogSeparator {}
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -55,7 +54,6 @@ BottomDialog {
                         WallpaperService.toggleShellMode();
                     }
                 }
-
             }
 
             // --- Auto Mode ---
@@ -79,11 +77,9 @@ BottomDialog {
                     checked: Mem.states.desktop.appearance.autoShellMode
                     onToggled: Mem.states.desktop.appearance.autoShellMode = checked
                 }
-
             }
 
-            BottomDialogSeparator {
-            }
+            BottomDialogSeparator {}
 
             // --- Auto Scheme Selection ---
             RowLayout {
@@ -106,11 +102,9 @@ BottomDialog {
                     checked: Mem.states.desktop.appearance.autoSchemeSelection
                     onToggled: Mem.states.desktop.appearance.autoSchemeSelection = checked
                 }
-
             }
 
-            BottomDialogSeparator {
-            }
+            BottomDialogSeparator {}
 
             // --- Color Intensity (Chroma) ---
             ColumnLayout {
@@ -138,7 +132,6 @@ BottomDialog {
                         color: Colors.colOnSurfaceVariant
                         opacity: 0.7
                     }
-
                 }
 
                 StyledSlider {
@@ -148,7 +141,6 @@ BottomDialog {
                     value: Mem.states.desktop.Colors.chroma
                     onMoved: Mem.states.desktop.Colors.chroma = value
                 }
-
             }
 
             // --- Tone Adjustment ---
@@ -177,7 +169,6 @@ BottomDialog {
                         color: Colors.colOnSurfaceVariant
                         opacity: 0.7
                     }
-
                 }
 
                 StyledSlider {
@@ -187,13 +178,11 @@ BottomDialog {
                     value: Mem.states.desktop.Colors.tone
                     onMoved: Mem.states.desktop.Colors.tone = value
                 }
-
             }
 
             Item {
                 Layout.fillHeight: true
             }
-
         }
 
         RowLayout {
@@ -213,9 +202,6 @@ BottomDialog {
                 buttonText: qsTr("Done")
                 onClicked: root.show = false
             }
-
         }
-
     }
-
 }

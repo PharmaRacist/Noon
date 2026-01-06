@@ -62,6 +62,10 @@ Item {
     focus: searchField
     z: 999
 
+    StyledRectangularShadow {
+        target: content
+    }
+
     RowLayout {
         id: content
 
@@ -92,10 +96,6 @@ Item {
                     return Colors.colPrimaryHover;
 
                 return Colors.m3.m3primary;
-            }
-
-            StyledRectangularShadow {
-                target: parent
             }
 
             RowLayout {
@@ -223,10 +223,6 @@ Item {
                 return Colors.m3.m3primary;
             }
 
-            StyledRectangularShadow {
-                target: parent
-            }
-
             MaterialSymbol {
                 anchors.centerIn: parent
                 text: secondIcon
@@ -300,10 +296,6 @@ Item {
             topRightRadius: thirdActive ? 50 : buttonRadius
             bottomRightRadius: thirdActive ? 50 : buttonRadius
             color: thirdBgColor
-
-            StyledRectangularShadow {
-                target: parent
-            }
 
             MaterialSymbol {
                 anchors.centerIn: parent

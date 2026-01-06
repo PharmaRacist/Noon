@@ -10,8 +10,8 @@ BottomDialog {
 
     collapsedHeight: parent.height * 0.64
     enableStagedReveal: false
-    onShowChanged: GlobalStates.showKdeConnectDialog = show
-    finishAction: GlobalStates.showKdeConnectDialog = reveal
+    onShowChanged: GlobalStates.main.dialogs.showKdeConnectDialog = show
+    finishAction: GlobalStates.main.dialogs.showKdeConnectDialog = reveal
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -22,8 +22,7 @@ BottomDialog {
             title: "Phone Actions"
         }
 
-        BottomDialogSeparator {
-        }
+        BottomDialogSeparator {}
         // --- Paired Devices ---
 
         StyledText {
@@ -59,12 +58,9 @@ BottomDialog {
                     onToggled: {
                         if (checked)
                             KdeConnectService.selectDevice(modelData.id);
-
                     }
                 }
-
             }
-
         }
 
         // --- Empty Paired State ---
@@ -86,11 +82,9 @@ BottomDialog {
                 color: Colors.colOnSurfaceVariant
                 opacity: 0.7
             }
-
         }
 
-        BottomDialogSeparator {
-        }
+        BottomDialogSeparator {}
 
         // --- Quick Actions + Device Management ---
         ColumnLayout {
@@ -106,31 +100,36 @@ BottomDialog {
             }
 
             Repeater {
-                model: [{
-                    "icon": "notifications_active",
-                    "text": qsTr("Ring Device"),
-                    "action": () => {
-                        return KdeConnectService.ringDevice();
+                model: [
+                    {
+                        "icon": "notifications_active",
+                        "text": qsTr("Ring Device"),
+                        "action": () => {
+                            return KdeConnectService.ringDevice();
+                        }
+                    },
+                    {
+                        "icon": "notifications",
+                        "text": qsTr("Send Ping"),
+                        "action": () => {
+                            return KdeConnectService.pingDevice();
+                        }
+                    },
+                    {
+                        "icon": "lock",
+                        "text": qsTr("Lock Device"),
+                        "action": () => {
+                            return KdeConnectService.lockDevice();
+                        }
+                    },
+                    {
+                        "icon": "content_paste",
+                        "text": qsTr("Send Clipboard"),
+                        "action": () => {
+                            return KdeConnectService.sendClipboard();
+                        }
                     }
-                }, {
-                    "icon": "notifications",
-                    "text": qsTr("Send Ping"),
-                    "action": () => {
-                        return KdeConnectService.pingDevice();
-                    }
-                }, {
-                    "icon": "lock",
-                    "text": qsTr("Lock Device"),
-                    "action": () => {
-                        return KdeConnectService.lockDevice();
-                    }
-                }, {
-                    "icon": "content_paste",
-                    "text": qsTr("Send Clipboard"),
-                    "action": () => {
-                        return KdeConnectService.sendClipboard();
-                    }
-                }]
+                ]
 
                 RowLayout {
                     Layout.fillWidth: true
@@ -152,13 +151,10 @@ BottomDialog {
                         materialIcon: "play_arrow"
                         onClicked: modelData.action()
                     }
-
                 }
-
             }
 
-            BottomDialogSeparator {
-            }
+            BottomDialogSeparator {}
 
             StyledText {
                 text: qsTr("Device Management")
@@ -191,7 +187,6 @@ BottomDialog {
                         Noon.callIpc("sidebar hide");
                     }
                 }
-
             }
 
             RowLayout {
@@ -218,9 +213,7 @@ BottomDialog {
                         KdeConnectService.selectDevice("");
                     }
                 }
-
             }
-
         }
 
         Item {
@@ -245,9 +238,6 @@ BottomDialog {
                 buttonText: qsTr("Done")
                 onClicked: root.show = false
             }
-
         }
-
     }
-
 }

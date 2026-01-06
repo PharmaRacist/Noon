@@ -28,9 +28,7 @@ TextField {
     background: StyledRect {
         id: rect
 
-        enableShadows: true
         color: colors.colLayer2
         radius: Rounding.large
     }
-
 }

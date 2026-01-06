@@ -11,5 +11,5 @@ QuickToggleButton {
     buttonName: toggled ? "Dark" : "Light"
     onClicked: WallpaperService.toggleShellMode()
     hasDialog: true
-    onRequestDialog: GlobalStates.showAppearanceDialog = true
+    onRequestDialog: GlobalStates.main.dialogs.showAppearanceDialog = true
 }

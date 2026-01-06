@@ -9,27 +9,30 @@ import qs.common.widgets
 import qs.modules.main.dock
 import qs.services
 
-StyledRect {
+Item {
     id: root
-
     property bool pinned
-
     implicitWidth: content.implicitWidth + (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
     implicitHeight: content.implicitHeight + (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
-    color: Colors.colLayer0
-    radius: dockRoot.mainRounding
-    enableBorders: true
-    enableShadows: true
 
-    RowLayout {
-        id: content
+    StyledRect {
+        id: rect
+        anchors.fill: parent
+        color: Colors.colLayer0
+        radius: dockRoot.mainRounding
+        enableBorders: true
 
-        anchors.centerIn: parent
+        RowLayout {
+            id: content
 
-        DockApps {
-            id: dockApps
+            anchors.centerIn: parent
+
+            DockApps {
+                id: dockApps
+            }
         }
-
     }
-
+    StyledRectangularShadow {
+        target: rect
+    }
 }

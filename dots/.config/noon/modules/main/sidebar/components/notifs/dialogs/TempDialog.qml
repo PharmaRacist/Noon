@@ -13,8 +13,8 @@ BottomDialog {
     enableStagedReveal: false
     bottomAreaReveal: true
     hoverHeight: 100
-    onShowChanged: GlobalStates.showTempDialog = show
-    finishAction: GlobalStates.showTempDialog = reveal
+    onShowChanged: GlobalStates.main.dialogs.showTempDialog = show
+    finishAction: GlobalStates.main.dialogs.showTempDialog = reveal
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -26,8 +26,7 @@ BottomDialog {
             subTitle: "Adjust HyprSunset from here"
         }
 
-        BottomDialogSeparator {
-        }
+        BottomDialogSeparator {}
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -55,7 +54,6 @@ BottomDialog {
                     checked: Mem.states.services.nightLight.enabled
                     onToggled: Mem.states.services.nightLight.enabled = checked
                 }
-
             }
 
             RowLayout {
@@ -78,7 +76,6 @@ BottomDialog {
                     checked: Mem.options.services.time.autoNightLightCycle
                     onToggled: Mem.options.services.time.autoNightLightCycle = checked
                 }
-
             }
 
             RowLayout {
@@ -102,7 +99,6 @@ BottomDialog {
                     color: Colors.colOnSurfaceVariant
                     opacity: 0.7
                 }
-
             }
 
             StyledSlider {
@@ -118,7 +114,6 @@ BottomDialog {
             Item {
                 Layout.fillHeight: true
             }
-
         }
 
         RowLayout {
@@ -133,9 +128,6 @@ BottomDialog {
                 buttonText: qsTr("Done")
                 onClicked: root.show = false
             }
-
         }
-
     }
-
 }

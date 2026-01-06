@@ -24,14 +24,13 @@ StyledPanel {
     property bool isActive: false
     property bool specialActive: false
     property bool animateWindows: false
-    property var lastPositions: {
-    }
+    property var lastPositions: {}
 
     function toggleExpose() {
         root.isActive = !root.isActive;
         if (root.isActive) {
             if (root.layoutAlgorithm === 'random') {
-                var layouts = ['smartgrid', 'justified', 'bands', 'masonry', 'hero', 'spiral', 'satellite', 'staggered', 'columnar'].filter((l) => {
+                var layouts = ['smartgrid', 'justified', 'bands', 'masonry', 'hero', 'spiral', 'satellite', 'staggered', 'columnar'].filter(l => {
                     return l !== root.lastLayoutAlgorithm;
                 });
                 var randomLayout = layouts[Math.floor(Math.random() * layouts.length)];
@@ -46,20 +45,18 @@ StyledPanel {
             refreshThumbs();
         } else {
             root.animateWindows = false;
-            root.lastPositions = {
-            };
+            root.lastPositions = {};
         }
     }
 
     function refreshThumbs() {
         if (!root.isActive)
-            return ;
+            return;
 
         for (var i = 0; i < winRepeater.count; ++i) {
             var it = winRepeater.itemAt(i);
             if (it && it.visible && it.refreshThumb)
                 it.refreshThumb();
-
         }
     }
 
@@ -81,13 +78,13 @@ StyledPanel {
             root.toggleExpose();
         }
 
-        target: GlobalStates
+        target: GlobalStates.main
     }
 
     Connections {
         function onRawEvent(ev) {
             if (!root.isActive && ev.name !== "activespecial")
-                return ;
+                return;
 
             switch (ev.name) {
             case "openwindow":
@@ -96,14 +93,14 @@ StyledPanel {
             case "movewindow":
                 Hyprland.refreshToplevels();
                 refreshThumbs();
-                return ;
+                return;
             case "activespecial":
                 var dataStr = String(ev.data);
                 var namePart = dataStr.split(",")[0];
                 root.specialActive = (namePart.length > 0);
-                return ;
+                return;
             default:
-                return ;
+                return;
             }
         }
 
@@ -131,7 +128,7 @@ StyledPanel {
                 var it = winRepeater.itemAt(candidate);
                 if (it && it.visible) {
                     exposeArea.currentIndex = candidate;
-                    return ;
+                    return;
                 }
             }
         }
@@ -142,7 +139,7 @@ StyledPanel {
             var currentItem = winRepeater.itemAt(startIndex);
             if (!currentItem || !currentItem.visible) {
                 moveSelectionHorizontal(dir > 0 ? 1 : -1);
-                return ;
+                return;
             }
             var curCx = currentItem.x + currentItem.width / 2;
             var curCy = currentItem.y + currentItem.height / 2;
@@ -175,24 +172,23 @@ StyledPanel {
             }
             if (bestIndex >= 0)
                 exposeArea.currentIndex = bestIndex;
-
         }
 
         anchors.fill: parent
         focus: true
         // Keyboard navigation
-        Keys.onPressed: (event) => {
+        Keys.onPressed: event => {
             if (!root.isActive)
-                return ;
+                return;
 
             if (event.key === Qt.Key_Escape) {
                 root.toggleExpose();
                 event.accepted = true;
-                return ;
+                return;
             }
             const total = winRepeater.count;
             if (total <= 0)
-                return ;
+                return;
 
             if (event.key === Qt.Key_Right || event.key === Qt.Key_Tab) {
                 moveSelectionHorizontal(1);
@@ -271,8 +267,7 @@ StyledPanel {
 
                             for (var it of rawToplevels) {
                                 var w = it;
-                                var clientInfo = w && w.lastIpcObject ? w.lastIpcObject : {
-                                };
+                                var clientInfo = w && w.lastIpcObject ? w.lastIpcObject : {};
                                 var workspace = clientInfo && clientInfo.workspace ? clientInfo.workspace : null;
                                 var workspaceId = workspace && workspace.id !== undefined ? workspace.id : undefined;
                                 // Filter invalid workspace or offscreen windows
@@ -293,7 +288,6 @@ StyledPanel {
                                     var match = title.indexOf(q) !== -1 || clazz.indexOf(q) !== -1 || ic.indexOf(q) !== -1 || app.indexOf(q) !== -1;
                                     if (!match)
                                         continue;
-
                                 }
                                 windowList.push({
                                     "win": w,
@@ -306,7 +300,7 @@ StyledPanel {
                                 });
                             }
                             // Sort by workspaceId, then originalIndex
-                            windowList.sort(function(a, b) {
+                            windowList.sort(function (a, b) {
                                 if (a.workspaceId < b.workspaceId)
                                     return -1;
 
@@ -344,9 +338,7 @@ StyledPanel {
                             hovered: visible && (exposeArea.currentIndex === index)
                             moveCursorToActiveWindow: root.moveCursorToActiveWindow
                         }
-
                     }
-
                 }
 
                 // Search bar
@@ -357,7 +349,6 @@ StyledPanel {
                     height: 50
                     radius: Rounding.large
                     color: Colors.colLayer2
-                    enableShadows: true
                     clip: true
                     anchors.horizontalCenter: parent.horizontalCenter
 
@@ -381,7 +372,6 @@ StyledPanel {
                             text: "search"
                             fill: 1
                         }
-
                     }
 
                     TextInput {
@@ -417,15 +407,9 @@ StyledPanel {
                             text: "Type to filter windows..."
                             visible: !searchInput.text || searchInput.text.length === 0
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }

@@ -33,7 +33,6 @@ Item {
                 rowSpacing: iconSpacing
                 columnSpacing: 0
             }
-
         },
         State {
             name: "horizontal"
@@ -46,7 +45,6 @@ Item {
                 rowSpacing: 0
                 columnSpacing: iconSpacing
             }
-
         }
     ]
 
@@ -58,11 +56,11 @@ Item {
         interval: 200
         onTriggered: {
             if (mode === "wifi") {
-                GlobalStates.showWifiDialog = true;
-                GlobalStates.showBluetoothDialog = false;
+                GlobalStates.dialogs.showWifiDialog = true;
+                GlobalStates.dialogs.showBluetoothDialog = false;
             } else if (mode === "bluetooth") {
-                GlobalStates.showWifiDialog = false;
-                GlobalStates.showBluetoothDialog = true;
+                GlobalStates.dialogs.showWifiDialog = false;
+                GlobalStates.dialogs.showBluetoothDialog = true;
             }
         }
     }
@@ -114,7 +112,22 @@ Item {
             NetworkPopup {
                 hoverTarget: networkMouse
             }
+        }
 
+        MaterialSymbol {
+            visible: RecordingService.isRecording ?? false
+            text: "radio_button_checked"
+            font.pixelSize: commonIconSize
+            color: commonIconColor
+            fill: 1
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                StyledToolTip {
+                    extraVisibleCondition: parent.containsMouse
+                    content: "Recording " + RecordingService.getFormattedDuration()
+                }
+            }
         }
 
         MaterialSymbol {
@@ -140,9 +153,6 @@ Item {
                     delayReveal.restart();
                 }
             }
-
         }
-
     }
-
 }

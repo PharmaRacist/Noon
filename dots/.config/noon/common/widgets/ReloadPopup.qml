@@ -55,7 +55,6 @@ StyledPanel {
 
         implicitWidth: root.expanded ? 1280 : 600
         implicitHeight: root.expanded ? 600 : 200
-        enableShadows: true
         radius: Rounding.huge
         color: Colors.m3.m3surfaceContainer
 

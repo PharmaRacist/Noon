@@ -14,7 +14,6 @@ StyledRect {
     radius: Rounding.large
     color: BeatsService.colors.colSecondaryContainer
     clip: true
-    enableShadows: true
 
     CroppedImage {
         id: coverImage

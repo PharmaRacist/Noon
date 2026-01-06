@@ -8,7 +8,7 @@ import qs.common
 import qs.common.utils
 
 /**
- * Provides access to some Hyprland data not available in Quickshell.Hyprland.
+ * Provides access to some Hyprland "RealTime" data not available in Quickshell.Hyprland.
  */
 Singleton {
     id: root
@@ -31,9 +31,7 @@ Singleton {
             "Arabic": "AR"
         })
     readonly property string keyboardLayoutShortName: keyboardLayoutShortNames[currentKeyboardLayout] ?? currentKeyboardLayout.substring(0, 2).toUpperCase()
-
-    property string hyprlandLayout: Mem.options.desktop.hyprland.tilingLayout
-    onHyprlandLayoutChanged: Noon.setHyprKey("layout", hyprlandLayout)
+    Component.onCompleted: updateAll()
 
     function updateWindowList() {
         getClients.running = true;
@@ -79,7 +77,6 @@ Singleton {
     function switchKeyboardLayout() {
         Noon.execDetached("hyprctl switchxkblayout current next");
     }
-    Component.onCompleted: updateAll()
 
     Connections {
         target: Hyprland

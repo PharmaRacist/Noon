@@ -94,7 +94,6 @@ Item {
 
         default property alias contents: innerLayout.children
 
-        enableShadows: true
         color: Colors.colLayer0
         radius: Rounding.verylarge
         implicitHeight: barHeight
@@ -123,7 +122,6 @@ Item {
     component SimpleChunk: StyledRect {
         default property alias contents: layout.children
 
-        enableShadows: true
         color: Colors.colLayer0
         radius: Rounding.verylarge
         implicitHeight: barHeight

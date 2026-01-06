@@ -18,7 +18,7 @@ StyledPopup {
         clip: true
         anchors.fill: parent
 
-        property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+        property var focusedScreen: GlobalStates.focusedScreen
         property var focusedWindow: Hyprland.focusedWindow
         property var toplevel: focusedWindow?.address ? Hyprland.toplevelForAddress(focusedWindow.address) : null
         readonly property Toplevel activeWindow: ToplevelManager.activeToplevel

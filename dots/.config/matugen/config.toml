@@ -16,9 +16,9 @@ output_path = '~/.config/niri/colors.kdl'
 input_path = "~/.config/matugen/templates/terminal/sequences.txt"
 output_path = '~/.local/state/noon/user/generated/terminal/sequences.txt'
 
-[templates.m3colors]
+[templates.noon]
 input_path = '~/.config/matugen/templates/colors.json'
-output_path = '~/.local/state/noon/user/generated/colors.json'
+output_path = '~/.local/state/noon/colors.json'
 
 [templates.starship]
 input_path = '~/.config/matugen/templates/starship.toml'

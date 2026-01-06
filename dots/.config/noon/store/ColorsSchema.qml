@@ -1,8 +1,7 @@
-pragma Singleton
 import QtQuick
-import Quickshell
+import qs.common.utils
 
-QtObject {
+JsonAdapter {
     property bool brightWall: false
     property bool darkmode: !brightWall
     property bool transparent: false

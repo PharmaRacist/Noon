@@ -8,10 +8,12 @@ import QtQuick.Layouts
 BottomDialog {
     id: root
     required property var db
+
     collapsedHeight: 650
     enableStagedReveal: false
     bottomAreaReveal: true
     hoverHeight: 200
+
     contentItem: ColumnLayout {
         anchors.fill: parent
         anchors.margins: Padding.verylarge
@@ -19,7 +21,7 @@ BottomDialog {
 
         BottomDialogHeader {
             title: "Islands"
-            subTitle: root.db.filter(item => item.enabled).length + " of " + root.db.length + " enabled"
+            subTitle: Mem.states.sidebar.widgets.enabled.length + " of " + root.db.length + " enabled"
             target: root
         }
 
@@ -37,8 +39,10 @@ BottomDialog {
                 Repeater {
                     id: dialogRepeater
                     model: root.db
-                    Layout.fillWidth: true
+
                     delegate: StyledDelegateItem {
+                        Layout.preferredWidth: parent.width
+                        Layout.preferredHeight: 72
                         Layout.fillWidth: true
                         colActiveColor: Colors.colPrimaryContainer
                         colActiveItemColor: Colors.colPrimary
@@ -47,32 +51,35 @@ BottomDialog {
                             let props = [];
                             if (modelData.expandable)
                                 props.push("Expandable");
-                            if (modelData.pill)
+                            if (Mem.states.sidebar.widgets.pilled.indexOf(modelData.id) !== -1)
                                 props.push("Pill");
+                            else
+                                props.push("Island");
+                            if (Mem.states.sidebar.widgets.pinned.indexOf(modelData.id) !== -1)
+                                props.push("Pinned");
+                            if (Mem.states.sidebar.widgets.expanded.indexOf(modelData.id) !== -1)
+                                props.push("Expanded");
                             return props.length > 0 ? props.join(" • ") : "Standard widget";
                         }
                         colSubtext: Colors.colSubtext
                         colTitle: Colors.colOnLayer2
-                        materialIcon: modelData.pill ? "tablet" : "grid_view"
-                        implicitHeight: 64
-                        enabled: !root.db[index].enabled
-                        opacity: root.db[index].enabled ? 0.5 : 1
+                        materialIcon: modelData.materialIcon || "widgets"
+                        enabled: Mem.states.sidebar.widgets.enabled.indexOf(modelData.id) === -1
+                        opacity: Mem.states.sidebar.widgets.enabled.indexOf(modelData.id) !== -1 ? 0.5 : 1
 
                         onClicked: {
-                            if (!root.db[index].enabled) {
-                                root.db[index].enabled = true;
-                                let item = widgetRepeater.itemAt(index);
-                                if (item) {
-                                    item.active = true;
-                                }
-                                Qt.callLater(root.arrangeAll);
-                                dialogRepeater.model = root.db.slice();
+                            let list = Mem.states.sidebar.widgets.enabled;
+                            let idx = list.indexOf(modelData.id);
+                            if (idx === -1) {
+                                list.push(modelData.id);
+                                Mem.states.sidebar.widgets.enabled = list.slice();
                             }
                         }
                     }
                 }
             }
         }
+
         Spacer {}
     }
 }

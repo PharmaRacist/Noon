@@ -46,7 +46,6 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         radius: Rounding.verylarge
         color: Colors.m3.m3surface // Use opaque version of layer3
-        enableShadows: true
         y: root.show ? targetY : (targetY - root.backgroundAnimationMovementDistance)
         implicitWidth: root.backgroundWidth
         implicitHeight: contentColumn.implicitHeight + dialogBackground.radius * 2

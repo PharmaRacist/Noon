@@ -1,8 +1,9 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.common
-pragma Singleton
+
 /*
     Simple Hyprland Parser to (read,write) to hyprland conf file
     - [ ] Prevent useless writes
@@ -48,7 +49,7 @@ Singleton {
         const content = file.text();
         if (!content)
             return false;
-        const lines = content.split('\n').map((line) => {
+        const lines = content.split('\n').map(line => {
             const match = line.match(/^\$(\w+)\s*=/);
             if (match && variables.hasOwnProperty(match[1])) {
                 const name = match[1];
@@ -67,7 +68,7 @@ Singleton {
         if (!file.loaded)
             return;
         const parsed = {};
-        file.text().split('\n').forEach((line) => {
+        file.text().split('\n').forEach(line => {
             const match = line.match(/^\$(\w+)\s*=\s*(.+?)(?:\s+[#$].*)?$/);
             if (match)
                 parsed[match[1]] = parseValue(match[2].trim());
@@ -111,7 +112,7 @@ Singleton {
     }
 
     Timer {
-        interval: 100
+        interval: 300
         running: true
         repeat: false
         onTriggered: {

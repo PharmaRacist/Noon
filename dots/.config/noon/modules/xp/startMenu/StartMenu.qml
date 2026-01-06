@@ -4,8 +4,8 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Wayland
 import Quickshell.Hyprland
-import qs
 import qs.common
 import qs.common.widgets
 import qs.services
@@ -13,73 +13,59 @@ import qs.services
 StyledPanel {
     id: root
 
+    readonly property int shadowAccount: 100
     property bool top: false
-
+    visible: GlobalStates.xp.showStartMenu
     shell: "xp"
     name: "startMenu"
-    implicitHeight: XSizes.startMenu.size.height
-    implicitWidth: XSizes.startMenu.size.width
-    visible: GlobalStates.xp.startMenu.visible
-
+    implicitHeight: XSizes.startMenu.size.height + shadowAccount
+    implicitWidth: XSizes.startMenu.size.width + shadowAccount
+    WlrLayershell.layer: WlrLayer.Top
     anchors {
         bottom: true
         top: false
         left: true
     }
-
+    StyledRectangularShadow {
+        target: bg
+    }
     StyledRect {
         id: bg
-
-        color: XColors.colors.primaryContainer
-        topLeftRadius: XRounding.normal
-        topRightRadius: XRounding.large
-        border.color: XColors.colors.primaryBorder
-        // border.width: 2
-        layer.enabled: true
-
-        ColumnLayout {
-            id: contentColumn
-
-            anchors.fill: parent
-
-            StyledRect {
-                Layout.fillWidth: true
-                color: "transparent"
-                Layout.preferredHeight: 175
-
-                RowLayout {
-                    anchors.fill: parent
-
-                    StyledRect {
-                        Layout.leftMargin: XPadding.huge
-                        radius: XRounding.large
-                        implicitHeight: 120
-                        implicitWidth: 120
-                    }
-
-                }
-
-            }
-
-            Spacer {
-            }
-
-        }
-
         anchors {
             fill: parent
-            margins: 10
-            bottomMargin: -border.width - 2
+            topMargin: shadowAccount
+            rightMargin: shadowAccount
+            bottomMargin: 1
+            margins: -border.width
+        }
+        topRadius: XRounding.small
+        border.width: 2
+        border.color: XColors.colors.colPrimaryBorder
+        clip: true
+        gradient: Gradient {
+            GradientStop {
+                position: 0
+                color: "#1366CF"
+            }
+            GradientStop {
+                position: 0.2
+                color: "#3E8DEE"
+            }
+            GradientStop {
+                position: 0.8
+                color: "#3E8DEE"
+            }
+            GradientStop {
+                position: 1
+                color: "#1366CF"
+            }
         }
 
-        layer.effect: DropShadow {
-            verticalOffset: 4
-            horizontalOffset: 4
-            color: XColors.colors.shadows
-            radius: 3
-            samples: 2
+        ColumnLayout {
+            anchors.fill: parent
+            TopArea {}
+            CenterArea {}
+            BottomArea {}
         }
-
     }
-
 }

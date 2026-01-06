@@ -15,13 +15,14 @@ MouseArea {
 
     onClicked: expanded = !expanded
     hoverEnabled: true
-    implicitHeight: verticalMode ? content.implicitHeight + 5 : BarData.currentBarExclusiveSize
-    implicitWidth: verticalMode ? BarData.currentBarExclusiveSize : content.implicitWidth
-
+    implicitHeight: verticalMode ? children[0].implicitHeight : BarData.currentBarExclusiveSize
+    implicitWidth: verticalMode ? BarData.currentBarExclusiveSize : children[0].implicitWidth
+    Layout.leftMargin: verticalMode ? 0 : Padding.normal
+    Layout.rightMargin: verticalMode ? Padding.normal : 0
     GridLayout {
         id: content
 
-        anchors.fill: parent
+        anchors.centerIn: parent
         Component.onCompleted: WeatherService.loadWeather()
         rows: verticalMode ? 2 : 1
         columns: verticalMode ? 1 : 2
@@ -51,13 +52,10 @@ MouseArea {
                 color: Colors.colOnLayer1
                 horizontalAlignment: Text.AlignHCenter
             }
-
         }
-
     }
 
     WeatherPopup {
         hoverTarget: root
     }
-
 }

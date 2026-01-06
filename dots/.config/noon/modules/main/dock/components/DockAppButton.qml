@@ -75,10 +75,10 @@ RippleButton {
         root.desktopEntry?.execute();
     }
     altAction: () => {
-        if (Mem.states.dock.pinnedApps.indexOf(appToplevel.appId) !== -1) {
-            Mem.states.dock.pinnedApps = Mem.states.dock.pinnedApps.filter(id => id !== appToplevel.appId);
+        if (Mem.states.favorites.apps.indexOf(appToplevel.appId) !== -1) {
+            Mem.states.favorites.apps = Mem.states.favorites.apps.filter(id => id !== appToplevel.appId);
         } else {
-            Mem.states.dock.pinnedApps = Mem.states.dock.pinnedApps.concat([appToplevel.appId]);
+            Mem.states.favorites.apps = Mem.states.favorites.apps.concat([appToplevel.appId]);
         }
     }
     contentItem: Loader {

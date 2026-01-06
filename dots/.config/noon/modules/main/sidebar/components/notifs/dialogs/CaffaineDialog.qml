@@ -10,8 +10,8 @@ BottomDialog {
 
     collapsedHeight: parent.height * 0.4
     enableStagedReveal: false
-    onShowChanged: GlobalStates.showCaffaineDialog = show
-    finishAction: GlobalStates.showCaffaineDialog = reveal
+    onShowChanged: GlobalStates.main.dialogs.showCaffaineDialog = show
+    finishAction: GlobalStates.main.dialogs.showCaffaineDialog = reveal
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -22,8 +22,7 @@ BottomDialog {
             title: qsTr("Caffeine")
         }
 
-        BottomDialogSeparator {
-        }
+        BottomDialogSeparator {}
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -50,7 +49,6 @@ BottomDialog {
                     checked: Mem.options.services.idle.inhibit
                     onToggled: Mem.options.services.idle.inhibit = checked
                 }
-
             }
 
             RowLayout {
@@ -87,15 +85,12 @@ BottomDialog {
                         bottom: 0
                         top: 36000
                     }
-
                 }
-
             }
 
             Item {
                 Layout.fillHeight: true
             }
-
         }
 
         RowLayout {
@@ -110,9 +105,6 @@ BottomDialog {
                 buttonText: qsTr("Done")
                 onClicked: root.show = false
             }
-
         }
-
     }
-
 }

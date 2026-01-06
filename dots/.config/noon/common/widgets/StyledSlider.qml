@@ -38,12 +38,12 @@ Slider {
 
     MouseArea {
         anchors.fill: parent
-        onPressed: (mouse) => {
+        onPressed: mouse => {
             return mouse.accepted = false;
         }
         cursorShape: root.pressed ? Qt.ClosedHandCursor : Qt.PointingHandCursor
         // Add wheel event handler
-        onWheel: (wheel) => {
+        onWheel: wheel => {
             var delta = wheel.angleDelta.y / 120; // Normalize to clicks
             var newValue = root.value + (delta * root.wheelStepSize);
             root.value = Math.max(root.from, Math.min(root.to, newValue));
@@ -55,13 +55,10 @@ Slider {
         SmoothedAnimation {
             velocity: Animations.durations.small
         }
-
     }
 
     Behavior on handleMargins {
-        FAnim {
-        }
-
+        FAnim {}
     }
 
     background: Item {
@@ -104,7 +101,6 @@ Slider {
             radius: Rounding.full
             color: root.handleColor
         }
-
     }
 
     handle: Rectangle {
@@ -123,11 +119,7 @@ Slider {
         }
 
         Behavior on implicitWidth {
-            FAnim {
-            }
-
+            FAnim {}
         }
-
     }
-
 }

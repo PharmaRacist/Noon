@@ -1,6 +1,7 @@
+pragma Singleton
 import QtQuick
 import Quickshell
-pragma Singleton
+import qs.common.functions
 
 Singleton {
     property QtObject luna
@@ -9,20 +10,32 @@ Singleton {
     property QtObject colors: luna
 
     luna: QtObject {
-        readonly property color primary: "#758252"
-        readonly property color primaryContainer: "#2E61D6"
-        readonly property color primaryBorder: "#5297FF"
-        readonly property color secondary: "#208EE8"
-        readonly property color secondaryBorder: "#2AA2FB"
-        readonly property color tertiary: "#19911D"
-        readonly property color tertiaryBorder: "#84BD7E"
-        readonly property color quatrenary: "#D3E5FB"
-        readonly property color quatrenaryContainer: "#D3E5FB"
-        readonly property color quatrenaryBorder: "#A7B8D4"
-        readonly property color quatrenarySeparator: "#A5B6C9"
-        readonly property color critical: "#EC7E6D"
-        readonly property color warning: "#DAA60D"
-        readonly property color shadows: "#75000000"
+        readonly property real dimintensity: 1.2
+        readonly property real lightintensity: 1.2
+        readonly property color colPrimary: "#2C70CF"
+        readonly property color colOnPrimary: "#FFFFFF"
+        readonly property color colPrimaryContainer: "#225DDB"
+        readonly property color colPrimaryBorder: "#074491"
+        readonly property color colPrimaryBorderDim: Qt.darker(colPrimaryBorder, dimintensity)
+        readonly property color colSecondary: "#0C92ED"
+        readonly property color colSecondaryDim: Qt.darker(colSecondary, dimintensity)
+        readonly property color colSecondaryHover: Qt.lighter(colSecondary, lightintensity)
+        readonly property color colOnSecondary: "#A6FDFF"
+        readonly property color colSecondaryBorder: "#1FAAE9"
+        readonly property color colTertiary: "#2D812D" // Start Button Bg
+        readonly property color colTertiaryBorder: "#84BD7E"
+        readonly property color colQuaternary: "#D3E5FB"
+        readonly property color colQuaternaryContainer: "#D3E5FB"
+        readonly property color colQuaternaryBorder: "#A7B8D4"
+        readonly property color colQuaternarySeparator: "#A5B6C9"
+        readonly property color colCritical: "#F13F1C"
+        readonly property color colOnCritical: "#FFF8F5"
+        readonly property color colCriticalHover: Qt.lighter(colCritical, lightintensity)
+        readonly property color colCriticalBorder: ColorUtils.transparentize(colCritical, 0.45)
+        readonly property color colWarning: "#F2AF00"
+        readonly property color colOnWarning: "#FFFCF8"
+        readonly property color colWarningHover: Qt.lighter(colWarning, lightintensity)
+        readonly property color colWarningBorder: ColorUtils.transparentize(colWarning, 0.45)
+        readonly property color colShadows: "#75000000"
     }
-
 }

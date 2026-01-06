@@ -59,6 +59,58 @@ QtObject {
                         "name": "UI Font",
                         "key": "appearance.fonts.main",
                         "type": "text"
+                    },
+                    {
+                        "icon": "font_download",
+                        "name": "Sync Family",
+                        "key": "appearance.fonts.syncFamily"
+                    }
+                ]
+            },
+            {
+                "section": "Hyprland",
+                "icon": "water_drop",
+                "items": [
+                    {
+                        "icon": "blur_on",
+                        "name": "Blur Passes",
+                        "key": "desktop.hyprland.blurPasses",
+                        "type": "spin"
+                    },
+                    {
+                        "icon": "blur_on",
+                        "name": "X Ray",
+                        "key": "desktop.hyprland.xray"
+                    },
+                    {
+                        "icon": "dark_mode",
+                        "name": "Shadows",
+                        "key": "desktop.hyprland.shadows"
+                    },
+                    {
+                        "icon": "expand_content",
+                        "name": "Gaps Out",
+                        "key": "desktop.hyprland.gapsOut",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "collapse_content",
+                        "name": "Gaps In",
+                        "key": "desktop.hyprland.gapsIn",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "border_all",
+                        "name": "Border Width",
+                        "key": "desktop.hyprland.borders",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "dashboard",
+                        "name": "Tiling Layout",
+                        "type": "combobox",
+                        "comboBoxValues": ["master", "dwindle", "scrolling"],
+                        "key": "desktop.hyprland.tilingLayout"
                     }
                 ]
             },
@@ -531,16 +583,51 @@ QtObject {
                         "key": "desktop.view.mode"
                     },
                     {
-                        "icon": "water_drop",
-                        "name": "Tiling Layout",
-                        "type": "combobox",
-                        "comboBoxValues": ["master", "dwindle", "scrolling", "hy3"],
-                        "key": "desktop.hyprland.tilingLayout"
-                    },
-                    {
                         "icon": "location_on",
                         "name": "Location",
                         "key": "services.location",
+                        "type": "text"
+                    }
+                ]
+            },
+            {
+                "section": "Default Apps",
+                "icon": "apps",
+                "items": [
+                    {
+                        "icon": "folder_open",
+                        "name": "File Manager",
+                        "key": "apps.fileManager",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "language",
+                        "name": "Browser",
+                        "key": "apps.browser",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "web",
+                        "name": "Browser Alt",
+                        "key": "apps.browserAlt",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "terminal",
+                        "name": "Terminal",
+                        "key": "apps.terminal",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "code",
+                        "name": "Terminal Alt",
+                        "key": "apps.terminalAlt",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "edit_note",
+                        "name": "Editor",
+                        "key": "apps.editor",
                         "type": "text"
                     }
                 ]

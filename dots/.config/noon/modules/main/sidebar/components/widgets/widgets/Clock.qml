@@ -8,6 +8,5 @@ StyledRect {
     implicitSize: Sizes.sidebar.widgetSize
     color: Colors.colLayer1
     radius: Rounding.verylarge
-    enableShadows: true
     enableBorders: true
 }

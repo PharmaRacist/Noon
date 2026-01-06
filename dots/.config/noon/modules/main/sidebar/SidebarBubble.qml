@@ -5,7 +5,7 @@ import qs.common
 import qs.common.widgets
 import qs.services
 
-StyledRect {
+Item {
     id: root
 
     property bool show
@@ -125,64 +125,70 @@ StyledRect {
             ]
         }
     ]
-    visible: width > 0 && !Mem.states.sidebar.behavior.pinned
-    enableShadows: true
-    radius: Rounding.verylarge
-    color: colors.colLayer0
+
+    visible: bg.width > 0 && !Mem.states.sidebar.behavior.pinned
     height: content.implicitHeight + 2 * Padding.large
     width: show ? 55 : 0
     clip: true
 
-    MouseArea {
-        id: mouse
+    StyledRect {
+        id: bg
 
-        acceptedButtons: Qt.NoButton
+        radius: Rounding.verylarge
+        color: colors.colLayer0
         anchors.fill: parent
-        propagateComposedEvents: false
-        hoverEnabled: true
-    }
 
-    ColumnLayout {
-        id: content
+        MouseArea {
+            id: mouse
 
-        spacing: Padding.verysmall
-        anchors.centerIn: parent
+            acceptedButtons: Qt.NoButton
+            anchors.fill: parent
+            propagateComposedEvents: false
+            hoverEnabled: true
+        }
 
-        Repeater {
-            model: root.bubbles
+        ColumnLayout {
+            id: content
 
-            ColumnLayout {
-                spacing: parent.spacing
-                visible: modelData.cat === root.selectedCategory
+            spacing: Padding.verysmall
+            anchors.centerIn: parent
+
+            Repeater {
+                model: root.bubbles
 
                 ColumnLayout {
                     spacing: parent.spacing
+                    visible: modelData.cat === root.selectedCategory
 
-                    Repeater {
-                        model: modelData.bubbles
+                    ColumnLayout {
+                        spacing: parent.spacing
 
-                        RippleButtonWithIcon {
-                            colors: root.colors
-                            visible: modelData?.extraVisibleCondition ?? true
-                            Layout.fillWidth: true
-                            enabled: modelData.enabled !== undefined ? modelData.enabled : true
-                            materialIcon: modelData.icon
-                            releaseAction: modelData.action
+                        Repeater {
+                            model: modelData.bubbles
+
+                            RippleButtonWithIcon {
+                                colors: root.colors
+                                visible: modelData?.extraVisibleCondition ?? true
+                                Layout.fillWidth: true
+                                enabled: modelData.enabled !== undefined ? modelData.enabled : true
+                                materialIcon: modelData.icon
+                                releaseAction: modelData.action
+                            }
                         }
                     }
-                }
 
-                Separator {
-                    visible: modelData.cat === root.selectedCategory
+                    Separator {
+                        visible: modelData.cat === root.selectedCategory
+                    }
                 }
             }
-        }
 
-        RippleButtonWithIcon {
-            materialIcon: !root.rightMode && Mem.states.sidebar.behavior.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right"
-            colors: root.colors
-            releaseAction: () => {
-                Mem.states.sidebar.behavior.expanded = !Mem.states.sidebar.behavior.expanded;
+            RippleButtonWithIcon {
+                materialIcon: !root.rightMode && Mem.states.sidebar.behavior.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right"
+                colors: root.colors
+                releaseAction: () => {
+                    Mem.states.sidebar.behavior.expanded = !Mem.states.sidebar.behavior.expanded;
+                }
             }
         }
     }

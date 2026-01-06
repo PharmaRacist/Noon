@@ -19,9 +19,9 @@ Scope {
     property bool showFailure: false
     property var targetAction: LockContext.ActionEnum.Unlock
 
-    signal shouldReFocus()
+    signal shouldReFocus
     signal unlocked(var targetAction)
-    signal failed()
+    signal failed
 
     function resetTargetAction() {
         root.targetAction = LockContext.ActionEnum.Unlock;
@@ -49,9 +49,7 @@ Scope {
     onCurrentTextChanged: {
         if (currentText.length > 0) {
             showFailure = false;
-            GlobalStates.screenUnlockFailed = false;
         }
-        GlobalStates.screenLockContainsCharacters = currentText.length > 0;
         passwordClearTimer.restart();
     }
 
@@ -71,19 +69,16 @@ Scope {
         onPamMessage: {
             if (this.responseRequired)
                 this.respond(root.currentText);
-
         }
         // pam_unix won't send any important messages so all we need is the completion status.
-        onCompleted: (result) => {
+        onCompleted: result => {
             if (result == PamResult.Success) {
                 root.unlocked(root.targetAction);
             } else {
                 root.clearText();
                 root.unlockInProgress = false;
-                GlobalStates.screenUnlockFailed = true;
                 root.showFailure = true;
             }
         }
     }
-
 }

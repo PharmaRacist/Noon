@@ -25,7 +25,7 @@ StyledPanel {
     implicitWidth: visualContainer.width + visualContainer.rounding
     exclusiveZone: !barMode && pinned ? implicitWidth - visualContainer.rounding : noExlusiveZone ? -1 : 0
     aboveWindows: true
-    kbFocus: GlobalStates.sidebarOpen && !barMode
+    kbFocus: GlobalStates.main.sidebarOpen && !barMode
     WlrLayershell.layer: SidebarData?.isOverlay(sidebarContent.selectedCategory) ? WlrLayer.Overlay : WlrLayer.Top
 
     anchors {
@@ -49,7 +49,7 @@ StyledPanel {
             return;
 
         barMode = false;
-        GlobalStates.sidebarOpen = true;
+        GlobalStates.main.sidebarOpen = true;
         Mem.states.sidebar.behavior.expanded = true;
         sidebarContent.forceActiveFocus();
     }
@@ -78,7 +78,7 @@ StyledPanel {
     }
 
     Binding {
-        target: GlobalStates
+        target: GlobalStates.main
         property: "sidebarOpen"
         value: !barMode
     }
@@ -93,8 +93,42 @@ StyledPanel {
             right: visualContainer.rightMode ? parent.right : undefined
         }
 
-        /* Todo: Tidy -- change 2 > hyprland borders*/
-        width: root.barMode && !root.pinned ? Sizes.hyprland.gapsOut - 2  : visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0)
+        // Only consume width when revealed or not in bar mode
+        width: {
+            if (!barMode) {
+                return visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0);
+            } else if (reveal) {
+                return Math.max(visualContainer.width, hoverArea.width);
+            } else {
+                return Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn;
+            }
+        }
+
+        Behavior on width {
+            Anim {
+            }
+        }
+
+        MouseArea {
+            id: hoverArea
+            enabled: barMode
+            z: 1000
+            hoverEnabled: true
+            acceptedButtons: Qt.NoButton
+
+            width: reveal ? visualContainer.width : Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn
+            anchors {
+                top: parent.top
+                bottom: parent.bottom
+                left: !visualContainer.rightMode ? parent.left : undefined
+                right: visualContainer.rightMode ? parent.right : undefined
+            }
+        }
+
+        StyledRectangularShadow {
+            target: visualContainer
+        }
+
         StyledRect {
             id: visualContainer
 
@@ -102,7 +136,6 @@ StyledPanel {
             property int mode: Mem.options.sidebar.appearance.mode
             property int rounding: Rounding.verylarge
 
-            enableShadows: true
             width: sidebarWidth
             color: sidebarContent.contentColor
 
@@ -120,16 +153,6 @@ StyledPanel {
                 rightMargin: rightMode ? ((!barMode || reveal) ? -1 : -(width - 1)) : 0
                 topMargin: mode === 1 && Mem.options.bar.behavior.position !== "top" ? Sizes.frameThickness : 0
                 bottomMargin: mode === 1 && Mem.options.bar.behavior.position !== "bottom" ? Sizes.frameThickness : 0
-            }
-
-            MouseArea {
-                id: hoverArea
-                enabled: barMode
-                z: 999
-                anchors.fill: parent
-                anchors.margins: -1
-                hoverEnabled: true
-                acceptedButtons: Qt.NoButton
             }
 
             Content {
@@ -190,6 +213,7 @@ StyledPanel {
                 margins: Padding.verylarge
             }
         }
+
         RoundCorner {
             id: c1
             visible: visualContainer.mode === 2
@@ -222,7 +246,7 @@ StyledPanel {
 
     HyprlandFocusGrab {
         windows: [root]
-        active: GlobalStates.sidebarOpen && !barMode
+        active: GlobalStates.main.sidebarOpen && !barMode
         onCleared: if (!pinned)
             hideSidebar()
     }
@@ -235,14 +259,14 @@ StyledPanel {
         target: sidebarContent
 
         function onHideBarRequested() {
-            GlobalStates.sidebarOpen = false;
+            GlobalStates.main.sidebarOpen = false;
             hideSidebar();
         }
 
         function onAppLaunched() {
             if (barMode) {
                 reveal = false;
-                reveal = Qt.binding(() => hoverArea.containsMouse && barMode && GlobalStates.sidebarOpen);
+                reveal = Qt.binding(() => (hoverArea.containsMouse && barMode) || _isTransitioning || (seekOnSuper ? GlobalStates.superHeld : null) || PolkitService.flow !== null);
             } else {
                 hideSidebar();
             }

@@ -11,28 +11,27 @@ import qs.store
 
 Scope {
     IpcHandler {
-        target: "global"
+        target: "noon"
         function expose(show: bool) {
             if (show) {
-                GlobalStates.exposeView = true;
+                GlobalStates.main.exposeView = true;
             } else if (!show) {
-                GlobalStates.exposeView = false;
+                GlobalStates.main.exposeView = false;
             }
         }
-
-        function inc_brightness(){
+        function inc_brightness() {
             BrightnessService.increaseBrightness();
         }
 
         function dec_brightness() {
-             BrightnessService.decreaseBrightness();
+            BrightnessService.decreaseBrightness();
         }
         function clear_clipboard() {
             ClipboardService.wipe();
         }
         function update_clipboard() {
             ClipboardService.reload();
-            SidebarData.generateHistory()
+            SidebarData.generateHistory();
         }
         function refresh_appearance() {
             WallpaperService.refreshTheme();
@@ -62,7 +61,7 @@ Scope {
             Mem.states.dock.pinned = !Mem.states.dock.pinned;
         }
         function toggle_osk() {
-            GlobalStates.oskOpen = !GlobalStates.oskOpen;
+            GlobalStates.main.oskOpen = !GlobalStates.main.oskOpen;
         }
         function todoist_key(key: string) {
             const trimmed = key.trim();
@@ -70,27 +69,19 @@ Scope {
             TodoService.todoistApiToken = trimmed;
             console.log("API token set (trimmed):", TodoService.todoistApiToken);
         }
-        function toggle_beats() {
-            GlobalStates.playlistOpen = !GlobalStates.playlistOpen;
-        }
+
         function add_alarm(time: string, name: string) {
             AlarmService.addTimer(time, name);
         }
         function wake(message: string) {
             Noon.wake(message, "alarm");
         }
-        function close_beats() {
-            GlobalStates.playlistOpen = false;
-        }
-        function open_beats() {
-            GlobalStates.playlistOpen = true;
-        }
 
-        function edit_json(){
-            Noon.edit(Quickshell.env('SHELL_CONFIG_PATH'))
+        function edit_json() {
+            Noon.edit(Quickshell.env('SHELL_CONFIG_PATH'));
         }
         function lock() {
-            GlobalStates.locked = true;
+            GlobalStates.main.locked = true;
             IdleService.idleMonitor.reset();
         }
         function pause_all_players(): void {
@@ -113,8 +104,7 @@ Scope {
             MedicalDictionaryService.setApiKey(key);
         }
         function toggle_ai_bar() {
-            GlobalStates.showBeam = !GlobalStates.showBeam;
-            GlobalStates.xp.startMenu.visible = !GlobalStates.xp.startMenu.visible;
+            GlobalStates.main.showBeam = !GlobalStates.main.showBeam;
         }
     }
 }

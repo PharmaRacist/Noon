@@ -12,90 +12,71 @@ import qs.modules.main.sidebar
 import qs.modules.main.view
 
 Scope {
-    Component.onCompleted: GlobalStates.handle_init()
+    Component.onCompleted: GlobalStates.main.handle_init()
 
     WidgetLoader {
-        enabled: Mem.options.desktop.bg.useQs && Mem.states.desktop.bg.currentBg.length > 1 && !GlobalStates.topLevel.fullscreen && !Mem.states.desktop.bg.isLive
+        enabled: Mem.options.desktop.bg.useQs && Mem.states.desktop.bg.currentBg.length > 1 && !GlobalStates?.topLevel?.fullscreen && !Mem.states.desktop.bg.isLive
 
-        Bg {
-        }
-
+        Bg {}
     }
 
     WidgetLoader {
         enabled: Mem.options.desktop.bg.borderMultiplier > 0
 
-        Border {
-        }
-
+        Border {}
     }
 
     WidgetLoader {
         enabled: true
 
-        Sidebar {
-        }
-
+        Sidebar {}
     }
 
     WidgetLoader {
         enabled: true
 
-        NotificationPopup {
-        }
-
+        NotificationPopup {}
     }
 
     WidgetLoader {
         enabled: Mem.options.dock.enabled
 
-        Dock {
-        }
-
+        Dock {}
     }
 
     WidgetLoader {
         enabled: Mem.options.desktop.lock.enabled
 
-        Lock {
-        }
-
+        Lock {}
     }
 
     WidgetLoader {
         enabled: Mem.options.bar.enabled
 
-        Bar {
-        }
-
+        Bar {}
     }
 
     WidgetLoader {
         enabled: Mem.options.desktop.screenCorners > 0 ?? false
 
-        ScreenCorners {
-        }
-
+        ScreenCorners {}
     }
 
     WidgetLoader {
         enabled: Mem.options.osd.enabled
 
-        OSDs {
-        }
-
+        OSDs {}
     }
 
     WidgetLoader {
-        Hyprview {
-        }
-
+        Hyprview {}
     }
 
     WidgetLoader {
-        Beam {
-        }
-
+        Beam {}
     }
 
+    WidgetLoader {
+        IPC {}
+    }
 }

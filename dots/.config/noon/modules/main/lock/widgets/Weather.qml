@@ -13,7 +13,6 @@ StyledRect {
     Layout.fillWidth: true
     Layout.margins: Padding.normal
     enableBorders: true
-    enableShadows: true
     color: Colors.colLayer1
     radius: Rounding.verylarge
 

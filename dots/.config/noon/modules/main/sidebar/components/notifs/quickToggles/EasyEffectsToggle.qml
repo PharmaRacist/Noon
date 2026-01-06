@@ -17,7 +17,7 @@ QuickToggleButton {
             Noon.execDetached("pkill", "easyeffects");
         } else {
             toggled = !toggled;
-            Noon.execDetached("easyeffects", "--gapplication-service");
+            Noon.execDetached("easyeffects", "--service-mode");
         }
     }
 
@@ -40,5 +40,4 @@ QuickToggleButton {
             root.toggled = exitCode === 0;
         }
     }
-
 }

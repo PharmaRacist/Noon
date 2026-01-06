@@ -1,6 +1,7 @@
 pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.common
 
 Singleton {
@@ -12,28 +13,37 @@ Singleton {
     property var modes: Mem.states.services?.power?.modes || []
     property string currentMode: Mem.states.services?.power?.mode || "power-saver"
 
-    function cycleMode(reverse) {
-        if (!controller || !modes.length)
-            return
+    function cycleMode(reverse = false) {
+        const i = modes.indexOf(currentMode);
+        if (i === -1)
+            return;
 
-        const currentIndex = modes.indexOf(currentMode)
-        const next = modes[(currentIndex + 1) % modes.length]
-        const previous = modes[(currentIndex - 1 + modes.length) % modes.length]
-        const mode = reverse ? previous : next
-
-        Noon.execDetached(`${Directories.scriptsDir}/power_service.sh set ${mode}`)
+        const mode = modes[(i + (reverse ? -1 : 1) + modes.length) % modes.length];
+        Noon.execDetached(`${Directories.scriptsDir}/power_service.sh set ${mode}`);
     }
 
     function getModeDisplayName(mode) {
-        return { "bat": "Power Saver", "power-saver": "Power Saver", "balanced": "Balanced", "ac": "Performance", "performance": "Performance" }[mode] || mode
+        return {
+            "bat": "Power Saver",
+            "power-saver": "Power Saver",
+            "balanced": "Balanced",
+            "ac": "Performance",
+            "performance": "Performance"
+        }[mode] || mode;
     }
 
     function getModeIcon(mode) {
-        return { "bat": "eco", "power-saver": "eco", "balanced": "balance", "ac": "bolt", "performance": "bolt" }[mode] || "eco"
+        return {
+            "bat": "eco",
+            "power-saver": "eco",
+            "balanced": "balance",
+            "ac": "bolt",
+            "performance": "bolt"
+        }[mode] || "eco";
     }
 
     onCurrentModeChanged: {
-        modeName = getModeDisplayName(currentMode)
-        icon = getModeIcon(currentMode)
+        modeName = getModeDisplayName(currentMode);
+        icon = getModeIcon(currentMode);
     }
 }

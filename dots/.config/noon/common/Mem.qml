@@ -1,46 +1,78 @@
-pragma Singleton
 import qs.common.utils
 import qs.store
+pragma Singleton
 
 Singleton {
     id: root
 
-    property bool ready: todoView.loaded && optionsView.loaded && statesView.loaded && timersView.loaded
+    property bool ready: colorsView.loaded && todoView.loaded && optionsView.loaded && statesView.loaded && timersView.loaded
     property alias states: statesView.data
     property alias options: optionsView.data
     property alias timers: timersView.data
     property alias todo: todoView.data
     property alias store: storeView.data
+    property alias colors: colorsView.data
 
     ConfigFileView {
         id: optionsView
+
         state: false
         fileName: "options"
-        OptionsSchema {}
+
+        OptionsSchema {
+        }
+
     }
 
     ConfigFileView {
         id: todoView
+
         fileName: "todo"
-        TodoSchema {}
+
+        TodoSchema {
+        }
+
     }
 
     ConfigFileView {
         id: statesView
+
         fileName: "states"
-        StatesSchema {}
+
+        StatesSchema {
+        }
+
     }
 
     ConfigFileView {
         id: timersView
+
         fileName: "timers"
-        TimersSchema {}
+
+        TimersSchema {
+        }
+
+    }
+
+    ConfigFileView {
+        id: colorsView
+
+        fileName: "colors"
+
+        ColorsSchema {
+        }
+
     }
 
     ConfigFileView {
         id: storeView
+
         watchChanges: false
         fileName: "store"
-        StoreSchema {}
+
+        StoreSchema {
+        }
+
     }
+
 }

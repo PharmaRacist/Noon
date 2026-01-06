@@ -33,7 +33,6 @@ Menu {
         implicitHeight: 26 * parent.contentItem.children.length
         color: Colors.colLayer0
         radius: Rounding.verylarge
-        enableShadows: true
     }
 
     enter: Transition {

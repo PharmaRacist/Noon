@@ -19,7 +19,6 @@ StyledRect {
     readonly property int barRadius: Mem.options.bar.appearance.radius
     readonly property int mode: Mem.options.bar.appearance.mode
 
-    enableShadows: true
     enableBorders: true
     radius: barRadius
     color: ColorUtils.transparentize(Colors.m3.m3background, 0.7)

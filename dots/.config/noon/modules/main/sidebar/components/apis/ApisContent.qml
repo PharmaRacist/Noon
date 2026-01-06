@@ -15,7 +15,7 @@ Item {
     property var tabButtonList: [...(Mem.options.policies.ai ? [
                 {
                     "icon": "neurology",
-                    "name": qsTr("Intelligence")
+                    "name": qsTr(" AI ")
                 }
             ] : []), ...(Mem.options.policies.medicalDictionary ? [
                 {
@@ -25,7 +25,7 @@ Item {
             ] : []), ...(Mem.options.policies.translator ? [
                 {
                     "icon": "translate",
-                    "name": qsTr("Translator")
+                    "name": qsTr("Dicts")
                 }
             ] : [])]
     Keys.onPressed: event => {

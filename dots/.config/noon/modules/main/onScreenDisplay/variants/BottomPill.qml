@@ -42,7 +42,6 @@ StyledPanel {
 
         implicitWidth: Sizes.osd.bottomPill.width
         implicitHeight: Sizes.osd.bottomPill.height
-        enableShadows: true
         color: Colors.colLayer0
         radius: Rounding.normal
         clip: true

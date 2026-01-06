@@ -40,7 +40,6 @@ StyledPanel {
 
         implicitWidth: Sizes.osd.centerIsland.width
         implicitHeight: Sizes.osd.centerIsland.height
-        enableShadows: true
         enableBorders: true
         color: Colors.colLayer0
         radius: Rounding.massive

@@ -47,7 +47,7 @@ MouseArea {
             anchors.centerIn: background
             width: background.width * 0.65
             height: background.height * 0.65
-            source: SystemInfo.distroIcon
+            source: SysInfoService.distroIcon
         }
 
         ColorOverlay {
@@ -56,19 +56,12 @@ MouseArea {
             color: hovered ? Colors.colPrimary : Colors.m3.m3onSecondaryContainer
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
 
         Behavior on scale {
-            Anim {
-            }
-
+            Anim {}
         }
-
     }
-
 }

@@ -42,7 +42,6 @@ StyledPanel {
 
         implicitWidth: Sizes.osd.windows_10.width
         implicitHeight: Sizes.osd.windows_10.height
-        enableShadows: true
         color: Colors.colLayer0
         radius: 0
 

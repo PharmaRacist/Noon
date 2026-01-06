@@ -11,7 +11,7 @@ QuickToggleButton {
 
     showButtonName: false
     hasDialog: true
-    onRequestDialog: GlobalStates.showRecordingDialog = true
+    onRequestDialog: GlobalStates.main.dialogs.showRecordingDialog = true
     buttonName: RecordingService.isRecording ? `${qsTr("Recording")} ${RecordingService.getFormattedDuration()}` : qsTr("Record")
     toggled: RecordingService.isRecording
     buttonIcon: RecordingService.isRecording ? "radio_button_checked" : "radio_button_unchecked"
@@ -27,5 +27,4 @@ QuickToggleButton {
         extraVisibleCondition: RecordingService.isRecording
         content: StringUtils.format(qsTr("Recording {0} | Right-click to stop"), RecordingService.getFormattedDuration())
     }
-
 }

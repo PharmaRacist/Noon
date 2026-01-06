@@ -9,11 +9,12 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
+
 Scope {
     id: root
 
     property bool pinned: Mem.states.dock.pinned ?? false
-    property bool showOsk: GlobalStates.oskOpen
+    property bool showOsk: GlobalStates.main.oskOpen
 
     Variants {
         model: [Quickshell.screens[0]]
@@ -51,7 +52,7 @@ Scope {
                     left: parent.left
                     right: parent.right
                     top: parent.top
-                    topMargin: dockRoot.reveal && !GlobalStates.showBeam && !GlobalStates.showOsdValues ? 2 : dockRoot.dockHeight - 1
+                    topMargin: dockRoot.reveal && !GlobalStates.main.showBeam && !GlobalStates.main.showOsdValues ? 2 : dockRoot.dockHeight - 1
                     Behavior on topMargin {
                         FAnim {}
                     }
@@ -103,7 +104,6 @@ Scope {
 
         color: Colors.colLayer0
         radius: dockRoot.mainRounding
-        enableShadows: true
         enableBorders: true
 
         RowLayout {
@@ -135,7 +135,7 @@ Scope {
                     clickedWidth: baseWidth
                     clickedHeight: baseHeight + 20
                     buttonRadius: Rounding.normal
-                    onClicked: GlobalStates.oskOpen = false
+                    onClicked: GlobalStates.main.oskOpen = false
 
                     contentItem: MaterialSymbol {
                         text: "keyboard_hide"

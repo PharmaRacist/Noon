@@ -1,19 +1,18 @@
-import "../common"
+import "../../common"
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.widgets
 import qs.services
 
-StyledText {
+Text {
     id: root
 
-    text: DateTimeService.hour + ":" + DateTimeService.minute
-
+    text: DateTimeService.time.toUpperCase()
+    color: XColors.colors.colOnSecondary
     font {
         family: XFonts.family.title
         pixelSize: XFonts.sizes.normal
         weight: 500
     }
-
 }

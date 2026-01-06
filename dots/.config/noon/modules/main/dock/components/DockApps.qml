@@ -25,17 +25,17 @@ Item {
     Layout.preferredHeight: listView.implicitHeight
     Layout.fillWidth: true
     Component.onCompleted: {
-          if (Mem && Mem.states && Mem.states.dock) {
-              pinnedApps = Qt.binding(() => Mem.states.dock.pinnedApps ?? []);
-          }
-      }
+        if (Mem && Mem.states && Mem.states.dock) {
+            pinnedApps = Qt.binding(() => Mem.states.favorites.apps ?? []);
+        }
+    }
 
-      Connections {
-          target: Mem?.states?.dock
-          function onPinnedAppsChanged() {
-              root.pinnedApps = Mem.states.dock.pinnedApps ?? [];
-          }
-      }
+    Connections {
+        target: Mem?.states?.dock
+        function onPinnedAppsChanged() {
+            root.pinnedApps = Mem.states.favorites.apps ?? [];
+        }
+    }
 
     // Layout.fillHeight: true
     StyledListView {
@@ -58,7 +58,8 @@ Item {
 
                     if (!map.has(normalizedAppId)) {
                         map.set(normalizedAppId, {
-                            appId: appId,  // Keep original case
+                            appId: appId  // Keep original case
+                            ,
                             pinned: true,
                             toplevels: []
                         });
@@ -73,7 +74,8 @@ Item {
 
                     if (!map.has(normalizedAppId)) {
                         map.set(normalizedAppId, {
-                            appId: originalAppId,  // Store original
+                            appId: originalAppId  // Store original
+                            ,
                             pinned: false,
                             toplevels: []
                         });
@@ -94,7 +96,8 @@ Item {
                     if (map.has(normalizedAppId)) {
                         const appData = map.get(normalizedAppId);
                         values.push({
-                            appId: appData.appId,  // Use original case
+                            appId: appData.appId  // Use original case
+                            ,
                             toplevels: appData.toplevels,
                             pinned: appData.pinned
                         });
@@ -115,7 +118,7 @@ Item {
                 for (const [normalizedKey, appData] of map) {
                     if (appData.toplevels.length > 0) {
                         values.push({
-                            appId: appData.appId,  // Use original case
+                            appId: appData.appId,
                             toplevels: appData.toplevels,
                             pinned: appData.pinned
                         });
@@ -125,7 +128,6 @@ Item {
                 return values;
             }
         }
-
 
         delegate: DockAppButton {
             required property var modelData

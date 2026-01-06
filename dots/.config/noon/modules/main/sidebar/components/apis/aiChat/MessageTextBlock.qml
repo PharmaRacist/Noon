@@ -170,7 +170,7 @@ ColumnLayout {
 
             onLinkActivated: link => {
                 Qt.openUrlExternally(link);
-                GlobalStates.sidebarLeftOpen = false;
+                GlobalStates.main.sidebarOpen = false;
             }
 
             MouseArea {

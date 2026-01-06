@@ -69,7 +69,7 @@ LazyLoader {
 
                 // For left/right bars, respect exclusive size
                 if (barPosition === "left")
-                    return BarData.currentBarExclusiveSize;
+                    return BarData.currentBarExclusiveSize + (Sizes.hyprland.gapsOut / 2);
 
                 return 0;
             }
@@ -96,7 +96,7 @@ LazyLoader {
 
                 // For top/bottom bars, respect exclusive size
                 if (barPosition === "top")
-                    return BarData.currentBarExclusiveSize;
+                    return BarData.currentBarExclusiveSize + (Sizes.hyprland.gapsOut / 2);
 
                 return 0;
             }

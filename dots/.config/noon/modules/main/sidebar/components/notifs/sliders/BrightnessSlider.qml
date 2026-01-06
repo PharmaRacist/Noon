@@ -12,7 +12,7 @@ Item {
     Layout.fillWidth: true
     Layout.preferredHeight: 40
 
-    property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+    property var focusedScreen: GlobalStates.focusedScreen
     property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
     StyledSlider {
         id: brightnessSlider
@@ -25,7 +25,7 @@ Item {
         value: brightnessMonitor?.brightness ?? 0
 
         onValueChanged: {
-            if ( brightnessMonitor) {
+            if (brightnessMonitor) {
                 brightnessMonitor.setBrightness(value);
             }
         }
@@ -35,7 +35,7 @@ Item {
             ignoreUnknownSignals: true
 
             function onBrightnessChanged() {
-                if ( brightnessMonitor)
+                if (brightnessMonitor)
                     brightnessSlider.value = brightnessMonitor.brightness;
             }
         }
@@ -50,7 +50,6 @@ Item {
         anchors.left: brightnessSlider.left
         anchors.leftMargin: 10
         fill: 1
-        animateChange:true
-
+        animateChange: true
     }
 }

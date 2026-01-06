@@ -1,52 +1,23 @@
+pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.common.widgets
 import qs.services
-pragma Singleton
 
 Singleton {
     id: root
 
+    property QtObject main
     property QtObject xp
-    property bool locked: false
-    property bool playlistOpen: false
-    property bool oskOpen: false
+
     property bool superHeld: false
-    property bool superReleaseMightTrigger: false
-    property bool screenLocked: false
-    property bool sidebarOpen: true
-    property bool sidebarHovered: false
-    property bool exposeView: false
-    property bool showOsdValues: false
-    property bool showBeam: false
-    property bool showAppearanceDialog: false
-    property bool showCaffaineDialog: false
-    property bool showBluetoothDialog: false
-    property bool showWifiDialog: false
-    property bool showRecordingDialog: false
-    property bool showTransparencyDialog: false
-    property bool showTempDialog: false
-    property bool showKdeConnectDialog: false
     property var topLevel: ToplevelManager.activeToplevel
-
-    function handle_init() {
-        ColorsService.reload();
-        KeyringStorage.reload();
-        NightLightService.reload();
-        TimerService.reload();
-        AlarmService.reload();
-        ClipboardService.reload();
-        AmbientSoundsService.reload();
-        HyprlandParserService.getAll();
-        Noon.playSound("device_unlocked");
-    }
-
-    onSuperReleaseMightTriggerChanged: superHeld.stop()
+    property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
 
     Timer {
         id: superHeldTimer
-
         interval: Mem.options.hacks.superHeldInterval
         onTriggered: superHeld = true
     }
@@ -59,21 +30,48 @@ Singleton {
             superHeld = false;
         }
     }
+    main: QtObject {
+        id: main
+        function handle_init() {
+            KeyringStorage.reload();
+            NightLightService.reload();
+            TimerService.reload();
+            AlarmService.reload();
+            ClipboardService.reload();
+            AmbientSoundsService.reload();
+            HyprlandParserService.reload();
+            Noon.playSound("device_unlocked");
+        }
 
+        property bool locked: false
+        property bool oskOpen: false
+        property bool sidebarOpen: true
+        property bool exposeView: false
+        property bool showOsdValues: false
+        property bool showBeam: false
+
+        property QtObject dialogs: QtObject {
+            property bool showAppearanceDialog: false
+            property bool showCaffaineDialog: false
+            property bool showBluetoothDialog: false
+            property bool showWifiDialog: false
+            property bool showRecordingDialog: false
+            property bool showTransparencyDialog: false
+            property bool showTempDialog: false
+            property bool showKdeConnectDialog: false
+        }
+    }
     xp: QtObject {
         id: xp
 
-        property QtObject startMenu
         property bool locked: false
 
         function handle_init() {
+            HyprlandParserService.getAll();
             Noon.playSound("init", "xp");
         }
-
-        startMenu: QtObject {
-            property bool visible: false
-        }
-
+        property bool showRun: false
+        property bool showStartMenu: false
+        property bool showControlPanel: false
     }
-
 }

@@ -15,7 +15,6 @@ Item {
     property PwNode selectedDevice
 
     readonly property list<PwNode> appPwNodes: Pipewire.nodes.values.filter(node => {
-        // return node.type == "21" // Alternative, not as clean
         return node.isSink && node.isStream;
     })
 

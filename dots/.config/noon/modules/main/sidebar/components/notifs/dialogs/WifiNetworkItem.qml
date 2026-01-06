@@ -7,16 +7,16 @@ import QtQuick.Layouts
 DialogListItem {
     id: root
     required property var network
-    
+
     property bool showPasswordPrompt: false
-    
+
     active: network?.active ?? false
-    
+
     // Reset password prompt when network changes
     onNetworkChanged: {
         showPasswordPrompt = false;
     }
-    
+
     onClicked: {
         if (network.active) {
             // Disconnect if already connected
@@ -24,7 +24,7 @@ DialogListItem {
         } else {
             const isSecured = network.security && network.security.length > 0;
             const isSaved = network.saved ?? false;
-            
+
             if (isSecured && !isSaved) {
                 // Show password prompt only for unsaved secured networks
                 showPasswordPrompt = true;
@@ -48,27 +48,31 @@ DialogListItem {
         RowLayout {
             Layout.fillWidth: true
             spacing: 10
-            
+
             MaterialSymbol {
                 font.pixelSize: Fonts.sizes.verylarge
                 text: {
                     const s = root.network?.strength ?? 0;
-                    if (s > 80) return "signal_wifi_4_bar";
-                    if (s > 60) return "network_wifi_3_bar";
-                    if (s > 40) return "network_wifi_2_bar";
-                    if (s > 20) return "network_wifi_1_bar";
+                    if (s > 80)
+                        return "signal_wifi_4_bar";
+                    if (s > 60)
+                        return "network_wifi_3_bar";
+                    if (s > 40)
+                        return "network_wifi_2_bar";
+                    if (s > 20)
+                        return "network_wifi_1_bar";
                     return "signal_wifi_0_bar";
                 }
                 color: Colors.colOnSurfaceVariant
             }
-            
+
             StyledText {
                 Layout.fillWidth: true
                 color: Colors.colOnSurfaceVariant
                 elide: Text.ElideRight
                 text: root.network?.ssid ?? qsTr("Unknown")
             }
-            
+
             MaterialSymbol {
                 visible: {
                     const hasSecurity = root.network?.security && root.network.security.length > 0;
@@ -76,8 +80,10 @@ DialogListItem {
                     return hasSecurity || isActive;
                 }
                 text: {
-                    if (root.network?.active) return "check";
-                    if (root.network?.saved) return "lock_open";
+                    if (root.network?.active)
+                        return "check";
+                    if (root.network?.saved)
+                        return "lock_open";
                     return "lock";
                 }
                 font.pixelSize: Fonts.sizes.verylarge
@@ -98,7 +104,7 @@ DialogListItem {
                 echoMode: TextInput.Password
                 inputMethodHints: Qt.ImhSensitiveData
                 focus: root.showPasswordPrompt
-                
+
                 onAccepted: {
                     NetworkService.connectToWifiNetwork(root.network.ssid, text);
                     root.showPasswordPrompt = false;
@@ -150,7 +156,7 @@ DialogListItem {
                 colRipple: Colors.colLayer4Active
                 onClicked: {
                     Qt.openUrlExternally("http://nmcheck.gnome.org/");
-                    GlobalStates.sidebarRightOpen = false;
+                    GlobalStates.main.sidebarOpen = false;
                 }
             }
         }

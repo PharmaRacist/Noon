@@ -17,23 +17,12 @@ ShellRoot {
     WidgetLoader {
         active: mode === "xp"
 
-        XP {
-        }
-
+        XP {}
     }
 
     WidgetLoader {
         active: mode !== "xp"
 
-        Main {
-        }
-
+        Main {}
     }
-
-    WidgetLoader {
-        IPC {
-        }
-
-    }
-
 }

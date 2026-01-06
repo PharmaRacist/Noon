@@ -17,7 +17,7 @@ Singleton {
     id: root
 
     signal brightnessChanged
-    property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+    property var focusedScreen: GlobalStates.focusedScreen
     property var ddcMonitors: []
     readonly property list<BrightnessMonitor> monitors: Quickshell.screens.map(screen => monitorComp.createObject(root, {
             screen

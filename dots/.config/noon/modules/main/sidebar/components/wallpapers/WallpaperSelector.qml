@@ -21,31 +21,33 @@ Item {
 
     function updateGridModel() {
         if (!WallpaperService?.wallpaperModel) {
-            Qt.callLater(updateGridModel)
-            return
+            Qt.callLater(updateGridModel);
+            return;
         }
-        gridView.model = WallpaperService.wallpaperModel.count
+        gridView.model = WallpaperService.wallpaperModel.count;
     }
 
     function shuffleWallpaper() {
-        if (gridView.model <= 0) return
-        const randomIndex = Math.floor(Math.random() * gridView.model)
-        const fileUrl = WallpaperService.wallpaperModel.getFile(randomIndex)
+        if (gridView.model <= 0)
+            return;
+        const randomIndex = Math.floor(Math.random() * gridView.model);
+        const fileUrl = WallpaperService.wallpaperModel.getFile(randomIndex);
         if (fileUrl) {
-            WallpaperService.applyWallpaper(fileUrl)
-            gridView.currentIndex = randomIndex
+            WallpaperService.applyWallpaper(fileUrl);
+            gridView.currentIndex = randomIndex;
         }
     }
 
     Component.onCompleted: updateGridModel()
-    
+
     onSearchQueryChanged: {
-        if (!WallpaperService?.wallpaperModel) return
-        const model = WallpaperService.wallpaperModel
+        if (!WallpaperService?.wallpaperModel)
+            return;
+        const model = WallpaperService.wallpaperModel;
         if (searchQuery.length > 0) {
-            model.filterWallpapers(searchQuery)
+            model.filterWallpapers(searchQuery);
         } else {
-            model.clearFilter()
+            model.clearFilter();
         }
     }
 
@@ -73,75 +75,97 @@ Item {
 
                 onCountChanged: {
                     if (count > 0 && currentIndex === -1 && activeFocus)
-                        currentIndex = 0
+                        currentIndex = 0;
                 }
 
                 Keys.onPressed: event => {
-                    if (!gridView.model || gridView.model === 0) return
-
-                    const cols = root.gridColumns
-                    const shift = event.modifiers & Qt.ShiftModifier
-                    const jump = shift ? 5 : 1
-                    const page = Math.floor(gridView.height / root.gridItemHeight) * cols
+                    if (!gridView.model || gridView.model === 0)
+                        return;
+                    const cols = root.gridColumns;
+                    const shift = event.modifiers & Qt.ShiftModifier;
+                    const jump = shift ? 5 : 1;
+                    const page = Math.floor(gridView.height / root.gridItemHeight) * cols;
 
                     switch (event.key) {
                     case Qt.Key_Down:
-                        if (currentIndex === -1) currentIndex = 0
-                        else if (currentIndex + cols * jump < model) currentIndex += cols * jump
-                        else currentIndex = model - 1
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-                        event.accepted = true
-                        break
+                        if (currentIndex === -1)
+                            currentIndex = 0;
+                        else if (currentIndex + cols * jump < model)
+                            currentIndex += cols * jump;
+                        else
+                            currentIndex = model - 1;
+                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
+                        event.accepted = true;
+                        break;
                     case Qt.Key_Up:
-                        if (currentIndex === -1) currentIndex = model - 1
-                        else if (currentIndex >= cols * jump) currentIndex -= cols * jump
+                        if (currentIndex === -1)
+                            currentIndex = model - 1;
+                        else if (currentIndex >= cols * jump)
+                            currentIndex -= cols * jump;
                         else if (currentIndex >= 0) {
-                            if (shift) currentIndex = 0
-                            else { currentIndex = -1; root.searchFocusRequested() }
+                            if (shift)
+                                currentIndex = 0;
+                            else {
+                                currentIndex = -1;
+                                root.searchFocusRequested();
+                            }
                         }
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-                        event.accepted = true
-                        break
+                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
+                        event.accepted = true;
+                        break;
                     case Qt.Key_Left:
-                        if (currentIndex === -1) currentIndex = 0
-                        else if (currentIndex >= jump) currentIndex -= jump
-                        else if (currentIndex > 0) currentIndex = 0
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-                        event.accepted = true
-                        break
+                        if (currentIndex === -1)
+                            currentIndex = 0;
+                        else if (currentIndex >= jump)
+                            currentIndex -= jump;
+                        else if (currentIndex > 0)
+                            currentIndex = 0;
+                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
+                        event.accepted = true;
+                        break;
                     case Qt.Key_Right:
-                        if (currentIndex === -1) currentIndex = 0
-                        else if (currentIndex + jump < model) currentIndex += jump
-                        else currentIndex = model - 1
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-                        event.accepted = true
-                        break
+                        if (currentIndex === -1)
+                            currentIndex = 0;
+                        else if (currentIndex + jump < model)
+                            currentIndex += jump;
+                        else
+                            currentIndex = model - 1;
+                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
+                        event.accepted = true;
+                        break;
                     case Qt.Key_PageDown:
-                        currentIndex = (currentIndex === -1) ? 0 : Math.min(currentIndex + page, model - 1)
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-                        event.accepted = true
-                        break
+                        currentIndex = (currentIndex === -1) ? 0 : Math.min(currentIndex + page, model - 1);
+                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
+                        event.accepted = true;
+                        break;
                     case Qt.Key_PageUp:
-                        currentIndex = (currentIndex === -1) ? model - 1 : Math.max(currentIndex - page, 0)
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain)
-                        event.accepted = true
-                        break
+                        currentIndex = (currentIndex === -1) ? model - 1 : Math.max(currentIndex - page, 0);
+                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
+                        event.accepted = true;
+                        break;
                     case Qt.Key_Home:
-                        if (model > 0) { currentIndex = 0; gridView.positionViewAtIndex(0, GridView.Beginning) }
-                        event.accepted = true
-                        break
+                        if (model > 0) {
+                            currentIndex = 0;
+                            gridView.positionViewAtIndex(0, GridView.Beginning);
+                        }
+                        event.accepted = true;
+                        break;
                     case Qt.Key_End:
-                        if (model > 0) { currentIndex = model - 1; gridView.positionViewAtIndex(model - 1, GridView.End) }
-                        event.accepted = true
-                        break
+                        if (model > 0) {
+                            currentIndex = model - 1;
+                            gridView.positionViewAtIndex(model - 1, GridView.End);
+                        }
+                        event.accepted = true;
+                        break;
                     case Qt.Key_Return:
                     case Qt.Key_Enter:
                         if (currentIndex >= 0 && currentIndex < model) {
-                            const fileUrl = WallpaperService.wallpaperModel.getFile(currentIndex)
-                            if (fileUrl) WallpaperService.applyWallpaper(fileUrl)
+                            const fileUrl = WallpaperService.wallpaperModel.getFile(currentIndex);
+                            if (fileUrl)
+                                WallpaperService.applyWallpaper(fileUrl);
                         }
-                        event.accepted = true
-                        break
+                        event.accepted = true;
+                        break;
                     }
                 }
 
@@ -152,17 +176,23 @@ Item {
                     height: root.gridItemHeight
 
                     WallpaperItem {
+                        id: wallpaperItem
                         property int delegateIndex: index
                         isKeyboardSelected: delegateIndex === gridView.currentIndex && gridView.activeFocus
                         isCurrentWallpaper: fileUrl === WallpaperService.currentWallpaper
                         fileUrl: WallpaperService.wallpaperModel?.getFile(delegateIndex) ?? ""
-                        onClicked: {
-                            if (!fileUrl) return
-                            WallpaperService.applyWallpaper(fileUrl)
-                            gridView.currentIndex = delegateIndex
+                        onClicked: if (fileUrl) {
+                            WallpaperService.applyWallpaper(fileUrl);
+                            gridView.currentIndex = delegateIndex;
                         }
 
-                        Behavior on anchors.margins { Anim {} }
+                        Behavior on anchors.margins {
+                            Anim {}
+                        }
+                    }
+                    StyledRectangularShadow {
+                        target: wallpaperItem
+                        show: wallpaperItem.isKeyboardSelected
                     }
                 }
             }
@@ -171,16 +201,18 @@ Item {
         Connections {
             target: WallpaperService?.wallpaperModel ?? null
             ignoreUnknownSignals: true
-            function onModelUpdated() { root.updateGridModel() }
+            function onModelUpdated() {
+                root.updateGridModel();
+            }
         }
 
         Connections {
             target: root
             function onContentFocusRequested() {
                 if (gridView.model > 0) {
-                    gridView.currentIndex = 0
-                    gridView.forceActiveFocus()
-                    gridView.positionViewAtIndex(0, GridView.Beginning)
+                    gridView.currentIndex = 0;
+                    gridView.forceActiveFocus();
+                    gridView.positionViewAtIndex(0, GridView.Beginning);
                 }
             }
         }
@@ -192,13 +224,12 @@ Item {
         }
 
         WallpaperControls {
-            finishAction:()=> {
-                root.searchFocusRequested()
+            finishAction: () => {
+                root.searchFocusRequested();
             }
         }
     }
     ScrollEdgeFade {
-        target:parent 
+        target: parent
     }
-
 }

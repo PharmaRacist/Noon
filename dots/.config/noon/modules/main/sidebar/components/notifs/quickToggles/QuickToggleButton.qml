@@ -21,7 +21,7 @@ GroupButton {
             return r1;
     }
 
-    signal requestDialog()
+    signal requestDialog
 
     Layout.fillWidth: showButtonName
     Layout.fillHeight: false
@@ -36,7 +36,6 @@ GroupButton {
     altAction: () => {
         if (!showButtonName)
             requestDialog();
-
     }
 
     StyledRect {
@@ -45,7 +44,6 @@ GroupButton {
         z: 99
         color: !toggled ? Colors.m3.m3primary : Colors.m3.m3surfaceContainerHigh
         visible: hasDialog && showButtonName
-        enableShadows: true
         implicitWidth: 50
         topRightRadius: root.rightRadius
         bottomRightRadius: root.rightRadius
@@ -68,11 +66,8 @@ GroupButton {
             rotation: dialogBoxMouse.containsMouse ? 90 : 0
 
             Behavior on rotation {
-                Anim {
-                }
-
+                Anim {}
             }
-
         }
 
         MouseArea {
@@ -85,13 +80,10 @@ GroupButton {
                 Noon.playSound("pressed");
             }
         }
-
     }
 
     Behavior on color {
-        CAnim {
-        }
-
+        CAnim {}
     }
 
     contentItem: RowLayout {
@@ -116,11 +108,8 @@ GroupButton {
             text: buttonIcon
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
 
         StyledText {
@@ -133,9 +122,6 @@ GroupButton {
             text: buttonName
         }
 
-        Spacer {
-        }
-
+        Spacer {}
     }
-
 }

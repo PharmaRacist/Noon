@@ -80,6 +80,18 @@ StyledRect {
             tintColor: root.colors.colSecondaryContainer
         }
     }
+    Loader {
+        anchors.centerIn: parent
+        width: 300
+        height: 300
+        active: LyricsService.state === LyricsService.State.Loading && root.displayingLyrics
+        sourceComponent: MusicCoverArt {
+            anchors.fill: parent
+            clip: true
+            radius: Rounding.massive
+            enableBorders: false
+        }
+    }
 
     Visualizer {
         active: Mem.options.mediaPlayer.showVisualizer && root.playing

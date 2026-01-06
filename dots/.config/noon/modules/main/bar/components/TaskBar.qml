@@ -35,7 +35,7 @@ Item {
         model: ScriptModel {
             objectProp: "appId"
             values: {
-                const pinned = Mem.states.dock.pinnedApps ?? [];
+                const pinned = Mem.states.favorites.apps ?? [];
                 const values = [];
                 const pinnedSet = new Set();
 

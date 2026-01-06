@@ -13,13 +13,13 @@ Singleton {
     property Component aiMessageComponent: Ai.aiMessageComponent
 
     property var promptSubstitutions: {
-        "{DISTRO}": SystemInfo.distroName,
+        "{DISTRO}": SysInfoService.distroName,
         "{DATETIME}": `${DateTimeService.time}, ${DateTimeService.collapsedCalendarFormat}`,
         "{WINDOWCLASS}": `${ToplevelManager.activeToplevel?.appId} ${ToplevelManager.activeToplevel?.title}` ?? "Unknown",
-        "{DE}": `${SystemInfo.desktopEnvironment} (${SystemInfo.windowingSystem})`,
+        "{DE}": `${SysInfoService.desktopEnvironment} (${SysInfoService.windowingSystem})`,
         "{TASKS}": TodoService.formatTasks(),
         "{TIMERS}": TimerService.formatTimers(),
-        "{USER}": SystemInfo.username,
+        "{USER}": SysInfoService.username,
         "{LOCATION}": Mem.options.services.location,
         "{NOTES}": NotesService.content,
         "{PLAYING}": `title:${BeatsService.title}  artist:${BeatsService.artist}`,

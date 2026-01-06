@@ -14,7 +14,7 @@ Scope {
         model: Quickshell.screens
         StyledPanel {
             id: root
-            name: "beam"
+            name: "slide_layer"
             visible: reveal || hoverReveal || scrollReveal
             property var modelData
             property string state: "ai"
@@ -23,7 +23,7 @@ Scope {
             property bool scrollReveal: Mem.options.beam.behavior.scrollToReveal
             property bool hoverReveal: Mem.options.beam.behavior.hoverToReveal
             property bool revealLauncherOnAction: true // For Revealing More Info panels if needed
-            property bool reveal: GlobalStates.showBeam || (hoverReveal && beamMouseArea.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !GlobalStates.topLevel.activated)
+            property bool reveal: GlobalStates.main.showBeam || (hoverReveal && beamMouseArea.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !GlobalStates.topLevel.activated)
             property bool addSeparatorForNotes: true
             property int expandedLitterThreshhold: 10
             property int mainRounding: Rounding.huge
@@ -173,7 +173,7 @@ Scope {
 
             anchors.bottom: true
             implicitWidth: Sizes.beamSizeExpanded.width + 2 * Rounding.huge
-            implicitHeight: Sizes.beamSize.height + elevationValue
+            implicitHeight: Sizes.beamSize.height + elevationValue + 100
             kbFocus: true
             exclusiveZone: -1
 
@@ -286,7 +286,7 @@ Scope {
             }
 
             function revealSidebar() {
-                if (GlobalStates.sidebarOpen)
+                if (GlobalStates.main.sidebarOpen)
                     return;
                 Mem.states.sidebar.apis.selectedTab = 0;
                 Noon.callIpc("sidebar reveal API");
@@ -298,7 +298,7 @@ Scope {
             }
 
             function hide() {
-                GlobalStates.showBeam = false;
+                GlobalStates.main.showBeam = false;
             }
             function getAppSuggestion() {
                 const q = root.query.substring(1).trim().toLowerCase();
@@ -391,8 +391,8 @@ Scope {
                     break;
                 case "calc":
                     if (cleanQuery.length > 0) {
-                        QalcService.calculate(cleanQuery)
-                        ClipboardService.copy(QalcService.result)
+                        QalcService.calculate(cleanQuery);
+                        ClipboardService.copy(QalcService.result);
                     }
                     break;
                 case "ipc":
@@ -446,8 +446,8 @@ Scope {
                 case "search":
                     return getSearchSuggestions();
                 case "calc":
-                    QalcService.calculate(root.query.substring(1))
-                    return QalcService.result
+                    QalcService.calculate(root.query.substring(1));
+                    return QalcService.result;
                 case "ipc":
                     return getIpcSuggestion();
                 case "commands":
@@ -488,10 +488,10 @@ Scope {
                     let toggleThreshold = 20;
                     scrollSum += wheel.angleDelta.y;
                     if (!root.reveal && scrollSum <= -toggleThreshold) {
-                        GlobalStates.showBeam = true;
+                        GlobalStates.main.showBeam = true;
                         scrollSum = 0;
                     } else if (root.reveal && scrollSum >= toggleThreshold) {
-                        GlobalStates.showBeam = false;
+                        GlobalStates.main.showBeam = false;
                         scrollSum = 0;
                     }
 
@@ -499,7 +499,7 @@ Scope {
                 }
 
                 anchors {
-                    bottomMargin: root.reveal && !GlobalStates.showOsdValues ? 0 : -(Sizes.beamSize.height + elevationValue - 2)
+                    bottomMargin: root.reveal && !GlobalStates.main.showOsdValues ? 0 : -(Sizes.beamSize.height + elevationValue - 2)
 
                     Behavior on bottomMargin {
                         Anim {}
@@ -552,7 +552,6 @@ Scope {
                                     target: c1
                                     visible: false
                                 }
-
                             },
                             State {
                                 name: "corners"
@@ -568,9 +567,7 @@ Scope {
                                     target: c1
                                     visible: true
                                 }
-
                             }
-
                         ]
                         transitions: [
                             Transition {
@@ -585,7 +582,6 @@ Scope {
                             }
                         ]
                         color: Colors.colLayer0
-                        enableShadows: true
                         enableBorders: true
                         clip: true
 
@@ -598,7 +594,6 @@ Scope {
                                 margins: 1
                             }
                             topLeftRadius: bg.topLeftRadius
-                            enableShadows: true
                             color: "transparent" // Colors.colLayer2
                             implicitWidth: 60
 
@@ -656,7 +651,7 @@ Scope {
                                     bottom: parent.bottom
                                     rightMargin: Padding.normal
                                 }
-                                animateChange:true
+                                animateChange: true
                                 horizontalAlignment: Text.AlignRight
                                 width: 450
                                 elide: Text.ElideRight
@@ -729,7 +724,7 @@ Scope {
                             RippleButtonWithIcon {
                                 id: sendButton
                                 releaseAction: () => root.sendMessage()
-                                buttonRadius:root.mainRounding
+                                buttonRadius: root.mainRounding
                                 visible: opacity > 0
                                 opacity: inputField.text.length > 0 ? 1 : 0
                                 materialIcon: "send"
@@ -741,7 +736,7 @@ Scope {
 
                             RippleButtonWithIcon {
                                 id: osrButton
-                                buttonRadius:root.mainRounding
+                                buttonRadius: root.mainRounding
                                 releaseAction: () => root.handleImage(false)
                                 materialIcon: "screenshot_region"
                                 implicitSize: bg.height * 0.75
@@ -753,26 +748,29 @@ Scope {
                             }
                         }
                     }
+                    StyledRectangularShadow {
+                        show: root.reveal
+                        target: bg
+                    }
                     RoundCorner {
-                        id:c1
-                        corner:cornerEnum.bottomLeft
-                        size:root.mainRounding
+                        id: c1
+                        corner: cornerEnum.bottomLeft
+                        size: root.mainRounding
                         anchors {
-                            bottom:bg.bottom
-                            left:bg.right
+                            bottom: bg.bottom
+                            left: bg.right
                         }
                     }
                     RoundCorner {
-                        id:c2
-                        visible:c1.visible
-                        corner:cornerEnum.bottomRight
-                        size:root.mainRounding
+                        id: c2
+                        visible: c1.visible
+                        corner: cornerEnum.bottomRight
+                        size: root.mainRounding
                         anchors {
-                            bottom:bg.bottom
-                            right:bg.left
+                            bottom: bg.bottom
+                            right: bg.left
                         }
                     }
-
                 }
             }
         }

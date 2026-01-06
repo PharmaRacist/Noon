@@ -37,7 +37,6 @@ ToolTip {
             radius: Rounding.small ?? 7
             width: internalVisibleCondition ? (tooltipTextObject.width + 2 * root.horizontalPadding) : 0
             height: internalVisibleCondition ? (tooltipTextObject.height + 2 * root.verticalPadding) : 0
-            enableShadows:true
             Behavior on width {
                 Anim {}
             }
@@ -52,7 +51,7 @@ ToolTip {
                 font {
                     pixelSize: Fonts.sizes.small - 2 ?? 14
                     hintingPreference: Font.PreferFullHinting
-                    family:Fonts.family.reading
+                    family: Fonts.family.reading
                 }
                 color: Colors.m3.m3onSurface
                 wrapMode: Text.Wrap

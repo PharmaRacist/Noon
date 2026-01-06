@@ -1,4 +1,4 @@
-import "../common"
+import "../../common"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.SystemTray
@@ -8,7 +8,7 @@ import qs.common.widgets
 RowLayout {
     id: root
 
-    required property var bar
+    property var bar: parent.parent
 
     Layout.fillHeight: true
     spacing: XPadding.small
@@ -16,7 +16,6 @@ RowLayout {
     Repeater {
         model: SystemTray.items
 
-        // Remake
         SysTrayItem {
             required property SystemTrayItem modelData
 
@@ -24,7 +23,5 @@ RowLayout {
             implicitHeight: XSizes.taskbar.trayItemSize ?? 20
             item: modelData
         }
-
     }
-
 }

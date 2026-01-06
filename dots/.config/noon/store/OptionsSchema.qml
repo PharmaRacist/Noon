@@ -46,6 +46,7 @@ JsonAdapter {
         fonts: JsonObject {
             property real scale: 1
             property string main: "Google Sans Flex"
+            property bool syncFamily: false
         }
     }
 
@@ -101,12 +102,15 @@ JsonAdapter {
 
     property JsonObject apps: JsonObject {
         property string bluetooth: "kcmshell6 kcm_bluetooth"
-        property string imageViewer: "loupe"
         property string network: "plasmawindowed org.kde.plasma.networkmanagement"
         property string networkEthernet: "kcmshell6 kcm_networkmanagement"
         property string settings: "systemsettings"
-        property string taskManager: "plasma-systemmonitor --page-name Processes"
-        property string terminal: "kitty"
+        property string terminal: "foot"
+        property string terminalAlt: "kitty"
+        property string browser: "zen-browser"
+        property string browserAlt: "firefox"
+        property string fileManager: "dolphin"
+        property string editor: "codium"
     }
 
     property JsonObject services: JsonObject {
@@ -227,7 +231,7 @@ JsonAdapter {
     }
 
     property JsonObject osd: JsonObject {
-        property int timeout: 1000
+        property int timeout: 3000
         property bool enabled: false
     }
 
@@ -325,6 +329,11 @@ JsonAdapter {
         hyprland: JsonObject {
             property bool playSoundOnFocusChanged: false
             property string tilingLayout: "dwindle"
+            property int blurPasses: 1
+            property bool shadows: true
+            property int gapsOut: 1
+            property int gapsIn: 1
+            property int borders: 1
         }
 
         behavior: JsonObject {
@@ -350,7 +359,7 @@ JsonAdapter {
         property int currentLayout: 0
         property int currentVerticalLayout: 0
         property list<string> vLayout: ["materialStatusIcons", "nightlight", "weather", "separator", "battery", "separator", "sysTray", "spacer", "title", "spacer", "media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
-        property list<string> hLayout: ["power", "title", "spacer", "spacer", "resources", "media", "workspaces", "clock", "utilButtons", "spacer", "spacer", "spacer", "sysTray", "nightlight", "weather", "battery", "materialStatusIcons"]
+        property list<string> hLayout: ["power", "separator", "title", "spacer", "resources", "separator", "media", "separator", "workspaces", "separator", "clock", "separator", "utilButtons", "spacer", "sysTray", "nightlight", "battery", "weather", "materialStatusIcons"]
 
         appearance: JsonObject {
             property int mode: 2

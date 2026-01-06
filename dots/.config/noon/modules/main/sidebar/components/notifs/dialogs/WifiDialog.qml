@@ -7,13 +7,13 @@ import Quickshell
 
 BottomDialog {
     id: root
-    
+
     collapsedHeight: parent.height * 0.65
-    show: GlobalStates.showWifiDialog
-    finishAction: GlobalStates.showWifiDialog = reveal
-    
+    show: GlobalStates.main.dialogs.showWifiDialog
+    finishAction: GlobalStates.main.dialogs.showWifiDialog = reveal
+
     property bool isScanning: false
-    
+
     onShowChanged: {
         if (show && NetworkService.wifiEnabled) {
             isScanning = true;
@@ -21,13 +21,13 @@ BottomDialog {
             scanTimer.restart();
         }
     }
-    
+
     Timer {
         id: scanTimer
         interval: 3000
         onTriggered: isScanning = false
     }
-    
+
     contentItem: ColumnLayout {
         anchors.fill: parent
         anchors.margins: Padding.verylarge
@@ -36,7 +36,7 @@ BottomDialog {
         BottomDialogHeader {
             title: "Connect to Wi-Fi"
         }
-        
+
         BottomDialogSeparator {}
 
         StyledIndeterminateProgressBar {
@@ -53,8 +53,10 @@ BottomDialog {
             model: {
                 const networks = [...NetworkService.wifiNetworks];
                 return networks.sort((a, b) => {
-                    if (a.active && !b.active) return -1;
-                    if (!a.active && b.active) return 1;
+                    if (a.active && !b.active)
+                        return -1;
+                    if (!a.active && b.active)
+                        return 1;
                     return b.strength - a.strength;
                 });
             }
@@ -62,7 +64,7 @@ BottomDialog {
             delegate: WifiNetworkItem {
                 required property var modelData
                 required property int index
-                
+
                 width: ListView.view.width
                 network: modelData
             }
@@ -71,11 +73,11 @@ BottomDialog {
         RowLayout {
             Layout.preferredHeight: 50
             Layout.fillWidth: true
-            
+
             Item {
                 Layout.fillWidth: true
             }
-            
+
             DialogButton {
                 buttonText: qsTr("Refresh")
                 onClicked: {
@@ -84,14 +86,12 @@ BottomDialog {
                     scanTimer.restart();
                 }
             }
-            
+
             DialogButton {
                 buttonText: qsTr("Details")
                 onClicked: {
                     root.show = false;
-                    const app = NetworkService.ethernet ? 
-                        Mem.options.apps.networkEthernet : 
-                        Mem.options.apps.network;
+                    const app = NetworkService.ethernet ? Mem.options.apps.networkEthernet : Mem.options.apps.network;
                     Noon.execDetached(app);
                     Noon.callIpc("sidebar hide");
                 }

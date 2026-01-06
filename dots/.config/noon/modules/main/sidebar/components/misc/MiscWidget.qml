@@ -15,25 +15,24 @@ StyledRect {
     property var tabButtonList: [
         {
             "icon": "discover_tune",
-            "name": qsTr("Mixer")
+            "name": qsTr("Mixer"),
+            "component": "VolumeMixer"
         },
         {
             "icon": "relax",
-            "name": qsTr("Ambients")
+            "name": qsTr("Ambients"),
+            "component": "AmbientSounds"
         },
         {
             "icon": "hourglass",
-            "name": qsTr("Pomo")
+            "name": qsTr("Pomo"),
+            "component": "PomoWidget"
         },
         {
             "icon": "alarm",
-            "name": qsTr("Alarms")
+            "name": qsTr("Alarms"),
+            "component": "AlarmWidget"
         }
-        // {
-        //     "icon": "energy_savings_leaf",
-        //     "name": qsTr("Resources")
-        // }
-        ,
     ]
     ColumnLayout {
         anchors.fill: parent
@@ -74,7 +73,6 @@ StyledRect {
             AmbientSounds {}
             PomoWidget {}
             AlarmWidget {}
-            // ResourcesWidget {}
             Keys.onPressed: event => {
                 if (event.modifiers === Qt.ControlModifier) {
                     if (event.key === Qt.Key_PageDown) {

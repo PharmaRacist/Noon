@@ -21,7 +21,7 @@ StyledGridView {
     // Grid configuration
     cellWidth: Math.floor(width / columns)
     cellHeight: cellWidth
-    cacheBuffer:Math.min(500, cellHeight * 3)
+    cacheBuffer: Math.min(500, cellHeight * 3)
     reuseItems: true
     clip: true
     currentIndex: -1
@@ -118,7 +118,7 @@ StyledGridView {
         height: appGridView.cellHeight - 10
 
         property string appId: model.id
-        property bool isPinned: Mem.states.dock.pinnedApps.some(id => id.toLowerCase() === appId.toLowerCase())
+        property bool isPinned: Mem.states.favorites.apps.some(id => id.toLowerCase() === appId.toLowerCase())
         property bool isSelected: appGridView.currentIndex === index && appGridView.activeFocus
         property bool isEmoji: appGridView.selectedCategory === "Emojis"
 
@@ -138,6 +138,7 @@ StyledGridView {
             id: loader
             anchors.centerIn: parent
             width: parent.width - 20
+
             sourceComponent: appItem.isEmoji ? emojiComponent : appComponent
         }
 
@@ -195,7 +196,6 @@ StyledGridView {
     }
 
     ScrollEdgeFade {
-        target:appGridView 
+        target: appGridView
     }
-
 }

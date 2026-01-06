@@ -65,9 +65,13 @@ Rectangle {
     Behavior on implicitHeight {
         Anim {}
     }
-
-    StyledRectangularShadow {
-        visible: root.enableShadows
-        target: parent
+    Loader {
+        anchors.fill: parent
+        active: root.enableShadows
+        onLoaded: {
+            if (item && item !== null)
+                item.target = root;
+        }
+        sourceComponent: StyledRectangularShadow {}
     }
 }

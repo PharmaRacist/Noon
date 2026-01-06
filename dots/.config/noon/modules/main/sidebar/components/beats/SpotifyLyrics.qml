@@ -96,20 +96,6 @@ Item {
         shapeColor: BeatsService.colors.colOnPrimary
     }
 
-    Loader {
-        anchors.centerIn: parent
-        width: coverArtSize
-        height: coverArtSize
-        active: !loading && !displayLines.length
-        sourceComponent: MusicCoverArt {
-            anchors.fill: parent
-            clip: true
-            radius: Rounding.massive
-            enableShadows: true
-            enableBorders: false
-        }
-    }
-
     StyledFlickable {
         id: flick
 

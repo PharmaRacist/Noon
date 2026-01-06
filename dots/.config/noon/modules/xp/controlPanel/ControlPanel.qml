@@ -2,7 +2,6 @@ import "../common"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import qs
 import qs.common
 import qs.common.utils
 import qs.common.widgets
@@ -17,6 +16,7 @@ FloatingWindow {
         - [ ] Explorer Style Navigation
 
     */
+
     function dismiss() {
         root.visible = false;
     }
@@ -25,10 +25,13 @@ FloatingWindow {
         root.visible = false;
     }
 
+    visible: GlobalStates.xp.showControlPanel
     title: "control_panel"
     maximumSize: Qt.size(1600, 900)
     minimumSize: Qt.size(1280, 720)
-
+    Component.onCompleted: {
+        searchInput.focus = true;
+    }
     StyledRect {
         id: bg
 
@@ -64,7 +67,6 @@ FloatingWindow {
                     root.dismiss();
                 }
             }
-
         }
 
         StyledRect {
@@ -76,7 +78,6 @@ FloatingWindow {
             implicitWidth: 280
             radius: Rounding.huge
             color: Colors.colLayer1
-            enableShadows: true
             enableBorders: true
 
             StyledTextField {
@@ -99,7 +100,6 @@ FloatingWindow {
                 to: Padding.verylarge
                 running: true
             }
-
         }
 
         QuickSettings {
@@ -108,7 +108,6 @@ FloatingWindow {
             anchors.margins: Padding.verylarge
             sidebarMode: true
         }
-
     }
 
     component ControlButton: RippleButtonWithIcon {
@@ -117,5 +116,4 @@ FloatingWindow {
         buttonRadius: Rounding.full
         colBackground: Colors.m3.m3surfaceContainer
     }
-
 }

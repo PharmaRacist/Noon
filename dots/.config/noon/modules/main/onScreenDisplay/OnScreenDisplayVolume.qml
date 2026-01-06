@@ -13,22 +13,17 @@ Scope {
     property bool showOsdValues: false
     property bool userInteracting: false
     property string protectionMessage: ""
-    property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+    property var focusedScreen: GlobalStates.focusedScreen
 
     Binding {
-        target: GlobalStates
+        target: GlobalStates.main
         property: "showOsdValues"
-        value: showOsdValues
+        value: root.showOsdValues
     }
 
     function triggerOsd() {
-        showOsdValues = true;
+        root.showOsdValues = true;
         if (!userInteracting)
-            osdTimeout.restart();
-    }
-
-    function restartTimeoutIfNotInteracting() {
-        if (showOsdValues && !userInteracting)
             osdTimeout.restart();
     }
 
@@ -36,20 +31,16 @@ Scope {
         id: osdTimeout
         interval: Mem.options.osd.timeout
         repeat: false
+        running: !userInteracting
         onTriggered: {
-            if (!userInteracting) {
-                root.showOsdValues = false;
-                root.protectionMessage = "";
-            } else {
-                restart();
-            }
+            root.showOsdValues = false;
+            root.protectionMessage = "";
         }
     }
-
     Connections {
         target: BrightnessService
         function onBrightnessChanged() {
-            showOsdValues = false;
+            root.showOsdValues = false;
         }
     }
 
@@ -88,27 +79,25 @@ Scope {
         value: AudioService.sink?.audio.volume ?? 0
         icon: AudioService.sink?.audio.muted ? "volume_off" : "volume_up"
         targetScreen: root.focusedScreen
-
-        onValueModified: function(newValue) {
+        volumeMode: true
+        onInteractionStarted: root.userInteracting = true
+        onInteractionEnded: root.userInteracting = false
+        onValueModified: function (newValue) {
             if (AudioService.sink?.audio)
                 AudioService.sink.audio.volume = newValue;
-        }
-
-        onInteractionStarted: {
-            root.userInteracting = true;
-            osdTimeout.stop();
-        }
-
-        onInteractionEnded: {
-            root.userInteracting = false;
-            root.restartTimeoutIfNotInteracting();
         }
     }
 
     IpcHandler {
         target: "osdVolume"
-        function trigger() { root.triggerOsd(); }
-        function hide()    { root.showOsdValues = false; }
-        function toggle()  { root.showOsdValues = !root.showOsdValues; }
+        function trigger() {
+            root.triggerOsd();
+        }
+        function hide() {
+            root.showOsdValues = false;
+        }
+        function toggle() {
+            root.showOsdValues = !root.showOsdValues;
+        }
     }
 }

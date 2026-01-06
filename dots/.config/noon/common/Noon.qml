@@ -50,14 +50,14 @@ Singleton {
         Quickshell.execDetached(["bash", "-c", cmd]);
 
         // Send notification with "Got it" button that stops the sound
-        let icon = Directories.assets + "/icons/logo-symbolic.svg";
+        let icon = Directories.assets + "/icons/noon-symbolic.svg";
         let notifyCmd = `notify-send -i ${icon} -a "HyprNoon" -u critical -A "stop=Got it" "Wake Up !" "${name}" && pkill -f "paplay.*HyprNoon-Alarm"`;
 
         Quickshell.execDetached(["bash", "-c", notifyCmd]);
     }
 
     function notify(content: string, title: string) {
-        let icon = Directories.assets + "/icons/logo-symbolic.svg";
+        let icon = Directories.assets + "/icons/noon-symbolic.svg";
         let titleStr = title ?? "HyprNoon";
         Quickshell.execDetached(["notify-send", "-i", icon, "-a", titleStr, content]);
     }
@@ -141,6 +141,74 @@ Singleton {
             }
         }
     }
+    function changeSystemFont() {
+        const font = Fonts.family.main;
+        setHyprKey("font_main", font);
+        execDetached(`gsettings set org.gnome.desktop.interface font-name '${font} ${Fonts.sizes.verysmall}'`);
+        execDetached(`kwriteconfig6 --file kdeglobals --group General --key font '${font},${Fonts.sizes.verysmall},-1,5,50,0,0,0,0,0'`);
+        if (!Fonts.family.isMainMono)
+            execDetached(`kwriteconfig6 --file kdeglobals --group General --key fixed '${Fonts.family.monospace},${Fonts.sizes.verysmall},-1,5,50,0,0,0,0,0'`);
+    }
+
+    Connections {
+        target: Fonts.family
+        function onMainChanged() {
+            fontTimer.restart();
+        }
+        property Timer fontTimer: Timer {
+            id: fontTimer
+            interval: 1000
+            onTriggered: Noon.changeSystemFont()
+        }
+    }
+    Connections {
+        target: Mem.options.apps
+        property QtObject conf: Mem.options.apps
+
+        function onBrowserChanged() {
+            Noon.setHyprKey("browser", conf.browser);
+        }
+        function onBrowserAltChanged() {
+            Noon.setHyprKey("browser_alt", conf.browserAlt);
+        }
+        function onTerminalChanged() {
+            Noon.setHyprKey("terminal", conf.terminal);
+        }
+        function onTerminalAltChanged() {
+            Noon.setHyprKey("terminal_alt", conf.terminalAlt);
+        }
+        function onFileManagerChanged() {
+            Noon.setHyprKey("file_manager", conf.fileManager);
+        }
+        function onEditorChanged() {
+            Noon.setHyprKey("editor", conf.editor);
+        }
+    }
+    Connections {
+        target: Mem.options.desktop.hyprland
+        property QtObject conf: Mem.options.desktop.hyprland
+
+        function onGapsInChanged() {
+            Noon.setHyprKey("gaps_in", conf.gapsIn);
+        }
+        function onGapsOutChanged() {
+            Noon.setHyprKey("gaps_out", conf.gapsOut);
+        }
+        function onShadowsChanged() {
+            Noon.setHyprKey("shadows", conf.shadows);
+        }
+        function onBordersChanged() {
+            Noon.setHyprKey("borders", conf.borders);
+        }
+        function onBlurPassesChanged() {
+            Noon.setHyprKey("blur_passes", conf.blurPasses);
+        }
+        function onTilingLayoutChanged() {
+            Noon.setHyprKey("layout", conf.tilingLayout);
+            Noon.execDetached("hyprctl dispatch submap " + conf.tilingLayout);
+        }
+    }
+
     // WidgetLoader {
     //     id: popupLoader
     //     active:false

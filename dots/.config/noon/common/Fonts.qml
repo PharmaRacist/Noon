@@ -9,18 +9,18 @@ Singleton {
     property QtObject variableAxes
 
     family: QtObject {
+        id: root
+
         readonly property string main: Mem.options.appearance.fonts.main ?? "Google Sans Flex"
-        readonly property string title: "Rubik"
-        readonly property string reading: "Rubik"
-        readonly property string numbers: "Roboto Flex"
-        readonly property string monospace: "Iosevka"
-        readonly property string clock: "Google Sans Flex"
-        readonly property string variable: "Google Sans Flex"
-        readonly property string emoji: "Noto Color Emoj"
+        readonly property string title: syncFamily ? main : "Rubik"
+        readonly property string reading: syncFamily ? main : "Rubik"
+        readonly property string numbers: syncFamily ? main : "Roboto Flex"
+        readonly property string monospace: syncFamily ? main : "Iosevka"
+        readonly property string clock: syncFamily ? main : "Google Sans Flex"
+        readonly property string variable: syncFamily ? main : "Google Sans Flex"
+        readonly property string emoji: "Noto Color Emoji"
         readonly property string iconMaterial: "Material Symbols Rounded"
-        onMainChanged: {
-            Noon.setHyprKey("font_main", main);
-        }
+        readonly property bool syncFamily: Mem.options.appearance.fonts.syncFamily
     }
 
     sizes: QtObject {

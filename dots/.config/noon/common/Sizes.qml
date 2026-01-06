@@ -5,7 +5,7 @@ import qs.common
 import qs.services
 
 Singleton {
-    property real barElevation: hyprland.gapsOut / 4
+    property real barElevation: hyprland.gapsOut / 2
     property real osdWidth: 220
     property real osdHeight: 45
     property real collapsedSideBarWidth: 50
@@ -15,7 +15,7 @@ Singleton {
     property real elevationMargin: Math.round(frameThickness + elevationValue)
     property size beamSize: Qt.size(450, 60)
     property size beamSizeExpanded: Qt.size(800, 100)
-    property size gameLauncherItemSize: Qt.size(225, 360) // Expanded
+    property size gameLauncherItemSize: Qt.size(225, 360)
     property QtObject hyprland
     property QtObject sidebar
     property QtObject osd

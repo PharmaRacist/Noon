@@ -12,7 +12,6 @@ StyledRect {
     Layout.preferredHeight: playerSelector.height + 10
     Layout.bottomMargin: -10
     radius: 15
-    enableShadows: true
     color: root.colors.colSecondaryContainer
     visible: BeatsService.meaningfulPlayers.length > 1
     property QtObject colors: BeatsService.colors

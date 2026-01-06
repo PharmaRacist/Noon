@@ -11,6 +11,6 @@ QuickToggleButton {
     buttonName: device?.name || "No Devices"
     toggled: isAvailable
     buttonIcon: isAvailable ? "phonelink" : "phonelink_off"
-    onRequestDialog: GlobalStates.showKdeConnectDialog = true
+    onRequestDialog: GlobalStates.main.dialogs.showKdeConnectDialog = true
     onClicked: KdeConnectService.togglePower()
 }

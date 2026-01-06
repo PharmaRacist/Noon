@@ -1,12 +1,13 @@
 // Simple Gowall Wrapper for upscale / scheme processing
 
+pragma Singleton
+
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.functions
 import qs.common.utils
 import qs.store
-pragma Singleton
 
 Singleton {
     id: root
@@ -32,27 +33,23 @@ Singleton {
 
         if (themeProc.exited)
             WallpaperService.applyWallpaper(Qt.resolvedUrl(current_processed_wall));
-
     }
 
     Process {
         id: themeProc
 
-        onExited: (exitCode) => {
+        onExited: exitCode => {
             if (exitCode === 0)
                 WallpaperService.applyWallpaper(Qt.resolvedUrl(current_processed_wall));
-
         }
     }
 
     Process {
         id: upscaleProc
 
-        onExited: (exitCode) => {
+        onExited: exitCode => {
             if (exitCode === 0)
                 WallpaperService.applyWallpaper(Qt.resolvedUrl(upscale_output));
-
         }
     }
-
 }

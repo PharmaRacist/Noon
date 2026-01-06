@@ -13,8 +13,8 @@ BottomDialog {
     enableStagedReveal: false
     bottomAreaReveal: true
     hoverHeight: 100
-    onShowChanged: GlobalStates.showTransparencyDialog = show
-    finishAction: GlobalStates.showTransparencyDialog = reveal
+    onShowChanged: GlobalStates.main.dialogs.showTransparencyDialog = show
+    finishAction: GlobalStates.main.dialogs.showTransparencyDialog = reveal
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -25,8 +25,7 @@ BottomDialog {
             title: qsTr("Transparency")
         }
 
-        BottomDialogSeparator {
-        }
+        BottomDialogSeparator {}
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -54,7 +53,6 @@ BottomDialog {
                     checked: Mem.options.appearance.transparency.enabled
                     onToggled: Mem.options.appearance.transparency.enabled = checked
                 }
-
             }
 
             RowLayout {
@@ -78,7 +76,6 @@ BottomDialog {
                     onToggled: Mem.options.appearance.transparency.blur = checked
                     enabled: Mem.options.appearance.transparency.enabled
                 }
-
             }
 
             ColumnLayout {
@@ -106,7 +103,6 @@ BottomDialog {
                         color: Colors.colOnSurfaceVariant
                         opacity: 0.7
                     }
-
                 }
 
                 StyledSlider {
@@ -116,13 +112,11 @@ BottomDialog {
                     value: Mem.options.appearance.transparency.scale
                     onMoved: Mem.options.appearance.transparency.scale = value
                 }
-
             }
 
             Item {
                 Layout.fillHeight: true
             }
-
         }
 
         RowLayout {
@@ -137,9 +131,6 @@ BottomDialog {
                 buttonText: qsTr("Done")
                 onClicked: root.show = false
             }
-
         }
-
     }
-
 }

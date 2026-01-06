@@ -22,7 +22,8 @@ Singleton {
      * @returns {string}
      */
     function fileNameForPath(str) {
-        if (typeof str !== "string") return "";
+        if (typeof str !== "string")
+            return "";
         const trimmed = trimFileProtocol(str);
         return trimmed.split(/[\\/]/).pop();
     }
@@ -31,42 +32,46 @@ Singleton {
          * @param {string} str
          * @returns {string}
          */
-        function trimFileExt(str) {
-            if (typeof str !== "string") return "";
-            const trimmed = trimFileProtocol(str);
-            const lastDot = trimmed.lastIndexOf(".");
-            if (lastDot > -1 && lastDot > trimmed.lastIndexOf("/")) {
-                return trimmed.slice(0, lastDot);
-            }
-            return trimmed;
+    function trimFileExt(str) {
+        if (typeof str !== "string")
+            return "";
+        const trimmed = trimFileProtocol(str);
+        const lastDot = trimmed.lastIndexOf(".");
+        if (lastDot > -1 && lastDot > trimmed.lastIndexOf("/")) {
+            return trimmed.slice(0, lastDot);
         }
+        return trimmed;
+    }
     /**
         * Returns the parent directory of a given file path
         * @param {string} str
         * @returns {string}
         */
-       function parentDirectory(str) {
-           if (typeof str !== "string") return "";
-           const trimmed = trimFileProtocol(str);
-           const parts = trimmed.split(/[\\/]/);
-           if (parts.length <= 1) return "";
-           parts.pop();
-           return parts.join("/");
-       }
+    function parentDirectory(str) {
+        if (typeof str !== "string")
+            return "";
+        const trimmed = trimFileProtocol(str);
+        const parts = trimmed.split(/[\\/]/);
+        if (parts.length <= 1)
+            return "";
+        parts.pop();
+        return parts.join("/");
+    }
     /**
      * Extracts the folder name from a directory path
      * @param {string} str
      * @returns {string}
      */
     function folderNameForPath(str) {
-        if (typeof str !== "string") return "";
+        if (typeof str !== "string")
+            return "";
         const trimmed = trimFileProtocol(str);
         // Remove trailing slash if present
         const noTrailing = trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed;
-        if (!noTrailing) return "";
+        if (!noTrailing)
+            return "";
         return noTrailing.split(/[\\/]/).pop();
     }
-
 
     /**
      * Extracts the filename (with extension) from a path
@@ -139,35 +144,35 @@ Singleton {
      * @param {string} filePath - Path to the file (supports file:// protocol)
      * @returns {boolean} - True if file exists, false otherwise
      */
-function fileExists(filePath) {
-    if (!filePath) {
-        return false;
-    }
+    function fileExists(filePath) {
+        if (!filePath) {
+            return false;
+        }
 
-    let pathToCheck = filePath;
-    if (typeof filePath === "object" && filePath.toString) {
-        // Handle QML Url objects (e.g., if passed as Url {})
-        pathToCheck = filePath.toString();
-    } else if (typeof filePath !== "string") {
-        console.warn("fileExists: Invalid input type:", typeof filePath);
-        return false;
-    }
+        let pathToCheck = filePath;
+        if (typeof filePath === "object" && filePath.toString) {
+            // Handle QML Url objects (e.g., if passed as Url {})
+            pathToCheck = filePath.toString();
+        } else if (typeof filePath !== "string") {
+            console.warn("fileExists: Invalid input type:", typeof filePath);
+            return false;
+        }
 
-    // Manual trim to avoid recursion in FileUtils.trimFileProtocol
-    let trimmed = pathToCheck;
-    if (pathToCheck.startsWith("file://")) {
-        trimmed = pathToCheck.substring(7);  // Strip "file://" prefix
-    } else if (pathToCheck.startsWith("file:///")) {
-        trimmed = pathToCheck.substring(8);  // Handle triple-slash variant (absolute paths)
-    }
+        // Manual trim to avoid recursion in FileUtils.trimFileProtocol
+        let trimmed = pathToCheck;
+        if (pathToCheck.startsWith("file://")) {
+            trimmed = pathToCheck.substring(7);  // Strip "file://" prefix
+        } else if (pathToCheck.startsWith("file:///")) {
+            trimmed = pathToCheck.substring(8);  // Handle triple-slash variant (absolute paths)
+        }
 
-    try {
-        const exists = FileUtils.fileExists(trimmed);
-        return exists;
-    } catch (error) {
-        return false;
-    }
-}    /**
+        try {
+            const exists = FileUtils.fileExists(trimmed);
+            return exists;
+        } catch (error) {
+            return false;
+        }
+    }    /**
      * Gets file info using QuickShell's IO capabilities
      * @param {string} filePath - Path to the file
      * @returns {object|null} - File info object or null if error
@@ -184,20 +189,20 @@ function fileExists(filePath) {
             return null;
         }
     }
-    function mkdir(directories:var){
+    function mkdir(directories: var) {
         if (!directories)
             return;
-        Noon.execDetached( `mkdir -p '${directories.join("' '")}'`);
+        Noon.execDetached(`mkdir -p '${directories.join("' '")}'`);
     }
-    function copyItem(item:string,target:string) {
-        Noon.execDetached( `cp ${trimFileProtocol(item)} ${trimFileProtocol(target)}`);
+    function copyItem(item: string, target: string) {
+        Noon.execDetached(`cp ${trimFileProtocol(item)} ${trimFileProtocol(target)}`);
     }
     // by its same name
-    function moveItem(item:string,target:string) {
-        const fileName = getEscapedFileName(item)
-        Noon.execDetached( `mv ${trimFileProtocol(item)} ${trimFileProtocol(target)}/${fileName}`);
+    function moveItem(item: string, target: string) {
+        const fileName = getEscapedFileName(item);
+        Noon.execDetached(`mv ${trimFileProtocol(item)} ${trimFileProtocol(target)}/${fileName}`);
     }
-    function deleteItem(path:string) {
-        Noon.execDetached( `rm -rf ${trimFileProtocol(path)}`);
+    function deleteItem(path: string) {
+        Noon.execDetached(`rm -rf ${trimFileProtocol(path)}`);
     }
 }
