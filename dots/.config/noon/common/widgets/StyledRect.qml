@@ -14,6 +14,7 @@ Rectangle {
     property int leftRadius
     property int topRadius
     property int bottomRadius
+    property int implicitSize
     property QtObject borders: QtObject {
         property int size
         property color color
@@ -22,12 +23,12 @@ Rectangle {
         property var bottomBorder
         property var leftBorder
     }
-
+    implicitHeight: implicitSize
+    implicitWidth: implicitSize
     topRightRadius: Math.max(rightRadius, topRadius, radius)
     bottomRightRadius: Math.max(rightRadius, bottomRadius, radius)
     topLeftRadius: Math.max(leftRadius, topRadius, radius)
     bottomLeftRadius: Math.max(leftRadius, bottomRadius, radius)
-
     color: Colors.colPrimaryContainer
     border.color: enableBorders ? Colors.colOutline : "transparent"
     border.width: 1

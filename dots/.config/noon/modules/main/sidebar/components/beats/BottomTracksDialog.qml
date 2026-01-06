@@ -17,7 +17,7 @@ BottomDialog {
         const model = BeatsService.tracksModel;
         if (!model) {
             filteredTracks = tracks;
-            return ;
+            return;
         }
         const count = model.count;
         const search = searchText.toLowerCase();
@@ -25,10 +25,9 @@ BottomDialog {
             const trackInfo = BeatsService.getTrackInfo(i);
             if (trackInfo && (search === "" || trackInfo.name.toLowerCase().includes(search)))
                 tracks.push({
-                "index": i,
-                "info": trackInfo
-            });
-
+                    "index": i,
+                    "info": trackInfo
+                });
         }
         filteredTracks = tracks;
     }
@@ -51,15 +50,6 @@ BottomDialog {
         BottomDialogHeader {
             title: "Beats"
             subTitle: `There are ${root.filteredTracks.length} Tracks in your playlist !`
-
-            RippleButtonWithIcon {
-                colors: root.colors
-                materialIcon: "close"
-                releaseAction: () => {
-                    return root.show = false;
-                }
-            }
-
         }
 
         SearchBar {
@@ -82,7 +72,6 @@ BottomDialog {
                     root.updateFilteredTracks();
                 }
             }
-
         }
 
         StyledListView {
@@ -123,11 +112,7 @@ BottomDialog {
                     trackPath: parent.trackPath
                     trackName: parent.title
                 }
-
             }
-
         }
-
     }
-
 }

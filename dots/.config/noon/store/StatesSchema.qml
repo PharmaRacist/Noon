@@ -15,7 +15,7 @@ JsonAdapter {
             property bool isLive: false
             property string currentVideo: ""
             property string currentBg: ""
-            property string currentFolder: ""
+            property string currentFolder: "/Pictures/Wallpapers"
         }
         appearance: JsonObject {
             property JsonObject colors
@@ -119,7 +119,80 @@ JsonAdapter {
         property JsonObject behavior
         property JsonObject misc
         property JsonObject apis
-
+        property list<var> widgets: [
+            {
+                "id": "resources",
+                "pill": false,
+                "enabled": true,
+                "expandable": true,
+                "pinned": false,
+                "component": "Resources"
+            },
+            {
+                "id": "battery",
+                "pill": true,
+                "enabled": true,
+                "expandable": false,
+                "pinned": false,
+                "component": "Battery"
+            },
+            {
+                "id": "simple_clock",
+                "pill": true,
+                "enabled": true,
+                "expandable": false,
+                "pinned": false,
+                "component": "Clock_Simple"
+            },
+            {
+                "id": "bluetooth",
+                "pill": true,
+                "enabled": true,
+                "expandable": false,
+                "pinned": false,
+                "component": "Bluetooth"
+            },
+            {
+                "id": "media",
+                "pill": false,
+                "enabled": true,
+                "expandable": true,
+                "pinned": false,
+                "component": "Media"
+            },
+            {
+                "id": "combo",
+                "enabled": true,
+                "expandable": true,
+                "pinned": false,
+                "pill": false,
+                "component": "ClockWeatherCombo"
+            },
+            {
+                "id": "net",
+                "pill": true,
+                "enabled": true,
+                "expandable": false,
+                "pinned": false,
+                "component": "NetworkSpeed"
+            },
+            {
+                "id": "cal",
+                "pill": false,
+                "enabled": true,
+                "expandable": true,
+                "pinned": false,
+                "component": "Calendar"
+            },
+            {
+                "id": "pill",
+                "enabled": true,
+                "expandable": false,
+                "pinned": false,
+                "pill": true,
+                "component": "Weather_Simple"
+            }
+        ]
         behavior: JsonObject {
             property bool expanded: false
             property bool pinned: false
@@ -136,5 +209,4 @@ JsonAdapter {
     property JsonObject mediaPlayer: JsonObject {
         property string currentTrackPath: ""
     }
-
 }

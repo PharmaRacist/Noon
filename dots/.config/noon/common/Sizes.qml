@@ -35,6 +35,11 @@ Singleton {
         property real threeQuarter: Math.round(Screen.width * 0.85)
         property real session: 280
         property real overview: 1250
+        property real widgetSize: 172
+        property real widgetPillHeight: 72
+        property QtObject widgets: QtObject {
+            property real expandedWidth: 2 * Sizes.sidebar.widgetSize + Padding.verylarge
+        }
     }
 
     hyprland: QtObject {

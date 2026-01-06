@@ -21,7 +21,7 @@ Singleton {
     property string day: Qt.formatDateTime(clock.date, "dd")
     property string month: Qt.formatDateTime(clock.date, "MMMM")
     property string year: Qt.formatDateTime(clock.date, "yyyy")
-
+    property var clockVar: clock
     property string hour: {
         if (Mem.options.services.time.use12HourFormat) {
             return Qt.formatDateTime(clock.date, "hh AP").split(" ")[0];
@@ -41,7 +41,6 @@ Singleton {
     }
 
     property string minute: Qt.formatDateTime(clock.date, "mm")
-
     property string cleanMinute: String(parseInt(Qt.formatDateTime(clock.date, "mm")))
 
     property string dayTime: {
@@ -121,7 +120,7 @@ Singleton {
                 formatted += `${formatted ? ", " : ""}${minutes}m`;
             uptime = formatted;
             // Every 10 min
-            interval = 60 *1000 ;
+            interval = 60 * 1000;
         }
     }
 

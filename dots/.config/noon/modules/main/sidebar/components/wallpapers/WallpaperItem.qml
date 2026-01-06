@@ -22,12 +22,11 @@ StyledRect {
         for (let i = 0; i < NameFilters.video.length; i++) {
             if (name.endsWith(NameFilters.video[i]))
                 return true;
-
         }
         return false;
     }
 
-    signal clicked()
+    signal clicked
 
     anchors.fill: parent
     anchors.margins: isKeyboardSelected ? 3 * root.itemSpacing : root.itemSpacing
@@ -75,7 +74,6 @@ StyledRect {
             color: Colors.m3.m3onSurface
             font.pixelSize: 24
         }
-
     }
 
     MouseArea {
@@ -83,7 +81,7 @@ StyledRect {
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onPressed: (event) => {
+        onPressed: event => {
             if (event.button === Qt.RightButton)
                 wallpaperMenu.popup(event.x, event.y);
             else if (event.button === Qt.LeftButton)
@@ -92,12 +90,10 @@ StyledRect {
         onEntered: {
             if (isVideoFile && videoPlayer.playbackState !== MediaPlayer.PlayingState)
                 videoPlayer.play();
-
         }
         onExited: {
             if (isVideoFile && videoPlayer.playbackState === MediaPlayer.PlayingState)
                 videoPlayer.pause();
-
         }
     }
 
@@ -114,7 +110,6 @@ StyledRect {
             bottom: parent.bottom
             right: parent.right
         }
-
     }
 
     MaterialSymbol {
@@ -130,29 +125,28 @@ StyledRect {
             right: parent.right
             margins: 0
         }
-
     }
 
     StyledMenu {
         id: wallpaperMenu
 
-        content: [{
-            "text": "Favorite",
-            "materialIcon": "favorite",
-            "action": function() {
-                if (wallpaperItem.fileUrl)
-                    FileUtils.moveItem(wallpaperItem.fileUrl, Directories.wallpapers.favorite);
-
+        content: [
+            {
+                "text": "Favorite",
+                "materialIcon": "favorite",
+                "action": function () {
+                    if (wallpaperItem.fileUrl)
+                        FileUtils.moveItem(wallpaperItem.fileUrl, Directories.wallpapers.favorite);
+                }
+            },
+            {
+                "text": "delete",
+                "materialIcon": "delete",
+                "action": function () {
+                    if (wallpaperItem.fileUrl)
+                        FileUtils.deleteItem(wallpaperItem.fileUrl);
+                }
             }
-        }, {
-            "text": "delete",
-            "materialIcon": "delete",
-            "action": function() {
-                if (wallpaperItem.fileUrl)
-                    FileUtils.deleteItem(wallpaperItem.fileUrl);
-
-            }
-        }]
+        ]
     }
-
 }

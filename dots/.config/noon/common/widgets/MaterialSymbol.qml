@@ -6,17 +6,14 @@ StyledText {
 
     property real iconSize: Fonts.sizes.small ?? 16
     property real fill: 0
-    property real truncatedFill: fill.toFixed(1) // Reduce memory consumption spikes from constant font remapping
-    property var variableAxes:{
+    property real truncatedFill: fill.toFixed(1)
+    property var variableAxes: {
         "FILL": truncatedFill,
         "opsz": iconSize
     }
     renderType: Text.NativeRendering
 
     font {
-        // "wght": font.weight,
-        // "GRAD": 0,
-
         hintingPreference: Font.PreferNoHinting
         family: Fonts.family.iconMaterial ?? "Material Symbols Rounded"
         pixelSize: iconSize
@@ -25,15 +22,10 @@ StyledText {
     }
 
     Behavior on opacity {
-        Anim {
-        }
-
+        Anim {}
     }
 
     Behavior on fill {
-        FAnim {
-        }
-
+        FAnim {}
     }
-
 }

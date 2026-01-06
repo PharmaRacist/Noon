@@ -11,7 +11,7 @@ Singleton {
     id: root
     property int sidebarWidth
 
-    property QtObject sizePresets:Sizes.sidebar    
+    property QtObject sizePresets: Sizes.sidebar
     property var _categoryMap: ({})
     property var _enabledCategories: []
 
@@ -181,8 +181,9 @@ Singleton {
             name: "Misc",
             icon: "more_horiz",
             component: "MiscComponent",
+            preExpand: true,
             overlay: true,
-            customSize: sizePresets.quarter,
+            customSize: sizePresets.half,
             enabled: Mem.options.sidebar.content.misc
         },
         {
@@ -193,6 +194,16 @@ Singleton {
             overlay: true,
             customSize: sizePresets.quarter,
             enabled: false
+        },
+        {
+            id: "Widgets",
+            name: "Widgets",
+            icon: "dashboard",
+            component: "WidgetsPanel",
+            overlay: false,
+            preExpand: true,
+            customSize: sizePresets.half,
+            enabled: Mem.options.sidebar.content.widgets
         },
         {
             id: "Session",

@@ -7,7 +7,7 @@ import qs.common.widgets
 
 RowLayout {
     id: root
-
+    property var target: parent?.parent.parent ?? null
     property alias title: titleArea.text
     property alias subTitle: subTitleArea.text
     property QtObject colors: Colors
@@ -33,11 +33,18 @@ RowLayout {
             font.pixelSize: Fonts.sizes.normal
             color: root.colors.colSubtext
         }
-
     }
 
     Item {
         Layout.fillWidth: true
     }
-
+    RippleButtonWithIcon {
+        visible: root.target !== null
+        materialIcon: "close"
+        implicitSize: 42
+        colors: root.colors
+        releaseAction: () => {
+            root.target.show = false;
+        }
+    }
 }

@@ -202,6 +202,7 @@ JsonAdapter {
             property bool tweaks: true
             property bool wallpapers: true
             property bool session: true
+            property bool widgets: true
             property bool overview: false
             property bool misc: true
             property bool games: false
