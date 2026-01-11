@@ -17,7 +17,7 @@ MaterialShape {
     shape: MaterialShape.Shape.Clover4Leaf
     implicitSize: Math.max(symbol.implicitWidth, symbol.implicitHeight) + padding * 2
 
-    MaterialSymbol {
+    Symbol {
         id: symbol
 
         anchors.centerIn: parent

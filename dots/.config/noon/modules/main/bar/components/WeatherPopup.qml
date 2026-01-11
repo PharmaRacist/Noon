@@ -16,7 +16,7 @@ StyledPopup {
         Row {
             spacing: 6
 
-            MaterialSymbol {
+            Symbol {
                 anchors.verticalCenter: parent.verticalCenter
                 text: WeatherService.weatherData.currentEmoji
                 fill: 1
@@ -59,7 +59,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: "thermostat"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -86,7 +86,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: WeatherService.weatherData.feelsLike !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: "sentiment_satisfied"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -112,7 +112,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: WeatherService.weatherData.humidity !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: "water_drop"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -138,7 +138,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: WeatherService.weatherData.windSpeed !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: "air"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -164,7 +164,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: WeatherService.weatherData.visibility !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: "visibility"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large

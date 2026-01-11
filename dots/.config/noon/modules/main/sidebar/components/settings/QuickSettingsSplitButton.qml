@@ -74,7 +74,7 @@ Item {
                 anchors.rightMargin: 8
                 spacing: 4
 
-                MaterialSymbol {
+                Symbol {
                     text: "search"
                     color: Colors.colOnPrimary
                     fill: 1
@@ -191,7 +191,7 @@ Item {
                 target: parent
             }
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 text: "collapse_content"
                 color: Colors.colOnPrimary
@@ -286,7 +286,7 @@ Item {
                 target: parent
             }
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 text: "restart_alt"
                 color: Colors.m3.m3onPrimary

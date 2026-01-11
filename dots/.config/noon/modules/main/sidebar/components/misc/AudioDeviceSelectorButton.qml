@@ -23,7 +23,7 @@ GroupButton {
         anchors.margins: 5
         spacing: 10
 
-        MaterialSymbol {
+        Symbol {
             Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: false
             Layout.leftMargin: 5

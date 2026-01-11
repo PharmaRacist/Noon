@@ -49,7 +49,7 @@ DialogListItem {
             Layout.fillWidth: true
             spacing: 10
 
-            MaterialSymbol {
+            Symbol {
                 font.pixelSize: Fonts.sizes.verylarge
                 text: {
                     const s = root.network?.strength ?? 0;
@@ -73,7 +73,7 @@ DialogListItem {
                 text: root.network?.ssid ?? qsTr("Unknown")
             }
 
-            MaterialSymbol {
+            Symbol {
                 visible: {
                     const hasSecurity = root.network?.security && root.network.security.length > 0;
                     const isActive = root.network?.active ?? false;
@@ -156,7 +156,7 @@ DialogListItem {
                 colRipple: Colors.colLayer4Active
                 onClicked: {
                     Qt.openUrlExternally("http://nmcheck.gnome.org/");
-                    GlobalStates.main.sidebarOpen = false;
+                    GlobalStates.main.sidebar.show = false;
                 }
             }
         }

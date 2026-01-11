@@ -203,6 +203,7 @@ Singleton {
         Noon.execDetached(`mv ${trimFileProtocol(item)} ${trimFileProtocol(target)}/${fileName}`);
     }
     function deleteItem(path: string) {
-        Noon.execDetached(`rm -rf ${trimFileProtocol(path)}`);
+        if (path)
+            Noon.execDetached(`rm -rf "${trimFileProtocol(path)}"`);
     }
 }

@@ -20,7 +20,7 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
 
-        MaterialSymbol {
+        Symbol {
             Layout.alignment: Qt.AlignVCenter
             fill: 1
             text: "battery_full" // This will show the battery icon
@@ -71,7 +71,7 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
 
-        MaterialSymbol {
+        Symbol {
             Layout.alignment: Qt.AlignVCenter
             fill: 1
             text: "memory" // CPU icon
@@ -122,7 +122,7 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
 
-        MaterialSymbol {
+        Symbol {
             Layout.alignment: Qt.AlignVCenter
             fill: 1
             text: "database" // Memory icon
@@ -173,7 +173,7 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 8
 
-        MaterialSymbol {
+        Symbol {
             Layout.alignment: Qt.AlignVCenter
             fill: 1
             text: "swap_horiz" // Swap icon

@@ -91,7 +91,6 @@ Rectangle {
             from: -height - 56 * scaleFactor
             to: 56 * scaleFactor
         }
-
     }
 
     // User Switcher
@@ -141,16 +140,12 @@ Rectangle {
                 }
 
                 Behavior on color {
-                    CAnim {
-                    }
-
+                    CAnim {}
                 }
-
             }
-
         }
 
-        indicator: MaterialSymbol {
+        indicator: Symbol {
             x: userList.width - width - (12 * scaleFactor)
             y: userList.topPadding + (userList.availableHeight - height) / 2
             text: "arrow_drop_down"
@@ -159,11 +154,8 @@ Rectangle {
             rotation: userList.popup.visible ? 180 : 0
 
             Behavior on rotation {
-                Anim {
-                }
-
+                Anim {}
             }
-
         }
 
         background: Rectangle {
@@ -183,11 +175,8 @@ Rectangle {
             }
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
 
         contentItem: StyledText {
@@ -221,9 +210,7 @@ Rectangle {
                         from: 0.9
                         to: 1
                     }
-
                 }
-
             }
 
             exit: Transition {
@@ -232,7 +219,6 @@ Rectangle {
                     from: 1
                     to: 0
                 }
-
             }
 
             contentItem: ListView {
@@ -254,15 +240,10 @@ Rectangle {
                         color: parent.pressed ? root.colOnSurfaceVariant : Qt.rgba(root.colOnSurfaceVariant.r, root.colOnSurfaceVariant.g, root.colOnSurfaceVariant.b, 0.38)
 
                         Behavior on color {
-                            CAnim {
-                            }
-
+                            CAnim {}
                         }
-
                     }
-
                 }
-
             }
 
             background: Rectangle {
@@ -278,11 +259,8 @@ Rectangle {
                     color: Qt.rgba(0, 0, 0, 0.15)
                     transparentBorder: true
                 }
-
             }
-
         }
-
     }
 
     Controls.ComboBox {
@@ -329,16 +307,12 @@ Rectangle {
                 }
 
                 Behavior on color {
-                    CAnim {
-                    }
-
+                    CAnim {}
                 }
-
             }
-
         }
 
-        indicator: MaterialSymbol {
+        indicator: Symbol {
             x: sessionList.width - width - (12 * scaleFactor)
             y: sessionList.topPadding + (sessionList.availableHeight - height) / 2
             text: "arrow_drop_down"
@@ -347,11 +321,8 @@ Rectangle {
             rotation: sessionList.popup.visible ? 180 : 0
 
             Behavior on rotation {
-                Anim {
-                }
-
+                Anim {}
             }
-
         }
 
         background: Rectangle {
@@ -371,11 +342,8 @@ Rectangle {
             }
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
 
         contentItem: StyledText {
@@ -409,9 +377,7 @@ Rectangle {
                         from: 0.9
                         to: 1
                     }
-
                 }
-
             }
 
             exit: Transition {
@@ -420,7 +386,6 @@ Rectangle {
                     from: 1
                     to: 0
                 }
-
             }
 
             contentItem: ListView {
@@ -442,15 +407,10 @@ Rectangle {
                         color: parent.pressed ? root.colOnSurfaceVariant : Qt.rgba(root.colOnSurfaceVariant.r, root.colOnSurfaceVariant.g, root.colOnSurfaceVariant.b, 0.38)
 
                         Behavior on color {
-                            CAnim {
-                            }
-
+                            CAnim {}
                         }
-
                     }
-
                 }
-
             }
 
             background: Rectangle {
@@ -466,11 +426,8 @@ Rectangle {
                     color: Qt.rgba(0, 0, 0, 0.15)
                     transparentBorder: true
                 }
-
             }
-
         }
-
     }
 
     Rectangle {
@@ -506,7 +463,6 @@ Rectangle {
                     function onCurrentIndexChanged() {
                         if (userList.currentIndex >= 0 && userList.currentIndex < userModel.count)
                             avatarContainer.userName = userModel.data(userModel.index(userList.currentIndex, 0), Qt.DisplayRole);
-
                     }
 
                     target: userList
@@ -554,21 +510,17 @@ Rectangle {
                                 height: avatar.height
                                 radius: width / 2
                             }
-
                         }
-
                     }
 
-                    MaterialSymbol {
+                    Symbol {
                         anchors.centerIn: parent
                         text: "person"
                         font.pixelSize: parent.width * 0.5
                         color: root.colOnSurfaceVariant
                         visible: avatar.status !== Image.Ready && avatar.status !== Image.Loading
                     }
-
                 }
-
             }
 
             Rectangle {
@@ -602,7 +554,6 @@ Rectangle {
                     font.pixelSize: root.fontSizeXLarge
                     visible: !passwordBox.text && !passwordBox.activeFocus
                 }
-
             }
 
             Controls.Button {
@@ -615,16 +566,14 @@ Rectangle {
                     radius: root.radiusM
                 }
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     text: "send"
                     font.pixelSize: 26 * scaleFactor
                     color: root.colOnPrimary
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
-
             }
-
         }
 
         layer.effect: DropShadow {
@@ -641,7 +590,6 @@ Rectangle {
             from: -30 * scaleFactor - height
             to: 30 * scaleFactor
         }
-
     }
 
     ColumnLayout {
@@ -666,7 +614,6 @@ Rectangle {
             materialIcon: "power_settings_new"
             onClicked: sddm.powerOff()
         }
-
     }
 
     Rectangle {
@@ -687,7 +634,6 @@ Rectangle {
             font.pixelSize: root.fontSizeSmall
             font.bold: true
         }
-
     }
 
     Connections {
@@ -707,7 +653,7 @@ Rectangle {
         Layout.preferredHeight: 64
         Layout.preferredWidth: height
 
-        MaterialSymbol {
+        Symbol {
             text: powerBtn.materialIcon
             font.pixelSize: root.fontSizeHuge
             color: parent.hovered ? root.colOnPrimary : root.colOnSurfaceVariant
@@ -716,11 +662,8 @@ Rectangle {
             anchors.centerIn: parent
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
 
         background: Rectangle {
@@ -728,13 +671,9 @@ Rectangle {
             radius: root.radiusCircle
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
-
     }
 
     component StyledText: Text {
@@ -747,7 +686,7 @@ Rectangle {
         smooth: true
     }
 
-    component MaterialSymbol: Text {
+    component Symbol: Text {
         font.family: "Material Symbols Rounded"
         font.pixelSize: root.fontSizeMedium
     }
@@ -761,5 +700,4 @@ Rectangle {
         duration: 350
         easing.bezierCurve: [0.05, 0, 2 / 15, 0.06, 1 / 6, 0.4, 5 / 24, 0.82, 0.25, 1, 1, 1]
     }
-
 }

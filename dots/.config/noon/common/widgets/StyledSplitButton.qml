@@ -106,7 +106,7 @@ Item {
                 anchors.centerIn: parent
                 spacing: 4
 
-                MaterialSymbol {
+                Symbol {
                     id: primaryIconLabel
 
                     text: root.primaryIcon
@@ -207,7 +207,7 @@ Item {
             }
 
             // Secondary button icon with rotation effect
-            MaterialSymbol {
+            Symbol {
                 id: secondaryIconLabel
 
                 anchors.centerIn: parent

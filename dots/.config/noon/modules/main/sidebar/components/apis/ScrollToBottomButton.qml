@@ -45,7 +45,7 @@ RippleButton {
 
         spacing: 4
 
-        MaterialSymbol {
+        Symbol {
             anchors.verticalCenter: parent.verticalCenter
             text: "arrow_downward"
             font.pixelSize: Fonts.sizes.verylarge

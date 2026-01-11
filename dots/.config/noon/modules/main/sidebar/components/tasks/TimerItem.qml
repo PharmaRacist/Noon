@@ -83,7 +83,7 @@ Rectangle {
                             secondaryColor: Colors.m3.m3secondaryContainer
                             primaryColor: modelData.color || Colors.m3.m3secondary
 
-                            MaterialSymbol {
+                            Symbol {
                                 anchors.centerIn: parent
                                 fill: 1
                                 text: (modelData.isRunning ? "pause" : "play_arrow") ?? "timer"

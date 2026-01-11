@@ -78,7 +78,7 @@ Rectangle {
         }
 
         RowLayout {
-            MaterialSymbol {
+            Symbol {
                 Layout.alignment: Qt.AlignTop
                 text: {
                     if (root.mimeType.startsWith("image/"))
@@ -119,7 +119,7 @@ Rectangle {
                 implicitWidth: 28
                 onClicked: root.remove()
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     anchors.centerIn: parent
                     text: "close"
                     horizontalAlignment: Text.AlignHCenter

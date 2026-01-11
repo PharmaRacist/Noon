@@ -20,7 +20,7 @@ ComboBox {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 10
 
-            MaterialSymbol {
+            Symbol {
                 text: modelData?.icon ?? ""
                 font.pixelSize: 20
                 color: Colors.colOnLayer1

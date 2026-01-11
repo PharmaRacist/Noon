@@ -246,7 +246,7 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
         RowLayout {
             id: statusItemRowLayout
             spacing: 0
-            MaterialSymbol {
+            Symbol {
                 text: statusItem.icon
                 iconSize: Fonts.sizes.huge
                 color: Colors.colSubtext
@@ -693,7 +693,7 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                         }
                     }
 
-                    contentItem: MaterialSymbol {
+                    contentItem: Symbol {
                         anchors.centerIn: parent
                         horizontalAlignment: Text.AlignHCenter
                         iconSize: 22

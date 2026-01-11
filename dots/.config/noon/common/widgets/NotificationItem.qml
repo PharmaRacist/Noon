@@ -239,7 +239,7 @@ Item { // Notification item area
                                 root.destroyWithAnimation();
                             }
 
-                            contentItem: MaterialSymbol {
+                            contentItem: Symbol {
                                 font.pixelSize: Fonts.sizes.large
                                 horizontalAlignment: Text.AlignHCenter
                                 color: (notificationObject.urgency == NotificationUrgency.Critical) ? Colors.m3.m3onSurfaceVariant : Colors.m3.m3onSurface
@@ -280,7 +280,7 @@ Item { // Notification item area
                                 }
                             }
 
-                            contentItem: MaterialSymbol {
+                            contentItem: Symbol {
                                 id: copyIcon
                                 font.pixelSize: Fonts.sizes.large
                                 horizontalAlignment: Text.AlignHCenter

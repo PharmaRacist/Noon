@@ -24,7 +24,7 @@ RippleButton {
             url += ` -site:${site}`;
         }
         Qt.openUrlExternally(url);
-        Mem.states.sidebar.behavior.expanded = false;
+        GlobalStates.main.sidebar.expanded = false;
     }
 
     PointingHandInteraction {
@@ -41,7 +41,7 @@ RippleButton {
             anchors.centerIn: parent
             spacing: 5
 
-            MaterialSymbol {
+            Symbol {
                 text: "search"
                 font.pixelSize: 20
                 color: Colors.m3.m3onSurface

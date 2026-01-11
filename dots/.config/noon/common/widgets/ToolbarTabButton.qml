@@ -26,7 +26,7 @@ RippleButton {
         anchors.centerIn: parent
         spacing: 6
 
-        MaterialSymbol {
+        Symbol {
             id: icon
 
             anchors.verticalCenter: parent.verticalCenter

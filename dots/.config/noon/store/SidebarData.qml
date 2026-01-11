@@ -214,6 +214,15 @@ Singleton {
             customSize: sizePresets.session,
             enabled: Mem.options.sidebar.content.session
         },
+        {
+            id: "Shelf",
+            name: "Shelf",
+            icon: "shelves",
+            component: "ShelfPanel",
+            expandable: true,
+            customSize: sizePresets.half,
+            enabled: true
+        },
     ]
 
     Component.onCompleted: {

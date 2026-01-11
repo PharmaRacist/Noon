@@ -45,11 +45,15 @@ Singleton {
 
         property bool locked: false
         property bool oskOpen: false
-        property bool sidebarOpen: true
         property bool exposeView: false
         property bool showOsdValues: false
         property bool showBeam: false
 
+        property QtObject sidebar: QtObject {
+            property bool show: true
+            property bool pinned: false
+            property bool expanded: false
+        }
         property QtObject dialogs: QtObject {
             property bool showAppearanceDialog: false
             property bool showCaffaineDialog: false

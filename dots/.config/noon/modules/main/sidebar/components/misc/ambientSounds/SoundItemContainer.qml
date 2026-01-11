@@ -34,7 +34,7 @@ StyledRect {
                 anchors.fill: parent
                 spacing: -Padding.large
 
-                MaterialSymbol {
+                Symbol {
                     text: isMaster ? "tune" : (soundInfo?.icon ?? "music_note")
                     font.pixelSize: 24
                     Layout.alignment: Qt.AlignCenter

@@ -29,7 +29,7 @@ Scope {
 
             property real mainRounding: 2 * Rounding.verylarge * Mem.options.dock.appearance.iconSizeMultiplier
             property int dockHeight: root.showOsk ? 340 : mainLoader.implicitHeight + Sizes.elevationMargin
-            property bool reveal: root.showOsk || GlobalStates.superHeld || root.pinned || dockMouseArea.containsMouse || (!ToplevelManager.activeToplevel?.activated && !Mem.states.sidebar.behavior.expanded)
+            property bool reveal: root.showOsk || root.pinned || dockMouseArea.containsMouse || (!ToplevelManager.activeToplevel?.activated && !GlobalStates.main.sidebar.expanded)
             exclusiveZone: root.pinned ? mainLoader.implicitHeight + Sizes.elevationMargin : -1
 
             implicitWidth: content.implicitWidth + 10 * mainRounding
@@ -121,7 +121,7 @@ Scope {
                     toggled: root.pinned
                     onClicked: root.pinned = !root.pinned
 
-                    contentItem: MaterialSymbol {
+                    contentItem: Symbol {
                         text: "keep"
                         horizontalAlignment: Text.AlignHCenter
                         font.pixelSize: Fonts.sizes.verylarge
@@ -137,7 +137,7 @@ Scope {
                     buttonRadius: Rounding.normal
                     onClicked: GlobalStates.main.oskOpen = false
 
-                    contentItem: MaterialSymbol {
+                    contentItem: Symbol {
                         text: "keyboard_hide"
                         horizontalAlignment: Text.AlignHCenter
                         font.pixelSize: Fonts.sizes.verylarge

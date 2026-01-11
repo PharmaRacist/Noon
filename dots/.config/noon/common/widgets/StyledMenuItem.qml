@@ -29,7 +29,7 @@ MenuItem {
         Layout.leftMargin: Padding.large
         Layout.rightMargin: Padding.large
 
-        MaterialSymbol {
+        Symbol {
             id: symbol
 
             Layout.leftMargin: Padding.normal
@@ -47,7 +47,5 @@ MenuItem {
             Layout.fillWidth: true
             opacity: parent.parent.enabled ? 1 : 0.5
         }
-
     }
-
 }

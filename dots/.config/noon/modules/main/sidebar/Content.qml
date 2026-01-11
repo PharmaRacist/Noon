@@ -11,6 +11,7 @@ import "./components/settings"
 import "./components/tasks"
 import "./components/view"
 import "./components/wallpapers"
+import "./components/shelf"
 import "./components/widgets"
 import QtQuick
 import QtQuick.Layouts
@@ -64,6 +65,7 @@ FocusScope {
             "Notes": notesComponent,
             "GalleryWidget": gallerycomponent,
             "MiscComponent": misccomponent,
+            "ShelfPanel": shelfcomponent,
             "Auth": polkitComponent,
             "Games": gamescomponent,
             "WidgetsPanel": widgetscomponent
@@ -91,7 +93,7 @@ FocusScope {
             model.clear();
             return;
         }
-        if (!isAux && (!showContent || !GlobalStates.main.sidebarOpen)) {
+        if (!isAux && (!showContent || !GlobalStates.main.sidebar.show)) {
             if (clearAppListOnHide)
                 model.clear();
 
@@ -153,14 +155,14 @@ FocusScope {
             return;
         }
         const isSameCategory = selectedCategory === newCategory;
-        const isExpanded = showContent && GlobalStates.main.sidebarOpen;
+        const isExpanded = showContent && GlobalStates.main.sidebar.show;
         if (isSameCategory && isExpanded) {
             selectedCategory = "";
             dismiss();
             return;
         }
-        if (!GlobalStates.main.sidebarOpen)
-            GlobalStates.main.sidebarOpen = true;
+        if (!GlobalStates.main.sidebar.show)
+            GlobalStates.main.sidebar.show = true;
 
         selectedCategory = newCategory;
         resetSearch(initialQuery);
@@ -269,14 +271,14 @@ FocusScope {
     clip: true
     focus: true
     onShowContentChanged: {
-        if (showContent && GlobalStates.main.sidebarOpen)
+        if (showContent && GlobalStates.main.sidebar.show)
             Qt.callLater(focusSearchInput);
 
         if (!showContent && clearAppListOnHide)
             mainModel.clear();
     }
     onEffectiveSearchableChanged: {
-        if (showContent && GlobalStates.main.sidebarOpen)
+        if (showContent && GlobalStates.main.sidebar.show)
             Qt.callLater(focusSearchInput);
     }
     onSelectedCategoryChanged: {
@@ -308,7 +310,7 @@ FocusScope {
 
     Connections {
         function onSidebarOpenChanged() {
-            if (GlobalStates.main.sidebarOpen && showContent)
+            if (GlobalStates.main.sidebar.show && showContent)
                 Qt.callLater(root.focusSearchInput);
         }
 
@@ -406,7 +408,7 @@ FocusScope {
                 id: panelRepeater
 
                 model: 2
-                visible: root.showContent && GlobalStates.main.sidebarOpen
+                visible: root.showContent && GlobalStates.main.sidebar.show
                 clip: true
 
                 ContentChild {
@@ -561,7 +563,13 @@ FocusScope {
             expanded: root.expanded
         }
     }
+    Component {
+        id: shelfcomponent
 
+        ShelfPanel {
+            expanded: root.expanded
+        }
+    }
     Component {
         id: gallerycomponent
 

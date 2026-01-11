@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.common
+import qs.common.functions
 import qs.common.widgets
 import qs.services
 import qs.store
@@ -85,16 +86,16 @@ BottomDialog {
                 }
             }
         }
-
         StyledTextField {
-            Layout.preferredHeight: 40
+            property string sanitizedAddress: "~" + FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentFolder.slice(Directories.standard.home.length))
+            Layout.preferredHeight: 45
             Layout.fillWidth: true
-            text: Mem.states.desktop.bg.currentFolder
+            text: sanitizedAddress
             placeholderText: "Wallpaper folder path..."
             placeholderTextColor: Colors.colOnLayer1
             color: Colors.colOnLayer1
             Keys.onEscapePressed: focus = false
-            onAccepted: Mem.states.desktop.bg.currentFolder = text
+            onAccepted: Mem.states.desktop.bg.currentFolder = Qt.resolvedUrl(text.replace("~", Directories.standard.home))
         }
     }
 }

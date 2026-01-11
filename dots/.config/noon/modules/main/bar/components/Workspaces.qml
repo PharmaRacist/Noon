@@ -205,7 +205,7 @@ Item {
                     implicitHeight: workspaceButtonWidth
 
                     // Workspace number
-                    MaterialSymbol {
+                    Symbol {
                         readonly property color textColor: button.isActive ? Colors.colOnPrimary : (workspaceOccupied[index] ? Colors.colOnSecondaryContainer : Colors.colOnLayer1Inactive)
 
                         fill: 1

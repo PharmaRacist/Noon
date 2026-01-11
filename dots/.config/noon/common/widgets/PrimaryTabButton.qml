@@ -152,7 +152,7 @@ TabButton {
         ColumnLayout {
             anchors.centerIn: parent
             spacing: 0
-            MaterialSymbol {
+            Symbol {
                 visible: buttonIcon?.length > 0
                 Layout.alignment: Qt.AlignHCenter
                 horizontalAlignment: Text.AlignHCenter

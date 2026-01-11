@@ -9,7 +9,7 @@ IslandComponent {
         columns: expanded ? 4 : 2
         rows: expanded ? 1 : 2
         anchors.centerIn: parent
-        MaterialSymbol {
+        Symbol {
             text: "arrow_warm_up"
             color: Colors.m3.m3onSurfaceVariant
             font.pixelSize: Fonts.sizes.subTitle
@@ -24,7 +24,7 @@ IslandComponent {
 
         }
 
-        MaterialSymbol {
+        Symbol {
             text: "arrow_cool_down"
             color: Colors.m3.m3onSurfaceVariant
             font.pixelSize: Fonts.sizes.subTitle

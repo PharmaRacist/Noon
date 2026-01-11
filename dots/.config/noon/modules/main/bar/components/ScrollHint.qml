@@ -35,7 +35,7 @@ Revealer {
             anchors.centerIn: parent
             spacing: -5
 
-            MaterialSymbol {
+            Symbol {
                 Layout.leftMargin: 5
                 Layout.rightMargin: 5
                 text: "keyboard_arrow_up"
@@ -43,7 +43,7 @@ Revealer {
                 color: Colors.colSubtext ?? "black"
             }
 
-            MaterialSymbol {
+            Symbol {
                 Layout.leftMargin: 5
                 Layout.rightMargin: 5
                 text: root.icon
@@ -51,7 +51,7 @@ Revealer {
                 color: Colors.colSubtext ?? "black"
             }
 
-            MaterialSymbol {
+            Symbol {
                 Layout.leftMargin: 5
                 Layout.rightMargin: 5
                 text: "keyboard_arrow_down"

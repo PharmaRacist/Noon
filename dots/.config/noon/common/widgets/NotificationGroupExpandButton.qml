@@ -43,7 +43,7 @@ RippleButton {
                 font.pixelSize: root.fontSize
             }
 
-            MaterialSymbol {
+            Symbol {
                 text: "keyboard_arrow_down"
                 font.pixelSize: root.iconSize
                 color: Colors.colOnLayer2

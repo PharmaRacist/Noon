@@ -122,7 +122,7 @@ Item {
                 toggled: root.editing
                 onPressed: root.editing = !root.editing
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     text: "edit"
                     font.pixelSize: 20
                     anchors.centerIn: parent

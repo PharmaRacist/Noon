@@ -245,7 +245,7 @@ Item {
                     implicitHeight: 36
                     buttonRadius: Appearance.rounding.small
                     toggled: root.editing
-                    contentItem: MaterialSymbol {
+                    contentItem: Symbol {
                         text: "edit"
                         font.pixelSize: 20
                         anchors.centerIn: parent

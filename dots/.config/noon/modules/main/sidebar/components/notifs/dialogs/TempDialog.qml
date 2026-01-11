@@ -38,7 +38,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: 10
 
-                MaterialSymbol {
+                Symbol {
                     text: "nightlight"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -60,7 +60,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: 10
 
-                MaterialSymbol {
+                Symbol {
                     text: "night_sight_auto"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -82,7 +82,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: 10
 
-                MaterialSymbol {
+                Symbol {
                     text: "nightlight"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant

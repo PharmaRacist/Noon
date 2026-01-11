@@ -16,7 +16,7 @@ ToolbarButton {
         anchors.centerIn: parent
         spacing: 4
 
-        MaterialSymbol {
+        Symbol {
             anchors.verticalCenter: parent.verticalCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter

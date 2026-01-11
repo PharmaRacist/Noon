@@ -29,7 +29,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter
             onClicked: Noon.execDetached("hyprpicker -a -q")
 
-            MaterialSymbol {
+            Symbol {
                 horizontalAlignment: Qt.AlignHCenter
                 fill: 1
                 text: "colorize"
@@ -43,7 +43,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter
             onClicked: Noon.execDetached("hyprshot --freeze --clipboard-only --mode region --silent")
 
-            MaterialSymbol {
+            Symbol {
                 horizontalAlignment: Qt.AlignHCenter
                 fill: 1
                 text: "screenshot_region"
@@ -57,7 +57,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter
             onClicked: Noon.callIpc("sidebar reveal Walls")
 
-            MaterialSymbol {
+            Symbol {
                 horizontalAlignment: Qt.AlignHCenter
                 fill: 1
                 text: "dashboard"

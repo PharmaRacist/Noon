@@ -29,7 +29,7 @@ StyledRect {
         radius: root.radius
     }
 
-    MaterialSymbol {
+    Symbol {
         z: 99
         visible: coverImage.status === Image.Null || coverImage.status === Image.Error
         anchors.centerIn: parent

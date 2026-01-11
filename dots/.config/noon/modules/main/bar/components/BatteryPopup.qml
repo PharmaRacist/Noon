@@ -19,7 +19,7 @@ StyledPopup {
 
             spacing: 5
 
-            MaterialSymbol {
+            Symbol {
                 anchors.verticalCenter: parent.verticalCenter
                 fill: 0
                 font.weight: Font.Medium
@@ -69,7 +69,7 @@ StyledPopup {
             visible: rowVisible
             opacity: rowVisible ? 1 : 0
 
-            MaterialSymbol {
+            Symbol {
                 text: "schedule"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -117,7 +117,7 @@ StyledPopup {
             visible: rowVisible
             opacity: rowVisible ? 1 : 0
 
-            MaterialSymbol {
+            Symbol {
                 text: "bolt"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large

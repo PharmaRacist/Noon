@@ -115,21 +115,20 @@ JsonAdapter {
         property bool pinned: false
     }
     property JsonObject sidebar: JsonObject {
-        property JsonObject behavior
         property JsonObject misc
         property JsonObject apis
         property JsonObject widgets
+        property JsonObject shelf
 
+        shelf: JsonObject {
+            property list<string> filePaths: []
+        }
         widgets: JsonObject {
             property list<string> enabled: []
             property list<string> overlayed: []
             property list<string> pilled: []
             property list<string> pinned: []
             property list<string> expanded: []
-        }
-        behavior: JsonObject {
-            property bool expanded: false
-            property bool pinned: false
         }
         misc: JsonObject {
             property int selectedTabIndex: 0

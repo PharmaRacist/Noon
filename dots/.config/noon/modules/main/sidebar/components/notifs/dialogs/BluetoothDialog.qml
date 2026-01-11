@@ -88,7 +88,7 @@ BottomDialog {
                 onClicked: {
                     root.show = false;
                     Noon.execDetached(Mem.options.apps.bluetooth);
-                    GlobalStates.main.sidebarOpen = false;
+                    GlobalStates.main.sidebar.show = false;
                 }
             }
 

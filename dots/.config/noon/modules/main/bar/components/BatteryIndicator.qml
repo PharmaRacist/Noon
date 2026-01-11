@@ -41,7 +41,7 @@ MouseArea {
                 anchors.centerIn: parent
                 spacing: 0
 
-                MaterialSymbol {
+                Symbol {
                     id: boltIcon
 
                     Layout.alignment: Qt.AlignVCenter

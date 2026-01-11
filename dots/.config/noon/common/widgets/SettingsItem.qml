@@ -277,7 +277,7 @@ Rectangle {
             radius: 10
             color: isActive ? iconBackgroundActiveColor : iconBackgroundColor
 
-            MaterialSymbol {
+            Symbol {
                 id: iconSymbol
 
                 fill: 1
@@ -508,7 +508,7 @@ Rectangle {
                     Noon.callIpc("sidebar hide");
                 }
 
-                MaterialSymbol {
+                Symbol {
                     font.pixelSize: 24
                     fill: 1
                     anchors.centerIn: parent

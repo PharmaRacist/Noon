@@ -14,18 +14,28 @@ StyledPanel {
     name: "sidebar"
     visible: true
 
-    property bool pinned: Mem.states.sidebar.behavior.pinned
+    property bool pinned: GlobalStates.main.sidebar.pinned
     property bool barMode: true
     property bool seekOnSuper: Mem.options.sidebar.behavior.superHeldReveal
     property int sidebarWidth: SidebarData.currentSize(barMode, sidebarContent.expanded, sidebarContent.selectedCategory) + (sidebarContent.auxVisible && !barMode ? SidebarData.sizePresets.contentQuarter : 0)
     property bool reveal: (hoverArea.containsMouse && barMode) || _isTransitioning || (seekOnSuper ? GlobalStates.superHeld : null) || PolkitService.flow !== null
     property bool _isTransitioning: false
-    property bool noExlusiveZone: Mem.options.bar.appearance.mode === 0 && (Mem.options.bar.behavior.position === "top" || Mem.options.bar.behavior.position === "bottom")
+    property bool noExlusiveZone: {
+        if (!pinned) {
+            if (Mem.options.bar.appearance.mode === 0 && Mem.options.bar.behavior.position === "top" || Mem.options.bar.behavior.position === "bottom") {
+                return true;
+            }
+            if (Mem.options.bar.behavior.position === "left" || Mem.options.bar.behavior.position === "right") {
+                return true;
+            }
+        }
+        return false;
+    }
 
     implicitWidth: visualContainer.width + visualContainer.rounding
     exclusiveZone: !barMode && pinned ? implicitWidth - visualContainer.rounding : noExlusiveZone ? -1 : 0
     aboveWindows: true
-    kbFocus: GlobalStates.main.sidebarOpen && !barMode
+    kbFocus: GlobalStates.main.sidebar.show && !barMode
     WlrLayershell.layer: SidebarData?.isOverlay(sidebarContent.selectedCategory) ? WlrLayer.Overlay : WlrLayer.Top
 
     anchors {
@@ -49,15 +59,15 @@ StyledPanel {
             return;
 
         barMode = false;
-        GlobalStates.main.sidebarOpen = true;
-        Mem.states.sidebar.behavior.expanded = true;
+        GlobalStates.main.sidebar.show = true;
+        GlobalStates.main.sidebar.expanded = true;
         sidebarContent.forceActiveFocus();
     }
 
     function finalizeHide() {
         _isTransitioning = false;
         barMode = true;
-        Mem.states.sidebar.behavior.expanded = false;
+        GlobalStates.main.sidebar.expanded = false;
 
         if (!pinned) {
             reveal = Qt.binding(() => (hoverArea.containsMouse && barMode) || _isTransitioning || (seekOnSuper ? GlobalStates.superHeld : null) || PolkitService.flow !== null);
@@ -68,7 +78,7 @@ StyledPanel {
     }
 
     function togglePin() {
-        Mem.states.sidebar.behavior.pinned = !pinned;
+        GlobalStates.main.sidebar.pinned = !pinned;
     }
 
     Binding {
@@ -79,7 +89,7 @@ StyledPanel {
 
     Binding {
         target: GlobalStates.main
-        property: "sidebarOpen"
+        property: "show"
         value: !barMode
     }
 
@@ -105,10 +115,8 @@ StyledPanel {
         }
 
         Behavior on width {
-            Anim {
-            }
+            Anim {}
         }
-
         MouseArea {
             id: hoverArea
             enabled: barMode
@@ -122,6 +130,12 @@ StyledPanel {
                 bottom: parent.bottom
                 left: !visualContainer.rightMode ? parent.left : undefined
                 right: visualContainer.rightMode ? parent.right : undefined
+            }
+            DropArea {
+                anchors.fill: parent
+                keys: ["text/uri-list"]
+                onEntered: Noon.callIpc("sidebar reveal Shelf")
+                onExited: () => {}
             }
         }
 
@@ -246,7 +260,7 @@ StyledPanel {
 
     HyprlandFocusGrab {
         windows: [root]
-        active: GlobalStates.main.sidebarOpen && !barMode
+        active: GlobalStates.main.sidebar.show && !barMode
         onCleared: if (!pinned)
             hideSidebar()
     }
@@ -259,7 +273,7 @@ StyledPanel {
         target: sidebarContent
 
         function onHideBarRequested() {
-            GlobalStates.main.sidebarOpen = false;
+            GlobalStates.main.sidebar.show = false;
             hideSidebar();
         }
 

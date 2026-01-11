@@ -364,7 +364,7 @@ StyledPanel {
                             bottom: parent.bottom
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             anchors.centerIn: parent
                             anchors.horizontalCenterOffset: Padding.tiny
                             color: Colors.colOnPrimary

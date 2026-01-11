@@ -83,7 +83,7 @@ RippleButton {
                 anchors.fill: parent
                 active: root.menuEntry.buttonType === QsMenuButtonType.CheckBox && root.menuEntry.checkState !== Qt.Unchecked
 
-                sourceComponent: MaterialSymbol {
+                sourceComponent: Symbol {
                     text: root.menuEntry.checkState === Qt.PartiallyChecked ? "check_indeterminate_small" : "check"
                     font.pixelSize: 20
                 }
@@ -118,7 +118,7 @@ RippleButton {
         Loader {
             active: root.menuEntry.hasChildren
 
-            sourceComponent: MaterialSymbol {
+            sourceComponent: Symbol {
                 text: "chevron_right"
                 font.pixelSize: 20
             }

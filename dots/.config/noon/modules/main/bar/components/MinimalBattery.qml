@@ -42,7 +42,7 @@ MouseArea {
             primaryColor: (isLow && !isCharging) ? batteryLowOnBackground : Colors.m3.m3onSecondaryContainer
             fill: (isLow && !isCharging)
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 text: "bolt"
                 font.pixelSize: Fonts.sizes.normal
@@ -65,7 +65,7 @@ MouseArea {
                     visible: Math.round(percentage * 100) < 100
                 }
 
-                MaterialSymbol {
+                Symbol {
                     anchors.centerIn: parent
                     text: "battery_full"
                     font.pixelSize: Fonts.sizes.normal

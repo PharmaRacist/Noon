@@ -23,7 +23,7 @@ RippleButton {
     onClicked: {
         if (url) {
             Qt.openUrlExternally(url);
-            Mem.states.sidebar.behavior.expanded = false;
+            GlobalStates.main.sidebar.expanded = false;
         }
     }
 

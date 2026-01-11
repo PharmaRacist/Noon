@@ -179,7 +179,7 @@ FocusScope {
                     anchors.centerIn: parent
                     spacing: Padding.normal
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "add"
                         fill: 1
                         font.pixelSize: Fonts.sizes.large

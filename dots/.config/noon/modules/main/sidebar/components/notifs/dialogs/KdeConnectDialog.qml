@@ -39,7 +39,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: KdeConnectService.isDeviceAvailable(modelData.id) ? "phone_android" : "phone_disabled"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: KdeConnectService.isDeviceAvailable(modelData.id) ? Colors.colPrimaryActive : Colors.colOnSurfaceVariant
@@ -69,7 +69,7 @@ BottomDialog {
             spacing: Padding.small
             visible: KdeConnectService.devices.length === 0
 
-            MaterialSymbol {
+            Symbol {
                 text: "info"
                 font.pixelSize: Fonts.sizes.verylarge
                 color: Colors.colOnSurfaceVariant
@@ -135,7 +135,7 @@ BottomDialog {
                     Layout.fillWidth: true
                     spacing: Padding.small
 
-                    MaterialSymbol {
+                    Symbol {
                         text: modelData.icon
                         font.pixelSize: Fonts.sizes.verylarge
                         color: Colors.colOnSurfaceVariant
@@ -167,7 +167,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "link"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -193,7 +193,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "link_off"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant

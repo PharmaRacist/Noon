@@ -104,7 +104,7 @@ Item {
                 anchors.rightMargin: 8
                 spacing: 15
 
-                MaterialSymbol {
+                Symbol {
                     text: firstIcon
                     color: Colors.colOnPrimary
                     fill: 1
@@ -223,7 +223,7 @@ Item {
                 return Colors.m3.m3primary;
             }
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 text: secondIcon
                 color: Colors.colOnPrimary
@@ -297,7 +297,7 @@ Item {
             bottomRightRadius: thirdActive ? 50 : buttonRadius
             color: thirdBgColor
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 text: thirdIcon
                 color: Colors.m3.m3onPrimary

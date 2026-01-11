@@ -27,7 +27,7 @@ MouseArea {
         rows: verticalMode ? 2 : 1
         columns: verticalMode ? 1 : 2
 
-        MaterialSymbol {
+        Symbol {
             fill: 1
             text: weatherData.currentEmoji
             font.pixelSize: BarData.currentBarExclusiveSize / 2

@@ -66,7 +66,7 @@ StyledRect {
             margins: 8
         }
 
-        MaterialSymbol {
+        Symbol {
             anchors.centerIn: parent
             text: "play_circle"
             fill: 1
@@ -111,7 +111,7 @@ StyledRect {
         }
     }
 
-    MaterialSymbol {
+    Symbol {
         z: 999
         visible: checkmark.visible
         text: "check"

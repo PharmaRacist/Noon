@@ -198,7 +198,7 @@ Item {
                     left: parent.left
                 }
 
-                MaterialSymbol {
+                Symbol {
                     anchors.centerIn: parent
                     anchors.horizontalCenterOffset: Padding.tiny
                     font.pixelSize: 20
@@ -268,7 +268,7 @@ Item {
 
                     }
 
-                    MaterialSymbol {
+                    Symbol {
                         anchors.centerIn: parent
                         font.pixelSize: 16
                         text: "close"
@@ -310,7 +310,7 @@ Item {
             RowLayout {
                 anchors.centerIn: parent
 
-                MaterialSymbol {
+                Symbol {
                     font.pixelSize: 20
                     text: "close"
                     color: Colors.colOnError

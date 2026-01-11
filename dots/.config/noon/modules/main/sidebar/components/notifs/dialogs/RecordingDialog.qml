@@ -56,7 +56,7 @@ SidebarDialog {
                             bottomMargin: 8
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             text: modelData.icon
                             font.pixelSize: Fonts.sizes.verylarge
                             color: parent.parent.selected ? Colors.colOnPrimary : Colors.colOnSurfaceVariant
@@ -68,7 +68,7 @@ SidebarDialog {
                             color: parent.parent.selected ? Colors.colOnPrimary : Colors.colOnSurfaceVariant
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             visible: parent.parent.selected
                             text: "check"
                             font.pixelSize: Fonts.sizes.verylarge
@@ -136,7 +136,7 @@ SidebarDialog {
                             bottomMargin: 8
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             text: modelData.icon
                             font.pixelSize: Fonts.sizes.verylarge
                             color: parent.parent.selected ? Colors.colOnPrimary : Colors.colOnSurfaceVariant
@@ -148,7 +148,7 @@ SidebarDialog {
                             color: parent.parent.selected ? Colors.colOnPrimary : Colors.colOnSurfaceVariant
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             visible: parent.parent.selected
                             text: "check"
                             font.pixelSize: Fonts.sizes.verylarge
@@ -216,7 +216,7 @@ SidebarDialog {
                             bottomMargin: 8
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             text: modelData.icon
                             font.pixelSize: Fonts.sizes.verylarge
                             color: parent.parent.selected ? Colors.colOnPrimary : Colors.colOnSurfaceVariant
@@ -228,7 +228,7 @@ SidebarDialog {
                             color: parent.parent.selected ? Colors.colOnPrimary : Colors.colOnSurfaceVariant
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             visible: parent.parent.selected
                             text: "check"
                             font.pixelSize: Fonts.sizes.verylarge
@@ -260,7 +260,7 @@ SidebarDialog {
                 Layout.fillWidth: true
                 spacing: 10
 
-                MaterialSymbol {
+                Symbol {
                     text: "mouse"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -283,7 +283,7 @@ SidebarDialog {
                 Layout.fillWidth: true
                 spacing: 10
 
-                MaterialSymbol {
+                Symbol {
                     text: "speed"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -449,7 +449,7 @@ SidebarDialog {
                         anchors.fill: parent
                         spacing: 10
 
-                        MaterialSymbol {
+                        Symbol {
                             font.pixelSize: Fonts.sizes.verylarge
                             text: settingItem.icon
                             color: Colors.colOnSurfaceVariant
@@ -482,7 +482,7 @@ SidebarDialog {
                             }
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             text: settingItem.expanded ? "expand_less" : "expand_more"
                             font.pixelSize: Fonts.sizes.verylarge
                             color: Colors.colOnSurfaceVariant

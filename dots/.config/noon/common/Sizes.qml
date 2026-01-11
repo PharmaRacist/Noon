@@ -37,6 +37,9 @@ Singleton {
         property real overview: 1250
         property real widgetSize: 172
         property real widgetPillHeight: 72
+        property size shelfItemSize: Qt.size(115, 115)
+        property size shelfPopupSize: Qt.size(300, 200)
+
         property QtObject widgets: QtObject {
             property real expandedWidth: 2 * Sizes.sidebar.widgetSize + Padding.verylarge
         }

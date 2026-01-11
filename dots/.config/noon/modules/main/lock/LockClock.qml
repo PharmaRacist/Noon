@@ -79,7 +79,7 @@ ColumnLayout {
 
         spacing: Padding.small
 
-        MaterialSymbol {
+        Symbol {
             text: root.icon
             fill: 1
             font.pixelSize: 20

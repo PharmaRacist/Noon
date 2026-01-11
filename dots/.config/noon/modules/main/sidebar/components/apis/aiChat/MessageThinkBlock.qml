@@ -75,7 +75,7 @@ Item {
                 anchors.rightMargin: thinkBlockHeaderPaddingHorizontal
                 spacing: 10
 
-                MaterialSymbol {
+                Symbol {
                     Layout.fillWidth: false
                     Layout.topMargin: 7
                     Layout.bottomMargin: 7
@@ -104,7 +104,7 @@ Item {
                         root.collapsed = !root.collapsed;
                     }
 
-                    contentItem: MaterialSymbol {
+                    contentItem: Symbol {
                         anchors.centerIn: parent
                         text: "keyboard_arrow_down"
                         horizontalAlignment: Text.AlignHCenter

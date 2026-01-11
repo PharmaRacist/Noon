@@ -80,7 +80,7 @@ Item {
         rowSpacing: verticalMode ? iconSpacing : 0
         columnSpacing: verticalMode ? 0 : iconSpacing
 
-        MaterialSymbol {
+        Symbol {
             id: networkIcon
 
             fill: 1
@@ -114,7 +114,7 @@ Item {
             }
         }
 
-        MaterialSymbol {
+        Symbol {
             visible: RecordingService.isRecording ?? false
             text: "radio_button_checked"
             font.pixelSize: commonIconSize
@@ -130,7 +130,7 @@ Item {
             }
         }
 
-        MaterialSymbol {
+        Symbol {
             text: BluetoothService.currentDeviceIcon
             font.pixelSize: commonIconSize
             color: commonIconColor

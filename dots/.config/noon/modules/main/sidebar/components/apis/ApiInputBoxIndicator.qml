@@ -16,7 +16,7 @@ Item { // Model indicator
         id: rowLayout
         anchors.centerIn: parent
 
-        MaterialSymbol {
+        Symbol {
             text: root.icon
             font.pixelSize: Fonts.sizes.normal
         }

@@ -31,7 +31,7 @@ Rectangle { // App icon
         id: materialSymbolLoader
         active: root.appIcon == ""
         anchors.fill: parent
-        sourceComponent: MaterialSymbol {
+        sourceComponent: Symbol {
             text: {
                 const defaultIcon = NotificationUtils.findSuitableMaterialSymbol("");
                 const guessedIcon = NotificationUtils.findSuitableMaterialSymbol(root.summary);

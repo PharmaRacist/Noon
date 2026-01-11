@@ -160,7 +160,7 @@ BottomDialog {
         contentItem: RowLayout {
             spacing: Padding.normal
 
-            MaterialSymbol {
+            Symbol {
                 Layout.fillWidth: !root.hovered
                 text: root.materialIcon
                 color: colors.colOnSecondaryContainer

@@ -188,7 +188,7 @@ Rectangle {
                     anchors.leftMargin: 16
                     spacing: 15
 
-                    MaterialSymbol {
+                    Symbol {
                         text: {
                             switch (model.status) {
                             case TodoService.status_todo:
@@ -235,7 +235,7 @@ Rectangle {
                                 maximumLineCount: 2
                             }
 
-                            MaterialSymbol {
+                            Symbol {
                                 visible: {
                                     // Show if has todoistId OR if currently syncing with _tempId
                                     if (model.todoistId !== "" && model.todoistId !== null)
@@ -299,7 +299,7 @@ Rectangle {
                             ToolTip.text: "Edit (or middle-click)"
                             ToolTip.delay: 1000
 
-                            contentItem: MaterialSymbol {
+                            contentItem: Symbol {
                                 text: "edit"
                                 fill: 1
                                 font.pixelSize: Fonts.sizes.verylarge
@@ -314,7 +314,7 @@ Rectangle {
                                 updateTaskModels();
                             }
 
-                            contentItem: MaterialSymbol {
+                            contentItem: Symbol {
                                 text: "delete_forever"
                                 fill: 1
                                 font.pixelSize: Fonts.sizes.verylarge

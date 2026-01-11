@@ -33,7 +33,7 @@ Button {
             radius: Rounding.full
             color: toggled ? (button.down ? Colors.colSecondaryContainerActive : button.hovered ? Colors.colSecondaryContainerHover : Colors.colSecondaryContainer) : (button.down ? Colors.colLayer1Active : button.hovered ? Colors.colLayer1Hover : ColorUtils.transparentize(Colors.colLayer1Hover, 1))
 
-            MaterialSymbol {
+            Symbol {
                 id: navRailButtonIcon
 
                 anchors.centerIn: parent

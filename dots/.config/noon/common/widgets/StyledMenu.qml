@@ -25,7 +25,6 @@ Menu {
             text: modelData.text ?? ""
             onTriggered: modelData.action()
         }
-
     }
 
     background: StyledRect {
@@ -49,7 +48,6 @@ Menu {
             to: 1
             duration: Animations.durations.small
         }
-
     }
 
     exit: Transition {
@@ -66,7 +64,5 @@ Menu {
             to: 0.95
             duration: Animations.durations.small
         }
-
     }
-
 }

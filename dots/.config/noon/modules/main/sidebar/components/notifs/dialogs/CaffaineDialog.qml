@@ -33,7 +33,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "coffee"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -55,7 +55,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "timer"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant

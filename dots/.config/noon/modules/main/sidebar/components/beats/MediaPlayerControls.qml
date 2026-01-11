@@ -153,7 +153,7 @@ ColumnLayout {
                     onClicked: root.player.togglePlaying()
                 }
             }
-            MaterialSymbol {
+            Symbol {
                 id:playSymbol
                 fill:1
                 text: root.isPlaying ? "pause" : "play_arrow"

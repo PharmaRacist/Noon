@@ -20,7 +20,7 @@ ColumnLayout {
             text: root.title
         }
 
-        MaterialSymbol {
+        Symbol {
             visible: root.tooltip && root.tooltip.length > 0
             text: "info"
             iconSize: Fonts.sizes.large

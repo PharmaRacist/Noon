@@ -95,6 +95,17 @@ Item {
             ]
         },
         {
+            "cat": "Shelf",
+            "bubbles": [
+                {
+                    "icon": "clear_all",
+                    "action": () => {
+                        Mem.states.sidebar.shelf.filePaths = [];
+                    }
+                }
+            ]
+        },
+        {
             "cat": "Tasks",
             "bubbles": [
                 {
@@ -126,7 +137,7 @@ Item {
         }
     ]
 
-    visible: bg.width > 0 && !Mem.states.sidebar.behavior.pinned
+    visible: bg.width > 0 && !GlobalStates.main.sidebar.pinned
     height: content.implicitHeight + 2 * Padding.large
     width: show ? 55 : 0
     clip: true
@@ -184,10 +195,10 @@ Item {
             }
 
             RippleButtonWithIcon {
-                materialIcon: !root.rightMode && Mem.states.sidebar.behavior.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right"
+                materialIcon: !root.rightMode && GlobalStates.main.sidebar.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right"
                 colors: root.colors
                 releaseAction: () => {
-                    Mem.states.sidebar.behavior.expanded = !Mem.states.sidebar.behavior.expanded;
+                    GlobalStates.main.sidebar.expanded = !GlobalStates.main.sidebar.expanded;
                 }
             }
         }

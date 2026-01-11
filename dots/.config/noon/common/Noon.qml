@@ -17,7 +17,9 @@ Singleton {
     readonly property var avilableIpcCommands: Mem.store.misc.ipcCommands
     property bool ipcReady: false
     property bool commandsReady: false
-
+    function openFile(path: string) {
+        Quickshell.execDetached(["xdg-open", path]);
+    }
     function iconPath(icon: string): string {
         let iconName;
         if (Mem.states.desktop.appearance.mode === "dark") {
