@@ -15,7 +15,7 @@ Item {
     property var source: AudioService.source
     property real maxValue: 1
 
-    MaterialSymbol {
+    Symbol {
         z: 2
         text: {
             if (volumeSlider.value <= 0.01) return "mic_off"

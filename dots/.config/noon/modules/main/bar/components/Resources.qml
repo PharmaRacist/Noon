@@ -102,7 +102,7 @@ BarGroup {
                 value: percentage
                 implicitSize: root.itemSize
 
-                MaterialSymbol {
+                Symbol {
                     anchors.centerIn: parent
                     fill: 1
                     text: iconName

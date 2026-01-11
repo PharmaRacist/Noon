@@ -37,7 +37,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "opacity"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -59,7 +59,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "blur_on"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -86,7 +86,7 @@ BottomDialog {
                     Layout.fillWidth: true
                     spacing: Padding.small
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "tune"
                         font.pixelSize: Fonts.sizes.verylarge
                         color: Colors.colOnSurfaceVariant

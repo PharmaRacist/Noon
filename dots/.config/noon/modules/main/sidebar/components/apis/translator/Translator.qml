@@ -89,7 +89,7 @@ Item {
                             Quickshell.clipboardText = outputCanvas.displayedText;
                         }
 
-                        contentItem: MaterialSymbol {
+                        contentItem: Symbol {
                             anchors.centerIn: parent
                             horizontalAlignment: Text.AlignHCenter
                             font.pixelSize: Fonts.sizes.verylarge
@@ -113,7 +113,7 @@ Item {
                             Qt.openUrlExternally(url);
                         }
 
-                        contentItem: MaterialSymbol {
+                        contentItem: Symbol {
                             anchors.centerIn: parent
                             horizontalAlignment: Text.AlignHCenter
                             font.pixelSize: Fonts.sizes.verylarge
@@ -158,7 +158,7 @@ Item {
                     root.inputField.text = Quickshell.clipboardText;
                 }
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: Fonts.sizes.verylarge
@@ -178,7 +178,7 @@ Item {
                     root.inputField.text = "";
                 }
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: Fonts.sizes.verylarge

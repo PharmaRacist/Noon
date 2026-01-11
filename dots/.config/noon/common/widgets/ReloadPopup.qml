@@ -79,7 +79,7 @@ StyledPanel {
                 Layout.topMargin: -Padding.verylarge
                 Layout.leftMargin: Padding.verylarge
 
-                MaterialSymbol {
+                Symbol {
                     text: "error"
                     font.pixelSize: 20
                     color: Colors.colSubtext

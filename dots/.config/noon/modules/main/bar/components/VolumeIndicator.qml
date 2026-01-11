@@ -120,7 +120,7 @@ MouseArea {
                 }
 
         }
-                MaterialSymbol {
+                Symbol {
                     fill:1
                     font.family: revealer.reveal ?Fonts.family.main  :Fonts.family.iconMaterial
                     text:revealer.reveal ?  Math.round(100 * AudioService.sink?.audio.volume) : AudioService.sink?.audio.muted ? "volume_off" : "volume_up"

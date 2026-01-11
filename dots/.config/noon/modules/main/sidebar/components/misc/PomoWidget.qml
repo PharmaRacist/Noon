@@ -145,7 +145,7 @@ Item {
                 RowLayout {
                     anchors.centerIn: parent
                     spacing: Padding.normal
-                    MaterialSymbol {
+                    Symbol {
                         text: "edit"
                         fill: 1
                         font.pixelSize: Fonts.sizes.large
@@ -189,7 +189,7 @@ Item {
                 size: parent.height * 0.8
                 secondaryColor: Colors.m3.m3secondaryContainer
                 primaryColor: timer?.color || Colors.m3.m3primary
-                MaterialSymbol {
+                Symbol {
                     text: timer.icon
                     anchors.centerIn: parent
                     font.pixelSize: Fonts.sizes.title

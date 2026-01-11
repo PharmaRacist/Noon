@@ -115,7 +115,7 @@ TabButton {
                 verticalCenter: parent.verticalCenter
             }
 
-            MaterialSymbol {
+            Symbol {
                 id: navRailButtonIcon
 
                 rotation: root.buttonIconRotation

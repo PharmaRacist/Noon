@@ -12,7 +12,7 @@ ToolbarButton {
     colBackgroundToggledHover: Colors.colSecondaryContainerHover
     colRippleToggled: Colors.colSecondaryContainerActive
 
-    contentItem: MaterialSymbol {
+    contentItem: Symbol {
         anchors.centerIn: parent
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

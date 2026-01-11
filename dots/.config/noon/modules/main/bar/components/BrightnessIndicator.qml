@@ -117,7 +117,7 @@ MouseArea {
                 }
             }
         }
-        MaterialSymbol {
+        Symbol {
             fill: 1
             font.family: revealer.reveal ? Fonts.family.main : Fonts.family.iconMaterial
             text: revealer.reveal ? Math.round(100 * root.brightnessMonitor?.brightness) : BrightnessService.iconMaterial

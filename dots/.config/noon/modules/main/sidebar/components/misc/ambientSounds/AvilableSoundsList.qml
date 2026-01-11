@@ -62,7 +62,7 @@ Item {
                         radius: Rounding.normal
                         color: iconContainer.hovered ? Colors.m3.m3primaryContainer : Colors.colLayer3
 
-                        MaterialSymbol {
+                        Symbol {
                             text: modelData.icon
                             font.pixelSize: 20
                             color: iconContainer.hovered ? Colors.m3.m3onPrimaryContainer : Colors.colOnLayer3
@@ -80,7 +80,7 @@ Item {
                         elide: Text.ElideRight
                     }
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "add_circle"
                         font.pixelSize: 20
                         color: iconContainer.hovered ? Colors.colPrimary : Colors.colOnLayer2

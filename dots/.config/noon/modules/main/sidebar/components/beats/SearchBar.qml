@@ -26,7 +26,7 @@ StyledRect {
         anchors.leftMargin: Padding.large
         spacing: Padding.small
 
-        MaterialSymbol {
+        Symbol {
             Layout.alignment: Qt.AlignVCenter
             font.pixelSize: 20
             text: "search"
@@ -72,7 +72,7 @@ StyledRect {
 
             }
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 font.pixelSize: 16
                 text: "close"

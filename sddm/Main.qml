@@ -150,7 +150,7 @@ Rectangle {
 
         }
 
-        indicator: MaterialSymbol {
+        indicator: Symbol {
             x: userList.width - width - (12 * scaleFactor)
             y: userList.topPadding + (userList.availableHeight - height) / 2
             text: "arrow_drop_down"
@@ -338,7 +338,7 @@ Rectangle {
 
         }
 
-        indicator: MaterialSymbol {
+        indicator: Symbol {
             x: sessionList.width - width - (12 * scaleFactor)
             y: sessionList.topPadding + (sessionList.availableHeight - height) / 2
             text: "arrow_drop_down"
@@ -559,7 +559,7 @@ Rectangle {
 
                     }
 
-                    MaterialSymbol {
+                    Symbol {
                         anchors.centerIn: parent
                         text: "person"
                         font.pixelSize: parent.width * 0.5
@@ -615,7 +615,7 @@ Rectangle {
                     radius: root.radiusM
                 }
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     text: "send"
                     font.pixelSize: 26 * scaleFactor
                     color: root.colOnPrimary
@@ -707,7 +707,7 @@ Rectangle {
         Layout.preferredHeight: 64
         Layout.preferredWidth: height
 
-        MaterialSymbol {
+        Symbol {
             text: powerBtn.materialIcon
             font.pixelSize: root.fontSizeHuge
             color: parent.hovered ? root.colOnPrimary : root.colOnSurfaceVariant

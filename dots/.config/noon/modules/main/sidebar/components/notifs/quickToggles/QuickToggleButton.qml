@@ -55,7 +55,7 @@ GroupButton {
             margins: -0.5
         }
 
-        MaterialSymbol {
+        Symbol {
             id: symbol
 
             text: "keyboard_arrow_right"
@@ -98,7 +98,7 @@ GroupButton {
             leftMargin: Padding.large
         }
 
-        MaterialSymbol {
+        Symbol {
             font.pixelSize: Fonts.sizes.verylarge
             fill: toggled ? 1 : 0
             color: toggled ? Colors.colOnPrimary : Colors.colOnLayer2

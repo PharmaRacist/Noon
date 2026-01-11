@@ -14,7 +14,7 @@ Item {
     property var sink: AudioService.sink
     property real maxValue: 1
 
-    MaterialSymbol {
+    Symbol {
         z: 2
         text: {
             if (volumeSlider.value <= 0.01) return "volume_off"

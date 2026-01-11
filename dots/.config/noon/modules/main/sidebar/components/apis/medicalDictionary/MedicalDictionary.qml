@@ -111,7 +111,7 @@ Item {
                             Quickshell.clipboardText = outputCanvas.displayedText;
                         }
 
-                        contentItem: MaterialSymbol {
+                        contentItem: Symbol {
                             anchors.centerIn: parent
                             horizontalAlignment: Text.AlignHCenter
                             font.pixelSize: Fonts.sizes.verylarge
@@ -133,7 +133,7 @@ Item {
                             Qt.openUrlExternally(url);
                         }
 
-                        contentItem: MaterialSymbol {
+                        contentItem: Symbol {
                             anchors.centerIn: parent
                             horizontalAlignment: Text.AlignHCenter
                             font.pixelSize: Fonts.sizes.verylarge
@@ -151,7 +151,7 @@ Item {
                             MedicalDictionaryService.clear();
                         }
 
-                        contentItem: MaterialSymbol {
+                        contentItem: Symbol {
                             anchors.centerIn: parent
                             horizontalAlignment: Text.AlignHCenter
                             font.pixelSize: Fonts.sizes.verylarge
@@ -182,7 +182,7 @@ Item {
                     }
                 }
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: Fonts.sizes.verylarge
@@ -203,7 +203,7 @@ Item {
                     MedicalDictionaryService.clear();
                 }
 
-                contentItem: MaterialSymbol {
+                contentItem: Symbol {
                     anchors.centerIn: parent
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: Fonts.sizes.verylarge

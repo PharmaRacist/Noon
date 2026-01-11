@@ -12,7 +12,7 @@ GroupButton {
     toggled: activated
     baseWidth: height
 
-    contentItem: MaterialSymbol {
+    contentItem: Symbol {
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Fonts.sizes.verylarge
         text: buttonIcon

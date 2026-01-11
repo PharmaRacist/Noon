@@ -110,7 +110,7 @@ SpinBox {
             left: parent.left
         }
 
-        MaterialSymbol {
+        Symbol {
             anchors.centerIn: parent
             text: "remove"
             font.pixelSize: 20
@@ -146,7 +146,7 @@ SpinBox {
             right: parent.right
         }
 
-        MaterialSymbol {
+        Symbol {
             anchors.centerIn: parent
             text: "add"
             font.pixelSize: 20

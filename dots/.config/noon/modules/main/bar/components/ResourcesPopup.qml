@@ -14,7 +14,7 @@ StyledPopup {
         Row {
             spacing: 6
 
-            MaterialSymbol {
+            Symbol {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "memory"
                 fill: 1
@@ -41,7 +41,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: "speed"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -66,7 +66,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: "device_thermostat"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -90,7 +90,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: "speed"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -114,7 +114,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: "memory_alt"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -142,7 +142,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: ResourcesService.stats.swap_total > 0
 
-            MaterialSymbol {
+            Symbol {
                 text: "sync_alt"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -190,7 +190,7 @@ StyledPopup {
                     spacing: 5
                     width: parent.width
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "monitor_heart"
                         color: Colors.m3.m3onSurfaceVariant
                         font.pixelSize: Fonts.sizes.large
@@ -215,7 +215,7 @@ StyledPopup {
                     width: parent.width
                     visible: modelData.temperature > 0
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "device_thermostat"
                         color: Colors.m3.m3onSurfaceVariant
                         font.pixelSize: Fonts.sizes.large
@@ -240,7 +240,7 @@ StyledPopup {
                     width: parent.width
                     visible: modelData.memory_total > 1
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "memory"
                         color: Colors.m3.m3onSurfaceVariant
                         font.pixelSize: Fonts.sizes.large
@@ -265,7 +265,7 @@ StyledPopup {
                     width: parent.width
                     visible: modelData.power_draw > 0
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "bolt"
                         color: Colors.m3.m3onSurfaceVariant
                         font.pixelSize: Fonts.sizes.large

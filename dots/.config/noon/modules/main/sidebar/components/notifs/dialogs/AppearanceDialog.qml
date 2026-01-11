@@ -35,7 +35,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: Mem.states.desktop.appearance.mode === "dark" ? "dark_mode" : "light_mode"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -61,7 +61,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "schedule"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -86,7 +86,7 @@ BottomDialog {
                 Layout.fillWidth: true
                 spacing: Padding.small
 
-                MaterialSymbol {
+                Symbol {
                     text: "auto_awesome"
                     font.pixelSize: Fonts.sizes.verylarge
                     color: Colors.colOnSurfaceVariant
@@ -115,7 +115,7 @@ BottomDialog {
                     Layout.fillWidth: true
                     spacing: Padding.small
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "colorize"
                         font.pixelSize: Fonts.sizes.verylarge
                         color: Colors.colOnSurfaceVariant
@@ -152,7 +152,7 @@ BottomDialog {
                     Layout.fillWidth: true
                     spacing: Padding.small
 
-                    MaterialSymbol {
+                    Symbol {
                         text: "contrast"
                         font.pixelSize: Fonts.sizes.verylarge
                         color: Colors.colOnSurfaceVariant

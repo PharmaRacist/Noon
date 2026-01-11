@@ -57,7 +57,7 @@ StyledRect {
             spacing: 8
             anchors.centerIn: parent
 
-            MaterialSymbol {
+            Symbol {
                 font.pixelSize: root.btnSize
                 fill: 1
                 text: "skip_previous"
@@ -68,7 +68,7 @@ StyledRect {
                 }
             }
 
-            MaterialSymbol {
+            Symbol {
                 font.pixelSize: root.btnSize
                 fill: 1
                 text: player && player.playbackState === MprisPlaybackState.Playing ? "pause" : "play_arrow"
@@ -82,7 +82,7 @@ StyledRect {
                 }
             }
 
-            MaterialSymbol {
+            Symbol {
                 font.pixelSize: root.btnSize
                 fill: 1
                 text: "skip_next"

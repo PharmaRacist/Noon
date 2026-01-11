@@ -196,7 +196,7 @@ PopupWindow {
                         rightMargin: backButton.horizontalPadding
                     }
 
-                    MaterialSymbol {
+                    Symbol {
                         font.pixelSize: 20
                         text: "chevron_left"
                     }

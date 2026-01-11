@@ -33,7 +33,7 @@ DialogListItem {
             // Name
             spacing: 10
 
-            MaterialSymbol {
+            Symbol {
                 font.pixelSize: Fonts.sizes.verylarge
                 text: BluetoothService.getDeviceIcon(root.device?.icon || "")
                 color: Colors.colOnSurfaceVariant
@@ -64,7 +64,7 @@ DialogListItem {
                 }
             }
 
-            MaterialSymbol {
+            Symbol {
                 text: "keyboard_arrow_down"
                 font.pixelSize: Fonts.sizes.verylarge
                 color: Colors.colOnLayer3

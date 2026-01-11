@@ -16,7 +16,7 @@ Loader {
     sourceComponent: Item {
         implicitWidth: materialSymbol.implicitWidth
 
-        MaterialSymbol {
+        Symbol {
             id: materialSymbol
 
             anchors.centerIn: parent

@@ -71,7 +71,7 @@ Item {
                 buttonRadius: Rounding.verylarge
                 colBackground: modelData.c
                 
-                MaterialSymbol {
+                Symbol {
                     anchors.centerIn: parent
                     text: modelData.icon
                     color: modelData.i

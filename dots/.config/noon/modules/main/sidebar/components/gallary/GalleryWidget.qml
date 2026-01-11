@@ -159,7 +159,7 @@ Item {
             anchors.centerIn: parent
             spacing: 16
 
-            MaterialSymbol {
+            Symbol {
                 Layout.alignment: Qt.AlignHCenter
                 font.pixelSize: 64
                 text: "lock"
@@ -266,7 +266,7 @@ Item {
                     spacing: 8
                     visible: overlay.opacity > 0.5
 
-                    MaterialSymbol {
+                    Symbol {
                         Layout.alignment: Qt.AlignHCenter
                         font.pixelSize: 32
                         text: imageIcon || "wallpaper"

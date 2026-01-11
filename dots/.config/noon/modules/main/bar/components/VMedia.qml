@@ -15,7 +15,7 @@ Item {
         value: BeatsService.currentTrackProgressRatio()
         anchors.centerIn: parent
         implicitSize: Math.min(BarData.currentBarExclusiveSize, 35) * 0.75
-        MaterialSymbol {
+        Symbol {
             fill: 1
             anchors.centerIn: parent
             font.pixelSize: progress.implicitSize * BarData.barPadding

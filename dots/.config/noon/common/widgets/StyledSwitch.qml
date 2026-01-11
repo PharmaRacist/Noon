@@ -54,7 +54,7 @@ Switch {
         anchors.left: parent.left
         anchors.leftMargin: root.checked ? ((root.pressed || root.down) ? (22 * root.scale) : 24 * root.scale) : ((root.pressed || root.down) ? (2 * root.scale) : 8 * root.scale)
 
-        MaterialSymbol {
+        Symbol {
             visible: false
             text: 'done'
             fill: 1

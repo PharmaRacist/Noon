@@ -21,7 +21,7 @@ StyledPopup {
             Row {
                 spacing: 6
 
-                MaterialSymbol {
+                Symbol {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "mosque"
                     fill: 1
@@ -87,7 +87,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: PrayerService.nextPrayer !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: "schedule"
                 color: Colors.m3.m3primary
                 font.pixelSize: Fonts.sizes.large
@@ -124,7 +124,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: PrayerService.prayerTimes.fajr !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: PrayerService.prayerIcons.Fajr
                 color: PrayerService.nextPrayer === "Fajr" ? Colors.m3.m3primary : Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -159,7 +159,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: PrayerService.prayerTimes.sunrise !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: PrayerService.prayerIcons.Sunrise
                 color: PrayerService.nextPrayer === "Sunrise" ? Colors.m3.m3primary : Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -194,7 +194,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: PrayerService.prayerTimes.dhuhr !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: PrayerService.prayerIcons.Dhuhr
                 color: PrayerService.nextPrayer === "Dhuhr" ? Colors.m3.m3primary : Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -229,7 +229,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: PrayerService.prayerTimes.asr !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: PrayerService.prayerIcons.Asr
                 color: PrayerService.nextPrayer === "Asr" ? Colors.m3.m3primary : Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -264,7 +264,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: PrayerService.prayerTimes.maghrib !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: PrayerService.prayerIcons.Maghrib
                 color: PrayerService.nextPrayer === "Maghrib" ? Colors.m3.m3primary : Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -299,7 +299,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: PrayerService.prayerTimes.isha !== ""
 
-            MaterialSymbol {
+            Symbol {
                 text: PrayerService.prayerIcons.Isha
                 color: PrayerService.nextPrayer === "Isha" ? Colors.m3.m3primary : Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large

@@ -17,7 +17,7 @@ StyledPopup {
         Row {
             spacing: 6
 
-            MaterialSymbol {
+            Symbol {
                 anchors.verticalCenter: parent.verticalCenter
                 fill: 0
                 font.weight: Font.Medium
@@ -41,7 +41,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: NetworkService.ethernet ? "lan" : "wifi"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -67,7 +67,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: NetworkService.networkName.length > 0
 
-            MaterialSymbol {
+            Symbol {
                 text: "router"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -94,7 +94,7 @@ StyledPopup {
             Layout.fillWidth: true
             visible: NetworkService.wifi && NetworkService.networkStrength > 0
 
-            MaterialSymbol {
+            Symbol {
                 text: "signal_cellular_alt"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -119,7 +119,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: "download"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large
@@ -144,7 +144,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: "upload"
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large

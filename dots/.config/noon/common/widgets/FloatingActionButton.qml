@@ -29,7 +29,7 @@ RippleButton {
         }
         spacing: 0
 
-        MaterialSymbol {
+        Symbol {
             id: icon
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter

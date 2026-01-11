@@ -42,7 +42,7 @@ IslandComponent {
                         value: modelData.percentage
                         implicitSize: 64
                     }
-                    MaterialSymbol {
+                    Symbol {
                         anchors.centerIn: parent
                         fill: 1
                         text: modelData.iconName

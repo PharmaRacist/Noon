@@ -441,7 +441,7 @@ Item {
                 anchors.leftMargin: 16
                 spacing: 15
 
-                MaterialSymbol {
+                Symbol {
                     text: {
                         switch (taskData.status) {
                         case TodoService.status_todo:
@@ -488,7 +488,7 @@ Item {
                             maximumLineCount: 2
                         }
 
-                        MaterialSymbol {
+                        Symbol {
                             visible: taskData.todoistId !== "" && taskData.todoistId !== null
                             text: "cloud_done"
                             font.pixelSize: 14

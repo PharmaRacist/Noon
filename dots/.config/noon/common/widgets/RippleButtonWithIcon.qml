@@ -19,7 +19,7 @@ RippleButton {
     buttonRadius: Rounding.normal
     colBackground: colors.colLayer2
 
-    MaterialSymbol {
+    Symbol {
         id: symbol
 
         font.pixelSize: root.implicitSize / 2

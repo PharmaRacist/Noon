@@ -16,7 +16,7 @@ RippleButton {
     }
     buttonRadius: Rounding.full
 
-    contentItem: MaterialSymbol {
+    contentItem: Symbol {
         id: icon
 
         anchors.centerIn: parent

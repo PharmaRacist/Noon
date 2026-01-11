@@ -3,7 +3,7 @@ import qs.common
 
 StyledText {
     id: root
-
+    property bool nerd: false
     property real iconSize: Fonts.sizes.small ?? 16
     property real fill: 0
     property real truncatedFill: fill.toFixed(1)
@@ -15,10 +15,10 @@ StyledText {
 
     font {
         hintingPreference: Font.PreferNoHinting
-        family: Fonts.family.iconMaterial ?? "Material Symbols Rounded"
+        family: nerd ? Fonts.family.iconNerd : Fonts.family.iconMaterial
         pixelSize: iconSize
         weight: Font.Normal + (Font.DemiBold - Font.Normal) * truncatedFill
-        variableAxes: root.variableAxes
+        variableAxes: nerd ? ({}) : root.variableAxes
     }
 
     Behavior on opacity {

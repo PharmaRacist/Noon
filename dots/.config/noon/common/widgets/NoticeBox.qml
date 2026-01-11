@@ -22,7 +22,7 @@ Rectangle {
         anchors.margins: 8
         spacing: 8
 
-        MaterialSymbol {
+        Symbol {
             id: icon
 
             Layout.fillWidth: false

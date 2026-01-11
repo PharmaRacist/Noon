@@ -41,7 +41,7 @@ RippleButton {
             anchors.centerIn: parent
             spacing: 5
 
-            MaterialSymbol {
+            Symbol {
                 text: "search"
                 font.pixelSize: 20
                 color: Colors.m3.m3onSurface

@@ -67,7 +67,7 @@ StyledPanel {
                 }
             }
 
-            MaterialSymbol {
+            Symbol {
                 fill: 1
                 animateChange: !circularProgress.valueChanging
                 font {

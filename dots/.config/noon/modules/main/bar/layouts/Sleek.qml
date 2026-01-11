@@ -187,7 +187,7 @@ StyledRect {
 
     component SilentHint: Revealer {
         reveal: Notifications.silent
-        MaterialSymbol {
+        Symbol {
             color: Colors.colOnSecondaryContainer
             visible: Notifications.silent
             text: "notifications_off"
@@ -286,7 +286,7 @@ StyledRect {
         property bool percentageSymbol: true
         spacing: 5
 
-        MaterialSymbol {
+        Symbol {
             text: root.iconName
             font.pixelSize: 17
             fill: 1

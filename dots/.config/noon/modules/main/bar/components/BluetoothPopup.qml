@@ -20,7 +20,7 @@ StyledPopup {
 
             spacing: Padding.normal
 
-            MaterialSymbol {
+            Symbol {
                 anchors.verticalCenter: parent.verticalCenter
                 fill: 1
                 font.weight: Font.Medium
@@ -57,7 +57,7 @@ StyledPopup {
             spacing: 5
             Layout.fillWidth: true
 
-            MaterialSymbol {
+            Symbol {
                 text: BluetoothService.getDeviceStatusIcon(root.currentDevice)
                 color: Colors.m3.m3onSurfaceVariant
                 font.pixelSize: Fonts.sizes.large

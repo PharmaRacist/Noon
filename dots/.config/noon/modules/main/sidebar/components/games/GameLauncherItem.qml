@@ -45,7 +45,7 @@ StyledRect {
                 asynchronous: true
             }
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 text: "sports_esports"
                 font.pixelSize: 54
@@ -94,7 +94,7 @@ StyledRect {
                 }
                 RowLayout {
                     anchors.centerIn: parent
-                    MaterialSymbol {
+                    Symbol {
                         Layout.fillWidth: !root.collapsed
                         text: "play_arrow"
                         color: root.colors.colOnPrimary

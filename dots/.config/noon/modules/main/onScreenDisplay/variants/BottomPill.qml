@@ -62,7 +62,7 @@ StyledPanel {
                 anchors.horizontalCenterOffset: 2
                 spacing: -2
 
-                MaterialSymbol {
+                Symbol {
                     fill: 1
                     animateChange: true
                     color: Colors.colOnPrimary

@@ -26,7 +26,7 @@ RippleButton {
 
     }
 
-    contentItem: MaterialSymbol {
+    contentItem: Symbol {
         text: buttonText
         fill: 1
         anchors.centerIn: parent

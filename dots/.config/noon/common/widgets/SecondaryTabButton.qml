@@ -140,7 +140,7 @@ TabButton {
 
             Component {
                 id: materialSymbolComponent
-                MaterialSymbol {
+                Symbol {
                     verticalAlignment: Text.AlignVCenter
                     text: buttonIcon
                     font.pixelSize: Fonts.sizes.huge

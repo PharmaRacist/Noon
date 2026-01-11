@@ -120,7 +120,7 @@ Rectangle {
                                 color: Colors.m3.m3onSecondaryContainer
                             }
 
-                            MaterialSymbol {
+                            Symbol {
                                 id: roleIcon
                                 anchors.centerIn: parent
                                 visible: !modelIcon.visible
@@ -151,7 +151,7 @@ Rectangle {
 
                     background: Item
 
-                    MaterialSymbol {
+                    Symbol {
                         id: notVisibleToModelText
                         anchors.centerIn: parent
                         iconSize: Fonts.sizes.small

@@ -32,7 +32,7 @@ GroupButton {
             anchors.centerIn: parent
             spacing: 5
 
-            MaterialSymbol {
+            Symbol {
                 text: buttonIcon
                 font.pixelSize: Fonts.sizes.large
                 color: button.colText

@@ -64,7 +64,7 @@ Rectangle {
             secondaryColor: Colors.colSecondaryContainer
             primaryColor: Colors.m3.m3onSecondaryContainer
 
-            MaterialSymbol {
+            Symbol {
                 anchors.centerIn: parent
                 fill: 1
                 text: activePlayer?.isPlaying ? "pause" : "music_note"

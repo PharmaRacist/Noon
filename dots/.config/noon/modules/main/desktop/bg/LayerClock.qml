@@ -80,7 +80,7 @@ Item {
             }
 
             RowLayout {
-                MaterialSymbol {
+                Symbol {
                     text: weatherData.currentEmoji
                     font.pixelSize: dateText.font.pixelSize * 0.85
                     color: dateText.color

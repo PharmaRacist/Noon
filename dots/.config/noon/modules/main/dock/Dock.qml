@@ -121,7 +121,7 @@ Scope {
                     toggled: root.pinned
                     onClicked: root.pinned = !root.pinned
 
-                    contentItem: MaterialSymbol {
+                    contentItem: Symbol {
                         text: "keep"
                         horizontalAlignment: Text.AlignHCenter
                         font.pixelSize: Fonts.sizes.verylarge
@@ -137,7 +137,7 @@ Scope {
                     buttonRadius: Rounding.normal
                     onClicked: GlobalStates.main.oskOpen = false
 
-                    contentItem: MaterialSymbol {
+                    contentItem: Symbol {
                         text: "keyboard_hide"
                         horizontalAlignment: Text.AlignHCenter
                         font.pixelSize: Fonts.sizes.verylarge

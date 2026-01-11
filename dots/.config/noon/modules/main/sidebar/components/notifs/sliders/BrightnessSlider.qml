@@ -41,7 +41,7 @@ Item {
         }
     }
 
-    MaterialSymbol {
+    Symbol {
         z: 2
         text: brightnessSlider.value > 0.5 ? "light_mode" : "dark_mode"
         color: Colors.m3.m3onPrimary

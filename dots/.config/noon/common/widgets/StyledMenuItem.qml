@@ -29,7 +29,7 @@ MenuItem {
         Layout.leftMargin: Padding.large
         Layout.rightMargin: Padding.large
 
-        MaterialSymbol {
+        Symbol {
             id: symbol
 
             Layout.leftMargin: Padding.normal

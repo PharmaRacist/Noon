@@ -20,6 +20,7 @@ Singleton {
         readonly property string variable: syncFamily ? main : "Google Sans Flex"
         readonly property string emoji: "Noto Color Emoji"
         readonly property string iconMaterial: "Material Symbols Rounded"
+        readonly property string iconNerd: "Nerd Font"
         readonly property bool syncFamily: Mem.options.appearance.fonts.syncFamily
     }
 
