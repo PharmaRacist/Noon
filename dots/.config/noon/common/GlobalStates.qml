@@ -11,7 +11,7 @@ Singleton {
 
     property QtObject main
     property QtObject xp
-
+    property QtObject applications
     property bool superHeld: false
     property var topLevel: ToplevelManager.activeToplevel
     property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
@@ -28,6 +28,12 @@ Singleton {
         onReleased: {
             superHeldTimer.stop();
             superHeld = false;
+        }
+    }
+    applications: QtObject {
+        property QtObject mediaplayer: QtObject {
+            property bool show: false
+            property var queue: []
         }
     }
     main: QtObject {

@@ -10,6 +10,7 @@ import qs.common
 import qs.common.utils
 import qs.modules.main
 import qs.modules.xp
+import qs.modules.applications
 
 ShellRoot {
     property string mode: Mem.options.desktop.shell.mode ?? "main" // "xp" "main:noon"
@@ -19,10 +20,13 @@ ShellRoot {
 
         XP {}
     }
-
     WidgetLoader {
         active: mode !== "xp"
 
         Main {}
     }
+    WidgetLoader {
+        Applications {}
+    }
+
 }

@@ -20,6 +20,7 @@ RippleButton {
     property alias subtext: subtext.text  // Fixed: was pointing to title.text
     property color colSubtext: Colors.colSubtext
     property color colTitle: Colors.colOnLayer2
+    property bool expanded: true
     property string materialIcon: "music_note"
     width: parent?.width
     implicitHeight: 64
@@ -42,6 +43,7 @@ RippleButton {
 
     // Wrapper Item to handle anchors
     Item {
+        visible: expanded
         anchors {
             left: m3shape.right
             leftMargin: Padding.large
