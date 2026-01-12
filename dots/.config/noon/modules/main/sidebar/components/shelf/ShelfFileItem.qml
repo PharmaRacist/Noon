@@ -10,7 +10,7 @@ import qs.store
 
 StyledRect {
     id: root
-
+    property bool showPreview: false
     property string path
     implicitHeight: Sizes.sidebar.shelfItemSize.height
     implicitWidth: Sizes.sidebar.shelfItemSize.width
@@ -70,13 +70,14 @@ StyledRect {
         drag.target: dragProxy
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
+        onEntered: showPreview.restart()
+        onExited: {
+            showPreview.stop();
+            root.showPreview = false;
+        }
         onPressed: event => {
             switch (event.button) {
             case Qt.LeftButton:
-                Noon.openFile(path);
-                if (!GlobalStates.main.sidebar.pinned) {
-                    Noon.callIpc("sidebar hide");
-                }
                 dragProxy.Drag.mimeData = {
                     "text/uri-list": path
                 };
@@ -93,10 +94,15 @@ StyledRect {
             dragProxy.y = 0;
         }
     }
+    Timer {
+        id: showPreview
+        interval: Mem.options.sidebar.shelf.previewDelay
+        onTriggered: root.showPreview = true
+    }
     ShelfPreviewArea {
         type: symbol.text
         path: root.path
-        extraVisibleCondition: supportedPreviews.includes(type) && eventArea.containsMouse && path.length > 0
+        extraVisibleCondition: root.showPreview && supportedPreviews.includes(type) && eventArea.containsMouse && path.length > 0
     }
     Rectangle {
         id: dragProxy
@@ -122,6 +128,16 @@ StyledRect {
         id: contextMenu
         content: [
             {
+                "text": "Open",
+                "materialIcon": "open_in_new",
+                "action": () => {
+                    Noon.openFile(path);
+                    if (!GlobalStates.main.sidebar.pinned) {
+                        Noon.callIpc("sidebar hide");
+                    }
+                }
+            },
+            {
                 "text": "Forget",
                 "materialIcon": "delete",
                 "action": () => {
@@ -129,7 +145,7 @@ StyledRect {
                         Mem.states.sidebar.shelf.filePaths.splice(root.index, 1);
                     }
                 }
-            }
+            },
         ]
     }
 }

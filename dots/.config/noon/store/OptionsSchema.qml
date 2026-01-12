@@ -192,9 +192,12 @@ JsonAdapter {
         property JsonObject content
         property JsonObject behavior
         property JsonObject appearance
-
+        property JsonObject shelf
         property bool pinned: false
 
+        shelf: JsonObject {
+            property int previewDelay: 250
+        }
         content: JsonObject {
             property bool tasks: true
             property bool history: true
@@ -394,7 +397,7 @@ JsonAdapter {
             property string displayMode: "normal"
             property string customFallback: "●"
             property list<string> avilableModes: ["normal", "japanese", "roman", "custom"]
-            property list<string> customMapping: [] // ex: 1: "●" 
+            property list<string> customMapping: [] // ex: 1: "●"
         }
     }
 
