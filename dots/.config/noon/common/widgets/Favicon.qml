@@ -46,7 +46,5 @@ IconImage {
             height: root.implicitSize
             radius: Rounding.full
         }
-
     }
-
 }

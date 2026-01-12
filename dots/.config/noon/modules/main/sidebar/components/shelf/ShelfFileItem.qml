@@ -12,6 +12,8 @@ StyledRect {
     id: root
     property bool showPreview: false
     property string path
+    property bool onlineURL: path.toString().startsWith("https:") || path.startsWith("http:")
+    property string icon: getIcon(path)
     implicitHeight: Sizes.sidebar.shelfItemSize.height
     implicitWidth: Sizes.sidebar.shelfItemSize.width
     color: Colors.colLayer2
@@ -41,18 +43,36 @@ StyledRect {
 
     CLayout {
         anchors.centerIn: parent
-
-        Symbol {
-            id: symbol
-            text: getIcon(root.path)
-            fill: eventArea.drag.active ? 0 : 1
-            font.pixelSize: 32
+        Loader {
             Layout.alignment: Qt.AlignHCenter
-        }
+            sourceComponent: root.onlineURL ? favIconComponent : symbolComponent
 
+            Component {
+                id: symbolComponent
+                Symbol {
+                    id: symbol
+                    text: root.icon
+                    fill: eventArea.drag.active ? 0 : 1
+                    font.pixelSize: 32
+                    Layout.alignment: Qt.AlignHCenter
+                }
+            }
+            Component {
+                id: favIconComponent
+                Favicon {
+                    displayText: title.text
+                    url: root.path
+                }
+            }
+        }
         StyledText {
             id: title
-            text: decodeURIComponent(FileUtils.getEscapedFileNameWithoutExtension(root.path))
+            text: {
+                if (root.onlineURL) {
+                    StringUtils.getDomain(root.path);
+                } else
+                    decodeURIComponent(FileUtils.getEscapedFileNameWithoutExtension(root.path));
+            }
             color: Colors.colOnLayer2
             font.pixelSize: Fonts.sizes.small
             elide: Text.ElideRight
@@ -100,7 +120,7 @@ StyledRect {
         onTriggered: root.showPreview = true
     }
     ShelfPreviewArea {
-        type: symbol.text
+        type: root.icon
         path: root.path
         extraVisibleCondition: root.showPreview && supportedPreviews.includes(type) && eventArea.containsMouse && path.length > 0
     }
@@ -118,7 +138,7 @@ StyledRect {
         Drag.dragType: Drag.Automatic
 
         Symbol {
-            text: symbol.text
+            text: root.icon
             anchors.centerIn: parent
             font.pixelSize: 28
             color: Colors.colOnPrimary

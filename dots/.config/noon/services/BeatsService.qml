@@ -17,8 +17,8 @@ Singleton {
     readonly property bool filterPlayersEnabled: true
 
     readonly property string artUrl: player ? StringUtils.cleanMusicTitle(player.trackArtUrl) : ""
-    readonly property string title: player ? StringUtils.cleanMusicTitle(player.trackTitle) : ""
-    readonly property string artist: player ? StringUtils.cleanMusicTitle(player.trackArtist) : ""
+    readonly property string title: player ? StringUtils.cleanMusicTitle(player.trackTitle) : "No Title"
+    readonly property string artist: player ? StringUtils.cleanMusicTitle(player.trackArtist) : "No Artist"
     readonly property bool _playing: player && player.playbackState === MprisPlaybackState.Playing
 
     readonly property MprisPlayer player: {
@@ -188,7 +188,7 @@ Singleton {
     SourceDownloader {
         id: coverFetch
         active: root.artUrl.startsWith("http") || root.artUrl.startsWith("https")
-        input: root.artUrl // Fixed: Pointing to artUrl instead of circular BeatsService reference
+        input: root.artUrl
     }
 
     PaletteGenerator {

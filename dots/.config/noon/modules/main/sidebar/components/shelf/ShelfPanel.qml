@@ -67,7 +67,7 @@ StyledRect {
             PagePlaceholder {
                 icon: "shelves"
                 shown: Mem.states.sidebar.shelf.filePaths.length === 0
-                title: "Drop files here"
+                title: "Drop Anything Here"
             }
         }
     }

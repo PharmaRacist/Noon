@@ -1,8 +1,8 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.utils
-pragma Singleton
 
 // Wrapper for the firefox bookmarks script
 Singleton {
@@ -10,10 +10,10 @@ Singleton {
 
     // Properties
     property var bookmarks: Mem.states.services.bookmarks.firefoxBookmarks ?? []
-    property var bookmarkTitles: bookmarks.map((b) => {
+    property var bookmarkTitles: bookmarks.map(b => {
         return b.title;
     })
-    property var bookmarkUrls: bookmarks.map((b) => {
+    property var bookmarkUrls: bookmarks.map(b => {
         return b.url;
     })
     property bool isLoading: false
@@ -38,21 +38,21 @@ Singleton {
 
     function removeBookmark(bookmarkId) {
         if (!bookmarkId)
-            return ;
+            return;
 
         Quickshell.execDetached(["python3", scriptPath, "remove", bookmarkId.toString()]);
     }
 
     function openUrl(url) {
         if (!url)
-            return ;
+            return;
 
         Quickshell.execDetached(["python3", scriptPath, "open", url]);
     }
 
     function searchBookmarks(query) {
         const q = (query || "").toLowerCase();
-        return bookmarks.filter((b) => {
+        return bookmarks.filter(b => {
             return (b.title && b.title.toLowerCase().includes(q)) || (b.url && b.url.toLowerCase().includes(q));
         });
     }
@@ -69,7 +69,6 @@ Singleton {
         Qt.callLater(fetchFavicons);
         if (autoRefresh)
             refreshTimer.start();
-
     }
     // Watch for autoRefresh changes
     onAutoRefreshChanged: {
@@ -82,7 +81,6 @@ Singleton {
     onRefreshIntervalChanged: {
         if (refreshTimer.running)
             refreshTimer.restart();
-
     }
 
     Timer {
@@ -127,10 +125,8 @@ Singleton {
             onStreamFinished: {
                 if (this.text.trim())
                     console.error("FirefoxBookmarksService: stderr:", this.text);
-
             }
         }
-
     }
 
     // Process: Fetch all favicons
@@ -146,16 +142,12 @@ Singleton {
                     const result = JSON.parse(this.text.trim());
                     if (result.downloaded > 0)
                         loadBookmarks();
-
                 } catch (e) {
                     console.error("FirefoxBookmarksService: Failed to parse favicon fetch result:", e);
                 }
             }
         }
 
-        stderr: StdioCollector {
-        }
-
+        stderr: StdioCollector {}
     }
-
 }

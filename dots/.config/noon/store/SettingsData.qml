@@ -548,6 +548,11 @@ QtObject {
                         "key": "desktop.bg.parallax.enabled"
                     },
                     {
+                        "icon": "image",
+                        "name": "Deload On Fullscreen",
+                        "key": "desktop.bg.deloadOnFullscreen"
+                    },
+                    {
                         "icon": "width",
                         "name": "Sidebar Parallax",
                         "key": "desktop.bg.parallax.widgetParallax"

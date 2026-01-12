@@ -10,7 +10,7 @@ ColumnLayout {
     id: root
 
     readonly property MprisPlayer player: BeatsService.player
-    readonly property bool isPlaying: player?.playbackState === MprisPlaybackState.Playing
+    readonly property bool isPlaying: player.playbackState === MprisPlaybackState.Playing
     readonly property bool hasLyrics: LyricsService.state !== LyricsService.NoLyricsFound
     readonly property var trackColors: BeatsService.colors
 
@@ -51,7 +51,7 @@ ColumnLayout {
                 font.weight: Font.Medium
                 color: root.trackColors.colOnLayer0
                 elide: Text.ElideRight
-                text: root.player?.trackTitle || "No Title"
+                text: root.player.trackTitle || "No Title"
                 horizontalAlignment: Text.AlignLeft
             }
 
@@ -60,7 +60,7 @@ ColumnLayout {
                 font.pixelSize: 17
                 color: root.trackColors.colOnLayer2
                 elide: Text.ElideRight
-                text: root.player?.trackArtist || "No Artist"
+                text: root.player.trackArtist || "No Artist"
                 horizontalAlignment: Text.AlignLeft
             }
         }

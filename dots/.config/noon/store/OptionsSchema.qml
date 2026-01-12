@@ -300,6 +300,7 @@ JsonAdapter {
             property real borderMultiplier: 0.2
             property bool depthMode: true
             property bool useQs: true
+            property bool deloadOnFullscreen: true
 
             parallax: JsonObject {
                 property bool enabled: false

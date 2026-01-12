@@ -309,16 +309,6 @@ FocusScope {
     }
 
     Connections {
-        function onSidebarOpenChanged() {
-            if (GlobalStates.main.sidebar.show && showContent)
-                Qt.callLater(root.focusSearchInput);
-        }
-
-        target: GlobalStates.main
-    }
-
-    // Listen to searchFocusRequested from main panel
-    Connections {
         function onSearchFocusRequested() {
             root.focusSearchInput();
         }
