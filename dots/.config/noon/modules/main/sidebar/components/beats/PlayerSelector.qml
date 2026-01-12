@@ -17,12 +17,18 @@ StyledRect {
     property QtObject colors: BeatsService.colors
 
     function getPlayerIcon(dbus) {
-        if (!dbus) return "music_note";
-        if (dbus.includes("spotify")) return "queue_music";
-        if (dbus.includes("firefox") || dbus.includes("chromium")) return "web";
-        if (dbus.includes("vlc")) return "play_circle";
-        if (dbus.includes("mpv")) return "video_library";
-        if (dbus.includes("mpd")) return "library_music";
+        if (!dbus)
+            return "music_note";
+        if (dbus.includes("spotify"))
+            return "queue_music";
+        if (dbus.includes("firefox") || dbus.includes("chromium"))
+            return "web";
+        if (dbus.includes("vlc"))
+            return "play_circle";
+        if (dbus.includes("mpv"))
+            return "video_library";
+        if (dbus.includes("mpd"))
+            return "library_music";
         return "music_note";
     }
 
@@ -54,8 +60,7 @@ StyledRect {
                 materialIcon: root.getPlayerIcon(modelData?.dbusName)
                 iconColor: isSelected ? root.colors.colOnPrimary : root.colors.colOnSecondaryContainer
 
-                onClicked: Mem.states.services.mediaPlayer.selectedPlayerIndex = index;
-
+                onClicked: BeatsService.selectedPlayerIndex = index
 
                 StyledToolTip {
                     extraVisibleCondition: hovered

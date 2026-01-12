@@ -1,15 +1,16 @@
 import QtQuick
 import qs.common
 import qs.common.utils
-import qs.modules.main.bar
-import qs.modules.main.beam
-import qs.modules.main.desktop.bg
-import qs.modules.main.dock
-import qs.modules.main.lock
-import qs.modules.main.notificationPopup
-import qs.modules.main.onScreenDisplay
-import qs.modules.main.sidebar
-import qs.modules.main.view
+import "bar"
+import "beam"
+import "desktop/bg"
+import "dock"
+import "lock"
+import "notificationPopup"
+import "onScreenDisplay"
+import "sidebar"
+import "view"
+import "screenshot"
 
 Scope {
     Component.onCompleted: GlobalStates.main.handle_init()
@@ -25,7 +26,10 @@ Scope {
 
         Border {}
     }
-
+    WidgetLoader {
+        enabled: GlobalStates.main.showScreenshot
+        Screenshot {}
+    }
     WidgetLoader {
         enabled: true
 

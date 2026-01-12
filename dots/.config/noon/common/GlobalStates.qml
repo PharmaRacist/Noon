@@ -48,6 +48,7 @@ Singleton {
         property bool exposeView: false
         property bool showOsdValues: false
         property bool showBeam: false
+        property bool showScreenshot: false
 
         property QtObject sidebar: QtObject {
             property bool show: true

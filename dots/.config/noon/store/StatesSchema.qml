@@ -81,10 +81,7 @@ JsonAdapter {
             property bool muted: false
             property list<var> activeSounds: []
         }
-        mediaPlayer: JsonObject {
-            // property string selectedPlayerDbusName: ""
-            property int selectedPlayerIndex: 0
-        }
+        mediaPlayer: JsonObject {}
     }
 
     property JsonObject fonts: JsonObject {

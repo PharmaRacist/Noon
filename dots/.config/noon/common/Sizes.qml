@@ -19,7 +19,11 @@ Singleton {
     property QtObject hyprland
     property QtObject sidebar
     property QtObject osd
+    property QtObject screenshot
 
+    screenshot: QtObject {
+        property size size: Qt.size(400, 85)
+    }
     osd: QtObject {
         property size bottomPill: Qt.size(180, 42)
         property size centerIsland: Qt.size(145, 145)

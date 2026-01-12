@@ -7,6 +7,7 @@ Singleton {
     id: root
 
     property bool isBusy: mainProc.running
+    property bool freeze: false
 
     signal screenshotCompleted()
 

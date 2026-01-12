@@ -51,7 +51,7 @@ ColumnLayout {
                 font.weight: Font.Medium
                 color: root.trackColors.colOnLayer0
                 elide: Text.ElideRight
-                text: root.player?.trackTitle || "No players available"
+                text: root.player?.trackTitle || "No Title"
                 horizontalAlignment: Text.AlignLeft
             }
 
@@ -60,7 +60,7 @@ ColumnLayout {
                 font.pixelSize: 17
                 color: root.trackColors.colOnLayer2
                 elide: Text.ElideRight
-                text: root.player?.trackArtist || "No players available"
+                text: root.player?.trackArtist || "No Artist"
                 horizontalAlignment: Text.AlignLeft
             }
         }
@@ -125,11 +125,11 @@ ColumnLayout {
             releaseAction: () => root.player?.previous()
         }
         Item {
-            id:playButton
-            implicitHeight:playShape.implicitHeight
-            implicitWidth:playShape.implicitWidth
+            id: playButton
+            implicitHeight: playShape.implicitHeight
+            implicitWidth: playShape.implicitWidth
             MaterialShapeWrappedMaterialSymbol {
-                id:playShape
+                id: playShape
                 color: root.isPlaying ? root.trackColors.colPrimary : root.trackColors.colSecondaryContainer
                 shape: root.isPlaying ? MaterialShape.Shape.Cookie9Sided : MaterialShape.Shape.Cookie6Sided
                 padding: Padding.massive
@@ -154,12 +154,12 @@ ColumnLayout {
                 }
             }
             Symbol {
-                id:playSymbol
-                fill:1
+                id: playSymbol
+                fill: 1
                 text: root.isPlaying ? "pause" : "play_arrow"
                 color: root.isPlaying ? root.trackColors.colOnPrimary : root.trackColors.colOnSecondaryContainer
-                font.pixelSize:42
-                anchors.centerIn:playShape
+                font.pixelSize: 42
+                anchors.centerIn: playShape
             }
         }
 

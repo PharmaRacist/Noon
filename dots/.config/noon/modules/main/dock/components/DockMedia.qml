@@ -16,7 +16,7 @@ import qs.store
 StyledRect {
     id: root
     readonly property var meaningfulPlayers: BeatsService.meaningfulPlayers
-    property int selectedPlayerIndex: Mem.states.services.mediaPlayer.selectedPlayerIndex
+    property int selectedPlayerIndex: BeatsService.selectedPlayerIndex
     readonly property MprisPlayer player: meaningfulPlayers[selectedPlayerIndex]
     visible: player && player.trackTitle
     radius: dockRoot.mainRounding
