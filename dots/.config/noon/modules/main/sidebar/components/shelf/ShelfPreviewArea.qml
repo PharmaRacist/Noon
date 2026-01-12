@@ -1,4 +1,5 @@
 import QtQuick
+import QtWebView
 import QtQuick.Layouts
 import Quickshell
 import qs.common
@@ -34,6 +35,8 @@ StyledToolTip {
                     return docsComponent;
                 case "video":
                     return videoComponent;
+                // case "globe":
+                //     return onlineUrlComponent;
                 default:
                     return null;
                 }
@@ -43,11 +46,17 @@ StyledToolTip {
                     }
                 }
             }
-
+            Component {
+                // Waiting for Quickshell's Fix
+                id: onlineUrlComponent
+                WebView {
+                    url: root.path
+                }
+            }
             Component {
                 id: docsComponent
                 PdfPreview {
-                    source: root.source
+                    source: root.path
                     anchors.margins: Padding.verylarge
                     anchors.fill: parent
                     renderScale: 0.5

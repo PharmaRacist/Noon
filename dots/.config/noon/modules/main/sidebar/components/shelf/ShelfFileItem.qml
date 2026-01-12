@@ -37,6 +37,8 @@ StyledRect {
             return "docs";
         } else if (NameFilters.archive.indexOf(ext) !== -1) {
             return "archive";
+        } else if (path.startsWith("https:") || path.startsWith("http:")) {
+            return "globe";
         }
         return "draft";
     }
