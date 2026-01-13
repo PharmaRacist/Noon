@@ -12,10 +12,10 @@ Singleton {
         id: root
 
         readonly property string main: Mem.options.appearance.fonts.main ?? "Google Sans Flex"
+        readonly property string monospace: "Iosevka"
         readonly property string title: syncFamily ? main : "Rubik"
         readonly property string reading: syncFamily ? main : "Rubik"
         readonly property string numbers: syncFamily ? main : "Roboto Flex"
-        readonly property string monospace: syncFamily ? main : "Iosevka"
         readonly property string clock: syncFamily ? main : "Google Sans Flex"
         readonly property string variable: syncFamily ? main : "Google Sans Flex"
         readonly property string emoji: "Noto Color Emoji"

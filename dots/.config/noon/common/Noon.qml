@@ -85,7 +85,7 @@ Singleton {
     function edit(filePath) {
         if (!filePath)
             return;
-        execDetached(`${Quickshell.env('EDITOR')} ${Quickshell.env('SHELL_CONFIG_PATH')}`);
+        callIpc(`apps noon_edit ${filePath}`);
     }
 
     function fetchCommands() {

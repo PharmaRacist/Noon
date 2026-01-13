@@ -39,6 +39,16 @@ RippleButton {
         iconSize: parent.height / 2.5
         colSymbol: colActiveItemColor
         text: root.materialIcon
+        MouseArea {
+            id: shapeHoverArea
+            enabled: !root.expanded
+            hoverEnabled: true
+            anchors.fill: parent
+        }
+        StyledToolTip {
+            extraVisibleCondition: shapeHoverArea.containsMouse
+            content: root.title
+        }
     }
 
     // Wrapper Item to handle anchors

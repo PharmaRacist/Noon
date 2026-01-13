@@ -35,6 +35,11 @@ Singleton {
             property bool show: false
             property var queue: []
         }
+        property QtObject editor: QtObject {
+            property bool show: false
+            property string currentPath: Qt.resolvedUrl(Directories.shellConfigs)
+            property string currentFile: ""
+        }
     }
     main: QtObject {
         id: main

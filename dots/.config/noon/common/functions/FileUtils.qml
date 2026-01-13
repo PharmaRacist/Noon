@@ -189,6 +189,13 @@ Singleton {
             return null;
         }
     }
+    function handleTelda(filePath: string) {
+        if (!filePath)
+            return;
+        if (filePath.startsWith("~")) {
+            return Directories.standard.home + filePath.substring(1);
+        }
+    }
     function mkdir(directories: var) {
         if (!directories)
             return;

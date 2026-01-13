@@ -57,7 +57,7 @@ Item {
     FolderListModel {
         id: itemsModel
         folder: root.path
-        nameFilters: NameFilters.video
+        nameFilters: NameFilters.video.concat(NameFilters.audio)
         showDirs: false
         showFiles: true
         sortField: FolderListModel.Name

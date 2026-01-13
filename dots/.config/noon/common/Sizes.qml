@@ -20,13 +20,17 @@ Singleton {
     property QtObject sidebar
     property QtObject osd
     property QtObject screenshot
+    property QtObject editor
     property QtObject mediaPlayer
+
+    editor: QtObject {
+        property size statusIsland: Qt.size(120, 40)
+    }
     mediaPlayer: QtObject {
         property real sidebarWidth: 300
         property real sidebarWidthCollapsed: 100
         property real overlaySize: 145
         property size controlsSize: Qt.size(600, 80)
-
     }
     screenshot: QtObject {
         property size size: Qt.size(400, 85)

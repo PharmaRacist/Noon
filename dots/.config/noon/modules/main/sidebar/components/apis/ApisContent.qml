@@ -1,6 +1,7 @@
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Controls
+import QtWebView
 import QtQuick.Layouts
 import qs.common
 import qs.common.widgets
@@ -27,7 +28,12 @@ Item {
                     "icon": "translate",
                     "name": qsTr("Dicts")
                 }
-            ] : [])]
+            ] : []),
+        {
+            "icon": "globe",
+            "name": "Gemini"
+        }
+    ]
     Keys.onPressed: event => {
         if (event.modifiers === Qt.ControlModifier) {
             switch (event.key) {
@@ -84,7 +90,7 @@ Item {
             onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
             clip: true
             layer.enabled: true
-            contentChildren: [...(Mem.options.policies.ai ? [aiChat.createObject()] : []), ...(Mem.options.policies.medicalDictionary ? [medical.createObject()] : []), ...(Mem.options.policies.translator ? [translator.createObject()] : []),]
+            contentChildren: [...(Mem.options.policies.ai ? [aiChat.createObject()] : []), ...(Mem.options.policies.medicalDictionary ? [medical.createObject()] : []), ...(Mem.options.policies.translator ? [translator.createObject()] : []), gemini.createObject()]
 
             layer.effect: OpacityMask {
 
@@ -103,7 +109,15 @@ Item {
                 onExpandRequested: root.expandRequested()
             }
         }
-
+        Component {
+            id: gemini
+            Item {
+                WebView {
+                    anchors.fill: parent
+                    url: "https://google.com"
+                }
+            }
+        }
         Component {
             id: translator
 
