@@ -537,7 +537,7 @@ Canvas {
         var w = width;
         var n = points.length;
         if (n < 2)
-            return ;
+            return;
 
         // Smoothing: simple moving average
         var smoothWindow = root.smoothing;
@@ -625,5 +625,4 @@ Canvas {
         blurMax: visualizerType === "bars" ? 3 : visualizerType === "thickbars" ? 4 : visualizerType === "circular" ? 5 : visualizerType === "waveform" ? 4 : visualizerType === "particles" ? 2 : visualizerType === "gradient" ? 3 : visualizerType === "fluid" ? 6 : visualizerType === "neural" ? 4 : visualizerType === "ripple" ? 5 : visualizerType === "plasma" ? 8 : visualizerType === "crystal" ? 7 : visualizerType === "wave3d" ? 5 : visualizerType === "atom" ? 6 : 7
         blur: visualizerType === "bars" ? 0.5 : visualizerType === "thickbars" ? 0.6 : visualizerType === "circular" ? 0.8 : visualizerType === "waveform" ? 0.6 : visualizerType === "particles" ? 0.3 : visualizerType === "gradient" ? 0.4 : visualizerType === "fluid" ? 0.9 : visualizerType === "neural" ? 0.5 : visualizerType === "ripple" ? 0.7 : visualizerType === "plasma" ? 1 : visualizerType === "crystal" ? 0.8 : visualizerType === "wave3d" ? 0.6 : visualizerType === "atom" ? 0.9 : 1
     }
-
 }

@@ -22,7 +22,7 @@ Item {
     property color visualizerColor: ColorUtils.transparentize(Colors.colPrimary, 0.35)
     Process {
         id: cavaProcess
-        
+
         onRunningChanged: {
             if (!running) {
                 root.visualizerPoints = [];
