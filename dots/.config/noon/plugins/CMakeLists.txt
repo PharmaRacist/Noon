@@ -1,4 +1,3 @@
-# This creates both the 'noon' library and the 'noonplugin'
 qt_add_qml_module(noon
     URI Noon
     VERSION 1.0
@@ -8,7 +7,10 @@ qt_add_qml_module(noon
         src/highlighter.cpp
     QML_FILES
 )
-target_include_directories(noon PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(noon PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+
 target_link_libraries(noon PRIVATE
     Qt6::Quick
     Qt6::WebView
