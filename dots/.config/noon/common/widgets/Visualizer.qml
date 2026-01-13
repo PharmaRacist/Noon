@@ -1,50 +1,37 @@
+import Noon
 import QtQuick
 import qs.common
 import qs.common.utils
 import qs.common.widgets
 import qs.services
-import qs.common.functions
-
 import Quickshell
 
 Item {
     id: root
+
     anchors {
         fill: parent
         rightMargin: Padding.normal
         leftMargin: Padding.normal
     }
-    property alias active: cavaProcess.running
-    property list<real> visualizerPoints: []
-    property real maxVisualizerValue: mode === "crystal" ? 1000 : 2000
-    property int visualizerSmoothing: 3
+
+    property bool active: false
     property string mode: "filled"
     property color visualizerColor: ColorUtils.transparentize(Colors.colPrimary, 0.35)
-    Process {
-        id: cavaProcess
+    property real maxVisualizerValue: 5000
 
-        onRunningChanged: {
-            if (!running) {
-                root.visualizerPoints = [];
-                cavaProcess.exited(0, "stopped cava");
-            }
-        }
-        command: ["cava", "-p", `${Directories.scriptsDir}/cava/raw_output_config.txt`]
-
-        stdout: SplitParser {
-            onRead: data => {
-                const points = data.split(";").map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
-                root.visualizerPoints = points;
-            }
-        }
+    CavaWatcher {
+        id: cavaWatcher
+        smoothing: 0
+        active: root.active
     }
+
     WaveVisualizer {
         anchors.fill: parent
-        z: 0
-        visualizerType: mode
-        points: root.visualizerPoints
+        visualizerType: root.mode
+        points: cavaWatcher.data
         maxVisualizerValue: root.maxVisualizerValue
-        smoothing: root.visualizerSmoothing
         color: root.visualizerColor
+        live: root.active
     }
 }

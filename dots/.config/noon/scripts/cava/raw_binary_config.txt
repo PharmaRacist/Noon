@@ -1,0 +1,20 @@
+[general]
+framerate = 60
+bars = 30
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = raw
+raw_target = /dev/stdout
+data_format = binary
+channels = mono
+bit_format = 16bit
+
+[smoothing]
+monstercat = 0
+waves = 0
+gravity = 0
+integral = 0

@@ -14,12 +14,13 @@ StyledRect {
     z: 1
     clip: true
     color:"transparent"
-    radius:Rounding.verylarge
+    radius: Rounding.verylarge
     property int rowHeight: 30
     property int padding: Padding.normal
     property int minItemWidth: 300
     property int itemSpacing: Padding.normal
     property QtObject colors: Colors
+
     property int columnNumber: {
         var availableWidth = width - (padding * 2);
         var effectiveItemWidth = minItemWidth + itemSpacing;
@@ -27,19 +28,14 @@ StyledRect {
         return Math.max(1, calculatedColumns);
     }
 
-    property int commonSpacing: 9
     property string searchText: ""
     property bool expanded:  false
-    property bool showFullBar: false
-    property bool sidebarMode: columnNumber < 2
-    property bool enableExpand: true
     Layout.fillWidth: true
     Layout.fillHeight: true
 
     signal expandToggled
 
     property var settingsData: SettingsData.tweaks.settingsData ?? []
-
     property var itemStates: ({})
 
     function matchesSearch(text) {
@@ -82,41 +78,10 @@ StyledRect {
 
     Timer {
         id: reloadTimeOut
-        running: false
         interval: 200
         onTriggered: Quickshell.reload(true)
     }
 
-    Loader {
-        asynchronous:true
-        active: !root.sidebarMode
-        sourceComponent: QuickSettingsSplitButton {
-            id: splitButton
-            secondActive: !sidebarMode && root.enableExpand
-            anchors {
-                bottom: parent.bottom
-                left: parent.left
-                margins: 30
-            }
-            z: 99
-            thirdAction: reloadTimeOut?.running ?? false
-
-            searchAction: function (text) {
-                root.searchText = text;
-            }
-
-            secondAction: {
-                root.expandToggled();
-                root.searchText = "";
-            }
-
-            firstAction: {
-                if (!splitButton.searchToggled) {
-                    root.searchText = "";
-                }
-            }
-        }
-    }
     PagePlaceholder {
         anchors.centerIn:parent
         visible: !root.hasAnyVisibleSettingsItem

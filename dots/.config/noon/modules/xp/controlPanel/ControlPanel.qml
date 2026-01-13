@@ -106,7 +106,6 @@ FloatingWindow {
             searchText: searchInput.text
             anchors.fill: parent
             anchors.margins: Padding.verylarge
-            sidebarMode: true
         }
     }
 

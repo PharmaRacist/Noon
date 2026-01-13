@@ -480,7 +480,6 @@ FocusScope {
 
         QuickSettings {
             expanded: root.expanded
-            sidebarMode: true
             searchText: root.searchText
         }
     }

@@ -28,11 +28,11 @@ Item {
                     "icon": "translate",
                     "name": qsTr("Dicts")
                 }
-            ] : []),
-        {
-            "icon": "globe",
-            "name": "Gemini"
-        }
+            ] : [])
+        // {
+        //     "icon": "globe",
+        //     "name": "Gemini"
+        // }
     ]
     Keys.onPressed: event => {
         if (event.modifiers === Qt.ControlModifier) {
@@ -90,7 +90,7 @@ Item {
             onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
             clip: true
             layer.enabled: true
-            contentChildren: [...(Mem.options.policies.ai ? [aiChat.createObject()] : []), ...(Mem.options.policies.medicalDictionary ? [medical.createObject()] : []), ...(Mem.options.policies.translator ? [translator.createObject()] : []), gemini.createObject()]
+            contentChildren: [...(Mem.options.policies.ai ? [aiChat.createObject()] : []), ...(Mem.options.policies.medicalDictionary ? [medical.createObject()] : []), ...(Mem.options.policies.translator ? [translator.createObject()] : [])]
 
             layer.effect: OpacityMask {
 
