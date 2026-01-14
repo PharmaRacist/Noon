@@ -570,7 +570,27 @@ FocusScope {
     }
     Component {
         id: webcomponent
+        Item {
+            id: placeholder
+            anchors.fill: parent
+
+            Component.onCompleted: {
+                sharedWebBrowser.parent = placeholder;
+                sharedWebBrowser.anchors.fill = placeholder;
+            }
+
+            Component.onDestruction: {
+                sharedWebBrowser.parent = vault;
+            }
+        }
+    }
+
+    Item {
+        id: vault
+        visible: false
+
         WebBrowser {
+            id: sharedWebBrowser
             searchQuery: root.searchText
         }
     }
