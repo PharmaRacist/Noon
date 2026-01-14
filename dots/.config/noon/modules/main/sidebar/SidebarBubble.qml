@@ -170,7 +170,7 @@ Item {
         }
     ]
 
-    visible: bg.width > 0 && !GlobalStates.main.sidebar.pinned
+    visible: bg.width > 0
     height: content.implicitHeight + 2 * Padding.large
     width: show ? 55 : 0
     clip: true
@@ -227,13 +227,21 @@ Item {
                     }
                 }
             }
-
             RippleButtonWithIcon {
-                materialIcon: !root.rightMode && GlobalStates.main.sidebar.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right"
                 colors: root.colors
-                releaseAction: () => {
-                    GlobalStates.main.sidebar.expanded = !GlobalStates.main.sidebar.expanded;
+                materialIcon: "push_pin"
+                toggled: GlobalStates.main.sidebar.pinned
+                releaseAction: () => GlobalStates.main.sidebar.pinned = !toggled
+            }
+            RippleButtonWithIcon {
+                colors: root.colors
+                materialIcon: {
+                    if (GlobalStates.main.sidebar.rightMode) {
+                        return !GlobalStates.main.sidebar.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right";
+                    } else
+                        return GlobalStates.main.sidebar.expanded ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right";
                 }
+                releaseAction: () => GlobalStates.main.sidebar.expanded = !GlobalStates.main.sidebar.expanded
             }
         }
     }

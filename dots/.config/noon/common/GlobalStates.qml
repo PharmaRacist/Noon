@@ -43,6 +43,8 @@ Singleton {
     }
     main: QtObject {
         id: main
+        property var sidebar
+
         function handle_init() {
             KeyringStorage.reload();
             NightLightService.reload();
@@ -61,12 +63,6 @@ Singleton {
         property bool showBeam: false
         property bool showScreenshot: false
 
-        property QtObject sidebar: QtObject {
-            property bool show: true
-            property bool pinned: false
-            property bool expanded: false
-            property var webBrowserState
-        }
         property QtObject dialogs: QtObject {
             property bool showAppearanceDialog: false
             property bool showCaffaineDialog: false

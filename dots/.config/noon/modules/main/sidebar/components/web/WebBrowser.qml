@@ -89,10 +89,4 @@ StyledRect {
         property: "currentUrl"
         value: view.url
     }
-
-    Binding {
-        target: GlobalStates.main.sidebar
-        property: "webBrowserState"
-        value: view
-    }
 }

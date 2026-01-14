@@ -27,8 +27,7 @@ RippleButton {
         GlobalStates.main.sidebar.expanded = false;
     }
 
-    PointingHandInteraction {
-    }
+    PointingHandInteraction {}
 
     contentItem: Item {
         anchors.centerIn: parent
@@ -54,9 +53,6 @@ RippleButton {
                 text: root.query
                 color: Colors.m3.m3onSurface
             }
-
         }
-
     }
-
 }

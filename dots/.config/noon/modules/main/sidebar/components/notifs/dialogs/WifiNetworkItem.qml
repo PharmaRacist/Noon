@@ -156,7 +156,7 @@ DialogListItem {
                 colRipple: Colors.colLayer4Active
                 onClicked: {
                     Qt.openUrlExternally("http://nmcheck.gnome.org/");
-                    GlobalStates.main.sidebar.show = false;
+                    GlobalStates.main.sidebar.visible = false;
                 }
             }
         }

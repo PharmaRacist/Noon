@@ -18,8 +18,8 @@ Scope {
         name: "notificationPopup"
         WlrLayershell.layer: WlrLayer.Overlay
         exclusiveZone: Mem.options.bar.currentLayout === 3 ? -1 : 0
-        aboveWindows: false
-        property bool rightMode: GlobalStates.main.sidebar.expanded || GlobalStates.main.sidebar.show || Mem.options.bar.behavior.position !== "right"
+        aboveWindows: true
+        property bool rightMode: GlobalStates?.main?.sidebar.expanded || GlobalStates.main.sidebar.show || Mem.options.bar.behavior.position !== "right"
 
         anchors {
             top: true

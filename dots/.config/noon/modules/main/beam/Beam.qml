@@ -286,7 +286,7 @@ Scope {
             }
 
             function revealSidebar() {
-                if (GlobalStates.main.sidebar.show)
+                if (GlobalStates.main.sidebar.visible)
                     return;
                 Mem.states.sidebar.apis.selectedTab = 0;
                 Noon.callIpc("sidebar reveal API");

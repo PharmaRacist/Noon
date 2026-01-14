@@ -27,8 +27,7 @@ RippleButton {
         }
     }
 
-    PointingHandInteraction {
-    }
+    PointingHandInteraction {}
 
     contentItem: Item {
         anchors.centerIn: parent
@@ -54,9 +53,6 @@ RippleButton {
                 text: displayText
                 color: Colors.m3.m3onSurface
             }
-
         }
-
     }
-
 }

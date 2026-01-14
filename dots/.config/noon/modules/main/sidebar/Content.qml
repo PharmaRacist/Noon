@@ -77,7 +77,6 @@ FocusScope {
     signal barLayoutChangeRequested(int layoutIndex, bool isVertical)
     signal appLaunched(var app)
     signal contentToggleRequested
-    signal hideBarRequested
     signal dismiss
 
     // Helper to focus search input
@@ -95,7 +94,7 @@ FocusScope {
             model.clear();
             return;
         }
-        if (!isAux && (!showContent || !GlobalStates.main.sidebar.show)) {
+        if (!isAux && (!showContent || !GlobalStates.main.sidebar.visible)) {
             if (clearAppListOnHide)
                 model.clear();
 
@@ -157,14 +156,13 @@ FocusScope {
             return;
         }
         const isSameCategory = selectedCategory === newCategory;
-        const isExpanded = showContent && GlobalStates.main.sidebar.show;
-        if (isSameCategory && isExpanded) {
+        if (isSameCategory) {
             selectedCategory = "";
             dismiss();
             return;
         }
         if (!GlobalStates.main.sidebar.show)
-            GlobalStates.main.sidebar.show = true;
+            GlobalStates.main.sidebar.hoverMode = false;
 
         selectedCategory = newCategory;
         resetSearch(initialQuery);
@@ -273,14 +271,14 @@ FocusScope {
     clip: true
     focus: true
     onShowContentChanged: {
-        if (showContent && GlobalStates.main.sidebar.show)
+        if (showContent && GlobalStates.main.sidebar.visible)
             Qt.callLater(focusSearchInput);
 
         if (!showContent && clearAppListOnHide)
             mainModel.clear();
     }
     onEffectiveSearchableChanged: {
-        if (showContent && GlobalStates.main.sidebar.show)
+        if (showContent && GlobalStates.main.sidebar.visible)
             Qt.callLater(focusSearchInput);
     }
     onSelectedCategoryChanged: {
@@ -400,7 +398,7 @@ FocusScope {
                 id: panelRepeater
 
                 model: 2
-                visible: root.showContent && GlobalStates.main.sidebar.show
+                visible: root.showContent && GlobalStates.main.sidebar.visible
                 clip: true
 
                 ContentChild {
