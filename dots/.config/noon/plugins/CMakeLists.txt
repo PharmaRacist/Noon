@@ -7,6 +7,8 @@ qt_add_qml_module(noon
         widgets/highlighter.cpp
         widgets/cava_watcher.h
         widgets/cava_watcher.cpp
+        widgets/addblocker.h
+        widgets/addblocker.cpp
     QML_FILES
 )
 target_include_directories(noon PRIVATE
@@ -16,6 +18,8 @@ target_include_directories(noon PRIVATE
 target_link_libraries(noon PRIVATE
     Qt6::Quick
     Qt6::WebView
+    Qt6::WebEngineCore
+    Qt6::WebEngineQuick
 )
 
 if(NOT QML_INSTALL_DIR)

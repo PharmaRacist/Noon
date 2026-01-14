@@ -13,6 +13,7 @@ import "./components/view"
 import "./components/wallpapers"
 import "./components/shelf"
 import "./components/widgets"
+import "./components/web"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -68,7 +69,8 @@ FocusScope {
             "ShelfPanel": shelfcomponent,
             "Auth": polkitComponent,
             "Games": gamescomponent,
-            "WidgetsPanel": widgetscomponent
+            "WidgetsPanel": widgetscomponent,
+            "Web": webcomponent
         })
 
     signal requestPin
@@ -421,6 +423,8 @@ FocusScope {
                     parentRoot: root
                     isAux: index === 1
                     onSearchUpdated: newText => {
+                        if (selectedCategory === "Web")
+                            return;
                         if (index === 0) {
                             root.searchText = newText;
                             delayedRefresh.restart();
@@ -429,7 +433,12 @@ FocusScope {
                             auxDelayedRefresh.restart();
                         }
                     }
-
+                    Connections {
+                        target: searchInput
+                        function onAccepted() {
+                            root.searchText = searchInput.text;
+                        }
+                    }
                     Behavior on Layout.preferredWidth {
                         Anim {}
                     }
@@ -557,6 +566,12 @@ FocusScope {
 
         ShelfPanel {
             expanded: root.expanded
+        }
+    }
+    Component {
+        id: webcomponent
+        WebBrowser {
+            searchQuery: root.searchText
         }
     }
     Component {

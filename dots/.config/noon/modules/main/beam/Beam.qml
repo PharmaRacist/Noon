@@ -124,7 +124,7 @@ Scope {
                                 "search": {
                                     prefix: "",
                                     icon: "search",
-                                    searchQuery: "https://www.google.com/search?q=",
+                                    searchQuery: Mem.options.networking.searchPrefix,
                                     shape: MaterialShape.Shape.PixelCircle
                                 },
                                 "yt_music": {

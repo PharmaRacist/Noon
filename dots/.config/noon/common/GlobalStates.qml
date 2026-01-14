@@ -65,6 +65,7 @@ Singleton {
             property bool show: true
             property bool pinned: false
             property bool expanded: false
+            property var webBrowserState
         }
         property QtObject dialogs: QtObject {
             property bool showAppearanceDialog: false

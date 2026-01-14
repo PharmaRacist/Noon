@@ -11,8 +11,9 @@ Singleton {
     readonly property string sounds: FileUtils.trimFileProtocol(`${assets}/sounds/`)
     readonly property string assets: FileUtils.trimFileProtocol(`${standard.config}/noon/assets`)
     readonly property string gallery: FileUtils.trimFileProtocol(`${standard.pictures}/Gallary/`)
-    readonly property string scriptsDir: FileUtils.trimFileProtocol(`${standard.config}/noon/scripts`)
     readonly property string shellConfigs: FileUtils.trimFileProtocol(`${standard.config}/HyprNoon/`)
+    readonly property string shellDir: FileUtils.trimFileProtocol(`${standard.config}/noon`)
+    readonly property string scriptsDir: shellDir + "/scripts"
     readonly property string favicons: FileUtils.trimFileProtocol(`${standard.cache}/media/favicons`)
     Component.onCompleted: FileUtils.mkdir([venv, assets, gallery, sounds, scriptsDir, shellConfigs, favicons])
 

@@ -47,7 +47,9 @@ Singleton {
         property real contentQuarter: Math.round(Screen.width * 0.235) - Sizes.collapsedSideBarWidth
         property real half: Math.round(Screen.width * 0.457)
         property real quarter: Math.round(Screen.width * 0.246)
+        property real largerQuarter: Math.round(Screen.width * 0.28)
         property real threeQuarter: Math.round(Screen.width * 0.85)
+
         property real session: 280
         property real overview: 1250
         property real widgetSize: 172

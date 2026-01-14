@@ -25,8 +25,8 @@ Item {
     property QtObject colors: Colors
     // Unified signals
     signal searchUpdated(string newText)
-    signal contentFocusRequested()
-    signal searchFocusRequested()
+    signal contentFocusRequested
+    signal searchFocusRequested
 
     // Helper function to determine animation direction
     function getCategoryDirection(oldCat, newCat) {
@@ -79,7 +79,6 @@ Item {
                 property: "contentOpacity"
                 to: 1
             }
-
         }
 
         Loader {
@@ -88,7 +87,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             focus: true
-            asynchronous: isAux
+            asynchronous: isAux || SidebarData.isAsync(SidebarData.getComponent(category))
             opacity: contentOpacity
             sourceComponent: {
                 if (!category)
@@ -104,13 +103,13 @@ Item {
 
                     if ("selectedCategory" in item)
                         item.selectedCategory = Qt.binding(() => {
-                        return category;
-                    });
+                            return category;
+                        });
 
                     if ("searchQuery" in item)
                         item.searchQuery = Qt.binding(() => {
-                        return searchText;
-                    });
+                            return searchText;
+                        });
 
                     if ("expanded" in item) {
                         // Aux always collapsed, main follows parent's expanded state
@@ -118,15 +117,14 @@ Item {
                             item.expanded = false;
                         else
                             item.expanded = Qt.binding(() => {
-                            return parentRoot.expanded;
-                        });
+                                return parentRoot.expanded;
+                            });
                     }
                     if ("panelWindow" in item && !isAux)
                         item.panelWindow = parentRoot.panelWindow;
 
                     if ("sidebarMode" in item && !isAux)
                         item.sidebarMode = true;
-
                 }
             }
 
@@ -134,13 +132,11 @@ Item {
                 function onSearchFocusRequested() {
                     if (!isAux && searchInput && effectiveSearchable)
                         searchInput.forceActiveFocus();
-
                 }
 
                 function onContentFocusRequested() {
                     if (contentLoader.item && "contentFocusRequested" in contentLoader.item)
                         contentLoader.item.contentFocusRequested();
-
                 }
 
                 target: panel
@@ -150,7 +146,6 @@ Item {
                 function onSearchFocusRequested() {
                     if (!isAux)
                         panel.searchFocusRequested();
-
                 }
 
                 function onAltLaunched(app) {
@@ -168,7 +163,6 @@ Item {
             transform: Translate {
                 y: contentYOffset
             }
-
         }
 
         // Search Bar
@@ -206,7 +200,6 @@ Item {
                     color: panel.colors.colOnSecondary
                     opacity: 0.6
                 }
-
             }
 
             RowLayout {
@@ -239,7 +232,7 @@ Item {
                     onTextChanged: {
                         panel.searchUpdated(text);
                     }
-                    Keys.onPressed: (event) => {
+                    Keys.onPressed: event => {
                         if (event.key === Qt.Key_Down && effectiveSearchable || event.key === Qt.Key_PageDown && effectiveSearchable) {
                             panel.contentFocusRequested();
                             event.accepted = true;
@@ -250,7 +243,6 @@ Item {
                         family: Fonts.family.main
                         pixelSize: Fonts.sizes.small
                     }
-
                 }
 
                 RippleButton {
@@ -263,9 +255,8 @@ Item {
                         searchInput.clear();
                         if (!isAux)
                             Qt.callLater(() => {
-                            return searchInput.forceActiveFocus();
-                        });
-
+                                return searchInput.forceActiveFocus();
+                            });
                     }
 
                     Symbol {
@@ -274,9 +265,7 @@ Item {
                         text: "close"
                         color: Colors.colOnLayer1
                     }
-
                 }
-
             }
 
             transform: Translate {
@@ -284,11 +273,8 @@ Item {
             }
 
             Behavior on Layout.preferredHeight {
-                Anim {
-                }
-
+                Anim {}
             }
-
         }
 
         // Close button (only for aux panel)
@@ -304,7 +290,6 @@ Item {
             releaseAction: () => {
                 if (isAux && parentRoot)
                     parentRoot.closeAuxPanel();
-
             }
 
             RowLayout {
@@ -320,15 +305,12 @@ Item {
                     text: "Dismiss"
                     color: Colors.colOnError
                 }
-
             }
 
             transform: Translate {
                 y: contentYOffset
             }
-
         }
-
     }
 
     PagePlaceholder {
@@ -343,11 +325,7 @@ Item {
         }
 
         Behavior on opacity {
-            Anim {
-            }
-
+            Anim {}
         }
-
     }
-
 }

@@ -192,9 +192,12 @@ JsonAdapter {
         property JsonObject content
         property JsonObject behavior
         property JsonObject appearance
+        property JsonObject web
         property JsonObject shelf
         property bool pinned: false
-
+        web: JsonObject {
+            property string landingUrl: "https:www.google.com"
+        }
         shelf: JsonObject {
             property int previewDelay: 250
         }
@@ -260,6 +263,8 @@ JsonAdapter {
 
     property JsonObject networking: JsonObject {
         property string userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        property string sidebarAgent: "Mozilla/5.0 (Linux; Android 15; SM-S931B Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/127.0.6533.103 Mobile Safari/537.36"
+        property string searchPrefix: "https://www.google.com/search?q="
     }
 
     property JsonObject mediaPlayer: JsonObject {

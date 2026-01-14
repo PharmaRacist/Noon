@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -55,7 +56,6 @@ Item {
         },
         {
             "cat": "API",
-            "extraVisibleCondition": Mem.states.sidebar.apis.selectedTab === 0,
             "bubbles": [
                 {
                     "icon": "clear_all",
@@ -79,6 +79,39 @@ Item {
                     "icon": "upload",
                     "action": () => {
                         Ai.loadChat("lastSession");
+                    }
+                }
+            ]
+        },
+        {
+            "cat": "Web",
+            "bubbles": [
+                {
+                    "icon": "security",
+                    "enabled": AddBlocker.enabled,
+                    "action": () => {
+                        AddBlocker.enabled = true;
+                    }
+                },
+                {
+                    "icon": "keyboard_double_arrow_left",
+                    "enabled": GlobalStates.main.sidebar.webBrowserState.canGoBack,
+                    "action": () => {
+                        GlobalStates.main.sidebar.webBrowserState.goBack();
+                    }
+                },
+                {
+                    "icon": "keyboard_double_arrow_right",
+                    "enabled": GlobalStates.main.sidebar.webBrowserState.canGoForward,
+                    "action": () => {
+                        GlobalStates.main.sidebar.webBrowserState.goForward();
+                    }
+                },
+                {
+                    "icon": "restart_alt",
+                    "enabled": !GlobalStates.main.sidebar.webBrowserState.loading,
+                    "action": () => {
+                        GlobalStates.main.sidebar.webBrowserState.reload();
                     }
                 }
             ]
@@ -175,6 +208,7 @@ Item {
                         spacing: parent.spacing
 
                         Repeater {
+                            id: repeater
                             model: modelData.bubbles
 
                             RippleButtonWithIcon {
@@ -189,7 +223,7 @@ Item {
                     }
 
                     Separator {
-                        visible: modelData.cat === root.selectedCategory
+                        visible: modelData.cat === root.selectedCategory && repeater.model.length > 0
                     }
                 }
             }

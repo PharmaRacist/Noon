@@ -28,12 +28,7 @@ Item {
                     "icon": "translate",
                     "name": qsTr("Dicts")
                 }
-            ] : [])
-        // {
-        //     "icon": "globe",
-        //     "name": "Gemini"
-        // }
-    ]
+            ] : []),]
     Keys.onPressed: event => {
         if (event.modifiers === Qt.ControlModifier) {
             switch (event.key) {
@@ -107,15 +102,6 @@ Item {
 
             AiChat {
                 onExpandRequested: root.expandRequested()
-            }
-        }
-        Component {
-            id: gemini
-            Item {
-                WebView {
-                    anchors.fill: parent
-                    url: "https://google.com"
-                }
             }
         }
         Component {

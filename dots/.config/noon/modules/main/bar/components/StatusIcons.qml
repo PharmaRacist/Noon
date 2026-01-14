@@ -56,11 +56,11 @@ Item {
         interval: 200
         onTriggered: {
             if (mode === "wifi") {
-                GlobalStates.dialogs.showWifiDialog = true;
-                GlobalStates.dialogs.showBluetoothDialog = false;
+                GlobalStates.main.dialogs.showWifiDialog = true;
+                GlobalStates.main.dialogs.showBluetoothDialog = false;
             } else if (mode === "bluetooth") {
-                GlobalStates.dialogs.showWifiDialog = false;
-                GlobalStates.dialogs.showBluetoothDialog = true;
+                GlobalStates.main.dialogs.showWifiDialog = false;
+                GlobalStates.main.dialogs.showBluetoothDialog = true;
             }
         }
     }
@@ -102,10 +102,8 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: {
-                    delayReveal.mode = "";
+                    GlobalStates.main.dialogs.showWifiDialog = true;
                     Noon.callIpc("sidebar reveal Notifs");
-                    delayReveal.mode = "wifi";
-                    delayReveal.restart();
                 }
             }
 

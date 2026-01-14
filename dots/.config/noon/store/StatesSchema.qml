@@ -114,9 +114,12 @@ JsonAdapter {
     property JsonObject sidebar: JsonObject {
         property JsonObject misc
         property JsonObject apis
+        property JsonObject web
         property JsonObject widgets
         property JsonObject shelf
-
+        web: JsonObject {
+            property string currentUrl: ""
+        }
         shelf: JsonObject {
             property list<string> filePaths: []
         }

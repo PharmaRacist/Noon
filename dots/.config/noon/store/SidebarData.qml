@@ -38,6 +38,19 @@ Singleton {
             enabled: true
         },
         {
+            id: "Web",
+            name: "Web",
+            icon: "globe",
+            component: "Web",
+            expandable: true,
+            preExpand: true,
+            async: true,
+            overlay: true,
+            searchable: true,
+            customSize: sizePresets.half,
+            enabled: true
+        },
+        {
             id: "Notifs",
             name: "Notifs",
             icon: "notifications_active",
@@ -261,6 +274,10 @@ Singleton {
     function isSearchable(catId) {
         const cat = _categoryMap[catId];
         return cat ? (cat.searchable ?? false) : false;
+    }
+    function isAsync(catId) {
+        const cat = _categoryMap[catId];
+        return cat ? (cat.async ?? false) : false;
     }
     function hasModel(catId) {
         const cat = _categoryMap[catId];
