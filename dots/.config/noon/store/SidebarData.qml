@@ -19,13 +19,17 @@ Singleton {
                 icon: "apps",
                 componentPath: "apps/Apps",
                 searchable: true,
-                customSize: sizePresets.quarter
+                customSize: sizePresets.quarter,
+                enabled: Mem.options.sidebar.content.apps
+
             },
             "API": {
                 icon: "neurology",
                 componentPath: "apis/ApisContent",
                 expandable: true,
-                customSize: sizePresets.half
+                customSize: sizePresets.half,
+                enabled: Mem.options.sidebar.content.apis
+
             },
             "Web": {
                 icon: "globe",
@@ -34,7 +38,9 @@ Singleton {
                 preExpand: true,
                 async: true,
                 searchable: true,
-                customSize: sizePresets.half
+                customSize: sizePresets.half,
+                enabled: Mem.options.sidebar.content.web
+
             },
             "Notifs": {
                 icon: "notifications_active",
@@ -97,7 +103,8 @@ Singleton {
                 expandable: true,
                 searchable: true,
                 customSize: sizePresets.half - 80,
-                colorful: true
+                colorful: true,
+                enabled: Mem.options.sidebar.content.games
             },
             "Tweaks": {
                 icon: "tune",
@@ -116,7 +123,8 @@ Singleton {
             "Emojis": {
                 icon: "sentiment_calm",
                 componentPath: "emojis/Emojis",
-                searchable: true
+                searchable: true,
+                enabled: Mem.options.sidebar.content.emojis
             },
             "Session": {
                 icon: "power_settings_new",
@@ -126,15 +134,18 @@ Singleton {
             },
             "Shelf": {
                 icon: "shelves",
-                componentPath: "shelf/ShelfPanel"
+                componentPath: "shelf/ShelfPanel",
+                enabled: Mem.options.sidebar.content.shelf
             },
             "Widgets": {
                 icon: "widgets",
-                componentPath: "widgets/WidgetsPanel"
+                componentPath: "widgets/WidgetsPanel",
+                enabled: Mem.options.sidebar.content.widgets
             },
             "Misc": {
                 icon: "keyboard_option_key",
-                componentPath: "misc/MiscWidget"
+                componentPath: "misc/MiscWidget",
+                enabled: Mem.options.sidebar.content.misc
             },
             "Bars": {
                 componentPath: "barSwitcher/BarSwitcher",

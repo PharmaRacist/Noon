@@ -202,6 +202,10 @@ JsonAdapter {
             property int previewDelay: 250
         }
         content: JsonObject {
+            property bool apps: true
+            property bool apis: true
+            property bool web: true
+            property bool shelf: true
             property bool tasks: true
             property bool history: true
             property bool emojies: true
@@ -217,7 +221,6 @@ JsonAdapter {
             property bool misc: true
             property bool games: false
             property bool gallery: false
-            property bool scripts: false
         }
 
         behavior: JsonObject {

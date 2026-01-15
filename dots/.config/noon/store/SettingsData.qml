@@ -339,6 +339,26 @@ QtObject {
                 "icon": "dashboard",
                 "items": [
                     {
+                        "icon": "apps",
+                        "name": "Apps",
+                        "key": "sidebar.content.apps"
+                    },
+                    {
+                        "icon": "api",
+                        "name": "APIs",
+                        "key": "sidebar.content.apis"
+                    },
+                    {
+                        "icon": "public",
+                        "name": "Web",
+                        "key": "sidebar.content.web"
+                    },
+                    {
+                        "icon": "view_agenda",
+                        "name": "Shelf",
+                        "key": "sidebar.content.shelf"
+                    },
+                    {
                         "icon": "check_box",
                         "name": "Tasks",
                         "key": "sidebar.content.tasks"
@@ -402,6 +422,16 @@ QtObject {
                         "icon": "stylus",
                         "name": "Notes",
                         "key": "sidebar.content.notes"
+                    },
+                    {
+                        "icon": "extension",
+                        "name": "Widgets",
+                        "key": "sidebar.content.widgets"
+                    },
+                    {
+                        "icon": "more_horiz",
+                        "name": "Misc",
+                        "key": "sidebar.content.misc"
                     }
                 ]
             },
