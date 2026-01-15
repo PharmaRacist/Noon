@@ -10,7 +10,7 @@ import qs.store
 BottomDialog {
     id: root
 
-    property bool expanded: parent.expanded
+    property bool expanded: false
     property int comboWidth: 240
 
     function findIndex(array, value, valueRole) {

@@ -1,3 +1,4 @@
+import qs.store
 import qs.services
 import qs.common
 import qs.common.widgets
@@ -8,10 +9,11 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Hyprland
+import Quickshell.Wayland
 
 Item {
     id: root
-    required property var panelWindow
+    property var panelWindow
     readonly property HyprlandMonitor monitor: panelWindow ? Hyprland.monitorFor(panelWindow.screen) : null
     readonly property var toplevels: ToplevelManager.toplevels
     property real windowOffset: 0.014

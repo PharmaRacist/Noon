@@ -8,7 +8,7 @@ import "widgets"
 
 Item {
     id: root
-
+    anchors.fill:parent
     property bool expanded: false
     property bool isDragging: false
     property int pinnedCount: 0
@@ -376,7 +376,14 @@ Item {
             }
         }
     }
-
+    PagePlaceholder {
+        icon:"widgets"
+        title: "No Enabled Widgets"
+        description:"Scroll Below To Reveal Avilable Widgets"
+        anchors.centerIn:parent
+        shape:MaterialShapes.Shapes.SoftBoom
+        shown: Mem.states.sidebar.widgets.enabled.length === 0
+    }
     WidgetsSpawnerDialog {
         db: root.db
     }

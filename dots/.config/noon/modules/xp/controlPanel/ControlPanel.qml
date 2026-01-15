@@ -103,7 +103,7 @@ FloatingWindow {
         }
 
         QuickSettings {
-            searchText: searchInput.text
+            searchQuery: searchInput.text
             anchors.fill: parent
             anchors.margins: Padding.verylarge
         }

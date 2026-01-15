@@ -28,7 +28,7 @@ StyledRect {
         return Math.max(1, calculatedColumns);
     }
 
-    property string searchText: ""
+    property string searchQuery: ""
     property bool expanded:  false
     Layout.fillWidth: true
     Layout.fillHeight: true
@@ -39,7 +39,7 @@ StyledRect {
     property var itemStates: ({})
 
     function matchesSearch(text) {
-        return searchText === "" || text.toLowerCase().includes(searchText.toLowerCase());
+        return searchQuery === "" || text.toLowerCase().includes(searchQuery.toLowerCase());
     }
 
     function shouldShowItem(item) {
@@ -169,7 +169,7 @@ StyledRect {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     visible: (modelData?.visible ?? true) && shouldShowItem(modelData)
-                                    property bool isSearchMatch: root.searchText !== "" && matchesSearch(modelData.name)
+                                    property bool isSearchMatch: root.searchQuery !== "" && matchesSearch(modelData.name)
                                     colors:root.colors
                                     Rectangle {
                                         anchors.fill: parent

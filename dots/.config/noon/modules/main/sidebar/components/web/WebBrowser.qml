@@ -12,6 +12,7 @@ StyledRect {
     id: root
     color: "transparent"
     radius: Rounding.verylarge
+    anchors.fill: parent
     clip: true
 
     property string searchQuery
@@ -27,8 +28,8 @@ StyledRect {
         WebEngine.settings.pdfViewerEnabled = true;
         WebEngine.settings.pluginsEnabled = true;
         WebEngine.settings.showScrollBars = false;
-        // WebEngine.settings.spatialNavigationEnabled = true;
-        // WebEngine.settings.touchIconsEnabled = true;
+        WebEngine.settings.spatialNavigationEnabled = true;
+        WebEngine.settings.touchIconsEnabled = true;
         WebEngine.settings.webGLEnabled = true;
         WebEngine.settings.webRTCPublicInterfacesOnly = true;
         WebEngine.settings.accelerated2dCanvasEnabled = true;

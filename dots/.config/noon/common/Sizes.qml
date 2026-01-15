@@ -8,7 +8,6 @@ Singleton {
     property real barElevation: hyprland.gapsOut / 2
     property real osdWidth: 220
     property real osdHeight: 45
-    property real collapsedSideBarWidth: 50
     property real notificationPopupWidth: 420
     property real elevationValue: Padding.verylarge
     property real frameThickness: Mem.options.desktop.bg.borderMultiplier * (hyprland.gapsOut - Padding.normal)
@@ -43,8 +42,8 @@ Singleton {
     }
 
     sidebar: QtObject {
-        property real bar: Sizes.collapsedSideBarWidth
-        property real contentQuarter: Math.round(Screen.width * 0.235) - Sizes.collapsedSideBarWidth
+        property real bar: 52
+        property real contentQuarter: Math.round(Screen.width * 0.235) - bar
         property real half: Math.round(Screen.width * 0.457)
         property real quarter: Math.round(Screen.width * 0.246)
         property real largerQuarter: Math.round(Screen.width * 0.28)

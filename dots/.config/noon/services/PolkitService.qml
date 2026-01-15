@@ -30,8 +30,6 @@ Singleton {
 
     PolkitAgent {
         id: polkitAgent
-        onAuthenticationRequestStarted: {
-            root.interactionAvailable = true;
-        }
+        onAuthenticationRequestStarted: root.interactionAvailable = true
     }
 }

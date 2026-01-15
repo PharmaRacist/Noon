@@ -31,7 +31,6 @@ Scope {
         }
         function update_clipboard() {
             ClipboardService.reload();
-            SidebarData.generateHistory();
         }
         function refresh_appearance() {
             WallpaperService.refreshTheme();

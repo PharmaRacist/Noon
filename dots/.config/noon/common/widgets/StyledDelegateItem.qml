@@ -12,42 +12,67 @@ import qs.modules.main.sidebar
 
 RippleButton {
     id: root
-    property alias shapePadding: m3shape.padding
-    property alias shape: m3shape.shape
-    property color colActiveColor: Colors.colPrimaryContainer
-    property color colActiveItemColor: Colors.colPrimary
-    property alias title: title.text
-    property alias subtext: subtext.text  // Fixed: was pointing to title.text
+    property string iconSource
+    property QtObject colors: Colors
+    property bool active: toggled
+    property int shapePadding: 6
+    property var shape: MaterialShape.Shape.Cookie6Sided
+    property string title: ""
+    property string subtext: ""
     property color colSubtext: Colors.colSubtext
     property color colTitle: Colors.colOnLayer2
     property bool expanded: true
+    property int extraRightPadding:0
     property string materialIcon: "music_note"
     width: parent?.width
     implicitHeight: 64
-    colBackground: Colors.colLayer2
+    colBackgroundToggled: colors.colPrimaryContainer
+    colBackgroundHover: colors.colPrimaryContainerHover
+    colBackgroundToggledHover: colors.colPrimaryContainerHover
+    colBackground: colors.colLayer2
     buttonRadius: Rounding.large
-    MaterialShapeWrappedMaterialSymbol {
-        id: m3shape
+    Loader {
+        id:iconLoader
+        sourceComponent:iconSource.length > 0 ? iconComponent : shapeComponent
         anchors {
             left: parent.left
             leftMargin: Padding.huge
             verticalCenter: parent.verticalCenter
         }
-        colors: root.colors
-        shape: MaterialShape.Cookie6Sided
-        padding: Padding.large
-        iconSize: parent.height / 2.5
-        colSymbol: colActiveItemColor
-        text: root.materialIcon
-        MouseArea {
-            id: shapeHoverArea
-            enabled: !root.expanded
-            hoverEnabled: true
-            anchors.fill: parent
+
+        Component {
+            id:iconComponent
+            Item {
+                implicitWidth:50
+                implicitHeight:50
+                StyledIconImage {
+                    anchors.centerIn:parent
+                    implicitSize: 37
+                    source:root.iconSource
+                }
+            }
         }
-        StyledToolTip {
-            extraVisibleCondition: shapeHoverArea.containsMouse
-            content: root.title
+        Component {
+            id:shapeComponent
+            MaterialShapeWrappedMaterialSymbol {
+                id: m3shape
+                colors: root.colors
+                shape: MaterialShape.Cookie6Sided
+                padding: Padding.large
+                iconSize: parent.height / 2.5
+                colSymbol: root.active ? colors.colPrimaryActive : colors.colPrimary
+                text: root.materialIcon
+                MouseArea {
+                    id: shapeHoverArea
+                    enabled: !root.expanded
+                    hoverEnabled: true
+                    anchors.fill: parent
+                }
+                StyledToolTip {
+                    extraVisibleCondition: shapeHoverArea.containsMouse
+                    content: root.title
+                }
+            }
         }
     }
 
@@ -55,43 +80,50 @@ RippleButton {
     Item {
         visible: expanded
         anchors {
-            left: m3shape.right
+            left: iconLoader.right
             leftMargin: Padding.large
             right: parent.right
+            rightMargin: Padding.massive + root.extraRightPadding
             top: parent.top
             bottom: parent.bottom
             margins: Padding.normal
         }
 
-        RowLayout {
+        ColumnLayout {
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             anchors.fill: parent
-            spacing: Padding.massive
+            spacing: Padding.small
 
-            ColumnLayout {
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+            StyledText {
+                id: title
+                text:root.title
+                Layout.rightMargin:Padding.verylarge
+                maximumLineCount: 1
+                wrapMode: TextEdit.Wrap
+                elide: Text.ElideRight
+                Layout.preferredWidth: 240
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: Fonts.sizes.normal
+                color: {
+                    if (root.active)
+                        return root.colors.colOnPrimaryContainer;
+                    else
+                        return root.colors.colOnLayer2;
+                }
+            }
+
+            StyledText {
+                id: subtext
+                text:root.subtext
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: Padding.small
-
-                StyledText {
-                    id: title
-                    maximumLineCount: 1
-                    wrapMode: TextEdit.Wrap
-                    elide: Text.ElideRight
-                    Layout.preferredWidth: 240
-                    horizontalAlignment: Text.AlignLeft
-                    font.pixelSize: Fonts.sizes.normal
-                    color: root.colTitle
-                }
-
-                StyledText {
-                    id: subtext
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignLeft
-                    font.pixelSize: Fonts.sizes.small
-                    color: root.colSubtext
-                    visible: text !== ""
-                }
+                maximumLineCount: 1
+                wrapMode: TextEdit.Wrap
+                elide: Text.ElideRight
+                Layout.rightMargin:Padding.verylarge
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: Fonts.sizes.small
+                color: root.colSubtext
+                visible: text !== ""
             }
         }
     }

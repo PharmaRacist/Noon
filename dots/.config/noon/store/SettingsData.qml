@@ -323,11 +323,6 @@ QtObject {
                         "key": "sidebar.behavior.superHeldReveal"
                     },
                     {
-                        "icon": "width",
-                        "name": "List View for Apps",
-                        "key": "sidebar.appearance.useAppListView"
-                    },
-                    {
                         "icon": "text_fields",
                         "name": "Show Nav Titles",
                         "key": "sidebar.appearance.showNavTitles"

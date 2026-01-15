@@ -14,6 +14,7 @@ StyledRect {
     property string fileUrl
     property bool isKeyboardSelected: false
     property bool isCurrentWallpaper: false
+    property int spacing
     readonly property bool isVideoFile: {
         if (!fileUrl)
             return false;
@@ -29,7 +30,7 @@ StyledRect {
     signal clicked
 
     anchors.fill: parent
-    anchors.margins: isKeyboardSelected ? 3 * root.itemSpacing : root.itemSpacing
+    anchors.margins: isKeyboardSelected ? 3 * spacing : spacing
     radius: Rounding.large
     color: ColorUtils.transparentize(Colors.colLayer0, isKeyboardSelected ? 0 : 0.8)
     enableBorders: isKeyboardSelected
@@ -39,6 +40,7 @@ StyledRect {
         id: imageObject
 
         anchors.fill: parent
+        sourceSize: Qt.size(width, height)
         source: isVideoFile ? "" : WallpaperService.getThumbnailPath(wallpaperItem.fileUrl, "large")
         radius: Rounding.large
         asynchronous: true

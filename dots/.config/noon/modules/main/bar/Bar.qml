@@ -55,21 +55,27 @@ Scope {
     }
 
     function debounceRecreate() {
-        if (debounceTimer.running)
-            debounceTimer.stop();
-
         modelProxy = [];
         updateModels();
         debounceTimer.restart();
     }
+    Connections {
+        target:Mem.options.bar
 
+        function onCurrentLayoutChanged(){
+            debounceTimer.restart()
+        }
+        function onVerticalLayoutChanged(){
+            debounceTimer.restart()
+        }
+    }
     onVerticalChanged: updateModels()
     onCurrentPositionChanged: debounceRecreate()
 
     Timer {
         id: debounceTimer
 
-        interval: Mem.options.hacks.arbitraryRaceConditionDelay
+        interval: 100
         onTriggered: modelProxy = vertical ? verticalModel : horizontalModel
     }
 
@@ -148,7 +154,7 @@ Scope {
                     // Unified layout loader
                     Loader {
                         id: layoutLoader
-
+                        asynchronous:true
                         anchors.fill: parent
                         sourceComponent: vertical ? bar.verticalLayoutComponents[bar.verticalLayout] : bar.horizontalLayoutComponents[bar.horizontalLayout]
                         onLoaded: {

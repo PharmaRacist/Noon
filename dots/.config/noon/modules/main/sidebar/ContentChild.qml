@@ -9,26 +9,23 @@ import qs.store
 Item {
     id: panel
 
-    // Required properties
     required property string category
     required property string searchText
-    required property var dataModel
-    required property var componentMap
     required property var parentRoot
     required property bool isAux
     property bool showContent
-    property bool effectiveSearchable: category ? SidebarData.isSearchable(category) : false
+    property bool effectiveSearchable
     property alias searchInput: searchInput
     property real contentYOffset: 0
-    property real contentOpacity: 1
     property string previousCategory: ""
+    property alias componentPath: contentLoader.source
+    property alias contentOpacity: contentLoader.opacity
     property QtObject colors: Colors
-    // Unified signals
+
     signal searchUpdated(string newText)
     signal contentFocusRequested
     signal searchFocusRequested
 
-    // Helper function to determine animation direction
     function getCategoryDirection(oldCat, newCat) {
         if (!oldCat || !newCat || oldCat === newCat)
             return 1;
@@ -36,10 +33,11 @@ Item {
         const categories = SidebarData.enabledCategories || [];
         const oldIndex = categories.indexOf(oldCat);
         const newIndex = categories.indexOf(newCat);
+
         if (oldIndex !== -1 && newIndex !== -1)
             return newIndex > oldIndex ? -1 : 1;
 
-        return 1; // Default to downward motion
+        return 1;
     }
 
     onCategoryChanged: {
@@ -50,14 +48,6 @@ Item {
             resetAnimation.restart();
         }
         previousCategory = category;
-        // Force reload of content when category changes
-        if (category) {
-            contentLoader.sourceComponent = null;
-            Qt.callLater(() => {
-                const componentName = SidebarData.getComponent(category);
-                contentLoader.sourceComponent = componentMap[componentName] || null;
-            });
-        }
     }
 
     ColumnLayout {
@@ -67,13 +57,11 @@ Item {
 
         ParallelAnimation {
             id: resetAnimation
-
             Anim {
                 target: panel
                 property: "contentYOffset"
                 to: 0
             }
-
             Anim {
                 target: panel
                 property: "contentOpacity"
@@ -83,45 +71,26 @@ Item {
 
         Loader {
             id: contentLoader
-
             Layout.fillWidth: true
             Layout.fillHeight: true
             focus: true
-            asynchronous: isAux || SidebarData.isAsync(SidebarData.getComponent(category))
+            visible: !isAux && category !== ""
+            asynchronous: isAux || SidebarData.isAsync(category)
             opacity: contentOpacity
-            sourceComponent: {
-                if (!category)
-                    return null;
 
-                const componentName = SidebarData.getComponent(category);
-                return componentMap[componentName] || null;
-            }
             onLoaded: {
                 if (item) {
-                    if ("model" in item)
-                        item.model = dataModel;
-
                     if ("selectedCategory" in item)
-                        item.selectedCategory = Qt.binding(() => {
-                            return category;
-                        });
+                        item.selectedCategory = Qt.binding(() => category);
 
                     if ("searchQuery" in item)
-                        item.searchQuery = Qt.binding(() => {
-                            return searchText;
-                        });
+                        item.searchQuery = Qt.binding(() => searchText);
 
                     if ("expanded" in item) {
-                        // Aux always collapsed, main follows parent's expanded state
-                        if (isAux)
-                            item.expanded = false;
-                        else
-                            item.expanded = Qt.binding(() => {
-                                return parentRoot.expanded;
-                            });
+                        item.expanded = isAux ? false : Qt.binding(() => parentRoot.expanded);
                     }
                     if ("panelWindow" in item && !isAux)
-                        item.panelWindow = parentRoot.panelWindow;
+                        item.panelWindow = Qt.binding(() => parentRoot.panelWindow);
 
                     if ("sidebarMode" in item && !isAux)
                         item.sidebarMode = true;
@@ -129,35 +98,27 @@ Item {
             }
 
             Connections {
+                target: panel
                 function onSearchFocusRequested() {
                     if (!isAux && searchInput && effectiveSearchable)
                         searchInput.forceActiveFocus();
                 }
-
                 function onContentFocusRequested() {
                     if (contentLoader.item && "contentFocusRequested" in contentLoader.item)
                         contentLoader.item.contentFocusRequested();
                 }
-
-                target: panel
             }
 
             Connections {
+                target: contentLoader.item
+                ignoreUnknownSignals: true
                 function onSearchFocusRequested() {
                     if (!isAux)
                         panel.searchFocusRequested();
                 }
-
-                function onAltLaunched(app) {
-                    SidebarData.altLaunch(app, isAux);
+                function onDismiss() {
+                    parentRoot.dismiss();
                 }
-
-                function onAppLaunched(app) {
-                    SidebarData.launch(category, app, parentRoot.switchToLayout, isAux);
-                }
-
-                target: contentLoader.item
-                ignoreUnknownSignals: true
             }
 
             transform: Translate {
@@ -165,11 +126,9 @@ Item {
             }
         }
 
-        // Search Bar
         StyledRect {
             id: searchBar
-
-            visible: opacity > 0
+            visible: effectiveSearchable && category !== ""
             clip: true
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
@@ -182,21 +141,19 @@ Item {
 
             Rectangle {
                 id: sideRect
-
                 color: panel.colors.colSecondary
                 implicitWidth: 40
-
                 anchors {
                     top: parent.top
                     bottom: parent.bottom
                     left: parent.left
                 }
-
                 Symbol {
                     anchors.centerIn: parent
                     anchors.horizontalCenterOffset: Padding.tiny
                     font.pixelSize: 20
-                    text: SidebarData.getIcon(category) || "apps"
+                    text: SidebarData.getIcon(category)
+                    fill: 1
                     color: panel.colors.colOnSecondary
                     opacity: 0.6
                 }
@@ -204,7 +161,6 @@ Item {
 
             RowLayout {
                 spacing: Padding.small
-
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -215,30 +171,26 @@ Item {
 
                 StyledTextField {
                     id: searchInput
-
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     objectName: "searchInput"
                     visible: effectiveSearchable
                     enabled: effectiveSearchable
                     text: searchText
-                    placeholderText: SidebarData.getPlaceholder(category) || "Search..."
+                    placeholderText: "Search..."
+                    placeholderTextColor: Colors.colOutline
                     background: null
                     selectionColor: panel.colors.colSecondaryContainer
                     selectedTextColor: Colors.colOnSecondaryContainer
                     color: Colors.colOnLayer1
-                    placeholderTextColor: Colors.colOutline
                     selectByMouse: true
-                    onTextChanged: {
-                        panel.searchUpdated(text);
-                    }
+                    onTextChanged: panel.searchUpdated(text)
                     Keys.onPressed: event => {
-                        if (event.key === Qt.Key_Down && effectiveSearchable || event.key === Qt.Key_PageDown && effectiveSearchable) {
+                        if ((event.key === Qt.Key_Down || event.key === Qt.Key_PageDown) && effectiveSearchable) {
                             panel.contentFocusRequested();
                             event.accepted = true;
                         }
                     }
-
                     font {
                         family: Fonts.family.main
                         pixelSize: Fonts.sizes.small
@@ -254,11 +206,8 @@ Item {
                     releaseAction: () => {
                         searchInput.clear();
                         if (!isAux)
-                            Qt.callLater(() => {
-                                return searchInput.forceActiveFocus();
-                            });
+                            Qt.callLater(() => searchInput.forceActiveFocus());
                     }
-
                     Symbol {
                         anchors.centerIn: parent
                         font.pixelSize: 16
@@ -271,13 +220,11 @@ Item {
             transform: Translate {
                 y: contentYOffset
             }
-
             Behavior on Layout.preferredHeight {
                 Anim {}
             }
         }
 
-        // Close button (only for aux panel)
         RippleButton {
             visible: isAux
             Layout.alignment: Qt.AlignHCenter
@@ -289,43 +236,24 @@ Item {
             opacity: contentOpacity
             releaseAction: () => {
                 if (isAux && parentRoot)
-                    parentRoot.closeAuxPanel();
+                    parentRoot.resetAux();
             }
 
             RowLayout {
                 anchors.centerIn: parent
-
                 Symbol {
                     font.pixelSize: 20
                     text: "close"
                     color: Colors.colOnError
                 }
-
                 StyledText {
                     text: "Dismiss"
                     color: Colors.colOnError
                 }
             }
-
             transform: Translate {
                 y: contentYOffset
             }
-        }
-    }
-
-    PagePlaceholder {
-        visible: dataModel.count === 0 && SidebarData.hasModel(category) && showContent
-        opacity: visible ? contentOpacity : 0
-        icon: "block"
-        shape: MaterialShape.Clover4Leaf
-        title: "Nothing found"
-
-        transform: Translate {
-            y: contentYOffset
-        }
-
-        Behavior on opacity {
-            Anim {}
         }
     }
 }

@@ -1,23 +1,18 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import qs.common
 import qs.common.widgets
 import qs.services
 
 StyledGridView {
-    id: appGridView
+    id: root
 
-    // Properties
-    property alias model: appGridView.model
-    property string selectedCategory: ""
     property int columns: 3
     property int iconSize: 60
-
-    // Signals
-    signal appLaunched(var app)
+    signal dismiss
     signal searchFocusRequested
     signal contentFocusRequested
-
     // Grid configuration
     cellWidth: Math.floor(width / columns)
     cellHeight: cellWidth
@@ -27,17 +22,66 @@ StyledGridView {
     currentIndex: -1
     // Focus handling
     Connections {
-        target: appGridView
+        target: root
         function onContentFocusRequested() {
-            if (appGridView.count > 0) {
-                appGridView.currentIndex = 0;
-                appGridView.forceActiveFocus();
-                appGridView.positionViewAtIndex(0, GridView.Beginning);
+            if (root.count > 0) {
+                root.currentIndex = 0;
+                root.forceActiveFocus();
+                root.positionViewAtIndex(0, GridView.Beginning);
             }
         }
     }
+    model: DesktopEntries.applications
+    delegate: RippleButton {
+        id: appItem
+        required property int index
+        required property var modelData
 
-    // Keyboard navigation
+        width: root.cellWidth - 10
+        height: root.cellHeight - 10
+
+        property string appId: modelData.id
+        property bool isPinned: Mem.states.favorites.apps.some(id => id.toLowerCase() === appId.toLowerCase())
+        property bool isSelected: root.currentIndex === index && root.activeFocus
+
+        buttonRadius: isSelected ? Rounding.verylarge : 100
+        colBackground: isSelected ? Colors.colSecondaryContainerActive : "transparent"
+
+        releaseAction: () => {
+            modelData.execute();
+            root.dismiss();
+        }
+
+        altAction: () => {
+            if (loader.item && loader.item.contextMenu) {
+                loader.item.contextMenu.popup();
+            }
+        }
+
+        // Content loader
+        Loader {
+            id: loader
+            anchors.centerIn: parent
+            width: parent.width - 20
+
+            sourceComponent: appComponent
+        }
+
+        Component {
+            id: appComponent
+        }
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        z: -1
+        color: Colors.colLayer1
+        radius: Rounding.verylarge
+    }
+
+    ScrollEdgeFade {
+        target: root
+    }
     Keys.onPressed: event => {
         const cols = Math.floor(width / cellWidth);
         const idx = currentIndex;
@@ -85,7 +129,7 @@ StyledGridView {
         case Qt.Key_Return:
         case Qt.Key_Enter:
             if (idx >= 0 && idx < count) {
-                const item = model.get(idx);
+                const item = modelData.get(idx);
                 if (item)
                     appLaunched(item);
             }
@@ -106,96 +150,5 @@ StyledGridView {
             event.accepted = true;
             break;
         }
-    }
-
-    // Delegate
-    delegate: RippleButton {
-        id: appItem
-        required property int index
-        required property var model
-
-        width: appGridView.cellWidth - 10
-        height: appGridView.cellHeight - 10
-
-        property string appId: model.id
-        property bool isPinned: Mem.states.favorites.apps.some(id => id.toLowerCase() === appId.toLowerCase())
-        property bool isSelected: appGridView.currentIndex === index && appGridView.activeFocus
-        property bool isEmoji: appGridView.selectedCategory === "Emojis"
-
-        buttonRadius: isSelected ? Rounding.verylarge : 100
-        colBackground: isSelected ? Colors.colSecondaryContainerActive : "transparent"
-
-        releaseAction: () => appGridView.appLaunched(model)
-
-        altAction: () => {
-            if (!appItem.isEmoji && loader.item && loader.item.contextMenu) {
-                loader.item.contextMenu.popup();
-            }
-        }
-
-        // Content loader
-        Loader {
-            id: loader
-            anchors.centerIn: parent
-            width: parent.width - 20
-
-            sourceComponent: appItem.isEmoji ? emojiComponent : appComponent
-        }
-
-        Component {
-            id: appComponent
-            ColumnLayout {
-                spacing: Padding.small
-                property alias contextMenu: contextMenu
-
-                StyledIconImage {
-                    source: Noon.iconPath(model?.iconImage || "")
-                    colorize: Mem.options.appearance.icons.tint
-                    implicitWidth: appGridView.iconSize
-                    implicitHeight: appGridView.iconSize
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                StyledText {
-                    text: model.name || ""
-                    font.pixelSize: 12
-                    color: Colors.colOnLayer2
-                    elide: Text.ElideRight
-                    horizontalAlignment: Text.AlignHCenter
-                    wrapMode: Text.WordWrap
-                    maximumLineCount: 1
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                AppContextMenu {
-                    id: contextMenu
-                }
-            }
-        }
-
-        Component {
-            id: emojiComponent
-            StyledText {
-                text: model.icon || ""
-                font.family: Fonts.emoji
-                font.pixelSize: appGridView.iconSize
-                color: Colors.colOnLayer2
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-        }
-    }
-
-    // Background
-    Rectangle {
-        anchors.fill: parent
-        z: -1
-        color: Colors.colLayer1
-        radius: Rounding.verylarge
-    }
-
-    ScrollEdgeFade {
-        target: appGridView
     }
 }

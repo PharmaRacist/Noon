@@ -9,46 +9,62 @@ import qs.services
 Item {
     id: root
     property string searchQuery: ""
-    property int gridColumns: expanded ? 5 : 1
-    property int gridItemWidth: width / gridColumns
-    property int gridItemHeight: gridItemWidth * (9 / 16)
-    property bool expanded: false
-
     readonly property int itemSpacing: Padding.large
+    property var cachedWallpapers: []
+    anchors.fill: parent
 
     signal searchFocusRequested
     signal contentFocusRequested
 
-    function updateGridModel() {
-        if (!WallpaperService?.wallpaperModel) {
-            Qt.callLater(updateGridModel);
-            return;
-        }
-        gridView.model = WallpaperService.wallpaperModel.count;
-    }
-
-    function shuffleWallpaper() {
-        if (gridView.model <= 0)
-            return;
-        const randomIndex = Math.floor(Math.random() * gridView.model);
-        const fileUrl = WallpaperService.wallpaperModel.getFile(randomIndex);
-        if (fileUrl) {
-            WallpaperService.applyWallpaper(fileUrl);
-            gridView.currentIndex = randomIndex;
-        }
-    }
-
-    Component.onCompleted: updateGridModel()
-
-    onSearchQueryChanged: {
-        if (!WallpaperService?.wallpaperModel)
-            return;
+    function loadWallpapers() {
         const model = WallpaperService.wallpaperModel;
-        if (searchQuery.length > 0) {
-            model.filterWallpapers(searchQuery);
-        } else {
-            model.clearFilter();
+        const count = model.count;
+        const currentPath = WallpaperService.currentWallpaper;
+
+        let wallpapers = [];
+        for (let i = 0; i < count; i++) {
+            const fileUrl = model.getFile(i);
+            if (fileUrl) {
+                const urlString = fileUrl.toString();
+                wallpapers.push({
+                    index: i,
+                    fileUrl: fileUrl,
+                    fileName: FileUtils.getEscapedFileName(fileUrl),
+                    isCurrentWallpaper: urlString === currentPath
+                });
+            }
         }
+        cachedWallpapers = wallpapers;
+        Fuzzy.prepare(cachedWallpapers);
+        filterWallpapers();
+    }
+
+    function filterWallpapers() {
+        const query = root.searchQuery.trim();
+        if (!query) {
+            filteredModel.values = cachedWallpapers;
+            return;
+        }
+
+        filteredModel.values = Fuzzy.go(query, cachedWallpapers, {
+            key: 'fileName',
+            threshold: -10000,
+            limit: 7
+        }).map(r => r.obj);
+    }
+
+    Component.onCompleted: loadWallpapers()
+    onSearchQueryChanged: searchDebounceTimer.restart()
+
+    Timer {
+        id: searchDebounceTimer
+        interval: 250
+        onTriggered: filterWallpapers()
+    }
+
+    ScriptModel {
+        id: filteredModel
+        values: []
     }
 
     StyledRect {
@@ -57,179 +73,84 @@ Item {
         clip: true
         radius: Rounding.verylarge
 
-        ColumnLayout {
+        StyledListView {
+            id: listView
             anchors.fill: parent
-            spacing: 0
+            anchors.margins: Padding.normal
+            spacing: Padding.small
+            model: filteredModel
+            currentIndex: -1
+            cacheBuffer: height * 2
 
-            StyledGridView {
-                id: gridView
-                property int currentIndex: -1
+            delegate: Item {
+                width: ListView.view.width
+                height: width * (9 / 16)
 
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                cellWidth: root.gridItemWidth
-                cellHeight: root.gridItemHeight
-                model: WallpaperService.wallpaperModel?.count ?? 0
-                focus: true
+                required property var modelData
+                required property int index
 
-                onCountChanged: {
-                    if (count > 0 && currentIndex === -1 && activeFocus)
-                        currentIndex = 0;
-                }
+                WallpaperItem {
+                    id: wallpaperItem
+                    anchors.fill: parent
+                    isKeyboardSelected: listView.currentIndex === index && listView.activeFocus
+                    isCurrentWallpaper: modelData.isCurrentWallpaper
+                    fileUrl: modelData.fileUrl
 
-                Keys.onPressed: event => {
-                    if (!gridView.model || gridView.model === 0)
-                        return;
-                    const cols = root.gridColumns;
-                    const shift = event.modifiers & Qt.ShiftModifier;
-                    const jump = shift ? 5 : 1;
-                    const page = Math.floor(gridView.height / root.gridItemHeight) * cols;
-
-                    switch (event.key) {
-                    case Qt.Key_Down:
-                        if (currentIndex === -1)
-                            currentIndex = 0;
-                        else if (currentIndex + cols * jump < model)
-                            currentIndex += cols * jump;
-                        else
-                            currentIndex = model - 1;
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_Up:
-                        if (currentIndex === -1)
-                            currentIndex = model - 1;
-                        else if (currentIndex >= cols * jump)
-                            currentIndex -= cols * jump;
-                        else if (currentIndex >= 0) {
-                            if (shift)
-                                currentIndex = 0;
-                            else {
-                                currentIndex = -1;
-                                root.searchFocusRequested();
-                            }
-                        }
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_Left:
-                        if (currentIndex === -1)
-                            currentIndex = 0;
-                        else if (currentIndex >= jump)
-                            currentIndex -= jump;
-                        else if (currentIndex > 0)
-                            currentIndex = 0;
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_Right:
-                        if (currentIndex === -1)
-                            currentIndex = 0;
-                        else if (currentIndex + jump < model)
-                            currentIndex += jump;
-                        else
-                            currentIndex = model - 1;
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_PageDown:
-                        currentIndex = (currentIndex === -1) ? 0 : Math.min(currentIndex + page, model - 1);
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_PageUp:
-                        currentIndex = (currentIndex === -1) ? model - 1 : Math.max(currentIndex - page, 0);
-                        gridView.positionViewAtIndex(currentIndex, GridView.Contain);
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_Home:
-                        if (model > 0) {
-                            currentIndex = 0;
-                            gridView.positionViewAtIndex(0, GridView.Beginning);
-                        }
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_End:
-                        if (model > 0) {
-                            currentIndex = model - 1;
-                            gridView.positionViewAtIndex(model - 1, GridView.End);
-                        }
-                        event.accepted = true;
-                        break;
-                    case Qt.Key_Return:
-                    case Qt.Key_Enter:
-                        if (currentIndex >= 0 && currentIndex < model) {
-                            const fileUrl = WallpaperService.wallpaperModel.getFile(currentIndex);
-                            if (fileUrl)
-                                WallpaperService.applyWallpaper(fileUrl);
-                        }
-                        event.accepted = true;
-                        break;
+                    onClicked: if (fileUrl) {
+                        WallpaperService.applyWallpaper(fileUrl);
+                        listView.currentIndex = index;
                     }
                 }
 
-                delegate: Item {
-                    id: delegateItem
-                    required property int index
-                    width: root.gridItemWidth
-                    height: root.gridItemHeight
+                StyledRectangularShadow {
+                    target: wallpaperItem
+                    show: wallpaperItem.isKeyboardSelected
+                }
+            }
 
-                    WallpaperItem {
-                        id: wallpaperItem
-                        property int delegateIndex: index
-                        isKeyboardSelected: delegateIndex === gridView.currentIndex && gridView.activeFocus
-                        isCurrentWallpaper: fileUrl === WallpaperService.currentWallpaper
-                        fileUrl: WallpaperService.wallpaperModel?.getFile(delegateIndex) ?? ""
-                        onClicked: if (fileUrl) {
-                            WallpaperService.applyWallpaper(fileUrl);
-                            gridView.currentIndex = delegateIndex;
-                        }
+            Keys.onPressed: event => {
+                if (count === 0)
+                    return;
 
-                        Behavior on anchors.margins {
-                            Anim {}
-                        }
-                    }
-                    StyledRectangularShadow {
-                        target: wallpaperItem
-                        show: wallpaperItem.isKeyboardSelected
-                    }
+                const navKeys = [Qt.Key_Down, Qt.Key_Up, Qt.Key_PageDown, Qt.Key_PageUp, Qt.Key_Home, Qt.Key_End, Qt.Key_Return, Qt.Key_Enter, Qt.Key_Escape];
+                if (navKeys.indexOf(event.key) === -1)
+                    return;
+
+                event.accepted = true;
+                switch (event.key) {
+                case Qt.Key_Down:
+                    if (currentIndex < count - 1)
+                        currentIndex++;
+                    break;
+                case Qt.Key_Up:
+                    if (currentIndex <= 0) {
+                        currentIndex = -1;
+                        root.searchFocusRequested();
+                    } else
+                        currentIndex--;
+                    break;
+                case Qt.Key_PageDown:
+                    currentIndex = Math.min(currentIndex + 5, count - 1);
+                    break;
+                case Qt.Key_PageUp:
+                    currentIndex = Math.max(currentIndex - 5, 0);
+                    break;
+                case Qt.Key_Home:
+                    currentIndex = 0;
+                    break;
+                case Qt.Key_End:
+                    currentIndex = count - 1;
+                    break;
+                case Qt.Key_Return:
+                case Qt.Key_Enter:
+                    if (currentIndex >= 0)
+                        WallpaperService.applyWallpaper(model.values[currentIndex].fileUrl);
+                    break;
+                case Qt.Key_Escape:
+                    root.searchFocusRequested();
+                    break;
                 }
             }
         }
-
-        Connections {
-            target: WallpaperService?.wallpaperModel ?? null
-            ignoreUnknownSignals: true
-            function onModelUpdated() {
-                root.updateGridModel();
-            }
-        }
-
-        Connections {
-            target: root
-            function onContentFocusRequested() {
-                if (gridView.model > 0) {
-                    gridView.currentIndex = 0;
-                    gridView.forceActiveFocus();
-                    gridView.positionViewAtIndex(0, GridView.Beginning);
-                }
-            }
-        }
-
-        PagePlaceholder {
-            visible: gridView.model === 0 && root.searchQuery !== ""
-            icon: "block"
-            title: "Nothing found"
-        }
-
-        WallpaperControls {
-            finishAction: () => {
-                root.searchFocusRequested();
-            }
-        }
-    }
-    ScrollEdgeFade {
-        target: parent
     }
 }

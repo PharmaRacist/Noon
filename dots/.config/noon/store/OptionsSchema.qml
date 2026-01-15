@@ -228,7 +228,6 @@ JsonAdapter {
         }
 
         appearance: JsonObject {
-            property bool useAppListView: false
             property int mode: 2
             property bool showNavTitles: false
             property bool showSliders: true

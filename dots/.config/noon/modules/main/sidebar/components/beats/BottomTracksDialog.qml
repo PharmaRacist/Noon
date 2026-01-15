@@ -93,8 +93,6 @@ BottomDialog {
                 implicitHeight: 70
                 title: trackInfo.name || "Unknown Track"
                 subtext: fileExtension ? `${fileExtension} Audio` : ""
-                colActiveColor: currentlyPlaying ? colors.colSecondaryContainerActive : colors.colSecondaryContainer
-                colActiveItemColor: currentlyPlaying ? colors.colPrimary : colors.colSecondary
                 colBackground: currentlyPlaying ? colors.colSecondaryContainerActive : colors.colLayer1
                 shape: MaterialShape.Bun
                 shapePadding: Padding.small

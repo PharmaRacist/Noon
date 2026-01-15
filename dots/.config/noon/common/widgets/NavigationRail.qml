@@ -12,9 +12,6 @@ ColumnLayout {
     property int currentIndex: 0
 
     Behavior on spacing {
-        Anim {
-        }
-
+        Anim {}
     }
-
 }

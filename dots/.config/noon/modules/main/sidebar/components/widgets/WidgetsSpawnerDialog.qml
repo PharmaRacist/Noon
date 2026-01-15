@@ -44,8 +44,6 @@ BottomDialog {
                         Layout.preferredWidth: parent.width
                         Layout.preferredHeight: 72
                         Layout.fillWidth: true
-                        colActiveColor: Colors.colPrimaryContainer
-                        colActiveItemColor: Colors.colPrimary
                         title: modelData.component.replace(/_/g, " ")
                         subtext: {
                             let props = [];
