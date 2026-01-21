@@ -6,151 +6,185 @@ import qs.common.functions
 import qs.common.widgets
 import qs.services
 
-Item {
+StyledRect {
     id: root
+    visible: opacity > 0
+    opacity: width > 320 ? 1 : 0
+    color: "transparent"
+    radius: Rounding.verylarge
+    clip: true
     property string searchQuery: ""
-    readonly property int itemSpacing: Padding.large
+    property string _debouncedQuery: ""
     property var cachedWallpapers: []
-    anchors.fill: parent
 
     signal searchFocusRequested
     signal contentFocusRequested
+    signal dismiss
+
+    anchors.fill: parent
+
+    onSearchQueryChanged: debounceTimer.restart()
+
+    Timer {
+        id: debounceTimer
+        interval: 150
+        repeat: false
+        onTriggered: root._debouncedQuery = root.searchQuery.trim()
+    }
+
+    onContentFocusRequested: if (listView.count > 0) {
+        listView.currentIndex = 0;
+        listView.forceActiveFocus();
+    }
 
     function loadWallpapers() {
         const model = WallpaperService.wallpaperModel;
-        const count = model.count;
-        const currentPath = WallpaperService.currentWallpaper;
+        if (!model)
+            return;
 
-        let wallpapers = [];
-        for (let i = 0; i < count; i++) {
-            const fileUrl = model.getFile(i);
-            if (fileUrl) {
-                const urlString = fileUrl.toString();
-                wallpapers.push({
-                    index: i,
-                    fileUrl: fileUrl,
-                    fileName: FileUtils.getEscapedFileName(fileUrl),
-                    isCurrentWallpaper: urlString === currentPath
-                });
-            }
-        }
-        cachedWallpapers = wallpapers;
-        Fuzzy.prepare(cachedWallpapers);
-        filterWallpapers();
-    }
-
-    function filterWallpapers() {
-        const query = root.searchQuery.trim();
-        if (!query) {
-            filteredModel.values = cachedWallpapers;
+        if (WallpaperService.wallpaperSelectorCachedModel && WallpaperService.wallpaperSelectorCachedModel.length === model.count) {
+            cachedWallpapers = WallpaperService.wallpaperSelectorCachedModel;
             return;
         }
 
-        filteredModel.values = Fuzzy.go(query, cachedWallpapers, {
-            key: 'fileName',
-            threshold: -10000,
-            limit: 7
-        }).map(r => r.obj);
-    }
+        const count = model.count;
+        let wallpapers = new Array(count);
 
-    Component.onCompleted: loadWallpapers()
-    onSearchQueryChanged: searchDebounceTimer.restart()
+        for (let i = 0; i < count; i++) {
+            const fileUrl = model.getFile(i);
+            if (fileUrl) {
+                wallpapers[i] = {
+                    index: i,
+                    fileUrl: fileUrl,
+                    fileName: FileUtils.getEscapedFileName(fileUrl)
+                };
+            }
+        }
 
-    Timer {
-        id: searchDebounceTimer
-        interval: 250
-        onTriggered: filterWallpapers()
+        cachedWallpapers = wallpapers;
+        WallpaperService.wallpaperSelectorCachedModel = wallpapers;
     }
 
     ScriptModel {
         id: filteredModel
-        values: []
+        values: {
+            const baseData = root.cachedWallpapers;
+            if (!baseData || baseData.length === 0)
+                return [];
+
+            const query = root._debouncedQuery;
+            if (!query)
+                return baseData.slice(0, 100);
+
+            const fuzzyResults = Fuzzy.go(query, baseData, {
+                key: 'fileName',
+                threshold: -10000,
+                limit: 20
+            });
+
+            return fuzzyResults.map(r => r.obj);
+        }
     }
 
-    StyledRect {
+    Timer {
+        id: load_timer
+        interval: 200
+        onTriggered: loadWallpapers()
+    }
+
+    Connections {
+        target: WallpaperService
+        function onCurrentFolderPathChanged() {
+            load_timer.restart();
+        }
+    }
+    Component.onCompleted: {
+        load_timer.restart();
+    }
+    StyledListView {
+        id: listView
         anchors.fill: parent
-        color: "transparent"
+        animateAppearance: true
+        animateMovement: true
+        popin: true
+        anchors.margins: Padding.normal
+        spacing: Padding.small
         clip: true
-        radius: Rounding.verylarge
+        model: filteredModel
+        currentIndex: -1
+        reuseItems: true
+        cacheBuffer: height * 2
 
-        StyledListView {
-            id: listView
-            anchors.fill: parent
-            anchors.margins: Padding.normal
-            spacing: Padding.small
-            model: filteredModel
-            currentIndex: -1
-            cacheBuffer: height * 2
+        highlightFollowsCurrentItem: true
+        highlightMoveDuration: 150
 
-            delegate: Item {
-                width: ListView.view.width
-                height: width * (9 / 16)
+        delegate: Item {
+            id: loader
+            required property int index
+            required property var modelData
 
-                required property var modelData
-                required property int index
+            height: width * (9 / 16)
+            width: listView.width
 
-                WallpaperItem {
-                    id: wallpaperItem
-                    anchors.fill: parent
-                    isKeyboardSelected: listView.currentIndex === index && listView.activeFocus
-                    isCurrentWallpaper: modelData.isCurrentWallpaper
-                    fileUrl: modelData.fileUrl
+            WallpaperItem {
+                id: wallpaperItem
+                anchors.fill: parent
+                readonly property int cellWidth: loader.width
+                readonly property int cellHeight: loader.height
 
-                    onClicked: if (fileUrl) {
-                        WallpaperService.applyWallpaper(fileUrl);
-                        listView.currentIndex = index;
-                    }
-                }
+                isKeyboardSelected: listView.currentIndex === index
+                isCurrentWallpaper: modelData ? String(modelData.fileUrl) === String(WallpaperService.currentWallpaper) : false
+                fileUrl: modelData ? modelData.fileUrl : ""
 
-                StyledRectangularShadow {
-                    target: wallpaperItem
-                    show: wallpaperItem.isKeyboardSelected
+                onClicked: if (fileUrl) {
+                    WallpaperService.applyWallpaper(fileUrl);
+                    listView.currentIndex = index;
                 }
             }
 
-            Keys.onPressed: event => {
-                if (count === 0)
-                    return;
-
-                const navKeys = [Qt.Key_Down, Qt.Key_Up, Qt.Key_PageDown, Qt.Key_PageUp, Qt.Key_Home, Qt.Key_End, Qt.Key_Return, Qt.Key_Enter, Qt.Key_Escape];
-                if (navKeys.indexOf(event.key) === -1)
-                    return;
-
-                event.accepted = true;
-                switch (event.key) {
-                case Qt.Key_Down:
-                    if (currentIndex < count - 1)
-                        currentIndex++;
-                    break;
-                case Qt.Key_Up:
-                    if (currentIndex <= 0) {
-                        currentIndex = -1;
-                        root.searchFocusRequested();
-                    } else
-                        currentIndex--;
-                    break;
-                case Qt.Key_PageDown:
-                    currentIndex = Math.min(currentIndex + 5, count - 1);
-                    break;
-                case Qt.Key_PageUp:
-                    currentIndex = Math.max(currentIndex - 5, 0);
-                    break;
-                case Qt.Key_Home:
-                    currentIndex = 0;
-                    break;
-                case Qt.Key_End:
-                    currentIndex = count - 1;
-                    break;
-                case Qt.Key_Return:
-                case Qt.Key_Enter:
-                    if (currentIndex >= 0)
-                        WallpaperService.applyWallpaper(model.values[currentIndex].fileUrl);
-                    break;
-                case Qt.Key_Escape:
-                    root.searchFocusRequested();
-                    break;
-                }
+            StyledRectangularShadow {
+                target: wallpaperItem
+                show: wallpaperItem.isKeyboardSelected
             }
         }
+
+        Keys.onPressed: event => {
+            if (event.key === Qt.Key_Up) {
+                if (currentIndex <= 0) {
+                    currentIndex = -1;
+                    root.searchFocusRequested();
+                } else {
+                    currentIndex--;
+                }
+            } else if (event.key === Qt.Key_Down) {
+                if (currentIndex < count - 1) {
+                    currentIndex++;
+                }
+            } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                if (currentIndex >= 0) {
+                    const selectedData = filteredModel.values[currentIndex];
+                    if (selectedData && selectedData.fileUrl) {
+                        WallpaperService.applyWallpaper(selectedData.fileUrl);
+                        Noon.playSound("event_accepted");
+                    }
+                }
+            } else if (event.key === Qt.Key_Escape) {
+                root.dismiss();
+            } else
+                return;
+
+            event.accepted = true;
+        }
+    }
+    ScrollEdgeFade {
+        target: listView
+        anchors.fill: parent
+    }
+    WallpaperControls {}
+    PagePlaceholder {
+        shown: listView.count === 0
+        title: qsTr("No wallpapers found")
+        icon: "image_not_supported"
+        anchors.centerIn: parent
     }
 }

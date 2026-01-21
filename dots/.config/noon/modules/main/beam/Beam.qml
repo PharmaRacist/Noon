@@ -225,7 +225,7 @@ Scope {
                 target: ClipboardService
                 function onImageDecoded(path) {
                     if (path && path !== "") {
-                        root.revealSidebar();
+                        root.revealSidebar("API");
                         Ai.attachFile(path);
                         if (screenshotProcessTimer.autoSend) {
                             Ai.sendUserMessage("Explain This Briefly");
@@ -285,11 +285,10 @@ Scope {
                 ClipboardService.getLatestImage();
             }
 
-            function revealSidebar() {
-                if (GlobalStates.main.sidebar.visible)
-                    return;
+            function revealSidebar(cat: string) {
                 Mem.states.sidebar.apis.selectedTab = 0;
-                Noon.callIpc("sidebar reveal API");
+                GlobalStates.main.sidebar.hoverMode = false;
+                GlobalStates.main.sidebar.selectedCategory = cat;
             }
 
             function handleImage(autoSend = false) {
@@ -357,7 +356,7 @@ Scope {
                     if (root.clearAiChatBeforeSearch) {
                         Ai.clearMessages();
                     }
-                    root.revealSidebar();
+                    root.revealSidebar("API");
                     Ai.sendUserMessage(root.query);
                     break;
                 case "launch":

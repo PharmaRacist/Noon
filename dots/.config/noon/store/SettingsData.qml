@@ -88,6 +88,18 @@ QtObject {
                         "key": "desktop.hyprland.shadows"
                     },
                     {
+                        "icon": "collapse_content",
+                        "name": "Shadows Range",
+                        "key": "desktop.hyprland.shadowsRange",
+                        "type": "text"
+                    },
+                    {
+                        "icon": "collapse_content",
+                        "name": "Shadows Power",
+                        "key": "desktop.hyprland.shadowsPower",
+                        "type": "spin"
+                    },
+                    {
                         "icon": "expand_content",
                         "name": "Gaps Out",
                         "key": "desktop.hyprland.gapsOut",
@@ -103,7 +115,7 @@ QtObject {
                         "icon": "border_all",
                         "name": "Border Width",
                         "key": "desktop.hyprland.borders",
-                        "type": "text"
+                        "type": "spin"
                     },
                     {
                         "icon": "dashboard",
@@ -133,6 +145,11 @@ QtObject {
                 "items": [
                     {
                         "icon": "timer",
+                        "name": "Desktop Clock",
+                        "key": "desktop.clock.enabled"
+                    },
+                    {
+                        "icon": "timer",
                         "name": "Center Clock",
                         "state": true,
                         "enableTooltip": false,
@@ -140,7 +157,7 @@ QtObject {
                     },
                     {
                         "icon": "schedule",
-                        "name": "Clock Font",
+                        "name": "Layer Clock Font",
                         "key": "desktop.clock.font",
                         "type": "combobox",
                         "comboBoxValues": ["Badeen Display", "Ndot 55", "Six Caps", "Alfa Slab One", "Notable", "Monoton", "Titan One", "Bebas Neue", "Rubik", "UnifrakturCook"]
@@ -507,6 +524,77 @@ QtObject {
                 ]
             },
             {
+                "section": "AI Context",
+                "icon": "neurology",
+                "items": [
+                    {
+                        "icon": "computer",
+                        "name": "Distro",
+                        "key": "ai.context.distro"
+                    },
+                    {
+                        "icon": "schedule",
+                        "name": "Date & Time",
+                        "key": "ai.context.datetime"
+                    },
+                    {
+                        "icon": "window",
+                        "name": "Window Class",
+                        "key": "ai.context.windowclass"
+                    },
+                    {
+                        "icon": "desktop_windows",
+                        "name": "Desktop Environment",
+                        "key": "ai.context.desktopEnvironment"
+                    },
+                    {
+                        "icon": "task",
+                        "name": "Tasks",
+                        "key": "ai.context.tasks"
+                    },
+                    {
+                        "icon": "timer",
+                        "name": "Timers",
+                        "key": "ai.context.timers"
+                    },
+                    {
+                        "icon": "person",
+                        "name": "User",
+                        "key": "ai.context.user"
+                    },
+                    {
+                        "icon": "location_on",
+                        "name": "Location",
+                        "key": "ai.context.location"
+                    },
+                    {
+                        "icon": "note",
+                        "name": "Notes",
+                        "key": "ai.context.notes"
+                    },
+                    {
+                        "icon": "play_circle",
+                        "name": "Playing",
+                        "key": "ai.context.playing"
+                    },
+                    {
+                        "icon": "wb_sunny",
+                        "name": "Weather",
+                        "key": "ai.context.weather"
+                    },
+                    {
+                        "icon": "draft",
+                        "name": "PDF",
+                        "key": "ai.context.pdf"
+                    },
+                    {
+                        "icon": "alarm",
+                        "name": "Alarms",
+                        "key": "ai.context.alarms"
+                    }
+                ]
+            },
+            {
                 "section": "Media Player",
                 "icon": "music_note",
                 "items": [
@@ -571,6 +659,11 @@ QtObject {
                         "icon": "width",
                         "name": "Parallax Effect",
                         "key": "desktop.bg.parallax.enabled"
+                    },
+                    {
+                        "icon": "height",
+                        "name": "Vertical Parallax",
+                        "key": "desktop.bg.parallax.verticalParallax"
                     },
                     {
                         "icon": "image",

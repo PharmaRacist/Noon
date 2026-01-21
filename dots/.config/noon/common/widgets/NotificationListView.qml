@@ -10,8 +10,9 @@ import Quickshell.Hyprland
 StyledListView {
     id: root
     property bool popup: false
-    // anchors.fill: parent
     spacing: Padding.small
+    clip: true
+    radius: Rounding.huge
 
     model: ScriptModel {
         values: root.popup ? Notifications.popupAppNameList : Notifications.appNameList

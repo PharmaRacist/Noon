@@ -1,6 +1,6 @@
+pragma Singleton
 import qs.common.utils
 import qs.store
-pragma Singleton
 
 Singleton {
     id: root
@@ -19,9 +19,7 @@ Singleton {
         state: false
         fileName: "options"
 
-        OptionsSchema {
-        }
-
+        OptionsSchema {}
     }
 
     ConfigFileView {
@@ -29,9 +27,7 @@ Singleton {
 
         fileName: "todo"
 
-        TodoSchema {
-        }
-
+        TodoSchema {}
     }
 
     ConfigFileView {
@@ -39,9 +35,7 @@ Singleton {
 
         fileName: "states"
 
-        StatesSchema {
-        }
-
+        StatesSchema {}
     }
 
     ConfigFileView {
@@ -49,9 +43,7 @@ Singleton {
 
         fileName: "timers"
 
-        TimersSchema {
-        }
-
+        TimersSchema {}
     }
 
     ConfigFileView {
@@ -59,9 +51,7 @@ Singleton {
 
         fileName: "colors"
 
-        ColorsSchema {
-        }
-
+        ColorsSchema {}
     }
 
     ConfigFileView {
@@ -70,9 +60,6 @@ Singleton {
         watchChanges: false
         fileName: "store"
 
-        StoreSchema {
-        }
-
+        StoreSchema {}
     }
-
 }

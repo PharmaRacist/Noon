@@ -1,4 +1,4 @@
-import Noon
+// import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -9,11 +9,11 @@ import qs.services
 Item {
     id: root
 
-    property bool show
-    property bool rightMode
-    property string selectedCategory
+    required property bool show
+    required property bool rightMode
+    required property string selectedCategory
     property QtObject colors: Colors
-    property var bubbles: [
+    readonly property var bubbles: [
         {
             "cat": "Walls",
             "bubbles": [
@@ -87,31 +87,31 @@ Item {
             "cat": "Web",
             "bubbles": [
                 {
-                    "icon": "security",
-                    "enabled": AddBlocker.enabled,
+                    "icon": "open_in_new",
                     "action": () => {
-                        AddBlocker.enabled = true;
+                        Qt.openUrlExternally(GlobalStates.web_session.url);
+                        Noon.callIpc("sidebar hide");
                     }
                 },
                 {
                     "icon": "keyboard_double_arrow_left",
-                    "enabled": GlobalStates.main.sidebar.webBrowserState.canGoBack,
+                    "enabled": GlobalStates.web_session.canGoBack,
                     "action": () => {
-                        GlobalStates.main.sidebar.webBrowserState.goBack();
+                        GlobalStates.web_session.goBack();
                     }
                 },
                 {
                     "icon": "keyboard_double_arrow_right",
-                    "enabled": GlobalStates.main.sidebar.webBrowserState.canGoForward,
+                    "enabled": GlobalStates.web_session.canGoForward,
                     "action": () => {
-                        GlobalStates.main.sidebar.webBrowserState.goForward();
+                        GlobalStates.web_session.goForward();
                     }
                 },
                 {
                     "icon": "restart_alt",
-                    "enabled": !GlobalStates.main.sidebar.webBrowserState.loading,
+                    "enabled": !GlobalStates.web_session.loading,
                     "action": () => {
-                        GlobalStates.main.sidebar.webBrowserState.reload();
+                        GlobalStates.web_session.reload();
                     }
                 }
             ]
@@ -198,7 +198,8 @@ Item {
             anchors.centerIn: parent
 
             Repeater {
-                model: root.bubbles
+                id: repeater
+                model: bubbles
 
                 ColumnLayout {
                     spacing: parent.spacing
@@ -227,6 +228,13 @@ Item {
                     }
                 }
             }
+            RippleButtonWithIcon {
+                colors: root.colors
+                materialIcon: "close"
+                visible: GlobalStates.main.sidebar.auxWidth > 0
+                releaseAction: () => GlobalStates.main.sidebar.close_aux()
+            }
+
             RippleButtonWithIcon {
                 colors: root.colors
                 materialIcon: "push_pin"

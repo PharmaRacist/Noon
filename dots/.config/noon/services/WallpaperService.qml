@@ -17,6 +17,7 @@ Singleton {
     readonly property FolderListModel wallpaperModel: _wallpaperModel
     readonly property bool isBright: Mem.states.desktop.bg.isBright
     property var _thumbnailCache: ({})
+    property var wallpaperSelectorCachedModel
     property string thumbnailSize: "large"
     property alias _generatingThumbnails: thumbnailGenerator.running
     Component.onCompleted: refreshFolderDelayed()

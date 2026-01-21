@@ -13,6 +13,7 @@ Singleton {
     property QtObject xp
     property QtObject applications
     property bool superHeld: false
+    property var web_session
     property var topLevel: ToplevelManager.activeToplevel
     property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
 
@@ -34,6 +35,12 @@ Singleton {
         property QtObject mediaplayer: QtObject {
             property bool show: false
             property var queue: []
+        }
+        property QtObject reader: QtObject {
+            property bool show: false
+            property string currentPath: Qt.resolvedUrl(Directories.standard.documents)
+
+            property var document_page_view
         }
         property QtObject editor: QtObject {
             property bool show: false

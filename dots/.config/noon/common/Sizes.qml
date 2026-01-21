@@ -5,16 +5,17 @@ import qs.common
 import qs.services
 
 Singleton {
-    property real barElevation: hyprland.gapsOut / 2
-    property real osdWidth: 220
-    property real osdHeight: 45
-    property real notificationPopupWidth: 420
-    property real elevationValue: Padding.verylarge
-    property real frameThickness: Mem.options.desktop.bg.borderMultiplier * (hyprland.gapsOut - Padding.normal)
-    property real elevationMargin: Math.round(frameThickness + elevationValue)
-    property size beamSize: Qt.size(450, 60)
-    property size beamSizeExpanded: Qt.size(800, 100)
-    property size gameLauncherItemSize: Qt.size(225, 360)
+    readonly property real infinity: Number.POSITIVE_INFINITY
+    readonly property real barElevation: hyprland.gapsOut / 2
+    readonly property real osdWidth: 220
+    readonly property real osdHeight: 45
+    readonly property real notificationPopupWidth: 420
+    readonly property real elevationValue: Padding.verylarge
+    readonly property real frameThickness: Mem.options.desktop.bg.borderMultiplier * (hyprland.gapsOut - Padding.normal)
+    readonly property real elevationMargin: Math.round(frameThickness + elevationValue)
+    readonly property size beamSize: Qt.size(450, 60)
+    readonly property size beamSizeExpanded: Qt.size(800, 100)
+    readonly property size gameLauncherItemSize: Qt.size(225, 360)
     property QtObject hyprland
     property QtObject sidebar
     property QtObject osd
@@ -27,7 +28,7 @@ Singleton {
     }
     mediaPlayer: QtObject {
         property real sidebarWidth: 300
-        property real sidebarWidthCollapsed: 100
+        property real sidebarWidthCollapsed: 82
         property real overlaySize: 145
         property size controlsSize: Qt.size(600, 80)
     }
@@ -42,7 +43,7 @@ Singleton {
     }
 
     sidebar: QtObject {
-        property real bar: 52
+        property real bar: 50
         property real contentQuarter: Math.round(Screen.width * 0.235) - bar
         property real half: Math.round(Screen.width * 0.457)
         property real quarter: Math.round(Screen.width * 0.246)

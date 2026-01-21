@@ -20,7 +20,7 @@ BottomDialog {
         }
         return 0;
     }
-
+    z: 9999
     enableStagedReveal: false
     bottomAreaReveal: true
     hoverHeight: 180

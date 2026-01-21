@@ -69,30 +69,38 @@ Scope {
                             const workspaceOffset = range > 0 ? ((currentWorkspace - firstId) / range) : 0.5;
                             return Math.max(0, Math.min(1, workspaceOffset));
                         }
-
-                        property int widgetMargin: Mem.options.desktop.bg.parallax.widgetParallax && enableParallax && GlobalStates.main.sidebar.expanded ? (Mem.options.bar.behavior.position === "left" ? -1 : 1) * Math.max(Mem.options.desktop.bg.parallax.parallaxStrength, 0.1) * 12 * (SidebarData.launcherWidth > 500 ? 20 : 50) : 0
+                        function calculate_widget_margin(){
+                            let _widget_direction_offset = Mem.options.bar.behavior.position === "left" ? -1 : 1
+                            let _widget_width = GlobalStates.main.sidebar.sidebarWidth
+                            if (Mem.options.desktop.bg.parallax.widgetParallax && enableParallax)
+                                return _widget_direction_offset * Mem.options.desktop.bg.parallax.parallaxStrength * _widget_width
+                            else return 0
+                        }
                         sourceSize: Qt.size(screen.width, screen.height)
-                        width: imageLoaded ? parent.width * effectiveWallpaperScale : parent.width
-                        height: imageLoaded ? parent.height * effectiveWallpaperScale : parent.height
+                        width: parent.width * effectiveWallpaperScale
+                        height: parent.height * effectiveWallpaperScale
 
-                        x: imageLoaded ? (verticalParallaxMode ? widgetMargin : -effectiveMovableXSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableXSpace) : 0
-                        y: imageLoaded ? (verticalParallaxMode ? -effectiveMovableYSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableYSpace : 0) : 0
+                        x:  (verticalParallaxMode ? calculate_widget_margin() : -effectiveMovableXSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableXSpace)
+                        y:  (verticalParallaxMode ? -effectiveMovableYSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableYSpace : 0)
 
                         Behavior on x {
                             Anim {
-                                duration: Animations.durations.verylarge
+                                duration: Animations.durations.large
+                                easing.bezierCurve: Animations.curves.standardDecel
+
                             }
                         }
                         Behavior on y {
                             Anim {
-                                duration: Animations.durations.verylarge
+                                duration: Animations.durations.large
+                                easing.bezierCurve: Animations.curves.standardDecel
                             }
                         }
 
                         opacity: imageLoaded ? 1.0 : 0.0
                         Behavior on opacity {
                             Anim {
-                                duration: Animations.durations.verylarge
+                                duration: Animations.durations.large
                             }
                         }
                     }
@@ -104,7 +112,7 @@ Scope {
                     }
                     DesktopClock {
                         z: 9999
-                        visible: !backgroundPanel.enableDepthMode && Mem.options.desktop.clock.enabled || !layerClock.active
+                        visible: Mem.options.desktop.clock.enabled && (!backgroundPanel.enableDepthMode || !layerClock.active)
                     }
                     LazyLoader {
                         id: fgLoader

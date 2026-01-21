@@ -190,6 +190,12 @@ Singleton {
         target: Mem.options.desktop.hyprland
         property QtObject conf: Mem.options.desktop.hyprland
 
+        function onShadowsPowerChanged() {
+            Noon.setHyprKey("shadows_power", conf.shadowsPower);
+        }
+        function onShadowsRangeChanged() {
+            Noon.setHyprKey("shadows_range", conf.shadowsRange);
+        }
         function onGapsInChanged() {
             Noon.setHyprKey("gaps_in", conf.gapsIn);
         }

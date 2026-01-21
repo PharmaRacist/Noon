@@ -13,21 +13,19 @@ StyledPanel {
     id: root
     name: "sidebar"
     visible: true
-
     property bool hoverMode: true
     property bool pinned: false
-    property bool _transitioning: false
+    property bool expanded: false
     property bool reveal: revealCondition
-    property alias expanded: sidebarContent.expanded
 
     readonly property bool show: !hoverMode
     readonly property bool rightMode: barPosition === "left" || barPosition === "bottom"
-    readonly property bool revealCondition: (hoverArea.containsMouse && hoverMode) || _transitioning || PolkitService.flow !== null
+    readonly property bool revealCondition: (hoverArea.containsMouse && hoverMode) || PolkitService.flow !== null
     readonly property int rounding: Rounding.verylarge
     readonly property int appearanceMode: Mem.options.sidebar.appearance.mode
     readonly property string barPosition: Mem.options.bar.behavior.position
-
-    readonly property int sidebarWidth: SidebarData.currentSize(hoverMode, root.expanded, sidebarContent.selectedCategory) + auxWidth
+    property alias selectedCategory: sidebarContent.selectedCategory
+    readonly property int sidebarWidth: auxWidth + SidebarData.currentSize(hoverMode, root.expanded, selectedCategory)
     readonly property int auxWidth: sidebarContent.auxVisible && !hoverMode ? SidebarData.currentSize(false, false, sidebarContent.auxCategory) : 0
 
     implicitWidth: visualContainer.width + rounding + bubble.width + Sizes.hyprland.gapsOut
@@ -44,27 +42,22 @@ StyledPanel {
     }
 
     function hide() {
-        if (_transitioning && pinned)
+        if (pinned)
             return;
-        _transitioning = true;
         reveal = false;
-        finalizeHide();
-    }
-
-    function reveal_content() {
-        if (_transitioning)
-            return;
-        hoverMode = false;
-        sidebarContent.forceActiveFocus();
-    }
-
-    function finalizeHide() {
-        _transitioning = false;
-        hoverMode = true;
+        // hoverMode = true;
+        sidebarContent.dismiss();
         if (!pinned)
             reset_reveal_conditions();
     }
 
+    function reveal_content() {
+        hoverMode = false;
+        sidebarContent.forceActiveFocus();
+    }
+    function close_aux() {
+        sidebarContent.closeAux();
+    }
     function reset_reveal_conditions() {
         root.reveal = Qt.binding(() => root.revealCondition);
     }
@@ -136,10 +129,7 @@ StyledPanel {
 
             Content {
                 id: sidebarContent
-                rightMode: root.rightMode
                 panelWindow: root
-                showContent: reveal
-                pinned: root.pinned
             }
 
             Behavior on anchors.leftMargin {
@@ -233,18 +223,10 @@ StyledPanel {
         value: root
     }
 
-    Connections {
-        target: sidebarContent
-
-        function onRequestPin() {
-            root.pinned = !root.pinned;
-        }
-    }
-
     IpcHandler {
         target: "sidebar"
         function reveal_aux(cat: string) {
-            sidebarContent.auxReveal(cat);
+            sidebarContent.toggleAux(cat);
         }
         function reveal(cat: string) {
             sidebarContent.changeContent(cat);

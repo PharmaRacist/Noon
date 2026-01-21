@@ -60,13 +60,13 @@ Scope {
         debounceTimer.restart();
     }
     Connections {
-        target:Mem.options.bar
+        target: Mem.options.bar
 
-        function onCurrentLayoutChanged(){
-            debounceTimer.restart()
+        function onCurrentLayoutChanged() {
+            debounceTimer.restart();
         }
-        function onVerticalLayoutChanged(){
-            debounceTimer.restart()
+        function onCurrentVerticalLayoutChanged() {
+            debounceTimer.restart();
         }
     }
     onVerticalChanged: updateModels()
@@ -154,13 +154,11 @@ Scope {
                     // Unified layout loader
                     Loader {
                         id: layoutLoader
-                        asynchronous:true
+                        asynchronous: true
                         anchors.fill: parent
                         sourceComponent: vertical ? bar.verticalLayoutComponents[bar.verticalLayout] : bar.horizontalLayoutComponents[bar.horizontalLayout]
-                        onLoaded: {
-                            if (item)
-                                item.barRoot = barRoot;
-                        }
+                        onLoaded: if (item)
+                            item.barRoot = barRoot
                     }
 
                     // Smooth transitions for margins

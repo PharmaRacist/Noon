@@ -1,12 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Noon
 import QtWebEngine
 import qs.common
 import qs.common.widgets
 import qs.common.functions
 import qs.services
-import Noon
 
 StyledRect {
     id: root
@@ -14,43 +14,54 @@ StyledRect {
     radius: Rounding.verylarge
     anchors.fill: parent
     clip: true
-
+    property alias web_view: view
     property string searchQuery
-
+    property bool obsolete: false
     onSearchQueryChanged: view.url = Mem.options.networking.searchPrefix + searchQuery
-    Component.onCompleted: {
-        AddBlocker.filePath = FileUtils.trimFileProtocol(Directories.assets) + "/addlist.txt";
-        WebEngine.settings.forceDarkMode = true;
-        WebEngine.settings.hyperlinkAuditingEnabled = true;
-        WebEngine.settings.javascriptCanAccessClipboard = true;
-        WebEngine.settings.localStorageEnabled = true;
-        WebEngine.settings.navigateOnDropEnabled = true;
-        WebEngine.settings.pdfViewerEnabled = true;
-        WebEngine.settings.pluginsEnabled = true;
-        WebEngine.settings.showScrollBars = false;
-        WebEngine.settings.spatialNavigationEnabled = true;
-        WebEngine.settings.touchIconsEnabled = true;
-        WebEngine.settings.webGLEnabled = true;
-        WebEngine.settings.webRTCPublicInterfacesOnly = true;
-        WebEngine.settings.accelerated2dCanvasEnabled = true;
-        WebEngine.settings.allowWindowActivationFromJavaScript = true;
-        WebEngine.settings.defaultTextEncoding = "utf-8";
-        WebEngine.settings.dnsPrefetchEnabled = true;
-        WebEngine.settings.errorPageEnabled = true;
-        WebEngine.settings.focusOnNavigationEnabled = true;
-        WebEngine.settings.fullScreenSupportEnabled = true;
-    }
+    focus: true
 
-    WebEngineProfile {
+    Component.onCompleted: {
+        WebEngine.settings.localStorageEnabled = true;
+        WebEngine.settings.focusOnNavigationEnabled = true;
+        WebEngine.settings.dnsPrefetchEnabled = true;
+        // WebEngine.settings.errorPageEnabled = true;
+        // WebEngine.settings.fullScreenSupportEnabled = true;
+        // WebEngine.settings.defaultTextEncoding = "utf-8";
+        // WebEngine.settings.hyperlinkAuditingEnabled = true;
+        // WebEngine.settings.pdfViewerEnabled = true;
+        // WebEngine.settings.touchIconsEnabled = true;
+        // WebEngine.settings.pluginsEnabled = true;
+        // WebEngine.settings.allowWindowActivationFromJavaScript = true;
+        // WebEngine.settings.javascriptCanAccessClipboard = true;
+        // WebEngine.settings.webRTCPublicInterfacesOnly = true;
+        WebEngine.settings.navigateOnDropEnabled = true;
+        WebEngine.settings.spatialNavigationEnabled = true;
+        WebEngine.settings.webGLEnabled = true;
+        WebEngine.settings.accelerated2dCanvasEnabled = true;
+        if (Colors.m3.darkmode)
+            WebEngine.settings.forceDarkMode = true;
+    }
+    WebEngineProfilePrototype {
         id: webProfile
-        storageName: "NoonWebBrowser"
-        offTheRecord: false
-        downloadPath: Directories.standard.downloads
-        spellCheckEnabled: false
-        persistentPermissionsPolicy: WebEngineProfile.StoreOnDisk
-        persistentCookiesPolicy: WebEngineProfile.AllowPersistentCookies
         httpCacheType: WebEngineProfile.DiskHttpCache
-        httpUserAgent: Mem.options.networking.userAgent
+        persistentCookiesPolicy: WebEngineProfile.AllowPersistentCookies
+        persistentPermissionsPolicy: WebEngineProfile.AskEveryTime
+        storageName: "NoonWebBrowser"
+    }
+    function handleAddBlocker() {
+        AddBlocker.filePath = FileUtils.trimFileProtocol(Directories.assets) + "/addlist.txt";
+        view.userScripts.collection = [
+            {
+                name: "AdHider",
+                injectionPoint: WebEngineScript.DocumentReady,
+                worldId: WebEngineScript.MainWorld,
+                sourceCode: "(function() {
+                                let style = document.createElement('style');
+                                style.textContent = '" + AddBlocker.getElementHidingStyles() + "';
+                                document.head.appendChild(style);
+                            })();"
+            }
+        ];
     }
 
     ColumnLayout {
@@ -58,25 +69,10 @@ StyledRect {
 
         WebEngineView {
             id: view
-            zoomFactor: 1.15
             Layout.fillWidth: true
             Layout.fillHeight: true
             url: Mem.states.sidebar.web.currentUrl || Mem.options.sidebar.web.landingUrl
             profile: webProfile
-            Component.onCompleted: {
-                view.userScripts.collection = [
-                    {
-                        name: "AdHider",
-                        injectionPoint: WebEngineScript.DocumentReady,
-                        worldId: WebEngineScript.MainWorld,
-                        sourceCode: "(function() {
-                                    let style = document.createElement('style');
-                                    style.textContent = '" + AddBlocker.getElementHidingStyles() + "';
-                                    document.head.appendChild(style);
-                                })();"
-                    }
-                ];
-            }
         }
 
         StyledIndeterminateProgressBar {
@@ -84,7 +80,7 @@ StyledRect {
             Layout.fillWidth: true
         }
     }
-
+    WebBrowserBottomDialog {}
     Binding {
         target: Mem.states.sidebar.web
         property: "currentUrl"

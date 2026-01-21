@@ -25,8 +25,14 @@ RippleButton {
         font.pixelSize: root.implicitSize / 2
         anchors.centerIn: parent
         text: materialIcon
-        color: colors.colOnSecondaryContainer
+        color: {
+            if (root.toggled)
+                colors.colOnPrimary;
+            else if (root.containsMouse)
+                colors.colOnLayer1Hover;
+            else
+                colors.colOnLayer1;
+        }
         fill: materialIconFill ? 1 : 0
     }
-
 }

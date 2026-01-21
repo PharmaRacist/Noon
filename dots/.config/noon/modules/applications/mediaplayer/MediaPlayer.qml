@@ -10,8 +10,8 @@ ApplicationSkeleton {
         window: root
     }
 
-    sidebarContentItem: MediaPlayerList {
-        expanded: root.expandSidebar
+    secondary_content_item: MediaPlayerList {
+        expanded: root.sidebar_expanded
         onPlay: filePath => {
             if (root.contentLoaderItem) {
                 root.contentLoaderItem.play(filePath);

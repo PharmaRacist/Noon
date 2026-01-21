@@ -12,7 +12,7 @@ StyledRect {
     id: root
 
     color: Colors.colLayer1
-    radius: Rounding.verylarge
+    radius: Rounding.huge
     anchors.margins: Padding.normal
     clip: false
 
@@ -24,20 +24,9 @@ StyledRect {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: statusRow.top
-        anchors.bottomMargin: 5
+        anchors.margins: Padding.normal
         layer.enabled: true
         popup: false
-
-        layer.effect: OpacityMask {
-
-            maskSource: Rectangle {
-                width: listview.width
-                height: listview.height
-                radius: Rounding.normal
-            }
-
-        }
-
     }
 
     // Placeholder when list is empty
@@ -53,11 +42,8 @@ StyledRect {
         }
 
         Behavior on opacity {
-            Anim {
-            }
-
+            Anim {}
         }
-
     }
 
     Item {
@@ -66,26 +52,23 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+        anchors.margins: Padding.small
         Layout.fillWidth: true
         implicitHeight: Math.max(controls.implicitHeight, statusText.implicitHeight)
 
         StyledText {
             id: statusText
-
+            anchors.bottom: parent.bottom
             anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 10
+            anchors.margins: Padding.huge
             horizontalAlignment: Text.AlignHCenter
             text: `${Notifications.list.length} notifications`
             opacity: Notifications.list.length > 0 ? 1 : 0
             visible: opacity > 0
 
             Behavior on opacity {
-                Anim {
-                }
-
+                Anim {}
             }
-
         }
 
         ButtonGroup {
@@ -112,9 +95,6 @@ StyledRect {
                     Notifications.discardAllNotifications();
                 }
             }
-
         }
-
     }
-
 }

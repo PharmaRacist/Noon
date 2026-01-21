@@ -8,6 +8,7 @@ Item {
 
     property bool shown: true
     property alias icon: shapeWidget.text
+    property alias shapePadding:shapeWidget.padding
     property alias title: widgetNameText.text
     property alias description: widgetDescriptionText.text
     property alias shape: shapeWidget.shape

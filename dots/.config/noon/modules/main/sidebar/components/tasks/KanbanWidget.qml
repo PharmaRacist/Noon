@@ -10,52 +10,50 @@ import qs.services
 Item {
     id: root
 
-    property bool quarters: false
-    property bool showAddDialog: false
-    property bool showAddButton: true
+    property bool expanded: false
     property int editIndex: -1
-    property int fabSize: 48
-    property int fabMargins: 14
-    property bool requestDockShow: false
-    property bool showHeader: false
-    property int dialogMargins: 20
     // Column configuration model
-    readonly property var columnConfigs: [{
-        "show": true,
-        "status": TodoService.status_todo,
-        "shape": MaterialShape.Cookie4Sided,
-        "icon": "timer",
-        "title": qsTr("Todo tasks"),
-        "model": todoTasksModel
-    }, {
-        "show": root.quarters,
-        "status": TodoService.status_in_progress,
-        "shape": MaterialShape.Ghostish,
-        "icon": "hourglass_empty",
-        "title": qsTr("In progress tasks"),
-        "model": inProgressTasksModel
-    }, {
-        "show": root.quarters,
-        "status": TodoService.status_final_touches,
-        "shape": MaterialShape.Slanted,
-        "icon": "build",
-        "title": qsTr("Final touches"),
-        "model": finalTouchesTasksModel
-    }, {
-        "show": true,
-        "status": TodoService.status_done,
-        "shape": MaterialShape.Cookie7Sided,
-        "icon": "check_circle",
-        "title": qsTr("Completed tasks"),
-        "model": doneTasksModel
-    }]
+    readonly property var columnConfigs: [
+        {
+            "show": true,
+            "status": TodoService.status_todo,
+            "shape": MaterialShape.Cookie4Sided,
+            "icon": "timer",
+            "title": qsTr("Todo tasks"),
+            "model": todoTasksModel
+        },
+        {
+            "show": root.expanded,
+            "status": TodoService.status_in_progress,
+            "shape": MaterialShape.Ghostish,
+            "icon": "hourglass_empty",
+            "title": qsTr("In progress tasks"),
+            "model": inProgressTasksModel
+        },
+        {
+            "show": root.expanded,
+            "status": TodoService.status_final_touches,
+            "shape": MaterialShape.Slanted,
+            "icon": "build",
+            "title": qsTr("Final touches"),
+            "model": finalTouchesTasksModel
+        },
+        {
+            "show": true,
+            "status": TodoService.status_done,
+            "shape": MaterialShape.Cookie7Sided,
+            "icon": "check_circle",
+            "title": qsTr("Completed tasks"),
+            "model": doneTasksModel
+        }
+    ]
     // Backward compatibility aliases
     readonly property var todoColumn: getColumnByStatus(TodoService.status_todo)
     readonly property var inProgressColumn: getColumnByStatus(TodoService.status_in_progress)
     readonly property var finalTouchesColumn: getColumnByStatus(TodoService.status_final_touches)
     readonly property var doneColumn: getColumnByStatus(TodoService.status_done)
 
-    signal requestReveal()
+    signal requestReveal
 
     function updateTaskModels() {
         todoTasksModel.clear();
@@ -89,7 +87,7 @@ Item {
 
     function syncModelsToTodo() {
         var newList = [];
-        const appendModel = (m) => {
+        const appendModel = m => {
             for (var i = 0; i < m.count; i++) {
                 var it = m.get(i);
                 newList.push({
@@ -160,7 +158,6 @@ Item {
             var item = columnRepeater.itemAt(i);
             if (item && item.targetStatus === status)
                 return item;
-
         }
         return null;
     }
@@ -236,7 +233,7 @@ Item {
         }
         thirdAction: () => {
             if (editMode)
-                return ;
+                return;
 
             thirdBgColor = Colors.m3.m3success;
             successTimer.running = true;
@@ -248,14 +245,14 @@ Item {
                 root.editIndex = -1;
                 commandBar.searchToggled = false;
                 timerMode = false;
-                return ;
+                return;
             }
             timerMode = !timerMode;
             commandBar.searchToggled = !commandBar.searchToggled;
         }
         secondPressHoldAction: () => {
             if (editMode)
-                return ;
+                return;
 
             root.requestReveal();
         }
@@ -264,10 +261,9 @@ Item {
             // The searchAction will handle the actual save
 
             if (editMode)
-                return ;
-
+                return;
         }
-        searchAction: (text) => {
+        searchAction: text => {
             if (editMode) {
                 // Save edit
                 if (text.length > 0 && root.editIndex >= 0) {
@@ -278,13 +274,13 @@ Item {
                 root.editIndex = -1;
                 timerMode = false;
                 text = "";
-                return ;
+                return;
             }
             if (!timerMode) {
                 TodoService.addTask(text);
                 updateTaskModels();
                 text = "";
-                return ;
+                return;
             }
             const duration = TimerService.parseTimeString(text);
             if (duration > 0) {
@@ -307,7 +303,7 @@ Item {
                     // Open the search field first
                     commandBar.searchToggled = true;
                     // Try multiple approaches to set the text value
-                    Qt.callLater(function() {
+                    Qt.callLater(function () {
                         // Try different property names
                         if (commandBar.hasOwnProperty('searchText'))
                             commandBar.searchText = taskContent;
@@ -351,7 +347,6 @@ Item {
             right: parent.right
             margins: 30
         }
-
     }
 
     GridLayout {
@@ -363,8 +358,8 @@ Item {
         anchors.fill: parent
         columnSpacing: 10
         rowSpacing: 10
-        columns: quarters ? 2 : 1
-        rows: quarters ? 2 : 2
+        columns: expanded ? 2 : 1
+        rows: expanded ? 2 : 2
 
         Repeater {
             id: columnRepeater
@@ -394,18 +389,16 @@ Item {
                 shape: modelData.shape
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                listBottomPadding: root.fabSize + root.fabMargins * 2
+                listBottomPadding: 32 + Padding.massive
                 emptyPlaceholderIcon: modelData.icon
                 emptyPlaceholderText: modelData.title
                 targetStatus: modelData.status
                 taskListModel: modelData.model
-                onEditRequested: function(idx, currentContent) {
+                onEditRequested: function (idx, currentContent) {
                     root.editIndex = idx;
                 }
             }
-
         }
-
     }
 
     StyledRectangularShadow {
@@ -417,9 +410,9 @@ Item {
     TimerItem {
         id: timers
 
-        extraVisibleCondition: quarters
+        extraVisibleCondition: expanded
         anchors.bottom: parent.bottom
-        anchors.margins: root.fabMargins
+        anchors.margins: Padding.massive
         anchors.left: parent.left
     }
 
@@ -495,7 +488,6 @@ Item {
                             color: Colors.colPrimary
                             opacity: 0.5
                         }
-
                     }
 
                     StyledText {
@@ -517,17 +509,12 @@ Item {
                         opacity: taskData.status === TodoService.status_done ? 0.3 : 0.45
                         font.pixelSize: 11
                     }
-
                 }
 
                 Item {
                     Layout.fillWidth: true
                 }
-
             }
-
         }
-
     }
-
 }

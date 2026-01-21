@@ -8,8 +8,8 @@ ApplicationSkeleton {
     contentItem: EditorPreview {
         window: root
     }
-    sidebarContentItem: EditorList {
-        expanded: root.expandSidebar
+    secondary_content_item: EditorList {
+        expanded: root.sidebar_expanded
         onEdit: filePath => {
             if (root.contentLoaderItem) {
                 root.contentLoaderItem.edit(filePath);

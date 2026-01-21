@@ -5,6 +5,7 @@ import qs.common
 import qs.common.functions
 import qs.common.widgets
 import qs.services
+import qs.store
 
 StyledRect {
     id: root
@@ -23,36 +24,11 @@ StyledRect {
         }
     }
 
-    ScriptModel {
-        id: bookmarkModel
-        values: {
-            const bookmarks = FirefoxBookmarksService.bookmarks || [];
-            const mapped = bookmarks.map(b => ({
-                        name: b.title || "Untitled",
-                        url: b.url,
-                        icon: b.favicon_local || b.favicon_url || "bookmark",
-                        isLocalIcon: !!(b.favicon_local || b.favicon_url),
-                        type: qsTr("Bookmark")
-                    }));
-
-            const query = root.searchQuery.trim();
-            if (!query)
-                return mapped;
-
-            const results = Fuzzy.go(query, mapped, {
-                keys: ['name', 'url'],
-                threshold: -10000,
-                limit: 50
-            });
-            return results.map(r => r.obj);
-        }
-    }
-
     StyledListView {
         id: listView
         anchors.fill: parent
         anchors.margins: Padding.normal
-        model: bookmarkModel
+        model: Models.bookmarkModel
         spacing: Padding.small
         currentIndex: -1
 

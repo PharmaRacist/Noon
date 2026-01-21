@@ -460,8 +460,8 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
             id: inputWrapper
             property real spacing: 5
             Layout.fillWidth: true
-            radius: Rounding.normal - root.padding
-            color: Colors.colLayer2
+            radius: Rounding.verylarge - root.padding
+            color: Colors.colLayer1
             implicitHeight: Math.max(inputFieldRowLayout.implicitHeight + inputFieldRowLayout.anchors.topMargin + commandButtonsRow.implicitHeight + commandButtonsRow.anchors.bottomMargin + spacing, 45) + (attachedFileIndicator.implicitHeight + spacing + attachedFileIndicator.anchors.topMargin)
             clip: true
 

@@ -25,5 +25,4 @@ TextField {
         color: Colors.colLayer1
         radius: Rounding.full
     }
-
 }

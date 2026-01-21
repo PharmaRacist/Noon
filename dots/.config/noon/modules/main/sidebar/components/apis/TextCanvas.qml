@@ -20,12 +20,12 @@ Rectangle {
     readonly property string displayedText: isInput ? inputLoader.item.text : root.text.length > 0 ? outputLoader.item.text : ""
     default property alias actionButtons: actions.data
 
-    signal inputTextChanged() // Signal emitted when text changes
+    signal inputTextChanged // Signal emitted when text changes
 
     Layout.fillWidth: true
     implicitHeight: Math.max(100, inputColumn.implicitHeight)
     color: isInput ? Colors.colLayer1 : Colors.colSurfaceContainer
-    radius: Rounding.verylarge - 5
+    radius: Rounding.verylarge
 
     ColumnLayout {
         id: inputColumn
@@ -54,7 +54,6 @@ Rectangle {
                 background: null
                 onTextChanged: root.inputTextChanged()
             }
-
         }
 
         Loader {
@@ -74,7 +73,6 @@ Rectangle {
                 color: root.text.length > 0 ? Colors.colOnLayer1 : Colors.colSubtext
                 text: root.text.length > 0 ? root.text : root.placeholderText
             }
-
         }
 
         Item {
@@ -97,7 +95,6 @@ Rectangle {
                     color: Colors.colOnLayer1
                     font.pixelSize: Fonts.sizes.verysmall
                 }
-
             }
 
             Item {
@@ -107,9 +104,6 @@ Rectangle {
             ButtonGroup {
                 id: actions
             }
-
         }
-
     }
-
 }

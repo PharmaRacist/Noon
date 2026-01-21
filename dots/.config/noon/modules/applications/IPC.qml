@@ -10,9 +10,13 @@ Scope {
         id: ipc
         target: "apps"
 
+        function noon_view_pdf(): void {
+            GlobalStates.applications.reader.show = true;
+        // Mem.states.applications.reader.currentFile = file;
+        }
         function noon_edit(file: string): void {
+            GlobalStates.applications.editor.currentFile = file;
             open_editor();
-            GlobalStates.applications.editor.currentFile = Qt.resolvedUrl(FileUtils.handleTelda(file));
         }
         function open_editor() {
             GlobalStates.applications.editor.show = true;

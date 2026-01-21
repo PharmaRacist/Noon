@@ -9,6 +9,7 @@ PanelWindow {
     property string shell: "noon"
     required property string name
     property bool kbFocus: false
+    reloadableId: name
 
     color: "transparent"
     exclusiveZone: 0

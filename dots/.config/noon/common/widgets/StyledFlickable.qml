@@ -8,23 +8,20 @@ Flickable {
     property real touchpadScrollFactor: Mem.options.interactions.scrolling.touchpadScrollFactor ?? 100
     property real mouseScrollFactor: Mem.options.interactions.scrolling.mouseScrollFactor ?? 50
     property real mouseScrollDeltaThreshold: Mem.options.interactions.scrolling.mouseScrollDeltaThreshold ?? 120
-    // Accumulated scroll destination so wheel deltas stack while animating
     property real scrollTargetY: 0
 
     maximumFlickVelocity: 1000
     boundsBehavior: Flickable.StopAtBounds
-    // Keep target synced when not animating (e.g., drag/flick or programmatic changes)
     onContentYChanged: {
         if (!scrollAnim.running)
             root.scrollTargetY = root.contentY;
-
     }
 
     MouseArea {
         visible: Mem.options.interactions.scrolling.fasterTouchpadScroll
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
-        onWheel: function(wheelEvent) {
+        onWheel: function (wheelEvent) {
             const delta = wheelEvent.angleDelta.y / root.mouseScrollDeltaThreshold;
             // The angleDelta.y of a touchpad is usually small and continuous,
             // while that of a mouse wheel is typically in multiples of ±120.
@@ -38,8 +35,7 @@ Flickable {
         }
     }
 
-    ScrollBar.vertical: StyledScrollBar {
-    }
+    ScrollBar.vertical: StyledScrollBar {}
 
     Behavior on contentY {
         Anim {
@@ -49,7 +45,5 @@ Flickable {
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
-
     }
-
 }

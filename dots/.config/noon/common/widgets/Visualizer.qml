@@ -2,6 +2,7 @@ import Noon
 import QtQuick
 import qs.common
 import qs.common.utils
+import qs.common.functions
 import qs.common.widgets
 import qs.services
 import Quickshell

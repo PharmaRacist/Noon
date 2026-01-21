@@ -11,21 +11,21 @@ Singleton {
     id: root
     property Component aiModelComponent: Ai.aiModelComponent
     property Component aiMessageComponent: Ai.aiMessageComponent
-
-    property var promptSubstitutions: {
-        "{DISTRO}": SysInfoService.distroName,
-        "{DATETIME}": `${DateTimeService.time}, ${DateTimeService.collapsedCalendarFormat}`,
-        "{WINDOWCLASS}": `${ToplevelManager.activeToplevel?.appId} ${ToplevelManager.activeToplevel?.title}` ?? "Unknown",
-        "{DE}": `${SysInfoService.desktopEnvironment} (${SysInfoService.windowingSystem})`,
-        "{TASKS}": TodoService.formatTasks(),
-        "{TIMERS}": TimerService.formatTimers(),
-        "{USER}": SysInfoService.username,
-        "{LOCATION}": Mem.options.services.location,
-        "{NOTES}": NotesService.content,
-        "{PLAYING}": `title:${BeatsService.title}  artist:${BeatsService.artist}`,
-        "{WEATHER}": WeatherService.weatherData.currentTemp,
-        "{ALARMS}": Mem.timers.alarms
-    }
+    property var promptSubstitutions: ({
+            "{DISTRO}": Mem.options.ai.context.distro ? SysInfoService.distroName : "",
+            "{DATETIME}": Mem.options.ai.context.datetime ? `${DateTimeService.time}, ${DateTimeService.collapsedCalendarFormat}` : "",
+            "{WINDOWCLASS}": Mem.options.ai.context.windowclass ? `${ToplevelManager.activeToplevel?.appId} ${ToplevelManager.activeToplevel?.title}` ?? "Unknown" : "",
+            "{DE}": Mem.options.ai.context.desktopEnvironment ? `${SysInfoService.desktopEnvironment} (${SysInfoService.windowingSystem})` : "",
+            "{TASKS}": Mem.options.ai.context.tasks ? TodoService.formatTasks() : "",
+            "{TIMERS}": Mem.options.ai.context.timers ? TimerService.formatTimers() : "",
+            "{USER}": Mem.options.ai.context.user ? SysInfoService.username : "",
+            "{LOCATION}": Mem.options.ai.context.location ? Mem.options.services.location : "",
+            "{NOTES}": Mem.options.ai.context.notes ? NotesService.content : "",
+            "{PLAYING}": Mem.options.ai.context.playing ? `title:${BeatsService.title}  artist:${BeatsService.artist}` : "",
+            "{WEATHER}": Mem.options.ai.context.weather ? WeatherService.weatherData.currentTemp : "",
+            "{PDF}": Mem.options.ai.context.weather ? WeatherService.weatherData.pdf : "",
+            "{ALARMS}": Mem.options.ai.context.alarms ? Mem.timers.alarms : ""
+        })
     property var tools: {
         "gemini": {
             "functions": [
@@ -54,7 +54,11 @@ Singleton {
                                 "required": ["name", "time"]
                             }
                         },
-
+                        // PDF TOOLS
+                        {
+                            "name": "summarize_pdf",
+                            "description": "Summarize The Open PDF in the APP"
+                        },
                         // Timers
                         {
                             "name": "get_timers",
@@ -271,6 +275,17 @@ Singleton {
         },
         "openai": {
             "functions": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "summarize_pdf",
+                        "description": "Summarize The Open PDF in the APP",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                },
                 {
                     "type": "function",
                     "function": {

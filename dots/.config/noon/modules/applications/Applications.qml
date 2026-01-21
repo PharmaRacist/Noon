@@ -4,14 +4,19 @@ import qs.common
 import qs.common.utils
 import "mediaplayer"
 import "editor"
+import "reader"
 
 Scope {
     WidgetLoader {
-        enabled: GlobalStates.applications.mediaplayer.show
+        active: GlobalStates.applications.mediaplayer.show
         MediaPlayer {}
     }
     WidgetLoader {
-        enabled: GlobalStates.applications.editor.show
+        // active: GlobalStates.applications.reader.show
+        PDFReader {}
+    }
+    WidgetLoader {
+        active: GlobalStates.applications.editor.show
         Editor {}
     }
     IPC {}

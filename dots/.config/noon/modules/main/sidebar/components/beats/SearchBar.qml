@@ -54,7 +54,6 @@ StyledRect {
                 family: Fonts.family.main
                 pixelSize: Fonts.sizes.small
             }
-
         }
 
         RippleButton {
@@ -65,11 +64,9 @@ StyledRect {
             colBackground: "transparent"
             releaseAction: () => {
                 searchInput.clear();
-                if (!isAux)
-                    Qt.callLater(() => {
+                Qt.callLater(() => {
                     return searchInput.forceActiveFocus();
                 });
-
             }
 
             Symbol {
@@ -78,15 +75,10 @@ StyledRect {
                 text: "close"
                 color: Colors.m3.m3onSurfaceVariant
             }
-
         }
-
     }
 
     Behavior on Layout.preferredHeight {
-        Anim {
-        }
-
+        Anim {}
     }
-
 }

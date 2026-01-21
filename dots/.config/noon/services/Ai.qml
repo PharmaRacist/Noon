@@ -324,6 +324,20 @@ Singleton {
         root.addMessage(qsTr("Temperature: %1").arg(root.temperature), Ai.interfaceRole);
     }
 
+    Connections {
+        target: PDFService
+        function onTextReady(text) {
+            root.sendStealthMessage(qsTr(Mem.options.ai.summaryPrompt + "\n\n```txt\n%1\n```").arg(text));
+        }
+    }
+    function summarizePDF(pdf = Mem.states.applications.reader.currentFile) {
+        if (pdf) {
+            PDFService.extract(pdf);
+        } else {
+            Ai.addMessage(qsTr("No PDF Opened"), Ai.interfaceRole);
+        }
+    }
+
     function clearMessages() {
         root.messageIDs = [];
         root.messageByID = ({});
@@ -483,6 +497,24 @@ Singleton {
         for (let i = root.messageIDs.length - 1; i >= messageIndex; i--) {
             root.removeMessage(i);
         }
+        requester.makeRequest();
+    }
+    function sendStealthMessage(message) {
+        if (message.length === 0)
+            return;
+
+        const aiMessage = aiMessageComponent.createObject(root, {
+            "role": "user",
+            "content": message,
+            "rawContent": message,
+            "thinking": false,
+            "done": true,
+            "visibleToUser": false
+        });
+        const id = idForMessage(aiMessage);
+        root.messageIDs = [...root.messageIDs, id];
+        root.messageByID[id] = aiMessage;
+
         requester.makeRequest();
     }
 
@@ -724,6 +756,9 @@ Singleton {
             TimerService.removeTimer(args.timer_id);
             addFunctionOutputMessage("delete_timer", qsTr("Timer %1 deleted: %2").arg(args.timer_id).arg(timerName));
             requester.makeRequest();
+        },
+        "summarize_pdf": function () {
+            summarizePDF();
         },
         "search_online_inbrowser": function (args, message) {
             if (!args.query || args.query.trim().length === 0) {

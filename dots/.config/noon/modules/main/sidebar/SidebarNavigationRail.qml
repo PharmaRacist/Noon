@@ -5,49 +5,39 @@ import qs.common.widgets
 import qs.services
 import qs.store
 
-StyledRect {
+Item {
     id: navContainer
 
     required property string selectedCategory
-    property QtObject colors: Colors
-
-    implicitWidth: SidebarData.sizePresets.bar - Padding.large
-    color: "transparent"
+    required property QtObject colors
     Layout.fillHeight: true
+    Layout.minimumWidth: childrenRect.width
+    implicitWidth: childrenRect.width
 
     NavigationRail {
         id: navRail
-
-        // Reactive property to toggle titles based on memory settings
-        property bool sleek: !Mem.options.sidebar.appearance.showNavTitles
-
         anchors.centerIn: parent
-        implicitWidth: navContainer.implicitWidth
+        implicitWidth: SidebarData.sizePresets.bar
         expanded: false
         spacing: sleek ? Padding.small : Padding.large
+        readonly property bool sleek: !Mem.options.sidebar.appearance.showNavTitles
 
         Repeater {
-            // Using the new reactive enabledCategories list
             model: SidebarData.enabledCategories
 
             NavigationRailButton {
                 required property int index
-                required property string modelData // This is the Category ID string
-
-                // UI Properties
+                required property string modelData
                 showText: !navRail.sleek
                 fontSize: baseSize / 3.5
-                baseSize: navContainer.implicitWidth
-                implicitWidth: navContainer.implicitWidth
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                baseSize: navRail.implicitWidth * 0.75
+                implicitWidth: navRail.implicitWidth
 
-                // Logic
-                toggled: navContainer.selectedCategory === modelData && root.showContent
+                toggled: (navContainer.selectedCategory === modelData)
                 buttonIcon: SidebarData.getIcon(modelData)
-
-                // Get the 'name' (e.g., "APIs") instead of the 'id' (e.g., "API")
                 buttonText: SidebarData.getCategory(modelData).name || modelData
-
-                // Coloring
                 highlightColor: navContainer.colors.colSecondaryContainer
                 highlightColorHover: navContainer.colors.colSecondaryContainerHover
                 highlightColorActive: navContainer.colors.colSecondaryContainerActive

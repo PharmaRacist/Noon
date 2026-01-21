@@ -2,6 +2,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
+import qs.common.widgets
 import qs.common.utils
 import qs.common.functions
 import qs.services
@@ -10,18 +11,16 @@ Singleton {
     id: root
 
     property int sidebarWidth
-    property QtObject sizePresets: Sizes.sidebar
-
+    readonly property QtObject sizePresets: Sizes.sidebar
     readonly property var enabledCategories: Object.keys(registry).filter(key => (registry[key].enabled ?? true) && !registry[key].stealth)
-
     readonly property var registry: ({
             "Apps": {
                 icon: "apps",
                 componentPath: "apps/Apps",
                 searchable: true,
                 customSize: sizePresets.quarter,
+                shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.apps
-
             },
             "API": {
                 icon: "neurology",
@@ -29,7 +28,6 @@ Singleton {
                 expandable: true,
                 customSize: sizePresets.half,
                 enabled: Mem.options.sidebar.content.apis
-
             },
             "Web": {
                 icon: "globe",
@@ -37,10 +35,11 @@ Singleton {
                 expandable: true,
                 preExpand: true,
                 async: true,
+                on_accepted_only: true,
                 searchable: true,
+                shape: MaterialShape.Shape.Ghostish,
                 customSize: sizePresets.half,
                 enabled: Mem.options.sidebar.content.web
-
             },
             "Notifs": {
                 icon: "notifications_active",
@@ -53,6 +52,7 @@ Singleton {
                 componentPath: "wallpapers/WallpaperSelector",
                 searchable: true,
                 async: true,
+                shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.wallpapers
             },
             "Gallery": {
@@ -61,6 +61,7 @@ Singleton {
                 expandable: true,
                 customSize: sizePresets.threeQuarter,
                 searchable: true,
+                shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.gallery ?? true
             },
             "Tasks": {
@@ -89,12 +90,13 @@ Singleton {
                 icon: "music_note",
                 componentPath: "beats/Beats",
                 enabled: Mem.options.sidebar.content.beats,
-                colorful: true
+                colors: BeatsService.colors
             },
             "History": {
                 icon: "content_paste",
                 componentPath: "history/History",
                 searchable: true,
+                shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.history
             },
             "Games": {
@@ -102,8 +104,9 @@ Singleton {
                 componentPath: "games/GameLauncher",
                 expandable: true,
                 searchable: true,
+                shape: MaterialShape.Shape.Ghostish,
                 customSize: sizePresets.half - 80,
-                colorful: true,
+                colors: GameLauncherService.colors,
                 enabled: Mem.options.sidebar.content.games
             },
             "Tweaks": {
@@ -112,18 +115,21 @@ Singleton {
                 expandable: true,
                 searchable: true,
                 customSize: sizePresets.threeQuarter,
+                shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.tweaks
             },
             "Bookmarks": {
                 icon: "bookmark",
                 componentPath: "bookmarks/Bookmarks",
                 searchable: true,
+                shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.bookmarks
             },
             "Emojis": {
                 icon: "sentiment_calm",
                 componentPath: "emojis/Emojis",
                 searchable: true,
+                shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.emojis
             },
             "Session": {
@@ -149,6 +155,7 @@ Singleton {
             },
             "Bars": {
                 componentPath: "barSwitcher/BarSwitcher",
+                shape: MaterialShape.Shape.Ghostish,
                 searchable: true,
                 stealth: true
             },
@@ -158,13 +165,17 @@ Singleton {
             }
         })
 
-    // Removed the "Apps" fallback here so it can return undefined
     function _get(id) {
         return registry[id];
     }
-
+    function getColors(id) {
+        return _get(id)?.colors ?? Colors;
+    }
     function getCategory(id) {
         return _get(id);
+    }
+    function getShape(id) {
+        return _get(id)?.shape || "";
     }
     function getIcon(id) {
         return _get(id)?.icon || "";
@@ -172,9 +183,6 @@ Singleton {
     function getComponentPath(id) {
         const c = _get(id);
         return c ? "components/" + c.componentPath + ".qml" : "";
-    }
-    function isColorful(id) {
-        return !!_get(id)?.colorful;
     }
     function isSearchable(id) {
         return !!_get(id)?.searchable;

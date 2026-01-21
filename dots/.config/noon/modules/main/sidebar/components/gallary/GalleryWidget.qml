@@ -13,8 +13,7 @@ Item {
     property var model
     property int columns: root.expanded ? 3 : 2
     property int spacing: 8
-    property string passwordKeyId: "gallery"  // Unique ID for this password in keyring
-
+    property string passwordKeyId: "gallery"
     property bool unlocked: false
     property string storedPassword: KeyringStorage.keyringData?.galleryPassword ?? ""  // Retrieve from keyring
 
@@ -300,8 +299,7 @@ Item {
             scale: mouseArea.pressed ? 0.95 : 1.0
 
             Behavior on scale {
-                Anim {
-                }
+                Anim {}
             }
         }
     }
@@ -319,6 +317,6 @@ Item {
         anchors.fill: parent
         shape: MaterialShape.Arch
         title: "Nothing found"
-        visible: root.model && root.model.count === 0 && root.unlocked
+        shown: root.model.length === 0 && root.unlocked
     }
 }

@@ -5,6 +5,13 @@ import QtQuick
 import Quickshell
 
 JsonAdapter {
+    property JsonObject applications: JsonObject {
+        property JsonObject windowControls: JsonObject {
+            property bool minimize: false
+            property bool maximize: false
+            property bool close: true
+        }
+    }
     property JsonObject appearance: JsonObject {
         property JsonObject animations
         property JsonObject colors
@@ -57,6 +64,7 @@ JsonAdapter {
     }
 
     property JsonObject ai: JsonObject {
+        property string summaryPrompt: "Summarize the following text:"
         property string systemPrompt: "## Style
         - Use Egyptian dilect casual tone,don't change the language by yourself only if the user explicitly asked for , don't be formal! Make sure you answer precisely without hallucination and prefer bullet points over walls of text. You can have a friendly greeting at the beginning of the conversation, but don't repeat the user's question
 
@@ -73,10 +81,26 @@ JsonAdapter {
         - Asked to compare different options? You should firstly use a table to compare the main aspects, then elaborate or include relevant comments from online forums *after* the table. Make sure to provide a final recommendation for the user's use case!
         - Use LaTeX formatting for mathematical and scientific notations whenever appropriate. Enclose all LaTeX '$$' delimiters. NEVER generate LaTeX code in a latex block unless the user explicitly asks for it. DO NOT use LaTeX for regular documents (resumes, letters, essays, CVs, etc.).
         "
+
         property string tool: "search"
         property list<var> extraModels: []
         property string model: "gemini-2.5-flash"
         property real temperature: 0.5
+        property JsonObject context: JsonObject {
+            property bool distro: false
+            property bool datetime: false
+            property bool windowclass: false
+            property bool desktopEnvironment: false
+            property bool tasks: false
+            property bool alarms: false
+            property bool timers: false
+            property bool username: false
+            property bool location: false
+            property bool notes: false
+            property bool currentMedia: false
+            property bool weather: false
+            property bool pdf: false
+        }
     }
 
     property JsonObject audio: JsonObject {
@@ -264,9 +288,9 @@ JsonAdapter {
     }
 
     property JsonObject networking: JsonObject {
-        property string userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-        property string sidebarAgent: "Mozilla/5.0 (Linux; Android 15; SM-S931B Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/127.0.6533.103 Mobile Safari/537.36"
-        property string searchPrefix: "https://www.google.com/search?q="
+        property string userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        property string sidebarAgent: "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.86 Mobile Safari/537.36"
+        property string searchPrefix: "https://duckduckgo.com/?q="
     }
 
     property JsonObject mediaPlayer: JsonObject {
@@ -318,10 +342,12 @@ JsonAdapter {
         }
 
         clock: JsonObject {
+            property bool enabled: false
             property real x: 0
             property real y: 0
             property real scale: 1
             property real spacingMultiplier: 0.3
+
             property bool editMode: false
             property bool verticalMode: false
             property string font: "Badeen Display"
@@ -342,6 +368,8 @@ JsonAdapter {
             property string tilingLayout: "dwindle"
             property int blurPasses: 1
             property bool shadows: true
+            property int shadowsRange: 1
+            property int shadowsPower: 1
             property int gapsOut: 1
             property int gapsIn: 1
             property int borders: 1

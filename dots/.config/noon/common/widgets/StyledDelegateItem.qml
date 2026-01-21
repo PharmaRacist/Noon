@@ -22,7 +22,7 @@ RippleButton {
     property color colSubtext: Colors.colSubtext
     property color colTitle: Colors.colOnLayer2
     property bool expanded: true
-    property int extraRightPadding:0
+    property int extraRightPadding: 0
     property string materialIcon: "music_note"
     width: parent?.width
     implicitHeight: 64
@@ -32,8 +32,9 @@ RippleButton {
     colBackground: colors.colLayer2
     buttonRadius: Rounding.large
     Loader {
-        id:iconLoader
-        sourceComponent:iconSource.length > 0 ? iconComponent : shapeComponent
+        id: iconLoader
+        z: -1
+        sourceComponent: iconSource.length > 0 ? iconComponent : shapeComponent
         anchors {
             left: parent.left
             leftMargin: Padding.huge
@@ -41,19 +42,19 @@ RippleButton {
         }
 
         Component {
-            id:iconComponent
+            id: iconComponent
             Item {
-                implicitWidth:50
-                implicitHeight:50
+                implicitWidth: 50
+                implicitHeight: 50
                 StyledIconImage {
-                    anchors.centerIn:parent
+                    anchors.centerIn: parent
                     implicitSize: 37
-                    source:root.iconSource
+                    source: root.iconSource
                 }
             }
         }
         Component {
-            id:shapeComponent
+            id: shapeComponent
             MaterialShapeWrappedMaterialSymbol {
                 id: m3shape
                 colors: root.colors
@@ -96,8 +97,8 @@ RippleButton {
 
             StyledText {
                 id: title
-                text:root.title
-                Layout.rightMargin:Padding.verylarge
+                text: root.title
+                Layout.rightMargin: Padding.verylarge
                 maximumLineCount: 1
                 wrapMode: TextEdit.Wrap
                 elide: Text.ElideRight
@@ -114,12 +115,12 @@ RippleButton {
 
             StyledText {
                 id: subtext
-                text:root.subtext
+                text: root.subtext
                 Layout.fillWidth: true
                 maximumLineCount: 1
                 wrapMode: TextEdit.Wrap
                 elide: Text.ElideRight
-                Layout.rightMargin:Padding.verylarge
+                Layout.rightMargin: Padding.verylarge
                 horizontalAlignment: Text.AlignLeft
                 font.pixelSize: Fonts.sizes.small
                 color: root.colSubtext

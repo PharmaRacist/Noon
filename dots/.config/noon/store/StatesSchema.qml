@@ -1,6 +1,14 @@
 import qs.common.utils
 
 JsonAdapter {
+    property JsonObject applications: JsonObject {
+        property JsonObject reader: JsonObject {
+            property string currentFile: ""
+            property bool sidebar_expanded: false
+            property bool sidebar_pinned: false
+            property int appearance_mode: 0
+        }
+    }
     property JsonObject desktop: JsonObject {
         property JsonObject icons
         property JsonObject bg
@@ -15,7 +23,7 @@ JsonAdapter {
             property bool isLive: false
             property string currentVideo: ""
             property string currentBg: ""
-            property string currentFolder: "/Pictures/Wallpapers"
+            property string currentFolder: "~/Pictures/Wallpapers"
         }
         appearance: JsonObject {
             property JsonObject colors
