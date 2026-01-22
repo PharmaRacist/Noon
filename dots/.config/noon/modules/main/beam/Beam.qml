@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -199,13 +200,6 @@ Scope {
                 onTriggered: root.hide()
             }
 
-            Timer {
-                id: screenshotProcessTimer
-                interval: Mem.options.hacks.arbitraryRaceConditionDelay
-                property bool autoSend: false
-                onTriggered: processScreenshot(autoSend)
-            }
-
             HyprlandFocusGrab {
                 id: grab
                 windows: [root]
@@ -214,25 +208,31 @@ Scope {
             }
 
             Connections {
-                target: ScreenShotService
-                function onScreenshotCompleted() {
-                    ClipboardService.reload();
-                    screenshotProcessTimer.start();
+                target: ClipboardService
+                enabled: false
+
+                function onEntriesRefreshed() {
+                    attachScreenshot();
                 }
             }
 
-            Connections {
-                target: ClipboardService
-                function onImageDecoded(path) {
-                    if (path && path !== "") {
-                        root.revealSidebar("API");
-                        Ai.attachFile(path);
-                        if (screenshotProcessTimer.autoSend) {
-                            Ai.sendUserMessage("Explain This Briefly");
-                        }
-                    }
+            function takeScreenshot() {
+                ScreenShotService.takeScreenShot();
+            }
+
+            function attachScreenshot() {
+                var img = ClipboardService.getImagePath(0);
+                if (ClipboardService.isImage(img)) {
+                    Ai.attachFile(img);
+                    root.revealSidebar("API");
                 }
             }
+
+            function handleAutoSendScreenshot() {
+                takeScreenshot();
+                Qt.callLater(() => Ai.sendUserMessage("Explain This Briefly"));
+            }
+
             function getSearchSuggestions() {
                 if (FirefoxBookmarksService.bookmarkTitles.length > 0) {
                     for (let i = 0; i < FirefoxBookmarksService.bookmarkTitles.length; i++) {
@@ -281,19 +281,10 @@ Scope {
                     }
                 }
             }
-            function processScreenshot(autoSend) {
-                ClipboardService.getLatestImage();
-            }
 
             function revealSidebar(cat: string) {
                 Mem.states.sidebar.apis.selectedTab = 0;
-                GlobalStates.main.sidebar.hoverMode = false;
-                GlobalStates.main.sidebar.selectedCategory = cat;
-            }
-
-            function handleImage(autoSend = false) {
-                screenshotProcessTimer.autoSend = autoSend;
-                ScreenShotService.takeScreenShot();
+                Noon.callIpc(`sidebar reveal ${cat}`);
             }
 
             function hide() {
@@ -702,7 +693,7 @@ Scope {
 
                                 if (event.modifiers === Qt.ControlModifier) {
                                     if (event.key === Qt.Key_S) {
-                                        root.handleImage(true);
+                                        root.handleAutoSendScreenshot();
                                         event.accepted = true;
                                     }
                                 }
@@ -736,7 +727,7 @@ Scope {
                             RippleButtonWithIcon {
                                 id: osrButton
                                 buttonRadius: root.mainRounding
-                                releaseAction: () => root.handleImage(false)
+                                releaseAction: () => root.takeScreenshot()
                                 materialIcon: "screenshot_region"
                                 implicitSize: bg.height * 0.75
                                 enabled: !ScreenShotService.isBusy

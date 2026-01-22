@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -96,7 +97,7 @@ Item {
             focus: true
             visible: active
             active: selectedCategory !== "Web"
-            asynchronous: _aux || SidebarData.isAsync(category)
+            // asynchronous: _aux || SidebarData.isAsync(category)
             source: SidebarData.getComponentPath(category)
             onLoaded: if (item) {
                 if ("selectedCategory" in item)
@@ -122,7 +123,7 @@ Item {
                 }
 
                 function onDismiss() {
-                    parentRoot.dismiss();
+                    parentRoot.hide();
                 }
             }
 

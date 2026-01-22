@@ -1,4 +1,5 @@
 import QtQuick
+import Noon
 import Quickshell
 import Quickshell.Services.Mpris
 import qs.common
@@ -28,9 +29,6 @@ Scope {
         }
         function clear_clipboard() {
             ClipboardService.wipe();
-        }
-        function update_clipboard() {
-            ClipboardService.reload();
         }
         function refresh_appearance() {
             WallpaperService.refreshTheme();

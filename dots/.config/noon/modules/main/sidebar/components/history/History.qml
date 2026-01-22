@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -21,7 +22,12 @@ StyledRect {
 
     anchors.fill: parent
 
-    // --- Focus Control ---
+    Connections {
+        target: ClipboardService
+        function onEntriesRefreshed() {
+        }
+    }
+
     onContentFocusRequested: {
         if (listView.count > 0) {
             listView.currentIndex = 0;
@@ -29,47 +35,30 @@ StyledRect {
         }
     }
 
+    // Simple filtered model
     ScriptModel {
         id: filteredModel
         values: {
-            const allResults = ClipboardService.entries || [];
-            if (!allResults.length)
+            const entries = ClipboardService?.entries;
+            if (!entries.length)
                 return [];
 
-            const mapped = allResults.map(str => {
-                const id = Number(str.split("\t")[0]);
-                const isImage = ClipboardService.entryIsImage(str);
-                const content = StringUtils.cleanCliphistEntry(str);
-                let displayName = content, imagePath = "";
+            // Create simple data objects
+            let items = [];
+            for (let i = 0; i < entries.length; i++) {
+                items.push({
+                    index: i,
+                    text: entries[i],
+                    isImage: ClipboardService.isImage(i)
+                });
+            }
 
-                if (isImage) {
-                    imagePath = '/tmp/cliphist-' + id + '.png';
-                    displayName = content.split("]]")[1]?.trim() || "Image";
-                }
-
-                return {
-                    cliphistRawString: str,
-                    name: displayName,
-                    searchText: displayName,
-                    icon: isImage ? "image" : "content_paste",
-                    type: isImage ? qsTr("Image") : `#${id}`,
-                    id: id.toString(),
-                    isImage: isImage,
-                    imagePath: imagePath
-                };
-            });
-
-            const query = root.searchQuery.trim();
+            // Filter by search query
+            const query = root.searchQuery.trim().toLowerCase();
             if (!query)
-                return mapped;
+                return items;
 
-            const fuzzyResults = Fuzzy.go(query, mapped, {
-                key: 'searchText',
-                threshold: -10000,
-                limit: 50
-            });
-
-            return fuzzyResults.map(r => r.obj);
+            return items.filter(item => item.text.toLowerCase().includes(query));
         }
     }
 
@@ -84,7 +73,6 @@ StyledRect {
         clip: true
         model: filteredModel
         currentIndex: -1
-
         highlightFollowsCurrentItem: true
         highlightMoveDuration: 150
 
@@ -93,99 +81,104 @@ StyledRect {
             required property int index
             required property var modelData
 
+            width: listView.width
             height: modelData.isImage ? 140 : 70
-            width: listView.width - (modelData.isImage ? Padding.normal : 0)
 
-            activeFocusOnTab: false
-            sourceComponent: modelData.isImage ? imageComponent : textComponent
-            onLoaded: if (item) {
-                item.modelData = Qt.binding(() => loader.modelData);
-                item.index = Qt.binding(() => loader.index);
-                if (item.hasOwnProperty("selected")) {
-                    item.selected = Qt.binding(() => listView.currentIndex === loader.index);
+            sourceComponent: modelData.isImage ? imageDelegate : textDelegate
+
+            property bool isSelected: listView.currentIndex === index
+
+            onLoaded: {
+                if (item) {
+                    item.itemData = Qt.binding(() => loader.modelData);
+                    item.selected = Qt.binding(() => loader.isSelected);
                 }
             }
         }
 
+        // Image delegate
         Component {
-            id: imageComponent
+            id: imageDelegate
+
             StyledRect {
-                property int index
-                property var modelData
+                property var itemData
                 property bool selected: false
-                anchors.fill: parent
+
                 color: selected ? Colors.colSecondaryContainerActive : Colors.colLayer2
                 radius: Rounding.small
                 clip: true
-
                 border.width: selected ? 2 : 0
                 border.color: Colors.colPrimary
 
                 StyledImage {
                     anchors.fill: parent
-                    sourceSize: Qt.size(140, width)
-                    source: Qt.resolvedUrl(modelData.imagePath)
-                    fillMode: Image.PreserveAspectCrop
+                    anchors.margins: 4
+                    source: "file://" + ClipboardService.getImagePath(itemData.index)
+                    fillMode: Image.PreserveAspectFit
                     asynchronous: true
                     cache: false
+
+                    onStatusChanged: {
+                        if (status === Image.Error) {
+                            console.warn("Failed to load image at index:", itemData.index);
+                        }
+                    }
                 }
+
+                // Overlay when selected
                 StyledRect {
                     anchors.fill: parent
+                    visible: selected
                     color: ColorUtils.transparentize(Colors.colPrimaryContainerHover, 0.85)
-                    opacity: selected ? 1 : 0
+
                     MaterialShapeWrappedMaterialSymbol {
-                        z: 9999
-                        color: Colors.colPrimaryContainer
-                        colSymbol: Colors.colOnPrimaryContainer
                         anchors {
                             bottom: parent.bottom
                             right: parent.right
-                            margins: Padding.verylarge
+                            margins: Padding.large
                         }
-                        text: "history"
-                        padding: 16
-                        iconSize: 24
-                    }
-                    StyledText {
-                        anchors {
-                            bottom: parent.bottom
-                            left: parent.left
-                            margins: Padding.verylarge
-                        }
-                        text: modelData.id
+                        color: Colors.colPrimaryContainer
+                        colSymbol: Colors.colOnPrimaryContainer
+                        text: "image"
+                        padding: 12
+                        iconSize: 20
                     }
                 }
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        ClipboardService.copy(modelData.cliphistRawString);
+                        ClipboardService.copy(itemData.index);
+                        Noon.playSound("event_accepted");
                         root.dismiss();
                     }
                 }
             }
         }
 
+        // Text delegate
         Component {
-            id: textComponent
-            StyledDelegateItem {
-                property int index
-                property var modelData
-                property bool selected: false
-                toggled: selected
+            id: textDelegate
 
+            StyledDelegateItem {
+                property var itemData
+                property bool selected: false
+
+                toggled: selected
                 shape: MaterialShape.Shape.Clover4Leaf
-                title: modelData.name
-                subtext: modelData.type
-                materialIcon: "history"
+                title: itemData.text
+                subtext: qsTr("Text")
+                materialIcon: "content_paste"
 
                 releaseAction: () => {
-                    ClipboardService.copy(modelData.cliphistRawString);
+                    ClipboardService.copy(itemData.index);
                     Noon.playSound("event_accepted");
                     root.dismiss();
                 }
             }
         }
 
+        // Keyboard navigation
         Keys.onPressed: event => {
             if (event.key === Qt.Key_Up) {
                 if (currentIndex <= 0) {
@@ -194,23 +187,31 @@ StyledRect {
                 } else {
                     currentIndex--;
                 }
+                event.accepted = true;
             } else if (event.key === Qt.Key_Down) {
                 if (currentIndex < count - 1) {
                     currentIndex++;
                 }
+                event.accepted = true;
             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                if (currentIndex >= 0) {
-                    const selectedData = model.values[currentIndex];
-                    ClipboardService.copy(selectedData.cliphistRawString);
+                if (currentIndex >= 0 && currentIndex < model.values.length) {
+                    ClipboardService.copy(model.values[currentIndex].index);
                     Noon.playSound("event_accepted");
                     root.dismiss();
                 }
+                event.accepted = true;
+            } else if (event.key === Qt.Key_Delete) {
+                if (currentIndex >= 0 && currentIndex < model.values.length) {
+                    ClipboardService.deleteEntry(model.values[currentIndex].index);
+                    if (currentIndex >= count) {
+                        currentIndex = count - 1;
+                    }
+                }
+                event.accepted = true;
             } else if (event.key === Qt.Key_Escape) {
                 root.dismiss();
-            } else
-                return;
-
-            event.accepted = true;
+                event.accepted = true;
+            }
         }
 
         ScrollEdgeFade {
@@ -219,10 +220,11 @@ StyledRect {
         }
     }
 
+    // Empty state
     PagePlaceholder {
         shown: listView.count === 0
-        title: qsTr("No history matches")
-        icon: "history_toggle_off"
+        title: root.searchQuery ? qsTr("No matches found") : qsTr("Clipboard is empty")
+        icon: root.searchQuery ? "search_off" : "content_paste"
         anchors.centerIn: parent
     }
 }

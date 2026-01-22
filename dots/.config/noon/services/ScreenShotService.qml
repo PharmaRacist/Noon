@@ -1,31 +1,27 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common.utils
-pragma Singleton
 
 Singleton {
     id: root
 
-    property bool isBusy: mainProc.running
-    property bool freeze: false
+    readonly property bool isBusy: mainProc.running
 
-    signal screenshotCompleted()
+    signal screenshotCompleted
 
     function takeScreenShot() {
         if (!isBusy)
             mainProc.running = true;
-
     }
 
     Process {
         id: mainProc
 
-        command: ["hyprshot", "--freeze", "--clipboard-only", "--mode", "region", "--silent"]
-        onExited: (exitCode) => {
+        command: ["grimblast", "copy", "area"]
+        onExited: exitCode => {
             if (exitCode === 0)
                 root.screenshotCompleted();
-
         }
     }
-
 }

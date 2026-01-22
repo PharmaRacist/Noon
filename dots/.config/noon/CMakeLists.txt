@@ -11,6 +11,7 @@ find_package(
     WebEngineCore
     WebEngineQuick
     WebView
+    Sql
 )
 qt_standard_project_setup(REQUIRES 6.5)
 add_subdirectory(plugins)

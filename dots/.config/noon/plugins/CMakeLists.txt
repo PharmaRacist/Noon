@@ -11,6 +11,8 @@ qt_add_qml_module(noon
         services/addblocker.cpp
         services/latex.cpp
         services/latex.h
+        services/clipboard.h
+        services/clipboard.cpp
     QML_FILES
 )
 target_include_directories(noon PRIVATE
@@ -23,6 +25,7 @@ target_link_libraries(noon PRIVATE
     Qt6::WebView
     Qt6::WebEngineCore
     Qt6::WebEngineQuick
+    Qt6::Sql
 )
 find_library(MICROTEX_LIBRARY
     NAMES microtex microTeX MicroTeX

@@ -1,4 +1,5 @@
 pragma Singleton
+import Noon
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
