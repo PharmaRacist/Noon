@@ -100,7 +100,7 @@ Singleton {
         list.push(newTask);
         root.list = list.slice(0);
         saveToConfig();
-        Noon.playSound("task_added");
+        NoonUtils.playSound("task_added");
 
         if (syncEnabled) {
             const tempId = "pending_" + Date.now() + "_" + Math.random();
@@ -159,7 +159,7 @@ Singleton {
             list.splice(index, 1);
             root.list = list.slice(0);
             saveToConfig();
-            Noon.playSound("task_completed");
+            NoonUtils.playSound("task_completed");
 
             if (syncEnabled && todoistId)
                 deleteTodoistItem(todoistId);

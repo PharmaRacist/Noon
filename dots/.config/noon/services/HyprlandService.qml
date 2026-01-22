@@ -75,7 +75,7 @@ Singleton {
         }, null);
     }
     function switchKeyboardLayout() {
-        Noon.execDetached("hyprctl switchxkblayout current next");
+        NoonUtils.execDetached("hyprctl switchxkblayout current next");
     }
 
     Connections {

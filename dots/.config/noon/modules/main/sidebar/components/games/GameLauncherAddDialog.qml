@@ -55,7 +55,7 @@ BottomDialog {
             materialIcon: "folder"
             action: () => {
                 executableFileDialog.open();
-                Noon.callIpc("sidebar hide");
+                NoonUtils.callIpc("sidebar hide");
             }
             name: "Path:"
             placeholder: "/path/to/game.exe or /path/to/game"
@@ -66,7 +66,7 @@ BottomDialog {
             materialIcon: "image"
             action: () => {
                 coverImageFileDialog.open();
-                Noon.callIpc("sidebar hide");
+                NoonUtils.callIpc("sidebar hide");
             }
             name: "Cover:"
             placeholder: "/path/to/cover.jpg"
@@ -118,7 +118,7 @@ BottomDialog {
         onAccepted: {
             let filePath = currentFile ? currentFile.toString() : selectedFile.toString();
             pathInput.text = filePath.replace("file://", "");
-            Noon.callIpc("sidebar reveal Games");
+            NoonUtils.callIpc("sidebar reveal Games");
         }
     }
     FileDialog {
@@ -129,7 +129,7 @@ BottomDialog {
         onAccepted: {
             let filePath = currentFile ? currentFile.toString() : selectedFile.toString();
             coverInput.text = filePath.replace("file://", "");
-            Noon.callIpc("sidebar reveal Games");
+            NoonUtils.callIpc("sidebar reveal Games");
         }
     }
     component OptionArea: RowLayout {

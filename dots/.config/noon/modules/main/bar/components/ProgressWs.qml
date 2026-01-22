@@ -34,7 +34,7 @@ Item {
     property int maxWorkspaces: 8
 
     property int workspaceIndexInGroup: (monitor.activeWorkspace?.id - 1) % maxWorkspaces
-    onActiveWindowChanged: if (Mem.options.desktop.hyprland.playSoundOnFocusChanged) Noon.playSound("workspace_changed",0.15)
+    onActiveWindowChanged: if (Mem.options.desktop.hyprland.playSoundOnFocusChanged) NoonUtils.playSound("workspace_changed",0.15)
     // Function to update workspaceOccupied
     function updateWorkspaceOccupied() {
         workspaceOccupied = Array.from({

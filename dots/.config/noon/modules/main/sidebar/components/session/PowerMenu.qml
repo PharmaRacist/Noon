@@ -79,7 +79,7 @@ Item {
                 }
                 
                 releaseAction: () => {
-                    modelData?.command === "" ? Noon.callIpc("global lock") : Noon.execDetached(modelData.command);
+                    modelData?.command === "" ? NoonUtils.callIpc("global lock") : NoonUtils.execDetached(modelData.command);
                 }
             }
         }

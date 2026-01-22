@@ -61,7 +61,7 @@ Singleton {
             ClipboardService.reload();
             AmbientSoundsService.reload();
             HyprlandParserService.reload();
-            Noon.playSound("device_unlocked");
+            NoonUtils.playSound("device_unlocked");
         }
 
         property bool locked: false
@@ -89,7 +89,7 @@ Singleton {
 
         function handle_init() {
             HyprlandParserService.getAll();
-            Noon.playSound("init", "xp");
+            NoonUtils.playSound("init", "xp");
         }
         property bool showRun: false
         property bool showStartMenu: false

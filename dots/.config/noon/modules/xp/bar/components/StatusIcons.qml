@@ -24,7 +24,7 @@ RowLayout {
 
         StyledIconImage {
             anchors.centerIn: parent
-            source: Noon.iconPath("audio-volume-muted")
+            source: NoonUtils.iconPath("audio-volume-muted")
             implicitSize: commonIconSize
         }
     }
@@ -45,7 +45,7 @@ RowLayout {
 
             StyledIconImage {
                 anchors.centerIn: parent
-                source: Noon.iconPath("microphone-sensitivity-muted")
+                source: NoonUtils.iconPath("microphone-sensitivity-muted")
                 implicitSize: commonIconSize
                 mipmap: true
                 smooth: true
@@ -79,7 +79,7 @@ RowLayout {
 
         StyledIconImage {
             anchors.centerIn: parent
-            source: Noon.iconPath(parent.networkIcon)
+            source: NoonUtils.iconPath(parent.networkIcon)
             width: commonIconSize
             height: commonIconSize
         }
@@ -88,7 +88,7 @@ RowLayout {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
-            onClicked: Noon.execDetached(Mem.options.apps.networkEthernet)
+            onClicked: NoonUtils.execDetached(Mem.options.apps.networkEthernet)
         }
     }
 
@@ -110,7 +110,7 @@ RowLayout {
 
         StyledIconImage {
             anchors.centerIn: parent
-            source: Noon.iconPath(parent.bluetoothIcon)
+            source: NoonUtils.iconPath(parent.bluetoothIcon)
             implicitSize: commonIconSize
         }
     }

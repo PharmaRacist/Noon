@@ -15,18 +15,18 @@ Image {
     fillMode: Image.PreserveAspectFit
     source: {
         if (!fileModelData.fileIsDir)
-            return Noon.iconPath("application-x-zerosize");
+            return NoonUtils.iconPath("application-x-zerosize");
 
         if ([Directories.standard.documents, Directories.standard.downloads, Directories.standard.music, Directories.standard.pictures, Directories.standard.videos].some((dir) => {
             return FileUtils.trimFileProtocol(dir) === fileModelData.filePath;
         }))
-            return Noon.iconPath(`folder-${fileModelData.fileName.toLowerCase()}`);
+            return NoonUtils.iconPath(`folder-${fileModelData.fileName.toLowerCase()}`);
 
-        return Noon.iconPath("inode-directory");
+        return NoonUtils.iconPath("inode-directory");
     }
     onStatusChanged: {
         if (status === Image.Error)
-            source = Noon.iconPath("error");
+            source = NoonUtils.iconPath("error");
 
     }
 
@@ -39,7 +39,7 @@ Image {
                 const mime = text.split(";")[0].replace("/", "-");
                 root.source = Images.validImageTypes.some((t) => {
                     return mime === `image-${t}`;
-                }) ? fileModelData.fileUrl : Noon.iconPath(mime);
+                }) ? fileModelData.fileUrl : NoonUtils.iconPath(mime);
             }
         }
 

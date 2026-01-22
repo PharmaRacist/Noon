@@ -44,7 +44,7 @@ StyledRect {
 
             releaseAction: () => {
                 FirefoxBookmarksService.openUrl(modelData.url);
-                Noon.playSound("event_accepted");
+                NoonUtils.playSound("event_accepted");
                 root.dismiss();
             }
         }

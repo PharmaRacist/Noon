@@ -22,7 +22,7 @@ StyledMenu {
             "action": () => {
                 if (fileData && fileData.filePath) {
                     Ai.summarizePDF(fileData.filePath);
-                    Noon.callIpc("sidebar reveal API");
+                    NoonUtils.callIpc("sidebar reveal API");
                 }
             }
         },

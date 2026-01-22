@@ -153,9 +153,9 @@ StyledRect {
                 "text": "Open",
                 "materialIcon": "open_in_new",
                 "action": () => {
-                    Noon.openFile(path);
+                    NoonUtils.openFile(path);
                     if (!GlobalStates.main.sidebar.pinned) {
-                        Noon.callIpc("sidebar hide");
+                        NoonUtils.callIpc("sidebar hide");
                     }
                 }
             },

@@ -184,7 +184,7 @@ BottomDialog {
                     onClicked: {
                         const deviceId = KdeConnectService.selectedDeviceId;
                         KdeConnectService.shareFile(deviceId);
-                        Noon.callIpc("sidebar hide");
+                        NoonUtils.callIpc("sidebar hide");
                     }
                 }
             }

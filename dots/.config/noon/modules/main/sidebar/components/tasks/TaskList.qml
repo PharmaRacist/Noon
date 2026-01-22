@@ -65,21 +65,21 @@ Rectangle {
                     hoverEnabled: true
                     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                     preventStealing: true
-                    onPressed: function(mouse) {
+                    onPressed: function (mouse) {
                         if (mouse.button !== Qt.LeftButton)
-                            return ;
+                            return;
 
                         startPos = Qt.point(mouse.x, mouse.y);
                     }
-                    onPositionChanged: function(mouse) {
+                    onPositionChanged: function (mouse) {
                         if (dragging) {
                             var globalPos = mapToItem(overlay, mouse.x, mouse.y);
                             draggedItem.x = globalPos.x - draggedItem.width / 2;
                             draggedItem.y = globalPos.y - draggedItem.height / 2;
-                            return ;
+                            return;
                         }
                         if (!pressed)
-                            return ;
+                            return;
 
                         var delta = Qt.point(mouse.x - startPos.x, mouse.y - startPos.y);
                         if (Math.abs(delta.x) > 10 || Math.abs(delta.y) > 10) {
@@ -102,11 +102,11 @@ Rectangle {
                             });
                         }
                     }
-                    onReleased: function(mouse) {
+                    onReleased: function (mouse) {
                         if (dragging) {
                             dragging = false;
                             if (draggedItem === null)
-                                return ;
+                                return;
 
                             var centerX = draggedItem.x + draggedItem.width / 2;
                             var centerY = draggedItem.y + draggedItem.height / 2;
@@ -136,7 +136,6 @@ Rectangle {
                                     var targetItem = listView.itemAt(localX, localY);
                                     if (targetItem && localY > targetItem.y + targetItem.height / 2)
                                         dropIndex++;
-
                                 }
                                 if (dropIndex !== index && dropIndex >= 0) {
                                     if (dropIndex > index)
@@ -159,7 +158,6 @@ Rectangle {
                                     var targetItem = targetList.listView.itemAt(localX, localY);
                                     if (targetItem && localY > targetItem.y + targetItem.height / 2)
                                         dropIndex++;
-
                                 }
                                 targetList.taskListModel.insert(dropIndex, taskData);
                                 syncModelsToTodo();
@@ -178,7 +176,6 @@ Rectangle {
                             }
                             if (statusChanged)
                                 updateTaskModels();
-
                         }
                     }
                 }
@@ -258,9 +255,7 @@ Rectangle {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                 }
-
                             }
-
                         }
 
                         StyledText {
@@ -282,7 +277,6 @@ Rectangle {
                             opacity: model.status === TodoService.status_done ? 0.3 : 0.45
                             font.pixelSize: 11
                         }
-
                     }
 
                     Item {
@@ -305,7 +299,6 @@ Rectangle {
                                 font.pixelSize: Fonts.sizes.verylarge
                                 color: Colors.colOnLayer1
                             }
-
                         }
 
                         TodoItemActionButton {
@@ -320,29 +313,19 @@ Rectangle {
                                 font.pixelSize: Fonts.sizes.verylarge
                                 color: Colors.m3.m3error
                             }
-
                         }
-
                     }
-
                 }
 
                 Behavior on opacity {
-                    Anim {
-                    }
-
+                    Anim {}
                 }
 
                 Behavior on color {
-                    CAnim {
-                    }
-
+                    CAnim {}
                 }
-
             }
-
         }
-
     }
 
     PagePlaceholder {
@@ -353,7 +336,6 @@ Rectangle {
         anchors.centerIn: parent
         icon: emptyPlaceholderIcon
         shape: MaterialShape.Clover4Leaf
-        title: quarters ? emptyPlaceholderText : ""
+        title: expanded ? emptyPlaceholderText : ""
     }
-
 }

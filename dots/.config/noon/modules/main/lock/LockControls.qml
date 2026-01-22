@@ -22,7 +22,7 @@ ColumnLayout {
         materialIcon: "power_settings_new"
         implicitSize: 72
         releaseAction: () => {
-            Noon.execDetached("systemctl poweroff");
+            NoonUtils.execDetached("systemctl poweroff");
         }
     }
 
@@ -30,7 +30,7 @@ ColumnLayout {
         materialIcon: "restart_alt"
         implicitSize: 72
         releaseAction: () => {
-            Noon.execDetached("reboot");
+            NoonUtils.execDetached("reboot");
         }
     }
 
@@ -38,7 +38,7 @@ ColumnLayout {
         materialIcon: "dark_mode"
         implicitSize: 72
         releaseAction: () => {
-            Noon.execDetached("systemctl suspend");
+            NoonUtils.execDetached("systemctl suspend");
         }
     }
 

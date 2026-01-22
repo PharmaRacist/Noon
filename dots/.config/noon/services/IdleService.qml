@@ -27,7 +27,7 @@ Singleton {
         timeout: Mem.options.services.idle.timeOut
         onIsIdleChanged: {
             if (isIdle)
-                Noon.callIpc("global lock");
+                NoonUtils.callIpc("global lock");
 
         }
     }

@@ -76,7 +76,7 @@ Button {
                 "x": x,
                 "y": y
             } = event;
-            Noon.playSound("event_accepted");
+            NoonUtils.playSound("event_accepted");
             startRipple(x, y);
         }
         onReleased: event => {

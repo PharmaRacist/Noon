@@ -25,11 +25,11 @@ Singleton {
     property real timeToEmpty: UPower.displayDevice.timeToEmpty
     property real timeToFull: UPower.displayDevice.timeToFull
     onIsLowAndNotCharging: if (isLowAndNotCharging)
-        Noon.playSound("power_low")
+        NoonUtils.playSound("power_low")
     onIsChargingChanged: if (isCharging) {
-        Noon.playSound("power_plugged");
+        NoonUtils.playSound("power_plugged");
     } else {
-        Noon.playSound("power_unplugged");
+        NoonUtils.playSound("power_unplugged");
     }
     onIsLowAndNotChargingChanged: {
         if (available && isLowAndNotCharging)
@@ -43,7 +43,7 @@ Singleton {
 
     onIsSuspendingAndNotChargingChanged: {
         if (available && isSuspendingAndNotCharging) {
-            Noon.execDetached(`systemctl suspend || loginctl suspend`);
+            NoonUtils.execDetached(`systemctl suspend || loginctl suspend`);
         }
     }
 }

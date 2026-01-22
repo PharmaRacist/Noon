@@ -69,7 +69,7 @@ Item {
                         spacing: XPadding.normal
                         StyledIconImage {
                             implicitSize: 24
-                            source: Noon.iconPath(modelData.appId)
+                            source: NoonUtils.iconPath(modelData.appId)
                         }
                         StyledText {
                             Layout.maximumWidth: rect.width * 0.6

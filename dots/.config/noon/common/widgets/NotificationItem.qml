@@ -202,7 +202,7 @@ Item { // Notification item area
 
                     onLinkActivated: link => {
                         Qt.openUrlExternally(link);
-                        Noon.callIpc("sidebar hide");
+                        NoonUtils.callIpc("sidebar hide");
                     }
 
                     PointingHandLinkHover {}

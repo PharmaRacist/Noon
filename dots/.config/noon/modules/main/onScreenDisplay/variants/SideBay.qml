@@ -180,10 +180,10 @@ StyledPanel {
                     let icon;
                     icon = AppSearch.guessIcon(root.node.properties["application.icon-name"]);
                     if (AppSearch.iconExists(icon))
-                        return Noon.iconPath(icon);
+                        return NoonUtils.iconPath(icon);
 
                     icon = AppSearch.guessIcon(root.node.properties["node.name"]);
-                    return Noon.iconPath(icon);
+                    return NoonUtils.iconPath(icon);
                 }
             }
         }

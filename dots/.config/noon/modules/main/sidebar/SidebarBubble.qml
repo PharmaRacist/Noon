@@ -90,7 +90,7 @@ Item {
                     "icon": "open_in_new",
                     "action": () => {
                         Qt.openUrlExternally(GlobalStates.web_session.url);
-                        Noon.callIpc("sidebar hide");
+                        NoonUtils.callIpc("sidebar hide");
                     }
                 },
                 {

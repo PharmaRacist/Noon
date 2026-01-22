@@ -26,7 +26,7 @@ StyledPopup {
         property var iconToScreenRatio: 0.13
         // Get appId from the active window via ToplevelManager
         property string windowAppId: (activeWindow?.activated && activeWindow?.appId) ? activeWindow.appId : ""
-        property var iconPath: Noon.iconPath(AppSearch.guessIcon(windowAppId))
+        property var iconPath: NoonUtils.iconPath(AppSearch.guessIcon(windowAppId))
 
         implicitHeight: preview.implicitHeight
         implicitWidth: preview.implicitWidth

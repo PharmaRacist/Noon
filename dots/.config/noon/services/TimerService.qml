@@ -84,8 +84,8 @@ Singleton {
                     preset: timer.preset,
                     icon: timer.icon
                 });
-                Noon.playSound("record_stopped");
-                Noon.notify(`'⏰ Timer Complete , ${timer.name} finished!'`);
+                NoonUtils.playSound("record_stopped");
+                NoonUtils.notify(`'⏰ Timer Complete , ${timer.name} finished!'`);
                 timerFinished(timer.id, timer.name);
                 changed = true;
             } else {
@@ -146,7 +146,7 @@ Singleton {
         });
 
         Mem.timers.timers = updated;
-        Noon.playSound("record_started");
+        NoonUtils.playSound("record_started");
     }
 
     function pauseTimer(timerId) {

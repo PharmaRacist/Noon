@@ -98,7 +98,7 @@ StyledPanel {
             DropArea {
                 anchors.fill: parent
                 keys: ["text/uri-list"]
-                onEntered: Noon.callIpc("sidebar reveal Shelf")
+                onEntered: NoonUtils.callIpc("sidebar reveal Shelf")
             }
         }
 

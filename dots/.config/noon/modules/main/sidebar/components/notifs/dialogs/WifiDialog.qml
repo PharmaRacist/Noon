@@ -92,8 +92,8 @@ BottomDialog {
                 onClicked: {
                     root.show = false;
                     const app = NetworkService.ethernet ? Mem.options.apps.networkEthernet : Mem.options.apps.network;
-                    Noon.execDetached(app);
-                    Noon.callIpc("sidebar hide");
+                    NoonUtils.execDetached(app);
+                    NoonUtils.callIpc("sidebar hide");
                 }
             }
 

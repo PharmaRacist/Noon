@@ -504,8 +504,8 @@ Rectangle {
                 colBackground: root.colors.colLayer3
                 releaseAction: function() {
                     let cmd = Directories.scriptsDir + "/" + root.actionName;
-                    Noon.execDetached(cmd);
-                    Noon.callIpc("sidebar hide");
+                    NoonUtils.execDetached(cmd);
+                    NoonUtils.callIpc("sidebar hide");
                 }
 
                 Symbol {

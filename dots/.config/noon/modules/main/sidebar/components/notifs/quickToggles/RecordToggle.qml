@@ -20,7 +20,7 @@ QuickToggleButton {
         if (RecordingService.isRecording)
             RecordingService.stopRecording();
         else
-            Noon.execDetached("xdg-open ~/Videos");
+            NoonUtils.execDetached("xdg-open ~/Videos");
     }
 
     StyledToolTip {

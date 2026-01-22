@@ -38,15 +38,15 @@ Scope {
         }
         function pick_accent() {
             WallpaperService.pickAccentColor();
-            Noon.notify("Color Changed");
+            NoonUtils.notify("Color Changed");
         }
         function pick_random_wall() {
             WallpaperService.applyRandomWallpaper();
-            Noon.notify("Picked Random Wall");
+            NoonUtils.notify("Picked Random Wall");
         }
         function set_wall(path: string) {
             WallpaperService.applyWallpaper(path);
-            Noon.notify("Wallpaper Changed");
+            NoonUtils.notify("Wallpaper Changed");
         }
         function toggle_bar_mode() {
             Mem.options.bar.behavior.position = BarData.getNextMode();
@@ -71,11 +71,11 @@ Scope {
             AlarmService.addTimer(time, name);
         }
         function wake(message: string) {
-            Noon.wake(message, "alarm");
+            NoonUtils.wake(message, "alarm");
         }
 
         function edit_json() {
-            Noon.edit(Quickshell.env('SHELL_CONFIG_PATH'));
+            NoonUtils.edit(Quickshell.env('SHELL_CONFIG_PATH'));
         }
         function lock() {
             GlobalStates.main.locked = true;

@@ -77,7 +77,7 @@ GroupButton {
             anchors.fill: parent
             onReleased: {
                 root.requestDialog();
-                Noon.playSound("pressed");
+                NoonUtils.playSound("pressed");
             }
         }
     }

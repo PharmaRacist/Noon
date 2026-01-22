@@ -13,7 +13,7 @@ StyledText {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: Noon.callIpc("sidebar reveal Apps")
+        onClicked: NoonUtils.callIpc("sidebar reveal Apps")
     }
 
 }

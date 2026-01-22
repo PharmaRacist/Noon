@@ -158,7 +158,7 @@ Singleton {
             root.list = [...root.list, newNotifObject];
 
             if (!root.silent) {
-                Noon.playSound("notif_1");
+                NoonUtils.playSound("notif_1");
             }
 
             // Popup

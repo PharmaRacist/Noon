@@ -103,7 +103,7 @@ Item {
                 hoverEnabled: true
                 onClicked: {
                     GlobalStates.main.dialogs.showWifiDialog = true;
-                    Noon.callIpc("sidebar reveal Notifs");
+                    NoonUtils.callIpc("sidebar reveal Notifs");
                 }
             }
 
@@ -146,7 +146,7 @@ Item {
                 hoverEnabled: true
                 onClicked: {
                     delayReveal.mode = "";
-                    Noon.callIpc("sidebar reveal Notifs");
+                    NoonUtils.callIpc("sidebar reveal Notifs");
                     delayReveal.mode = "bluetooth";
                     delayReveal.restart();
                 }

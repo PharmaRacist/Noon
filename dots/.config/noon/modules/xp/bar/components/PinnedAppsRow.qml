@@ -19,7 +19,7 @@ RowLayout {
         model: Mem.states.favorites.apps ?? []
         StyledIconImage {
             implicitSize: XSizes.taskbar.pinnedItemSize
-            source: Noon.iconPath(modelData)
+            source: NoonUtils.iconPath(modelData)
             MouseArea {
                 anchors.fill: parent
                 onPressed: DesktopEntries.byId(modelData).execute();

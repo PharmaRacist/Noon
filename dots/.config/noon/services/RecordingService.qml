@@ -58,7 +58,7 @@ Singleton {
     function checkRecordingState() {
         const wasRecording = root.isRecording;
         // Simple check using pidof
-        const result = Noon.execDetached("pidof wf-recorder");
+        const result = NoonUtils.execDetached("pidof wf-recorder");
         if (wasRecording && !root.isRecording) {
             root.recordingDuration = 0;
             root.recordingStopped();
@@ -149,7 +149,7 @@ Singleton {
             console.log("RecordingService: Starting recording:", cmd.join(" "));
             // Execute via hyprland dispatch
             const fullCmd = cmd.join(" ");
-            Noon.execDetached(` ${fullCmd}`);
+            NoonUtils.execDetached(` ${fullCmd}`);
             // Set recording state after a short delay to allow process to start
             Qt.callLater(() => {
                 root.isRecording = true;
@@ -185,7 +185,7 @@ Singleton {
         }
         try {
             // Send SIGINT to wf-recorder to stop gracefully
-            Noon.execDetached("pkill -SIGINT wf-recorder");
+            NoonUtils.execDetached("pkill -SIGINT wf-recorder");
             root.isRecording = false;
             root.recordingDuration = 0;
             root.lastError = "";

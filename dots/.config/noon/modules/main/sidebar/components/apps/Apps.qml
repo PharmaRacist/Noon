@@ -99,7 +99,7 @@ StyledRect {
                 spacing: Padding.normal
 
                 StyledIconImage {
-                    source: Noon.iconPath(modelData.icon)
+                    source: NoonUtils.iconPath(modelData.icon)
                     colorize: Mem.options.appearance.icons.tint
                     implicitSize: 56
                     Layout.alignment: Qt.AlignHCenter

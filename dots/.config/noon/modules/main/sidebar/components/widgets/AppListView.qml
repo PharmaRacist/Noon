@@ -182,7 +182,7 @@ StyledListView {
                 Component {
                     id: iconImageComponent
                     StyledIconImage {
-                        source: Noon.iconPath(model?.iconImage || "")
+                        source: NoonUtils.iconPath(model?.iconImage || "")
                         implicitSize: root.iconSize
                     }
                 }

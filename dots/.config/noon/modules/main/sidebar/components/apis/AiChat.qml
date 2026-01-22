@@ -285,11 +285,11 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
             // Messages
             Layout.fillWidth: true
             Layout.fillHeight: true
-            layer.enabled: true
+            layer.enabled: false
             layer.effect: OpacityMask {
                 maskSource: Rectangle {
-                    width: root.parent.width
-                    height: root.parent.height
+                    width: root.parent.implicitWidth
+                    height: root.parent.implicitHeight
                     radius: Rounding.small
                 }
             }

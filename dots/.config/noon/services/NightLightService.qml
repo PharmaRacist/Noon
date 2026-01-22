@@ -17,7 +17,7 @@ Singleton {
             mainProc.running = true;
         } else {
             mainProc.running = false;
-            Noon.execDetached("killall hyprsunset");
+            NoonUtils.execDetached("killall hyprsunset");
         }
     }
 

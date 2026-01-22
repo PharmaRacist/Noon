@@ -52,7 +52,7 @@ Rectangle { // App icon
             id: appIconImage
             implicitSize: root.appIconSize
             asynchronous: true
-            source: Noon.iconPath(root.appIcon)
+            source: NoonUtils.iconPath(root.appIcon)
         }
     }
     Loader {
@@ -94,7 +94,7 @@ Rectangle { // App icon
                 sourceComponent: IconImage {
                     implicitSize: root.smallAppIconSize
                     asynchronous: true
-                    source: Noon.iconPath(root.appIcon)
+                    source: NoonUtils.iconPath(root.appIcon)
                 }
             }
         }

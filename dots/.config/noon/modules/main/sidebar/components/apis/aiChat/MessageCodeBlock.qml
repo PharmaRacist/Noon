@@ -95,7 +95,7 @@ ColumnLayout {
 
                     onClicked: {
                         const downloadPath = FileUtils.trimFileProtocol(Directories.standard.downloads);
-                        Noon.execDetached(`echo '${StringUtils.shellSingleQuoteEscape(segmentContent)}' > '${downloadPath}/code.${segmentLang || "txt"}'`);
+                        NoonUtils.execDetached(`echo '${StringUtils.shellSingleQuoteEscape(segmentContent)}' > '${downloadPath}/code.${segmentLang || "txt"}'`);
                         Quickshell.execDetached(["notify-send", qsTr("Code saved to file"), qsTr("Saved to %1").arg(`${downloadPath}/code.${segmentLang || "txt"}`), "-a", "Shell"]);
                         saveCodeButton.activated = true;
                         saveIconTimer.restart();

@@ -162,7 +162,7 @@ Singleton {
             filePicker.open();
         } else {
             executeCommand(["--device", deviceId, "--share", path]);
-            Noon.notify("Sharing..");
+            NoonUtils.notify("Sharing..");
         }
     }
 

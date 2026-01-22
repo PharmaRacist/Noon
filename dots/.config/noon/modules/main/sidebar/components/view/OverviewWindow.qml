@@ -31,7 +31,7 @@ Rectangle { // Window
     property var iconToWindowRatio: 0.3
     property var xwaylandIndicatorToIconRatio: 0.35
     property var iconToWindowRatioCompact: 0.6
-    property var iconPath: Noon.iconPath(AppSearch.guessIcon(windowData?.class))
+    property var iconPath: NoonUtils.iconPath(AppSearch.guessIcon(windowData?.class))
     property bool compactMode: Fonts.sizes.verysmall * 4 > targetWindowHeight || Fonts.sizes.verysmall * 4 > targetWindowWidth
 
     property bool indicateXWayland: (windowData?.xwayland) ?? false

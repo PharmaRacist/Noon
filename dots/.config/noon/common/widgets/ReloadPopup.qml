@@ -205,7 +205,7 @@ StyledPanel {
                 padding: 6
                 releaseAction: () => {
                     let cmd = `${Quickshell.env("FILE_MANAGER")} ${Directories.standard.home}/.cache/quickshell/crashes`;
-                    Noon.execDetached(cmd);
+                    NoonUtils.execDetached(cmd);
                     root.visible = false;
                 }
             }

@@ -18,7 +18,7 @@ Singleton {
     }
 
     function handleFirstRun() {
-        Noon.notify(`'${root.firstRunNotifSummary}' '${root.firstRunNotifBody}'`);
+        NoonUtils.notify(`'${root.firstRunNotifSummary}' '${root.firstRunNotifBody}'`);
         Appearance.getCurrentIconTheme();
     }
 

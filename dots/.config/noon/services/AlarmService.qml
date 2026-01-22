@@ -39,7 +39,7 @@ Singleton {
                     remindInterval: alarm.remindInterval,
                     lastRemind: now.toISOString()
                 });
-                Noon.wake(alarm.message);
+                NoonUtils.wake(alarm.message);
                 changed = true;
             } else if (alarm.ringed && alarm.remindInterval) {
                 const lastRemind = new Date(alarm.lastRemind || alarm.time);
@@ -53,7 +53,7 @@ Singleton {
                         remindInterval: alarm.remindInterval,
                         lastRemind: now.toISOString()
                     });
-                    Noon.wake(alarm.message);
+                    NoonUtils.wake(alarm.message);
                     changed = true;
                 } else {
                     updated.push(alarm);

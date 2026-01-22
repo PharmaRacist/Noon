@@ -12,7 +12,7 @@ Scope {
         MediaPlayer {}
     }
     WidgetLoader {
-        // active: GlobalStates.applications.reader.show
+        active: GlobalStates.applications.reader.show
         PDFReader {}
     }
     WidgetLoader {

@@ -22,7 +22,7 @@ Singleton {
     property alias _generatingThumbnails: thumbnailGenerator.running
     Component.onCompleted: refreshFolderDelayed()
 
-    onCurrentWallpaperChanged: Noon.playSound("pressed")
+    onCurrentWallpaperChanged: NoonUtils.playSound("pressed")
 
     onCurrentFolderPathChanged: {
         refreshFolderDelayed();
@@ -39,10 +39,10 @@ Singleton {
     Process {
         id: thumbnailGenerator
         running: false
-        onStarted: Noon.notify("Generating Thumbnails")
+        onStarted: NoonUtils.notify("Generating Thumbnails")
         onExited: exitcode => {
             if (exitcode === 0)
-                Noon.notify("Thumbnails Done");
+                NoonUtils.notify("Thumbnails Done");
         }
         stdout: StdioCollector {
             onStreamFinished: _thumbnailCache = {}
@@ -99,15 +99,15 @@ Singleton {
     }
 
     function updateShellMode(mode) {
-        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --mode '${mode}'`);
+        NoonUtils.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --mode '${mode}'`);
     }
 
     function toggleShellMode() {
-        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --mode toggle`);
+        NoonUtils.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --mode toggle`);
     }
 
     function updateScheme(selectedMode) {
-        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --scheme '${selectedMode}'`);
+        NoonUtils.execDetached(`python3 ${Directories.wallpapers.switchScript} --noswitch -f --scheme '${selectedMode}'`);
     }
 
     function refreshFolderDelayed() {
@@ -119,19 +119,19 @@ Singleton {
     }
 
     function pickAccentColor() {
-        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --pick`);
+        NoonUtils.execDetached(`python3 ${Directories.wallpapers.switchScript} --pick`);
     }
 
     function changeAccentColor(color: string) {
-        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --color ${color}`);
+        NoonUtils.execDetached(`python3 ${Directories.wallpapers.switchScript} --color ${color}`);
     }
 
     function applyWallpaper(fileUrl) {
-        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --image '${FileUtils.trimFileProtocol(fileUrl)}'`);
+        NoonUtils.execDetached(`python3 ${Directories.wallpapers.switchScript} --image '${FileUtils.trimFileProtocol(fileUrl)}'`);
     }
 
     function applyRandomWallpaper() {
-        Noon.execDetached(`python3 ${Directories.wallpapers.switchScript} --random-no-recursive -R '${FileUtils.trimFileProtocol(currentFolderPath)}'`);
+        NoonUtils.execDetached(`python3 ${Directories.wallpapers.switchScript} --random-no-recursive -R '${FileUtils.trimFileProtocol(currentFolderPath)}'`);
     }
 
     function shuffleWallpapers() {

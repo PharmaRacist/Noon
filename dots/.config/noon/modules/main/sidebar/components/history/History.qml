@@ -149,7 +149,7 @@ StyledRect {
                     anchors.fill: parent
                     onClicked: {
                         ClipboardService.copy(itemData.index);
-                        Noon.playSound("event_accepted");
+                        NoonUtils.playSound("event_accepted");
                         root.dismiss();
                     }
                 }
@@ -172,7 +172,7 @@ StyledRect {
 
                 releaseAction: () => {
                     ClipboardService.copy(itemData.index);
-                    Noon.playSound("event_accepted");
+                    NoonUtils.playSound("event_accepted");
                     root.dismiss();
                 }
             }
@@ -196,7 +196,7 @@ StyledRect {
             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                 if (currentIndex >= 0 && currentIndex < model.values.length) {
                     ClipboardService.copy(model.values[currentIndex].index);
-                    Noon.playSound("event_accepted");
+                    NoonUtils.playSound("event_accepted");
                     root.dismiss();
                 }
                 event.accepted = true;

@@ -44,7 +44,7 @@ Item {
                 itemColorActive: navContainer.colors.colOnLayer2
 
                 onClicked: {
-                    Noon.playSound("pressed");
+                    NoonUtils.playSound("pressed");
                     root.changeContent(modelData);
                 }
             }

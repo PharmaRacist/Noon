@@ -193,7 +193,7 @@ Item {
                 }
 
                 readonly property var windowToplevel: root.findToplevelForWindow(biggestWindow)
-                readonly property string appIconSource: Noon.iconPath(AppSearch.guessIcon(biggestWindow?.class))
+                readonly property string appIconSource: NoonUtils.iconPath(AppSearch.guessIcon(biggestWindow?.class))
                 readonly property bool showNumber: Mem.options.bar.workspaces.alwaysShowNumbers || GlobalStates.superHeld || !biggestWindow
 
                 Layout.fillHeight: true

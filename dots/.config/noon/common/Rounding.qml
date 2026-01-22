@@ -15,5 +15,5 @@ Singleton {
     property int massive: 24 * scale
     property int full: 999
 
-    onScaleChanged: Noon.setHyprKey("rounding", verylarge)
+    onScaleChanged: NoonUtils.setHyprKey("rounding", verylarge)
 }

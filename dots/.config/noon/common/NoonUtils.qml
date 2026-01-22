@@ -160,7 +160,7 @@ Singleton {
         property Timer fontTimer: Timer {
             id: fontTimer
             interval: 1000
-            onTriggered: Noon.changeSystemFont()
+            onTriggered: NoonUtils.changeSystemFont()
         }
     }
     Connections {
@@ -168,22 +168,22 @@ Singleton {
         property QtObject conf: Mem.options.apps
 
         function onBrowserChanged() {
-            Noon.setHyprKey("browser", conf.browser);
+            NoonUtils.setHyprKey("browser", conf.browser);
         }
         function onBrowserAltChanged() {
-            Noon.setHyprKey("browser_alt", conf.browserAlt);
+            NoonUtils.setHyprKey("browser_alt", conf.browserAlt);
         }
         function onTerminalChanged() {
-            Noon.setHyprKey("terminal", conf.terminal);
+            NoonUtils.setHyprKey("terminal", conf.terminal);
         }
         function onTerminalAltChanged() {
-            Noon.setHyprKey("terminal_alt", conf.terminalAlt);
+            NoonUtils.setHyprKey("terminal_alt", conf.terminalAlt);
         }
         function onFileManagerChanged() {
-            Noon.setHyprKey("file_manager", conf.fileManager);
+            NoonUtils.setHyprKey("file_manager", conf.fileManager);
         }
         function onEditorChanged() {
-            Noon.setHyprKey("editor", conf.editor);
+            NoonUtils.setHyprKey("editor", conf.editor);
         }
     }
     Connections {
@@ -191,29 +191,29 @@ Singleton {
         property QtObject conf: Mem.options.desktop.hyprland
 
         function onShadowsPowerChanged() {
-            Noon.setHyprKey("shadows_power", conf.shadowsPower);
+            NoonUtils.setHyprKey("shadows_power", conf.shadowsPower);
         }
         function onShadowsRangeChanged() {
-            Noon.setHyprKey("shadows_range", conf.shadowsRange);
+            NoonUtils.setHyprKey("shadows_range", conf.shadowsRange);
         }
         function onGapsInChanged() {
-            Noon.setHyprKey("gaps_in", conf.gapsIn);
+            NoonUtils.setHyprKey("gaps_in", conf.gapsIn);
         }
         function onGapsOutChanged() {
-            Noon.setHyprKey("gaps_out", conf.gapsOut);
+            NoonUtils.setHyprKey("gaps_out", conf.gapsOut);
         }
         function onShadowsChanged() {
-            Noon.setHyprKey("shadows", conf.shadows);
+            NoonUtils.setHyprKey("shadows", conf.shadows);
         }
         function onBordersChanged() {
-            Noon.setHyprKey("borders", conf.borders);
+            NoonUtils.setHyprKey("borders", conf.borders);
         }
         function onBlurPassesChanged() {
-            Noon.setHyprKey("blur_passes", conf.blurPasses);
+            NoonUtils.setHyprKey("blur_passes", conf.blurPasses);
         }
         function onTilingLayoutChanged() {
-            Noon.setHyprKey("layout", conf.tilingLayout);
-            Noon.execDetached("hyprctl dispatch submap " + conf.tilingLayout);
+            NoonUtils.setHyprKey("layout", conf.tilingLayout);
+            NoonUtils.execDetached("hyprctl dispatch submap " + conf.tilingLayout);
         }
     }
 

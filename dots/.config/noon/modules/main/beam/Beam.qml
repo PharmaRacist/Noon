@@ -201,38 +201,51 @@ Scope {
             }
 
             HyprlandFocusGrab {
-                id: grab
                 windows: [root]
                 active: root.reveal
                 onCleared: root.hide()
             }
 
             Connections {
+                id: clip_watcher
                 target: ClipboardService
-                enabled: false
+                enabled: clip_watcher.waiting
+                ignoreUnknownSignals: true
+
+                property bool waiting: false
+                property bool autoSend: false
 
                 function onEntriesRefreshed() {
-                    attachScreenshot();
+                    const img = ClipboardService.getImagePath(0);
+                    if (ClipboardService.isImage(img)) {
+                        Ai.attachFile(img);
+                        root.revealSidebar("API");
+
+                        if (clip_watcher.autoSend) {
+                            const command = Mem.options.ai.beamScreenshotHintCommand;
+                            if (command) {
+                                Qt.callLater(() => Ai.sendUserMessage(command));
+                            }
+                        }
+                    }
+
+                    // Done, turn off
+                    clip_watcher.waiting = false;
+                    clip_watcher.autoSend = false;
                 }
             }
 
             function takeScreenshot() {
+                clip_watcher.waiting = true;
+                clip_watcher.autoSend = false;
                 ScreenShotService.takeScreenShot();
             }
 
-            function attachScreenshot() {
-                var img = ClipboardService.getImagePath(0);
-                if (ClipboardService.isImage(img)) {
-                    Ai.attachFile(img);
-                    root.revealSidebar("API");
-                }
-            }
-
             function handleAutoSendScreenshot() {
-                takeScreenshot();
-                Qt.callLater(() => Ai.sendUserMessage("Explain This Briefly"));
+                clip_watcher.waiting = true;
+                clip_watcher.autoSend = true;
+                ScreenShotService.takeScreenShot();
             }
-
             function getSearchSuggestions() {
                 if (FirefoxBookmarksService.bookmarkTitles.length > 0) {
                     for (let i = 0; i < FirefoxBookmarksService.bookmarkTitles.length; i++) {
@@ -244,11 +257,11 @@ Scope {
                 }
             }
             function getIpcSuggestion() {
-                if (Noon.avilableIpcCommands.length < 1) {
-                    Noon.fetchIpcCommands();
+                if (NoonUtils.avilableIpcCommands.length < 1) {
+                    NoonUtils.fetchIpcCommands();
                 }
-                for (let i = 0; i < Noon.avilableIpcCommands.length; i++) {
-                    const cmd = Noon.avilableIpcCommands[i];
+                for (let i = 0; i < NoonUtils.avilableIpcCommands.length; i++) {
+                    const cmd = NoonUtils.avilableIpcCommands[i];
                     if (cmd.toLowerCase().startsWith(root.query.substring(2).toLowerCase())) {
                         return cmd;
                     }
@@ -271,11 +284,11 @@ Scope {
             }
 
             function getCommandSuggestion() {
-                if (Noon.avilableSystemCommands.length < 1) {
-                    Noon.fetchCommands();
+                if (NoonUtils.avilableSystemCommands.length < 1) {
+                    NoonUtils.fetchCommands();
                 }
-                for (let i = 0; i < Noon.avilableSystemCommands.length; i++) {
-                    const cmd = Noon.avilableSystemCommands[i];
+                for (let i = 0; i < NoonUtils.avilableSystemCommands.length; i++) {
+                    const cmd = NoonUtils.avilableSystemCommands[i];
                     if (cmd.toLowerCase().startsWith(root.query.substring(2).toLowerCase())) {
                         return cmd;
                     }
@@ -283,8 +296,7 @@ Scope {
             }
 
             function revealSidebar(cat: string) {
-                Mem.states.sidebar.apis.selectedTab = 0;
-                Noon.callIpc(`sidebar reveal ${cat}`);
+                NoonUtils.callIpc(`sidebar reveal ${cat}`);
             }
 
             function hide() {
@@ -365,7 +377,7 @@ Scope {
                         TimerService.startTimer(id);
                         if (root.revealLauncherOnAction) {
                             Mem.states.sidebar.misc.selectedTabIndex = 2;
-                            Noon.callIpc("sidebar reveal Misc");
+                            NoonUtils.callIpc("sidebar reveal Misc");
                         }
                     }
                     break;
@@ -376,7 +388,7 @@ Scope {
                     break;
                 case "install":
                     if (cleanQuery.length > 0) {
-                        Noon.installPkg(cleanQuery);
+                        NoonUtils.installPkg(cleanQuery);
                     }
                     break;
                 case "calc":
@@ -387,7 +399,7 @@ Scope {
                     break;
                 case "ipc":
                     if (cleanQuery.length > 0) {
-                        Noon.callIpc(cleanQuery);
+                        NoonUtils.callIpc(cleanQuery);
                     }
                     break;
                 case "search":
@@ -416,7 +428,7 @@ Scope {
                     AlarmService.addTimer(cleanQuery, "Beam Timer");
                     if (root.revealLauncherOnAction) {
                         Mem.states.sidebar.misc.selectedTabIndex = 3;
-                        Noon.callIpc("sidebar reveal Misc");
+                        NoonUtils.callIpc("sidebar reveal Misc");
                     }
                     break;
                 }
@@ -614,7 +626,7 @@ Scope {
                                 rightMargin: Padding.large
                                 leftMargin: Padding.large
                             }
-                            focus: grab.active
+                            focus: root.reveal
                             objectName: "inputField"
                             placeholderText: reg[root.state]?.placeholder || "Ask any thing ..."
                             text: root.query
@@ -727,7 +739,9 @@ Scope {
                             RippleButtonWithIcon {
                                 id: osrButton
                                 buttonRadius: root.mainRounding
-                                releaseAction: () => root.takeScreenshot()
+                                releaseAction: () => {
+                                    root.takeScreenshot();
+                                }
                                 materialIcon: "screenshot_region"
                                 implicitSize: bg.height * 0.75
                                 enabled: !ScreenShotService.isBusy

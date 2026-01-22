@@ -165,7 +165,7 @@ StyledRect {
                     const selectedData = filteredModel.values[currentIndex];
                     if (selectedData && selectedData.fileUrl) {
                         WallpaperService.applyWallpaper(selectedData.fileUrl);
-                        Noon.playSound("event_accepted");
+                        NoonUtils.playSound("event_accepted");
                     }
                 }
             } else if (event.key === Qt.Key_Escape) {

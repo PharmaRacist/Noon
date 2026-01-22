@@ -199,18 +199,18 @@ Singleton {
     function mkdir(directories: var) {
         if (!directories)
             return;
-        Noon.execDetached(`mkdir -p '${directories.join("' '")}'`);
+        NoonUtils.execDetached(`mkdir -p '${directories.join("' '")}'`);
     }
     function copyItem(item: string, target: string) {
-        Noon.execDetached(`cp ${trimFileProtocol(item)} ${trimFileProtocol(target)}`);
+        NoonUtils.execDetached(`cp ${trimFileProtocol(item)} ${trimFileProtocol(target)}`);
     }
     // by its same name
     function moveItem(item: string, target: string) {
         const fileName = getEscapedFileName(item);
-        Noon.execDetached(`mv ${trimFileProtocol(item)} ${trimFileProtocol(target)}/${fileName}`);
+        NoonUtils.execDetached(`mv ${trimFileProtocol(item)} ${trimFileProtocol(target)}/${fileName}`);
     }
     function deleteItem(path: string) {
         if (path)
-            Noon.execDetached(`rm -rf "${trimFileProtocol(path)}"`);
+            NoonUtils.execDetached(`rm -rf "${trimFileProtocol(path)}"`);
     }
 }

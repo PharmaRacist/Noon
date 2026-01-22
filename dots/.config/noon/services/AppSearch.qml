@@ -75,7 +75,7 @@ Singleton {
     function iconExists(iconName) {
         if (!iconName || iconName.length == 0)
             return false;
-        return Noon.iconPath(iconName);
+        return NoonUtils.iconPath(iconName);
     }
 
     function getReverseDomainNameAppName(str) {

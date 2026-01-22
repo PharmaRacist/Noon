@@ -14,10 +14,10 @@ QuickToggleButton {
     onClicked: {
         if (toggled) {
             toggled = !toggled;
-            Noon.execDetached("pkill", "easyeffects");
+            NoonUtils.execDetached("pkill", "easyeffects");
         } else {
             toggled = !toggled;
-            Noon.execDetached("easyeffects", "--service-mode");
+            NoonUtils.execDetached("easyeffects", "--service-mode");
         }
     }
 

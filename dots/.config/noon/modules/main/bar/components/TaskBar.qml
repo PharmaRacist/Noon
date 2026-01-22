@@ -171,7 +171,7 @@ Item {
                         }
                         active: !root.isSeparator
                         sourceComponent: IconImage {
-                            source: Noon.iconPath(AppSearch.guessIcon(appToplevel.appId))
+                            source: NoonUtils.iconPath(AppSearch.guessIcon(appToplevel.appId))
                             implicitSize: root.iconSize
                         }
                     }

@@ -65,7 +65,7 @@ RippleButton {
             if (root.desktopEntry) {
                 return root.desktopEntry.execute();
             } else {
-                return Noon.execDetached("gtk-launch", [appToplevel.appId]);
+                return NoonUtils.execDetached("gtk-launch", [appToplevel.appId]);
             }
             return;
         }
@@ -94,7 +94,7 @@ RippleButton {
                 active: !root.isSeparator
                 sourceComponent: StyledIconImage {
                     id: iconImage
-                    source: Noon.iconPath(root.desktopEntry ? (root.desktopEntry.icon || root.desktopEntry.genericIcon || "applications-system") : appToplevel.appId)
+                    source: NoonUtils.iconPath(root.desktopEntry ? (root.desktopEntry.icon || root.desktopEntry.genericIcon || "applications-system") : appToplevel.appId)
                     implicitSize: root.iconSize - Padding.small
                     implicitWidth: root.iconSize - Padding.small
                     implicitHeight: root.iconSize - Padding.small

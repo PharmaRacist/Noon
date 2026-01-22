@@ -27,9 +27,9 @@ StyledRect {
             Mem.states.sidebar.shelf.filePaths = [...Mem.states.sidebar.shelf.filePaths, ...newPaths];
 
             if (!GlobalStates.main.sidebar.pinned) {
-                Noon.callIpc("sidebar hide");
+                NoonUtils.callIpc("sidebar hide");
             }
-            Noon.playSound("event_accepted");
+            NoonUtils.playSound("event_accepted");
         }
         StyledRect {
             id: dropRect

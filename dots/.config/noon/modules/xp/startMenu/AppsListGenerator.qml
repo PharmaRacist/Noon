@@ -45,7 +45,7 @@ ListView {
             spacing: XPadding.small
             StyledIconImage {
                 implicitSize: root.bgHeight * viewScale * 0.7 || 48 * viewScale
-                source: Noon.iconPath(modelData)
+                source: NoonUtils.iconPath(modelData)
             }
             ColumnLayout {
                 Layout.alignment: Qt.AlignVCenter

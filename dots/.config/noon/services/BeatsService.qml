@@ -123,7 +123,7 @@ Singleton {
 
         const reordered = allPaths.slice(startIndex).concat(allPaths.slice(0, startIndex));
         const joined = reordered.map(p => `'${p.replace(/'/g, `'\\''`)}'`).join(" ");
-        Noon.execDetached(`cvlc --one-instance --play-and-exit ${joined}`);
+        NoonUtils.execDetached(`cvlc --one-instance --play-and-exit ${joined}`);
     }
 
     function cycleRepeat() {
@@ -145,7 +145,7 @@ Singleton {
     }
 
     function stopPlayer() {
-        Noon.execDetached("killall vlc");
+        NoonUtils.execDetached("killall vlc");
     }
 
     function downloadCurrentSong() {
@@ -162,9 +162,9 @@ Singleton {
         property string query
         command: ["bash", "-c", `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:${query.replace(/'/g, "")}'`]
 
-        onStarted: Noon.notify(`Started Downloading: ${query}`)
+        onStarted: NoonUtils.notify(`Started Downloading: ${query}`)
         onExited: exitCode => {
-            exitCode === 0 ? Noon.notify(`Downloaded: ${query}`) : Noon.notify(`Download failed: ${query}`);
+            exitCode === 0 ? NoonUtils.notify(`Downloaded: ${query}`) : NoonUtils.notify(`Download failed: ${query}`);
         }
     }
 

@@ -17,21 +17,21 @@ Singleton {
     function releaseAllKeys() {
         const keycodes = Array.from(Array(249).keys());
         const releaseCommand = `ydotool key --key-delay 0 ${keycodes.map(keycode => `${keycode}:0`).join(" ")}`;
-        Noon.execDetached(releaseCommand);
+        NoonUtils.execDetached(releaseCommand);
         root.shiftMode = 0; // Reset shift mode
     }
 
     function releaseShiftKeys() {
         const releaseCommand = `ydotool key --key-delay 0 ${root.shiftKeys.map(keycode => `${keycode}:0`).join(" ")}`;
-        Noon.execDetached(releaseCommand);
+        NoonUtils.execDetached(releaseCommand);
         root.shiftMode = 0; // Reset shift mode
     }
 
     function press(keycode) {
-        Noon.execDetached(`ydotool key --key-delay 0 ${keycode}:1`);
+        NoonUtils.execDetached(`ydotool key --key-delay 0 ${keycode}:1`);
     }
 
     function release(keycode) {
-        Noon.execDetached(`ydotool key --key-delay 0 ${keycode}:0`);
+        NoonUtils.execDetached(`ydotool key --key-delay 0 ${keycode}:0`);
     }
 }

@@ -23,7 +23,7 @@ Singleton {
     property alias colors: colorsgen.colors
 
     Component.onCompleted: {
-        Noon.execDetached(`touch ${gameFileView.path}`);
+        NoonUtils.execDetached(`touch ${gameFileView.path}`);
         reload();
     }
 
@@ -98,7 +98,7 @@ Singleton {
         return gamesList.filter(game => game.name.toLowerCase().includes(lowerQuery) || game.description.toLowerCase().includes(lowerQuery));
     }
     function optimizeSystem() {
-        Noon.execDetached("hyprctl --batch keyword animations:enabled 0; keyword decoration:shadow:enabled 0; keyword decoration:blur:enabled 0; keyword general:gaps_in 0; keyword general:gaps_out 0; keyword general:border_size 1; keyword input:sensitivity 0; keyword decoration:rounding 0; keyword general:allow_tearing 1");
+        NoonUtils.execDetached("hyprctl --batch keyword animations:enabled 0; keyword decoration:shadow:enabled 0; keyword decoration:blur:enabled 0; keyword general:gaps_in 0; keyword general:gaps_out 0; keyword general:border_size 1; keyword input:sensitivity 0; keyword decoration:rounding 0; keyword general:allow_tearing 1");
     }
     Process {
         id: gameProcess
@@ -111,8 +111,8 @@ Singleton {
             const path = root.currentGame.executablePath;
             return path.substring(0, path.lastIndexOf('/'));
         }
-        onStarted: Noon.notify("Game Launched")
-        onExited: Noon.execDetached("hyprctl reload")
+        onStarted: NoonUtils.notify("Game Launched")
+        onExited: NoonUtils.execDetached("hyprctl reload")
     }
 
     FileView {
