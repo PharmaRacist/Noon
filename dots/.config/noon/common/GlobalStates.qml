@@ -13,25 +13,17 @@ Singleton {
     property QtObject main
     property QtObject xp
     property QtObject applications
-    property bool superHeld: false
     property var web_session
-    property var topLevel: ToplevelManager.activeToplevel
-    property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
 
-    Timer {
-        id: superHeldTimer
-        interval: Mem.options.hacks.superHeldInterval
-        onTriggered: superHeld = true
-    }
+    readonly property var topLevel: ToplevelManager.activeToplevel
+    readonly property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
+    readonly property bool superHeld: superHeldShortcut.pressed
 
     CustomShortcut {
+        id: superHeldShortcut
         name: "superHeld"
-        onPressed: superHeldTimer.start()
-        onReleased: {
-            superHeldTimer.stop();
-            superHeld = false;
-        }
     }
+
     applications: QtObject {
         property QtObject mediaplayer: QtObject {
             property bool show: false
@@ -58,7 +50,6 @@ Singleton {
             NightLightService.reload();
             TimerService.reload();
             AlarmService.reload();
-            ClipboardService.reload();
             AmbientSoundsService.reload();
             HyprlandParserService.reload();
             NoonUtils.playSound("device_unlocked");
@@ -70,6 +61,11 @@ Singleton {
         property bool showOsdValues: false
         property bool showBeam: false
         property bool showScreenshot: false
+
+        property QtObject dmenu: QtObject {
+            property var items
+            property var action
+        }
 
         property QtObject dialogs: QtObject {
             property bool showAppearanceDialog: false

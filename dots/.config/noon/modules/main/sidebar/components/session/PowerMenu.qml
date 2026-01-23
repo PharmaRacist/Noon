@@ -5,9 +5,8 @@ import qs.common.widgets
 
 Item {
     id: root
-    
-    property int buttonSize: parent.width * 0.8
-    property var contentModel: [
+
+    readonly property var contentModel: [
         {
             "icon": "lock",
             "tooltip": qsTr("Lock"),
@@ -57,27 +56,25 @@ Item {
             "i": Colors.m3.m3error
         }
     ]
-    
+
     ColumnLayout {
         anchors.centerIn: parent
         spacing: Padding.large
-        
+
         Repeater {
             model: root.contentModel
-            
-            delegate: RippleButton {
+
+            delegate: RippleButtonWithIcon {
+                required property var modelData
+                readonly property int buttonSize: root.width * 0.8
                 implicitHeight: buttonSize
                 implicitWidth: buttonSize
                 buttonRadius: Rounding.verylarge
                 colBackground: modelData.c
-                
-                Symbol {
-                    anchors.centerIn: parent
-                    text: modelData.icon
-                    color: modelData.i
-                    font.pixelSize: buttonSize * 0.6
-                }
-                
+                materialIconFill: hovered || toggled
+                materialIcon: modelData.icon
+                iconSize: buttonSize * 0.6
+                iconColor: modelData.i
                 releaseAction: () => {
                     modelData?.command === "" ? NoonUtils.callIpc("global lock") : NoonUtils.execDetached(modelData.command);
                 }

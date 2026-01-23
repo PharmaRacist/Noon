@@ -9,7 +9,6 @@ import qs.store
 
 import "components/apis"
 import "components/beats"
-import "components/gallary"
 import "components/games"
 import "components/misc"
 import "components/notes"

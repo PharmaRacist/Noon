@@ -10,7 +10,7 @@ import qs.common
 import qs.common.widgets
 import qs.services
 
-Item {
+BarGroup {
     id: root
 
     property bool verticalMode: false
@@ -19,8 +19,11 @@ Item {
     property color commonIconColor: Colors.colOnLayer1
 
     Layout.fillWidth: verticalMode
-    implicitWidth: verticalMode ? parent.width : grid.implicitWidth + 24
-    implicitHeight: verticalMode ? grid.implicitHeight + Padding.verylarge : grid.implicitHeight
+    Layout.preferredWidth: verticalMode ? grid.implicitWidth + Padding.large : 0
+    Layout.preferredHeight: verticalMode ? grid.implicitHeight + Padding.large : 0
+    Layout.margins: Padding.small
+    Layout.fillHeight: !verticalMode
+
     states: [
         State {
             name: "verticalMode"
@@ -63,12 +66,6 @@ Item {
                 GlobalStates.main.dialogs.showBluetoothDialog = true;
             }
         }
-    }
-
-    BarGroup {
-        anchors.centerIn: parent
-        implicitHeight: parent.implicitHeight - Padding.small
-        implicitWidth: parent.implicitWidth * padding
     }
 
     GridLayout {

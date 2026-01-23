@@ -13,7 +13,7 @@ import Quickshell.Hyprland
 import Quickshell.Widgets
 import Qt5Compat.GraphicalEffects
 
-Item {
+BarGroup {
     id: root
     required property var bar
 
@@ -35,11 +35,8 @@ Item {
     readonly property real previewScale: 0.2
     readonly property size previewMaxSize: Qt.size((bar.screen?.width ?? 1920) * previewScale, (bar.screen?.height ?? 1080) * previewScale)
     readonly property real previewIconScale: 0.15
-
-    Layout.topMargin: Padding.small
-    Layout.bottomMargin: Padding.small
-    Layout.preferredHeight: columnLayout.height
-    Layout.fillWidth: true
+    vertical: true
+    Layout.preferredHeight: columnLayout.implicitHeight
 
     function updateWorkspaceOccupied() {
         workspaceOccupied = Array.from({
@@ -93,23 +90,38 @@ Item {
             model: shownWs
 
             Rectangle {
-                readonly property bool isActiveWorkspace: monitor.activeWorkspace?.id === index + 1 || false
-                readonly property bool isOccupied: root.workspaceOccupied[index] && !(isActiveWorkspace && !activeWindow?.activated) || false
-                readonly property bool adjacentOccupiedAbove: root.workspaceOccupied[index - 1] && !isActiveWorkspace || true
-                readonly property bool adjacentOccupiedBelow: root.workspaceOccupied[index + 1] && !(!activeWindow?.activated && monitor.activeWorkspace?.id === index + 2) || true
+                readonly property int workspaceId: workspaceGroup * shownWs + index + 1
+                readonly property bool isOccupied: HyprlandService.windowList.some(w => w.workspace?.id === workspaceId)
+
+                readonly property bool adjacentOccupiedAbove: {
+                    if (index === 0)
+                        return false;
+                    const aboveWorkspaceId = workspaceGroup * shownWs + (index - 1) + 1;
+                    return HyprlandService.windowList.some(w => w.workspace?.id === aboveWorkspaceId);
+                }
+
+                readonly property bool adjacentOccupiedBelow: {
+                    if (index === shownWs - 1)
+                        return false;
+                    const belowWorkspaceId = workspaceGroup * shownWs + (index + 1) + 1;
+                    return HyprlandService.windowList.some(w => w.workspace?.id === belowWorkspaceId);
+                }
 
                 z: 1
                 Layout.alignment: Qt.AlignHCenter
                 implicitHeight: workspaceButtonHeight
-                implicitWidth: 32 * 0.8
+                implicitWidth: 34 * 0.8
                 radius: Rounding.full
-                color: Mem.options.bar.appearance.modulesBg ? Colors.colLayer2 : "transparent"
+                color: Colors.colLayer1
                 opacity: isOccupied ? 1 : 0
 
+                // Round top corners only if no occupied workspace above
                 topLeftRadius: adjacentOccupiedAbove ? 0 : Rounding.full
-                topRightRadius: topLeftRadius
+                topRightRadius: adjacentOccupiedAbove ? 0 : Rounding.full
+
+                // Round bottom corners only if no occupied workspace below
                 bottomLeftRadius: adjacentOccupiedBelow ? 0 : Rounding.full
-                bottomRightRadius: bottomLeftRadius
+                bottomRightRadius: adjacentOccupiedBelow ? 0 : Rounding.full
 
                 Behavior on opacity {
                     FAnim {}
@@ -124,7 +136,6 @@ Item {
         }
     }
 
-    // Active workspace indicator
     Rectangle {
         readonly property real computedHeight: Math.abs(idx1 - idx2) * workspaceButtonHeight + workspaceButtonHeight - margin * 2
         readonly property real computedY: Math.min(idx1, idx2) * workspaceButtonHeight + margin
@@ -145,10 +156,14 @@ Item {
             Anim {}
         }
         Behavior on idx1 {
-            Anim {duration:Animations.durations.small}
+            Anim {
+                duration: Animations.durations.small
+            }
         }
         Behavior on idx2 {
-            Anim {duration:Animations.durations.large}
+            Anim {
+                duration: Animations.durations.large
+            }
         }
     }
 
@@ -163,7 +178,6 @@ Item {
 
             Button {
                 id: button
-
                 readonly property int workspaceValue: root.workspaceGroup * root.shownWs + index + 1
                 readonly property string displayText: WorkspaceLabelManager.getDisplayText(workspaceValue)
                 readonly property string currentMode: WorkspaceLabelManager.currentMode
@@ -190,7 +204,6 @@ Item {
                 background: Item {
                     implicitHeight: workspaceButtonHeight
 
-                    // Workspace number
                     Symbol {
                         readonly property color textColor: button.isActive ? Colors.colOnPrimary : (root.workspaceOccupied[index] ? Colors.colOnSecondaryContainer : Colors.colOnLayer1Inactive)
 
@@ -209,16 +222,17 @@ Item {
                         }
                     }
 
-                    // App icon with hover area
                     StyledIconImage {
                         id: mainAppIcon
 
                         readonly property real offsetMultiplier: button.showNumber ? 2 * root.shrinkedIconMargin : 0
 
-                        anchors.centerIn: parent
-                        anchors.verticalCenterOffset: button.showNumber ? -offsetMultiplier : 0
-                        anchors.horizontalCenterOffset: button.showNumber ? offsetMultiplier * button.positionMultiplier : 0
-
+                        anchors {
+                            centerIn: parent
+                            verticalCenterOffset: button.showNumber ? -offsetMultiplier : 0
+                            horizontalCenterOffset: button.showNumber ? offsetMultiplier * button.positionMultiplier : 0
+                        }
+                        asynchronous: true
                         source: button.appIconSource
                         implicitSize: button.showNumber ? root.shrinkedIconSize : root.baseIconSize
                         tint: 0.4
@@ -247,70 +261,8 @@ Item {
                     }
                 }
 
-                // Live window preview popup
-                StyledPopup {
-                    name: `workspace-${button.workspaceValue}-preview`
+                CurrentAppPopUp {
                     hoverTarget: iconHoverArea
-                    focus: false
-
-                    StyledRect {
-                        readonly property size targetSize: {
-                            if (button.windowToplevel && button.biggestWindow?.size) {
-                                const winWidth = button.biggestWindow.size[0];
-                                const winHeight = button.biggestWindow.size[1];
-
-                                if (winWidth <= 0 || winHeight <= 0)
-                                    return root.previewMaxSize;
-
-                                const aspectRatio = winWidth / winHeight;
-                                let width = winWidth * root.previewScale;
-                                let height = winHeight * root.previewScale;
-
-                                if (width > root.previewMaxSize.width) {
-                                    width = root.previewMaxSize.width;
-                                    height = width / aspectRatio;
-                                }
-
-                                if (height > root.previewMaxSize.height) {
-                                    height = root.previewMaxSize.height;
-                                    width = height * aspectRatio;
-                                }
-
-                                return Qt.size(width, height);
-                            }
-                            return root.previewMaxSize;
-                        }
-
-                        clip: true
-                        color: "transparent"
-                        radius: Rounding.verylarge - Padding.normal
-                        anchors.fill: parent
-                        anchors.margins: Padding.normal
-                        implicitWidth: targetSize.width - Padding.normal
-                        implicitHeight: targetSize.height - Padding.normal
-
-                        StyledScreencopyView {
-                            id: preview
-                            z: 0
-                            anchors.fill: parent
-                            constraintSize: Qt.size(parent.implicitWidth, parent.implicitHeight)
-                            captureSource: button.windowToplevel || root.bar.screen
-                            live: true
-                            smooth: true
-                        }
-
-                        // Fallback app icon
-                        IconImage {
-                            z: 1
-                            anchors.bottom: parent.bottom
-                            anchors.right: parent.right
-                            anchors.margins: Padding.huge
-                            width: Math.min(parent.implicitWidth, parent.implicitHeight) * root.previewIconScale
-                            height: width
-                            source: button.appIconSource
-                            mipmap: true
-                        }
-                    }
                 }
             }
         }

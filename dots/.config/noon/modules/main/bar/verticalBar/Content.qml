@@ -36,53 +36,18 @@ ColumnLayout {
         Loader {
             id: moduleLoader
 
-            property string moduleName: modelData
-
-            // Automatically bind all Layout attached properties
-            Binding {
-                target: moduleLoader.Layout
-                property: "fillHeight"
-                value: moduleLoader.item?.Layout?.fillHeight ?? false
-                when: moduleLoader.item !== null
-            }
-            Binding {
-                target: moduleLoader.Layout
-                property: "topMargin"
-                value: moduleLoader.item?.Layout?.topMargin ?? false
-                when: moduleLoader.item !== null
-            }
-            Binding {
-                target: moduleLoader.Layout
-                property: "bottomMargin"
-                value: moduleLoader.item?.Layout?.bottomMargin ?? false
-                when: moduleLoader.item !== null
-            }
-
-            Binding {
-                target: moduleLoader.Layout
-                property: "fillWidth"
-                value: moduleLoader.item?.Layout?.fillWidth ?? false
-                when: moduleLoader.item !== null
-            }
-
-            Binding {
-                target: moduleLoader.Layout
-                property: "preferredHeight"
-                value: moduleLoader.item?.Layout?.preferredHeight ?? moduleLoader.item?.implicitHeight ?? 0
-                when: moduleLoader.item !== null
-            }
-
-            Binding {
-                target: moduleLoader.Layout
-                property: "preferredWidth"
-                value: moduleLoader.item?.Layout?.preferredWidth ?? moduleLoader.item?.implicitWidth ?? 0
-                when: moduleLoader.item !== null
+            onLoaded: {
+                var layoutProps = ["fillHeight", "fillWidth", "preferredWidth", "preferredHeight", "topMargin", "bottomMargin", "leftMargin", "rightMargin", "margins", "implicitWidth", "implicitHeight", "width", "height", "minimumWidth", "minimumHeight", "maximumWidth", "maximumHeight"];
+                layoutProps.forEach(prop => {
+                    Layout[prop] = Qt.binding(() => item?.Layout?.[prop]);
+                });
             }
 
             Layout.alignment: Qt.AlignHCenter
-
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             sourceComponent: {
-                switch (moduleName) {
+                switch (modelData) {
                 case "spacer":
                     return spacerComponent;
                 case "power":
@@ -133,145 +98,111 @@ ColumnLayout {
                     return null;
                 }
             }
+
             Component {
                 id: circBatteryComponent
                 MinimalBattery {}
             }
             Component {
                 id: weatherComponent
-
                 WeatherIndicator {
                     verticalMode: true
                     expanded: persist.expandWeather
                 }
             }
-
             Component {
                 id: kbComponent
-
                 KeyboardLayout {}
             }
-
             Component {
                 id: batteryComponent
-
                 BatteryIndicator {
                     verticalMode: true
                 }
             }
-
             Component {
                 id: materialStatusIconsComponent
-
                 StatusIcons {
                     verticalMode: true
                     commonIconColor: Colors.colOnSecondaryContainer
                 }
             }
-
             Component {
                 id: titleComponent
-
                 CombinedTitle {
                     bar: barRoot
                 }
             }
-
             Component {
                 id: systemStatusIconsComponent
-
                 SystemStatusIcons {}
             }
-
             Component {
                 id: separatorComponent
-
                 HorizontalSeparator {
                     visible: opacity > 0
                     opacity: Mem.options.bar.appearance.enableSeparators ? 1 : 0
                 }
             }
-
             Component {
                 id: spacerComponent
-
                 Spacer {}
             }
-
             Component {
                 id: sysTrayComponent
-
                 SysTray {
                     bar: barRoot
                 }
             }
-
             Component {
                 id: spaceComponent
-
                 Item {
                     Layout.preferredHeight: 8
                 }
             }
-
             Component {
                 id: utilButtonsComponent
-
                 UtilButtons {
                     vertical: true
                 }
             }
-
             Component {
                 id: resourcesComponent
-
                 Resources {
                     verticalMode: true
                 }
             }
-
             Component {
                 id: volumeComponent
-
                 VolumeIndicator {
                     verticalMode: true
                 }
             }
-
             Component {
                 id: brightnessComponent
-
                 BrightnessIndicator {
                     verticalMode: true
                 }
             }
-
             Component {
                 id: mediaComponent
-
                 VMedia {}
             }
-
             Component {
                 id: progressWsComponent
-
                 ProgressWs {
                     bar: barRoot
                     vertical: true
                 }
             }
-
             Component {
                 id: iiWsComponent
-
                 VWorkspaces {
                     bar: barRoot
                 }
             }
-
             Component {
                 id: unicodeWsComponent
-
                 UnicodeWs {
                     bar: barRoot
                     verticalMode: true
@@ -279,23 +210,18 @@ ColumnLayout {
             }
             Component {
                 id: dateComponent
-
                 DateWidget {}
             }
-
             Component {
                 id: clockComponent
-
                 VClockWidget {}
             }
             Component {
                 id: powerComponent
-
                 PowerIcon {}
             }
             Component {
                 id: logoComponent
-
                 Logo {
                     bg: false
                 }

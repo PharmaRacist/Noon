@@ -9,18 +9,15 @@ import Quickshell
 import Quickshell.Services.Mpris
 import Quickshell.Hyprland
 
-Rectangle {
+BarGroup {
     id: root
 
     readonly property MprisPlayer activePlayer: MprisController.activePlayer
     readonly property string cleanedTitle: StringUtils.cleanMusicTitle(activePlayer?.trackTitle) || qsTr("No media")
     property bool bordered: Mem.options.bar.appearance.modulesBg
     property bool expand: false
-    color: bordered ? Colors.colLayer1 : "transparent"
-    radius: Rounding.small
-    implicitHeight: BarData.currentBarExclusiveSize
-    implicitWidth: Math.max(rowLayout.implicitWidth, 130)
-    Layout.preferredWidth: implicitWidth
+    vertical: false
+    Layout.preferredWidth: Math.max(rowLayout.implicitWidth, 130)
 
     Timer {
         running: activePlayer?.playbackState == MprisPlaybackState.Playing

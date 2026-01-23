@@ -11,7 +11,7 @@ Item {
 
     property bool pinned
     property bool hovered: false
-    property int radius: bg.radius
+    property int radius
 
     implicitWidth: implicitHeight * 2
     implicitHeight: bg.implicitHeight

@@ -5,27 +5,22 @@ import qs.common.widgets
 import qs.services
 import qs.store
 
-MouseArea {
+BarGroup {
     id: root
+    vertical: false
+    Layout.preferredWidth: 220
 
-    implicitHeight: BarData.currentBarExclusiveSize
-    implicitWidth: 200
-    hoverEnabled: true
-
-    Rectangle {
+    StyledText {
         anchors.fill: parent
-        color: Mem.options.bar.appearance.modulesBg ? Colors.colLayer1 : "transparent"
-        radius: Rounding.small
-        Layout.maximumWidth: implicitWidth
-
-        StyledText {
-            anchors.fill: parent
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Fonts.sizes.large
-            color: Colors.colOnLayer1
-            text: DateTimeService.gnomeClockWidgetFormat
-        }
-
+        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: Fonts.sizes.large
+        color: Colors.colOnLayer1
+        text: DateTimeService.gnomeClockWidgetFormat
     }
 
+    MouseArea {
+        id: event_area
+        anchors.fill: parent
+        hoverEnabled: true
+    }
 }

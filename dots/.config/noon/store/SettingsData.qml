@@ -249,8 +249,13 @@ QtObject {
                     },
                     {
                         "icon": "border_all",
-                        "name": "Borders",
-                        "key": "bar.appearance.modulesBg"
+                        "name": "BarGroup",
+                        "key": "bar.appearance.barGroup"
+                    },
+                    {
+                        "icon": "border_horizontal",
+                        "name": "Separators",
+                        "key": "bar.appearance.enableSeparators"
                     },
                     {
                         "icon": "border_all",
@@ -293,7 +298,7 @@ QtObject {
                     },
                     {
                         "icon": "graphic_eq",
-                        "name": "Workspaces Mode",
+                        "name": "Ws Mode",
                         "type": "combobox",
                         "comboBoxValues": Mem.options.bar.workspaces.avilableModes,
                         "key": "bar.workspaces.displayMode"
@@ -396,11 +401,6 @@ QtObject {
                         "key": "sidebar.content.emojies"
                     },
                     {
-                        "icon": "widgets",
-                        "name": "Bar Switcher",
-                        "key": "sidebar.content.barSwitcher"
-                    },
-                    {
                         "icon": "music_note",
                         "name": "Beats",
                         "key": "sidebar.content.beats"
@@ -429,11 +429,6 @@ QtObject {
                         "icon": "sports_esports",
                         "name": "Games",
                         "key": "sidebar.content.games"
-                    },
-                    {
-                        "icon": "photo_library",
-                        "name": "Gallery",
-                        "key": "sidebar.content.gallery"
                     },
                     {
                         "icon": "stylus",

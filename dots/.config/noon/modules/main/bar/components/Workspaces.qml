@@ -13,7 +13,7 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import Qt5Compat.GraphicalEffects
 
-Item {
+BarGroup {
     id: root
     required property var bar
 
@@ -37,9 +37,9 @@ Item {
     readonly property real previewIconScale: 0.15
     readonly property bool borders: Mem.options.bar.appearance.modulesBg
     readonly property int positionMultiplier: Mem.options.bar.behavior.position === "left" ? -1 : 1
-
-    Layout.leftMargin: Padding.normal
-    Layout.rightMargin: Padding.normal
+    vertical: false
+    // Layout.leftMargin: Padding.normal
+    // Layout.rightMargin: Padding.normal
 
     function updateWorkspaceOccupied() {
         workspaceOccupied = Array.from({
@@ -83,11 +83,6 @@ Item {
                 Hyprland.dispatch(`togglespecialworkspace`);
             }
         }
-    }
-
-    BarGroup {
-        implicitHeight: parent.height
-        implicitWidth: rowLayout.width
     }
 
     // Background workspace indicators
@@ -223,17 +218,17 @@ Item {
                         }
                     }
 
-                    // App icon with hover area
                     StyledIconImage {
                         id: mainAppIcon
 
-                        readonly property real offsetMultiplier: button.showNumber ? 2 * root.shrinkedIconMargin : 0
+                        readonly property int offsetMultiplier: button.showNumber ? 2 * root.shrinkedIconMargin : 0
 
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        anchors.bottomMargin: button.showNumber ? root.shrinkedIconMargin : (workspaceButtonWidth - root.baseIconSize) / 2
-                        anchors.rightMargin: button.showNumber ? root.shrinkedIconMargin : (workspaceButtonWidth - root.baseIconSize) / 2
-
+                        anchors {
+                            centerIn: parent
+                            verticalCenterOffset: button.showNumber ? -offsetMultiplier : 0
+                            horizontalCenterOffset: button.showNumber ? -offsetMultiplier : 0
+                        }
+                        asynchronous: true
                         source: button.appIconSource
                         implicitSize: button.showNumber ? root.shrinkedIconSize : root.baseIconSize
                         tint: 0.4
@@ -243,10 +238,10 @@ Item {
                         Behavior on opacity {
                             Anim {}
                         }
-                        Behavior on anchors.bottomMargin {
+                        Behavior on anchors.verticalCenterOffset {
                             Anim {}
                         }
-                        Behavior on anchors.rightMargin {
+                        Behavior on anchors.horizontalCenterOffset {
                             Anim {}
                         }
                         Behavior on implicitSize {
@@ -262,70 +257,8 @@ Item {
                     }
                 }
 
-                // Live window preview popup
-                StyledPopup {
-                    name: `workspace-${button.workspaceValue}-preview`
+                CurrentAppPopUp {
                     hoverTarget: iconHoverArea
-                    focus: false
-
-                    StyledRect {
-                        readonly property size targetSize: {
-                            if (button.windowToplevel && button.biggestWindow?.size) {
-                                const winWidth = button.biggestWindow.size[0];
-                                const winHeight = button.biggestWindow.size[1];
-
-                                if (winWidth <= 0 || winHeight <= 0)
-                                    return root.previewMaxSize;
-
-                                const aspectRatio = winWidth / winHeight;
-                                let width = winWidth * root.previewScale;
-                                let height = winHeight * root.previewScale;
-
-                                if (width > root.previewMaxSize.width) {
-                                    width = root.previewMaxSize.width;
-                                    height = width / aspectRatio;
-                                }
-
-                                if (height > root.previewMaxSize.height) {
-                                    height = root.previewMaxSize.height;
-                                    width = height * aspectRatio;
-                                }
-
-                                return Qt.size(width, height);
-                            }
-                            return root.previewMaxSize;
-                        }
-
-                        clip: true
-                        color: "transparent"
-                        radius: Rounding.verylarge - Padding.normal
-                        anchors.fill: parent
-                        anchors.margins: Padding.normal
-                        implicitWidth: targetSize.width - Padding.normal
-                        implicitHeight: targetSize.height - Padding.normal
-
-                        StyledScreencopyView {
-                            id: preview
-                            z: 0
-                            anchors.fill: parent
-                            constraintSize: Qt.size(parent.implicitWidth, parent.implicitHeight)
-                            captureSource: button.windowToplevel || root.bar.screen
-                            live: true
-                            smooth: true
-                        }
-
-                        // Fallback app icon
-                        IconImage {
-                            z: 1
-                            anchors.bottom: parent.bottom
-                            anchors.right: parent.right
-                            anchors.margins: Padding.huge
-                            width: Math.min(parent.implicitWidth, parent.implicitHeight) * root.previewIconScale
-                            height: width
-                            source: button.appIconSource
-                            mipmap: true
-                        }
-                    }
                 }
             }
         }

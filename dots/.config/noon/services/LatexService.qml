@@ -1,84 +1,57 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import qs.common.functions
-import qs.common
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Hyprland
-import Qt.labs.platform
+import qs.common
+import qs.common.functions
 
-/**
- * Renders LaTeX snippets with MicroTeX.
- * For every request:
- *   1. Hash it
- *   2. Check if the hash is already processed
- *   3. If not, render it with MicroTeX and mark as processed
- */
 Singleton {
     id: root
 
-    readonly property var renderPadding: 4 // This is to prevent cutoff in the rendered images
+    readonly property int renderPadding: 4
+    readonly property string microtexBinaryDir: "/opt/MicroTeX"
+    readonly property string microtexBinaryName: "LaTeX"
+    readonly property string latexOutputPath: Directories.services.latex
 
-    property list<string> processedHashes: []
-    property var processedExpressions: ({})
+    property var processedHashes: new Set()
     property var renderedImagePaths: ({})
-    property string microtexBinaryDir: "/opt/MicroTeX"
-    property string microtexBinaryName: "LaTeX"
-    property string latexOutputPath: Directories.services.latex
 
     signal renderFinished(string hash, string imagePath)
 
-    /**
-    * Requests rendering of a LaTeX expression.
-    * Returns the [hash, isNew]
-    */
     function requestRender(expression) {
-        // 1. Hash it and initialize necessary variables
         const hash = Qt.md5(expression);
         const imagePath = `${latexOutputPath}/${hash}.svg`;
 
-        // 2. Check if the hash is already processed
-        if (processedHashes.includes(hash)) {
-            // console.log("Already processed: " + hash)
+        if (processedHashes.has(hash)) {
             renderFinished(hash, imagePath);
             return [hash, false];
-        } else {
-            root.processedHashes.push(hash);
-            root.processedExpressions[hash] = expression;
-            // console.log("Rendering expression: " + expression)
         }
 
-        // 3. If not, render it with MicroTeX and mark as processed
-        // console.log(`[LatexService] Rendering expression: ${expression} with hash: ${hash}`)
-        // console.log(`                to file: ${imagePath}`)
-        // console.log(`                with command: cd ${microtexBinaryDir} && ./${microtexBinaryName} -headless -input=${StringUtils.shellSingleQuoteEscape(expression)} -output=${imagePath} -textsize=${Fonts.sizes.normal} -padding=${renderPadding} -background=${Colors.m3.m3tertiary} -foreground=${Colors.m3.m3onTertiary} -maxwidth=0.85`)
-        const processQml = `
-                        Process {
-                id: microtexProcess${hash}
-                running: true
-                command: [ "bash", "-c",
-                    "cd ${root.microtexBinaryDir} && ./${root.microtexBinaryName} -headless '-input=${StringUtils.shellSingleQuoteEscape(StringUtils.escapeBackslashes(expression))}' "
-                    + "'-output=${imagePath}' "
-                    + "'-textsize=${Fonts.sizes.normal}' "
-                    + "'-padding=${renderPadding}' "
-                    // + "'-background=${Colors.m3.m3tertiary}' "
-                    + "'-foreground=${Colors.colOnLayer1}' "
-                    + "-maxwidth=0.85 "
-                ]
-                // stdout: SplitParser {
-                //     onRead: data => { console.log("MicroTeX: " + data) }
-                // }
-                onExited: (exitCode, exitStatus) => {
-                    // console.log("[LatexService] MicroTeX process exited with code: " + exitCode + ", status: " + exitStatus)
-                    renderedImagePaths["${hash}"] = "${imagePath}"
-                    root.renderFinished("${hash}", "${imagePath}")
-                    microtexProcess${hash}.destroy()
-                }
+        processedHashes.add(hash);
+
+        const commandArgs = ["bash", "-c", `cd ${microtexBinaryDir} && ./${microtexBinaryName} ` + `-headless ` + `'-input=${StringUtils.shellSingleQuoteEscape(StringUtils.escapeBackslashes(expression))}' ` + `'-output=${imagePath}' ` + `'-textsize=${Fonts.sizes.normal}' ` + `'-padding=${renderPadding}' ` + `'-foreground=${Colors.colOnLayer1}' ` + `-maxwidth=0.85`];
+
+        const processConfig = {
+            command: commandArgs,
+            running: true
+        };
+
+        const process = Qt.createQmlObject(`import Quickshell.Io; Process {}`, root);
+
+        process.onExited.connect(exitCode => {
+            if (exitCode === 0) {
+                renderedImagePaths[hash] = imagePath;
+                root.renderFinished(hash, imagePath);
             }
-        `;
-        // console.log("MicroTeX: " + processQml)
-        Qt.createQmlObject(processQml, root, `MicroTeXProcess_${hash}`);
+            process.destroy();
+        });
+
+        process.command = commandArgs;
+        process.running = true;
+
         return [hash, true];
     }
 }

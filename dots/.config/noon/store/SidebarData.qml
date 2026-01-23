@@ -55,15 +55,6 @@ Singleton {
                 shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.wallpapers
             },
-            "Gallery": {
-                icon: "photo_library",
-                componentPath: "gallary/GalleryWidget",
-                expandable: true,
-                customSize: sizePresets.threeQuarter,
-                searchable: true,
-                shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.gallery ?? true
-            },
             "Tasks": {
                 icon: "task_alt",
                 componentPath: "tasks/KanbanWidget",
@@ -152,6 +143,12 @@ Singleton {
                 icon: "keyboard_option_key",
                 componentPath: "misc/MiscWidget",
                 enabled: Mem.options.sidebar.content.misc
+            },
+            "DMenu": {
+                icon: "dashboard",
+                componentPath: "dmenu/DMenu",
+                searchable: true,
+                stealth: true
             },
             "Bars": {
                 componentPath: "barSwitcher/BarSwitcher",

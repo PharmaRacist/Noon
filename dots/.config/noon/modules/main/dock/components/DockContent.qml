@@ -14,12 +14,11 @@ Item {
     property bool pinned
     implicitWidth: content.implicitWidth + (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
     implicitHeight: content.implicitHeight + (Padding.massive * Mem.options.dock.appearance.iconSizeMultiplier)
-
+    property alias radius: rect.radius
     StyledRect {
         id: rect
         anchors.fill: parent
         color: Colors.colLayer0
-        radius: dockRoot.mainRounding
         enableBorders: true
 
         RowLayout {

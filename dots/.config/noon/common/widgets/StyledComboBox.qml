@@ -7,18 +7,17 @@ import qs.services
 
 ComboBox {
     id: root
-    // clip:true
     Layout.preferredHeight: 40
     Layout.preferredWidth: 210
-    // ---- Custom delegate ----
+
     delegate: ItemDelegate {
-        width: root.width - 10
+        width: ListView.view.width
         height: 40
         highlighted: root.highlightedIndex === index
 
         contentItem: Row {
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 10
+            spacing: Padding.normal
 
             Symbol {
                 text: modelData?.icon ?? ""
@@ -36,120 +35,88 @@ ComboBox {
 
         background: Rectangle {
             color: parent.highlighted ? Colors.m3.m3primaryContainer : "transparent"
-            radius: Rounding.small
+            radius: Rounding.large
         }
     }
 
-    // ---- Displayed text ----
     contentItem: StyledText {
-        id: display
         text: root.displayText
         color: Colors.colOnLayer1
-        anchors.leftMargin:Padding.large
-        anchors.rightMargin:Padding.verylarge
-        anchors.fill: parent
+        leftPadding: Padding.large
+        rightPadding: Padding.verylarge
         elide: Text.ElideRight
-        wrapMode: TextEdit.Wrap
         maximumLineCount: 1
-
     }
 
     background: Rectangle {
-        color: Colors.m3.m3surfaceContainer
-        radius: Rounding.normal
+        color: Colors.colLayer2
+        radius: Rounding.small
     }
 
-    // ---- Click handling ----
     MouseArea {
         anchors.fill: parent
-        onClicked: {
-            if (popup.visible)
-                popup.closeWithAnim();
-            else
-                popup.openWithAnim();
-        }
+        onClicked: popup.visible ? popup.close() : popup.open()
     }
 
-    // ---- Custom popup ----
     popup: Popup {
         id: popup
-        width: root.width + padding + 6
-        padding: 15
-        opacity: 0
+        width: root.width + Padding.massive * 3
+        padding: Padding.large
         implicitHeight: Math.min(contentItem.implicitHeight + padding, 300)
-        property real animatedHeight: 0
-        property real baseY: root.height + 1.5 * padding
-        property real offsetY: padding
-        height: animatedHeight
-        x: (root.width - width) / 2 // Horizontally center the popup
-        y: baseY
-        closePolicy: Popup.NoAutoClose // prevent instant hide
+        height: 0
+        opacity: 0
+        x: (root.width - width) / 2
+        y: root.height + 1.5 * padding
+        closePolicy: Popup.NoAutoClose
 
-        function openWithAnim() {
-            animatedHeight = 0;
+        onAboutToShow: {
+            height = 0;
             opacity = 0;
-            y = baseY;
-            visible = true;
-            revealAnim.restart();
+            openAnim.restart();
         }
 
-        function closeWithAnim() {
-            if (!visible || hideAnim.running)
-                return;
-            hideAnim.restart();
+        onAboutToHide: {
+            closeAnim.restart();
         }
 
-        // Intercept close() to animate first
-        onAboutToHide: event => {
-            // event.accepted = true
-            closeWithAnim();
-        }
-
-        background: Rectangle {
-            color: Colors.m3.m3surfaceContainerLowest
-            radius: Rounding.large
-            clip: true
+        background: StyledRect {
+            color: Colors.colLayer0
+            radius: Rounding.verylarge
+            enableBorders: true
         }
 
         contentItem: StyledListView {
             clip: true
+            radius: Rounding.large
             implicitHeight: contentHeight
-            model: root.popup.visible ? root.delegateModel : null
             currentIndex: root.highlightedIndex
-            spacing: 2
-            ScrollIndicator.vertical: ScrollIndicator {}
+            spacing: Padding.tiny
+            model: root.popup.visible ? root.delegateModel : []
         }
 
-        // --- OPEN: expand upward + fade in ---
         ParallelAnimation {
-            id: revealAnim
-            running: false
+            id: openAnim
             PropertyAnimation {
                 target: popup
                 property: "opacity"
-                from: 0
                 to: 1
                 duration: 180
                 easing.type: Easing.OutCubic
             }
             PropertyAnimation {
                 target: popup
-                property: "animatedHeight"
-                from: 0
+                property: "height"
                 to: popup.implicitHeight
                 duration: 180
                 easing.type: Easing.OutCubic
             }
         }
 
-        // --- CLOSE: slide downward + fade out ---
         ParallelAnimation {
-            id: hideAnim
-            running: false
+            id: closeAnim
             PropertyAnimation {
                 target: popup
                 property: "opacity"
-                from: 1
                 to: 0
                 duration: 150
                 easing.type: Easing.InCubic
@@ -157,14 +124,14 @@ ComboBox {
             PropertyAnimation {
                 target: popup
                 property: "y"
-                from: popup.baseY
-                to: popup.baseY + 2 * popup.offsetY
+                from: popup.y
+                to: popup.y + 2 * popup.padding
                 duration: 150
                 easing.type: Easing.InCubic
             }
             onStopped: {
                 popup.visible = false;
-                popup.y = popup.baseY;
+                popup.y = Qt.binding(() => root.height + 1.5 * popup.padding);
             }
         }
     }

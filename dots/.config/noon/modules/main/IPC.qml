@@ -88,6 +88,23 @@ Scope {
             }
         }
 
+        function dmenu_create(list: string, callback: string, icon: string): void {
+            const items = list.split('|').filter(item => item.trim() !== '');
+
+            const preparedItems = items.map(item => {
+                return {
+                    title: item.trim(),
+                    subtitle: "",
+                    icon: icon,
+                    action: callback
+                };
+            });
+
+            GlobalStates.main.dmenu.items = preparedItems;
+            GlobalStates.main.dmenu.action = callback;
+            NoonUtils.callIpc("sidebar reveal DMenu");
+        }
+
         function toggle_playing(): void {
             MprisController.togglePlaying();
         }

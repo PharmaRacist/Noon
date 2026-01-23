@@ -266,7 +266,6 @@ JsonAdapter {
             property bool overview: false
             property bool misc: true
             property bool games: false
-            property bool gallery: false
         }
 
         behavior: JsonObject {
@@ -426,7 +425,7 @@ JsonAdapter {
             property int mode: 2
             property bool enableSeparators: true
             property bool useBg: true
-            property bool modulesBg: false
+            property bool barGroup: false
             property bool outline: true
             property int height: 38
             property int width: 36

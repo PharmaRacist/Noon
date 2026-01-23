@@ -11,15 +11,13 @@ import qs.store
 BarGroup {
     id: root
 
+    vertical: verticalMode
     property bool verticalMode: false
     readonly property bool isCharging: UPower.displayDevice.state == UPowerDeviceState.Charging
     property bool revealAll: false
-    property int itemSize: Math.min(BarData.currentBarExclusiveSize, 35) * 0.75
-
-    implicitWidth: content.implicitWidth + (verticalMode ? 0 : revealAll ? 20 : 0)
-    implicitHeight: content.implicitHeight + (verticalMode ? revealAll ? 20 : 0 : 0)
-    clip: false
-
+    readonly property int itemSize: Math.round((vertical ? width : height) * 0.75)
+    Layout.preferredHeight: content.implicitHeight + Padding.massive + (revealAll ? 20 : 0)
+    Layout.preferredWidth: content.implicitWidth + Padding.massive + (revealAll ? 20 : 0)
     MouseArea {
         id: mouse
 

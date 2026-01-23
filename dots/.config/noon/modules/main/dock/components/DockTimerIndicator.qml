@@ -21,7 +21,7 @@ Item {
     visible: activeTimers.length > 0
     implicitHeight: bg.implicitHeight
     width: contentWidth
-
+    property color borderColor
     Rectangle {
         id: timerDock
 
@@ -30,7 +30,7 @@ Item {
         anchors.left: parent.left
         color: Colors.colLayer0
         radius: dockRoot.mainRounding
-        border.color: bg.border.color
+        border.color: borderColor
         clip: true
 
         StyledRectangularShadow {

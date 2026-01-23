@@ -24,7 +24,6 @@ StyledRect {
         if (!path)
             return "draft";
 
-        // Get the extension and format it to match "*.ext"
         const ext = "*." + FileUtils.getEscapedFileExtension(path).toLowerCase();
 
         if (NameFilters.picture.indexOf(ext) !== -1) {

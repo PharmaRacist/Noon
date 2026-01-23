@@ -89,27 +89,27 @@ Item {
                 {
                     "icon": "open_in_new",
                     "action": () => {
-                        Qt.openUrlExternally(GlobalStates.web_session.url);
+                        Qt.openUrlExternally(GlobalStates.web_session?.url ?? "");
                         NoonUtils.callIpc("sidebar hide");
                     }
                 },
                 {
                     "icon": "keyboard_double_arrow_left",
-                    "enabled": GlobalStates.web_session.canGoBack,
+                    "enabled": GlobalStates.web_session?.canGoBack ?? false,
                     "action": () => {
                         GlobalStates.web_session.goBack();
                     }
                 },
                 {
                     "icon": "keyboard_double_arrow_right",
-                    "enabled": GlobalStates.web_session.canGoForward,
+                    "enabled": GlobalStates.web_session?.canGoForward ?? false,
                     "action": () => {
                         GlobalStates.web_session.goForward();
                     }
                 },
                 {
                     "icon": "restart_alt",
-                    "enabled": !GlobalStates.web_session.loading,
+                    "enabled": !GlobalStates.web_session?.loading ?? false,
                     "action": () => {
                         GlobalStates.web_session.reload();
                     }

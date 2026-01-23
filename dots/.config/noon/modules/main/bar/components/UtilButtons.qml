@@ -1,20 +1,33 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
-import qs.common
+import qs.services
 import qs.common.widgets
-import qs.modules.main.bar.components
 
-Rectangle {
+BarGroup {
     id: root
-
-    property bool vertical: false
-
-    implicitWidth: !vertical ? 130 : parent.width
-    implicitHeight: vertical ? 130 : parent.height
-    color: Mem.options.bar.appearance.modulesBg ? Colors.colLayer1 : "transparent"
-    radius: Rounding.small
+    Layout.preferredWidth: columnLayout.implicitWidth + padding
+    Layout.preferredHeight: columnLayout.implicitHeight + padding
+    readonly property var content: [
+        {
+            "icon": "colorize",
+            "action": function () {
+                NoonUtils.execDetached("hyprpicker -a -q");
+            }
+        },
+        {
+            "icon": "screenshot",
+            "action": function () {
+                ScreenShotService.takeScreenShot();
+            }
+        },
+        {
+            "icon": "dashboard",
+            "action": function () {
+                NoonUtils.callIpc("sidebar reveal Apps");
+            }
+        }
+    ]
 
     GridLayout {
         id: columnLayout
@@ -24,64 +37,17 @@ Rectangle {
         columnSpacing: 4
         rowSpacing: 4
         anchors.centerIn: parent
-
-        CircleUtilButton {
-            Layout.alignment: Qt.AlignVCenter
-            onClicked: NoonUtils.execDetached("hyprpicker -a -q")
-
-            Symbol {
-                horizontalAlignment: Qt.AlignHCenter
-                fill: 1
-                text: "colorize"
-                font.pixelSize: Fonts.sizes.large
-                color: Colors.colOnLayer1
+        Repeater {
+            id: repeater
+            model: root.content
+            delegate: RippleButtonWithIcon {
+                toggled: false
+                materialIcon: modelData.icon
+                materialIconFill: hovered
+                iconSize: Math.round(root.height * (hovered ? 0.5 : 0.45))
+                implicitSize: Math.round(root.height * 0.75)
+                releaseAction: () => modelData.action()
             }
-
         }
-
-        CircleUtilButton {
-            Layout.alignment: Qt.AlignVCenter
-            onClicked: NoonUtils.execDetached("hyprshot --freeze --clipboard-only --mode region --silent")
-
-            Symbol {
-                horizontalAlignment: Qt.AlignHCenter
-                fill: 1
-                text: "screenshot_region"
-                font.pixelSize: Fonts.sizes.large
-                color: Colors.colOnLayer1
-            }
-
-        }
-
-        CircleUtilButton {
-            Layout.alignment: Qt.AlignVCenter
-            onClicked: NoonUtils.callIpc("sidebar reveal Walls")
-
-            Symbol {
-                horizontalAlignment: Qt.AlignHCenter
-                fill: 1
-                text: "dashboard"
-                font.pixelSize: Fonts.sizes.normal
-                color: Colors.colOnLayer1
-            }
-
-        }
-
     }
-
-    component CircleUtilButton: RippleButton {
-        id: button
-
-        required default property Item content
-        property bool extraActiveCondition: false
-
-        implicitHeight: Math.max(content.implicitHeight, 26, content.implicitHeight)
-        implicitWidth: Math.max(content.implicitHeight, 26, content.implicitWidth)
-        contentItem: content
-
-        PointingHandInteraction {
-        }
-
-    }
-
 }

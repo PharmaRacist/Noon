@@ -23,7 +23,7 @@ Item {
     property var pinnedApps: []
     Layout.preferredWidth: listView.implicitWidth
     Layout.preferredHeight: listView.implicitHeight
-    Layout.fillWidth: true
+    // Layout.fillWidth: true
     Component.onCompleted: {
         if (Mem && Mem.states && Mem.states.dock) {
             pinnedApps = Qt.binding(() => Mem.states.favorites.apps ?? []);
@@ -31,8 +31,9 @@ Item {
     }
 
     Connections {
-        target: Mem?.states?.dock
-        function onPinnedAppsChanged() {
+        target: Mem?.states?.favorites
+
+        function onAppsChanged() {
             root.pinnedApps = Mem.states.favorites.apps ?? [];
         }
     }

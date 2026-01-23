@@ -3,12 +3,14 @@ import qs.common.widgets
 import qs.services
 import qs.store
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 
 Item {
     id: root
-    height: progress.implicitSize
-    width: progress.implicitSize
+
+    Layout.fillWidth: true
+    Layout.preferredHeight: progress.implicitSize
 
     ClippedFilledCircularProgress {
         id: progress

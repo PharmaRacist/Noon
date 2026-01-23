@@ -20,20 +20,19 @@ Scope {
 
         StyledPanel {
             id: dockRoot
-            name: "dock"
-            WlrLayershell.layer: WlrLayer.Top
-
             screen: modelData
-
-            required property var modelData
-            readonly property bool reveal: root.pinned || mouseArea.containsMouse || (!ToplevelManager.activeToplevel?.activated && !GlobalStates.main.sidebar.expanded)
-
-            implicitWidth: bg.implicitWidth + 100
-            implicitHeight: bg.implicitHeight + 100
-            exclusiveZone: root.pinned ? bg.implicitHeight + Sizes.elevationMargin : -1
-
+            name: "dock"
             anchors.bottom: true
 
+            required property var modelData
+            readonly property real rounding: 2 * Rounding.verylarge * Mem.options.dock.appearance.iconSizeMultiplier
+            readonly property bool reveal: root.showOsk || root.pinned || mouseArea.containsMouse || (!ToplevelManager.activeToplevel?.activated && !GlobalStates.main.sidebar.expanded)
+
+            implicitWidth: content.implicitWidth + 10 * rounding
+            implicitHeight: root.showOsk ? 340 : content.implicitHeight + Sizes.elevationMargin
+            exclusiveZone: root.pinned ? content.implicitHeight + Sizes.elevationMargin : -1
+
+            WlrLayershell.layer: WlrLayer.Top
             mask: Region {
                 item: mouseArea
             }
@@ -57,27 +56,27 @@ Scope {
                 Behavior on anchors.topMargin {
                     Anim {}
                 }
-                StyledRectangularShadow {
-                    target: bg
-                }
-                StyledRect {
-                    id: bg
-                    enableBorders: true
-                    implicitWidth: content.implicitWidth
-                    implicitHeight: content.implicitHeight
+
+                RowLayout {
+                    id: content
+                    spacing: Padding.small
+                    anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottomMargin: Sizes.elevationMargin
-                    anchors.bottom: parent.bottom
-                    color: Colors.colLayer0
-                    radius: Rounding.verylarge
 
-                    RowLayout {
-                        id: content
-                        spacing: Padding.small
-                        anchors.centerIn: parent
-                        DockApps {
-                            Layout.margins: Padding.normal
-                        }
+                    DockPinButton {
+                        radius: dockRoot.rounding
+                        pinned: root.pinned
+                    }
+                    DockMedia {
+                        radius: dockRoot.rounding
+                    }
+                    DockContent {
+                        id: bg
+                        radius: dockRoot.rounding
+                    }
+                    DockTimerIndicator {
+                        borderColor: bg.border.color
                     }
                 }
             }
