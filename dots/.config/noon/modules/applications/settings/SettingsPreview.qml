@@ -132,7 +132,7 @@ Item {
                                     key: modelData.key || ""
                                     icon: modelData.icon || "settings"
                                     type: modelData.type || "button"
-
+                                    comboBoxValues: modelData.comboBoxValues || []
                                     onToggledStateChanged: if (key)
                                         root.itemStates[key] = toggledState
                                     onIntValueChanged: if (key)

@@ -12,10 +12,11 @@ Singleton {
 
     property int sidebarWidth
     readonly property QtObject sizePresets: Sizes.sidebar
-    readonly property var enabledCategories: Object.keys(registry).filter(key => (registry[key].enabled ?? true) && !registry[key].stealth)
+    readonly property var enabledCategories: Object.keys(registry).filter(key => (registry[key].enabled ?? true) && !registry[key].stealth && (registry[key].shell === undefined || registry[key].shell === Mem.options.desktop.shell.mode))
     readonly property var registry: ({
             "Apps": {
                 icon: "apps",
+                shell: "main",
                 componentPath: "apps/Apps",
                 searchable: true,
                 customSize: sizePresets.quarter,
@@ -43,6 +44,7 @@ Singleton {
             },
             "Notifs": {
                 icon: "notifications_active",
+                shell: "main",
                 componentPath: "notifs/Notifs",
                 customSize: sizePresets.quarter,
                 enabled: Mem.options.sidebar.content.notifs
@@ -79,12 +81,14 @@ Singleton {
             },
             "Beats": {
                 icon: "music_note",
+                shell: "main",
                 componentPath: "beats/Beats",
                 enabled: Mem.options.sidebar.content.beats,
                 colors: BeatsService.colors
             },
             "History": {
                 icon: "content_paste",
+                shell: "main",
                 componentPath: "history/History",
                 searchable: true,
                 shape: MaterialShape.Shape.Ghostish,
@@ -102,6 +106,7 @@ Singleton {
             },
             "Tweaks": {
                 icon: "tune",
+                shell: "main",
                 componentPath: "settings/QuickSettings",
                 expandable: true,
                 searchable: true,
@@ -120,6 +125,7 @@ Singleton {
                 icon: "sentiment_calm",
                 componentPath: "emojis/Emojis",
                 searchable: true,
+                shell: "main",
                 shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.emojis
             },
@@ -154,6 +160,7 @@ Singleton {
                 componentPath: "barSwitcher/BarSwitcher",
                 shape: MaterialShape.Shape.Ghostish,
                 searchable: true,
+                shell: "main",
                 stealth: true
             },
             "Auth": {

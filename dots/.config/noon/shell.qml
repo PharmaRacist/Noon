@@ -16,18 +16,19 @@ import qs.modules.nobuntu
 import qs.modules.applications
 
 ShellRoot {
-    readonly property string mode: Mem.options.desktop.shell.mode ?? "main" // "xp" "main" "nobuntu"
+    readonly property string mode: Mem.options.desktop.shell.mode ?? "main"
     readonly property Component main: Main {}
     readonly property Component xp: XP {}
-    readonly property Component noBuntu: NoBuntu {}
-    readonly property var _shell_map: {
-        "main": main,
-        "xp": xp,
-        "nobuntu": noBuntu
-    }
+    readonly property Component nobuntu: NoBuntu {}
+    readonly property var _shell_map: ({
+            "main": main,
+            "xp": xp,
+            "nobuntu": nobuntu
+        })
 
     WidgetLoader {
-        component: noBuntu // _shell_map[mode]
+        reloadOn: mode
+        component: _shell_map[mode]
     }
 
     WidgetLoader {
