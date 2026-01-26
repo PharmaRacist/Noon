@@ -57,11 +57,9 @@ Singleton {
     property string uptime: "0h, 0m"
     property string collapsedCalendarFormat: Qt.formatDateTime(clock.date, "dd MMMM yyyy")
 
-    property string gnomeClockWidgetFormat: {
-        var monthName = Qt.formatDateTime(clock.date, "MMMM");
-        var timeFormat = Mem.options.services.time.use12HourFormat ? " dd hh:mm ap " : " dd HH:mm ";
-        var rest = Qt.formatDateTime(clock.date, timeFormat);
-        return monthName.charAt(0).toUpperCase() + monthName.slice(1) + rest;
+    property string gnome_format: {
+        var timeFormat = Mem.options.services.time.use12HourFormat ? "hh:mm ap" : "HH:mm";
+        return Qt.formatDateTime(clock.date, "dd MMM, ") + Qt.formatDateTime(clock.date, timeFormat);
     }
     // Relative time formatting function
     function getRelativeTime(timestamp) {

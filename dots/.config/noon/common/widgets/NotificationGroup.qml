@@ -102,6 +102,7 @@ Item { // Notification group area
         target: background
         visible: popup
     }
+
     Rectangle { // Background of the notification
         id: background
         anchors.left: parent.left
@@ -109,7 +110,10 @@ Item { // Notification group area
         color: Colors.colLayer0
         radius: Rounding.verylarge
         anchors.leftMargin: root.xOffset
-
+        border {
+            color:Colors.colOutline
+            width:root.popup ? 1 : 0
+        }
         Behavior on anchors.leftMargin {
             enabled: !dragManager.dragging
             Anim {}

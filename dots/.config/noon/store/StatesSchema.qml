@@ -2,6 +2,12 @@ import qs.common.utils
 
 JsonAdapter {
     property JsonObject applications: JsonObject {
+        property JsonObject settings: JsonObject {
+            property string cat: ""
+            property bool sidebar_expanded: false
+            property bool sidebar_pinned: false
+            property int appearance_mode: 0
+        }
         property JsonObject reader: JsonObject {
             property string currentFile: ""
             property bool sidebar_expanded: false

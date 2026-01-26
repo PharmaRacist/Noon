@@ -21,6 +21,7 @@ Scope {
         StyledPanel {
             id: dockRoot
             name: "dock"
+            shell: "nobuntu"
             WlrLayershell.layer: WlrLayer.Top
 
             screen: modelData

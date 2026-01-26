@@ -12,7 +12,8 @@ Item {
     required property QtObject colors
     Layout.fillHeight: true
     Layout.minimumWidth: childrenRect.width
-    implicitWidth: childrenRect.width
+    implicitWidth: SidebarData.sizePresets.bar // childrenRect.width
+    Layout.alignment: Qt.AlignHCenter
 
     NavigationRail {
         id: navRail
@@ -21,7 +22,6 @@ Item {
         expanded: false
         spacing: sleek ? Padding.small : Padding.large
         readonly property bool sleek: !Mem.options.sidebar.appearance.showNavTitles
-
         Repeater {
             model: SidebarData.enabledCategories
 

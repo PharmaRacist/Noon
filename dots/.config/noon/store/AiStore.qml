@@ -11,7 +11,23 @@ Singleton {
     id: root
     property Component aiModelComponent: Ai.aiModelComponent
     property Component aiMessageComponent: Ai.aiMessageComponent
-    property var promptSubstitutions: ({
+    readonly property string keys_prompt : "
+        ## ignore and don't answer when irrelevant or empty or have no idea
+        U have both read and set access to users
+        distro {DISTRO}
+        desktop environment: {DE}
+        date & time {DATETIME}
+        opened app {WINDOWCLASS}
+        weather {WEATHER}
+        city {LOCATION}
+        username {USER}
+        tasks {TASKS}
+        notes {NOTES}
+        alarms {ALARMS}
+        timers {TIMERS}
+        playing {PLAYING}
+     "
+    readonly property var promptSubstitutions: ({
             "{DISTRO}": Mem.options.ai.context.distro ? SysInfoService.distroName : "",
             "{DATETIME}": Mem.options.ai.context.datetime ? `${DateTimeService.time}, ${DateTimeService.collapsedCalendarFormat}` : "",
             "{WINDOWCLASS}": Mem.options.ai.context.windowclass ? `${ToplevelManager.activeToplevel?.appId} ${ToplevelManager.activeToplevel?.title}` ?? "Unknown" : "",

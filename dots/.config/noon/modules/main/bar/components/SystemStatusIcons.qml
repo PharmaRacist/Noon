@@ -1,132 +1,82 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import Quickshell
+import Quickshell.Widgets
 import qs.common
 import qs.common.widgets
 import qs.services
-import Quickshell
-import Quickshell.Hyprland
-import Quickshell.Services.Mpris
-import Quickshell.Widgets
-import QtNetwork
 
 Rectangle {
-    // Common properties
-    property real iconSpacing: 10
-    property real commonIconSize: 16
+    readonly property real iconSize: 16
 
     height: parent.height * 0.85
-    radius: Rounding.small
+    width: layout.implicitWidth + 20
     color: "transparent"
-    width: indicatorsRowLayout.width + 20
 
     RowLayout {
-        id: indicatorsRowLayout
+        id: layout
         anchors.centerIn: parent
-        spacing: 0
+        spacing: 10
 
-        // Muted audio indicator
-        Revealer {
-            reveal: AudioService.sink?.audio?.muted ?? false
-            Layout.fillHeight: true
-            Layout.rightMargin: reveal ? iconSpacing : 0
-
-            Behavior on Layout.rightMargin {
-                FAnim {}
-            }
+        Repeater {
+            model: [
+                {
+                    show: AudioService.sink?.audio?.muted ?? false,
+                    icon: "audio-volume-muted",
+                    cmd: null
+                },
+                {
+                    show: AudioService.source?.audio?.muted ?? false,
+                    icon: "microphone-sensitivity-muted",
+                    cmd: null
+                },
+                {
+                    show: true,
+                    icon: getNetIcon(),
+                    cmd: Mem.options.apps.networkEthernet
+                },
+                {
+                    show: BluetoothService.available,
+                    icon: getBtIcon(),
+                    cmd: null
+                }
+            ]
 
             IconImage {
-                anchors.centerIn: parent
-                source: NoonUtils.iconPath("audio-volume-muted")
-                implicitSize: commonIconSize
-            }
-        }
+                visible: modelData.show
+                source: NoonUtils.iconPath(modelData.icon)
+                implicitSize: iconSize
 
-        // Muted microphone indicator
-        Revealer {
-            reveal: AudioService.source?.audio?.muted ?? false
-            Layout.fillHeight: true
-            Layout.rightMargin: reveal ? iconSpacing : 0
-
-            Behavior on Layout.rightMargin {
-                FAnim {}
-            }
-
-            Item {
-                width: commonIconSize
-                height: commonIconSize
-
-                IconImage {
-                    anchors.centerIn: parent
-                    source: NoonUtils.iconPath("microphone-sensitivity-muted")
-                    implicitSize: commonIconSize
-                    mipmap: true
-                    smooth: true
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: !!modelData.cmd
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: NoonUtils.execDetached(modelData.cmd)
                 }
             }
         }
+    }
 
-        // Network indicator
-        Item {
-            Layout.rightMargin: iconSpacing
-            width: commonIconSize
-            height: commonIconSize
-
-            readonly property string networkIcon: {
-                if ((NetworkService.networkName ?? "") !== "" && (NetworkService.networkName ?? "") !== "lo") {
-                    const strength = NetworkService.networkStrength ?? 0;
-                    if (strength > 80)
-                        return "network-wireless-signal-excellent";
-                    if (strength > 60)
-                        return "network-wireless-signal-good";
-                    if (strength > 40)
-                        return "network-wireless-signal-ok";
-                    if (strength > 20)
-                        return "network-wireless-signal-weak";
-                    return "network-wireless-signal-none";
-                } else if (NetworkInformation.TransportMedium?.Ethernet ?? false) {
-                    return "network-connected";
-                }
-                return "network-wireless-offline";
-            }
-
-            IconImage {
-                anchors.centerIn: parent
-                source: NoonUtils.iconPath(parent.networkIcon)
-                width: commonIconSize
-                height: commonIconSize
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: NoonUtils.execDetached(Mem.options.apps.networkEthernet)
-            }
+    // Helper logic kept separate to keep the UI tree clean
+    function getNetIcon() {
+        if ((NetworkService.networkName || "") !== "" && NetworkService.networkName !== "lo") {
+            const s = NetworkService.networkStrength ?? 0;
+            if (s > 80)
+                return "network-wireless-signal-excellent";
+            if (s > 60)
+                return "network-wireless-signal-good";
+            if (s > 40)
+                return "network-wireless-signal-ok";
+            if (s > 20)
+                return "network-wireless-signal-weak";
+            return "network-wireless-signal-none";
         }
+        return (NetworkInformation.TransportMedium?.Ethernet) ? "network-connected" : "network-wireless-offline";
+    }
 
-        // Bluetooth indicator
-        Item {
-            width: commonIconSize
-            height: commonIconSize
-            visible: BluetoothService.available
-            readonly property string bluetoothIcon: {
-                const connected = BluetoothService.bluetoothConnected ?? false;
-                const enabled = BluetoothService.bluetoothEnabled ?? false;
-
-                if (connected)
-                    return "bluetooth-active";
-                if (enabled)
-                    return "bluetooth";
-                return "bluetooth-disabled";
-            }
-
-            IconImage {
-                anchors.centerIn: parent
-                source: NoonUtils.iconPath(parent.bluetoothIcon)
-                implicitSize: commonIconSize
-            }
-        }
+    function getBtIcon() {
+        if (BluetoothService.bluetoothConnected)
+            return "bluetooth-active";
+        return BluetoothService.bluetoothEnabled ? "bluetooth" : "bluetooth-disabled";
     }
 }

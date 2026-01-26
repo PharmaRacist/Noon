@@ -199,8 +199,11 @@ Singleton {
     function mkdir(directories: var) {
         if (!directories)
             return;
-        NoonUtils.execDetached(`mkdir -p '${directories.join("' '")}'`);
+
+        const trimmedDirs = directories.map(dir => trimFileProtocol(dir));
+        NoonUtils.execDetached(`mkdir -p '${trimmedDirs.join("' '")}'`);
     }
+
     function copyItem(item: string, target: string) {
         NoonUtils.execDetached(`cp ${trimFileProtocol(item)} ${trimFileProtocol(target)}`);
     }

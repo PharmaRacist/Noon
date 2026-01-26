@@ -12,9 +12,11 @@ Singleton {
 
     property QtObject main
     property QtObject xp
+    property QtObject nobuntu
     property QtObject applications
     property var web_session
 
+    property bool superPressed: false
     readonly property var topLevel: ToplevelManager.activeToplevel
     readonly property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
     readonly property bool superHeld: superHeldShortcut.pressed
@@ -22,6 +24,7 @@ Singleton {
     CustomShortcut {
         id: superHeldShortcut
         name: "superHeld"
+        // onPressed: GlobalStates.superPressed = !GlobalStates.superPressed
     }
 
     applications: QtObject {
@@ -90,5 +93,20 @@ Singleton {
         property bool showRun: false
         property bool showStartMenu: false
         property bool showControlPanel: false
+    }
+    nobuntu: QtObject {
+        id: nobuntu
+
+        property QtObject db: QtObject {
+            property bool show: false
+        }
+
+        property QtObject overview: QtObject {
+            property bool show: false
+        }
+
+        property QtObject notifs: QtObject {
+            property bool show: false
+        }
     }
 }

@@ -29,11 +29,12 @@ Singleton {
     readonly property string apiKeyEnvVarName: "API_KEY"
 
     property string systemPrompt: {
+        let keys_prompt = AiStore.keys_prompt;
         let prompt = Mem.options.ai?.systemPrompt ?? "";
         for (let key in root.promptSubstitutions) {
             prompt = prompt.split(key).join(root.promptSubstitutions[key]);
         }
-        return prompt;
+        return prompt + keys_prompt;
     }
     // property var messages: []
     property var messageIDs: []

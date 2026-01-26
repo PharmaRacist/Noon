@@ -76,21 +76,6 @@ JsonAdapter {
         - Make sure you answer precisely without hallucination and prefer bullet points over walls of text.
         - Don't repeat the user's question
 
-        ## Context (ignore when irrelevant or empty)
-         U have both read and set access to users
-         distro {DISTRO}
-         desktop environment: {DE}
-         date & time {DATETIME}
-         opened app {WINDOWCLASS}
-         weather {WEATHER}
-         city {LOCATION}
-         username {USER}
-         tasks {TASKS}
-         notes {NOTES}
-         alarms {ALARMS}
-         timers {TIMERS}
-         playing {PLAYING}
-
          ## Presentation
             - Use Markdown features in your response:
             - **Bold** text to **highlight keywords** in your response when needed

@@ -16,7 +16,7 @@ ScreencopyView {
     visible: HyprlandService.isHyprland
     live: true
     paintCursor: true
-    layer.enabled: radius > 0
+    layer.enabled: false // radius > 0
 
     layer.effect: OpacityMask {
 

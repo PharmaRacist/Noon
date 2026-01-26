@@ -129,9 +129,7 @@ ColumnLayout {
             }
             Component {
                 id: titleComponent
-                CombinedTitle {
-                    bar: barRoot
-                }
+                CombinedTitle {}
             }
             Component {
                 id: systemStatusIconsComponent

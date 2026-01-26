@@ -9,11 +9,10 @@ StyledText {
     font.family: "Rubik"
     font.pixelSize: Fonts.sizes.normal
     color: Colors.m3.m3onSurfaceVariant
-    text: DateTimeService.gnomeClockWidgetFormat
+    text: DateTimeService.gnome_format
 
     MouseArea {
         anchors.fill: parent
         onClicked: NoonUtils.callIpc("sidebar reveal Apps")
     }
-
 }

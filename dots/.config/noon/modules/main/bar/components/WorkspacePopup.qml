@@ -1,77 +1,81 @@
-import qs.services
-import qs.common
-import qs.common.widgets
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
-import Quickshell.Wayland
 import Quickshell.Hyprland
+import Quickshell.Wayland
+import Quickshell.Widgets
+import qs.common
+import qs.common.widgets
+import qs.services
 
 StyledPopup {
     id: popup
+
     active: HyprlandService.isHyprland && hoverTarget && hoverTarget.containsMouse
+
     Item {
         id: root
+
+        readonly property var focusedScreen: GlobalStates.focusedScreen
+        readonly property var focusedWindow: Hyprland.focusedWindow
+        readonly property var toplevel: Hyprland.toplevelForAddress(focusedWindow.address)
+        readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
+        readonly property string windowAppId: activeWindow.appId ?? ""
+        readonly property var iconPath: DesktopEntries.byId(windowAppId).icon
+        readonly property size mainSize: Qt.size(380, 214)
+
         clip: true
         anchors.fill: parent
-
-        property var focusedScreen: GlobalStates.focusedScreen
-        property var focusedWindow: Hyprland.focusedWindow
-        property var toplevel: focusedWindow?.address ? Hyprland.toplevelForAddress(focusedWindow.address) : null
-        readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
-
-        property var iconToScreenRatio: 0.13
-        // Get appId from the active window via ToplevelManager
-        property string windowAppId: (activeWindow?.activated && activeWindow?.appId) ? activeWindow.appId : ""
-        property var iconPath: NoonUtils.iconPath(AppSearch.guessIcon(windowAppId))
-
         implicitHeight: preview.implicitHeight
         implicitWidth: preview.implicitWidth
         visible: preview.hasContent
-        Loader {
-            active: HyprlandService.isHyprland
+
+        StyledRect {
+            clip: true
+            color: "transparent"
+            radius: Rounding.verylarge
+
             anchors {
                 fill: parent
-                margins: 9
-                topMargin: 3
-                bottomMargin: 3
+                margins: Padding.normal
+                topMargin: Padding.small
+                bottomMargin: Padding.small
             }
 
             StyledScreencopyView {
                 id: preview
+
                 anchors.fill: parent
-                constraintSize: Qt.size(432, 242)
-                captureSource: root?.focusedScreen ?? null
+                constraintSize: root.mainSize
+                captureSource: root.focusedScreen
                 clip: true
                 smooth: true
                 radius: Rounding.verylarge
 
                 IconImage {
                     id: appIcon
-                    property var iconSize: Math.min(preview.width, preview.height) * root.iconToScreenRatio
+
+                    readonly property var iconSize: Math.min(preview.width, preview.height) * 0.13
 
                     mipmap: true
                     source: root.iconPath
                     width: iconSize
                     height: iconSize
+
                     anchors {
                         bottom: parent.bottom
                         right: parent.right
                         margins: 18
                     }
 
-                    Behavior on width {
-                        Anim {}
-                    }
-
-                    Behavior on height {
-                        Anim {}
-                    }
                 }
+
             }
+
         }
+
     }
+
 }

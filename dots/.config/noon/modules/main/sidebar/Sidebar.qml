@@ -11,15 +11,13 @@ import qs.store
 
 StyledPanel {
     id: root
-    name: "sidebar"
-    visible: true
+
     property bool hoverMode: true
     property bool pinned: false
     property bool expanded: false
     property bool reveal: revealCondition
-
+    property bool rightMode: barPosition === "left" || barPosition === "bottom"
     readonly property bool show: !hoverMode
-    readonly property bool rightMode: barPosition === "left" || barPosition === "bottom"
     readonly property bool revealCondition: (hoverArea.containsMouse && hoverMode) || PolkitService.flow !== null
     readonly property int rounding: Rounding.verylarge
     readonly property int appearanceMode: Mem.options.sidebar.appearance.mode
@@ -28,6 +26,34 @@ StyledPanel {
     readonly property int sidebarWidth: auxWidth + SidebarData.currentSize(hoverMode, root.expanded, selectedCategory)
     readonly property int auxWidth: sidebarContent.auxVisible && !hoverMode ? SidebarData.currentSize(false, false, sidebarContent.auxCategory) : 0
 
+    function hide() {
+        if (pinned)
+            return;
+
+        reveal = false;
+        hoverMode = true;
+        sidebarContent.selectedCategory = "";
+        if (!pinned)
+            reset_reveal_conditions();
+    }
+
+    function reveal_content() {
+        hoverMode = false;
+        sidebarContent.forceActiveFocus();
+    }
+
+    function close_aux() {
+        sidebarContent.closeAux();
+    }
+
+    function reset_reveal_conditions() {
+        root.reveal = Qt.binding(() => {
+            return root.revealCondition;
+        });
+    }
+
+    name: "sidebar"
+    visible: true
     implicitWidth: visualContainer.width + rounding + bubble.width + Sizes.hyprland.gapsOut
     exclusiveZone: !hoverMode && pinned ? implicitWidth - rounding : -1
     aboveWindows: true
@@ -41,29 +67,17 @@ StyledPanel {
         bottom: true
     }
 
-    function hide() {
-        if (pinned)
-            return;
-        reveal = false;
-        // hoverMode = true;
-        sidebarContent.dismiss();
-        if (!pinned)
-            reset_reveal_conditions();
-    }
-
-    function reveal_content() {
-        hoverMode = false;
-        sidebarContent.forceActiveFocus();
-    }
-    function close_aux() {
-        sidebarContent.closeAux();
-    }
-    function reset_reveal_conditions() {
-        root.reveal = Qt.binding(() => root.revealCondition);
-    }
-
     Item {
         id: wrapperItem
+
+        opacity: width > Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn ? 1 : 0
+        width: {
+            if (!hoverMode)
+                return visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0);
+
+            return reveal ? Math.max(visualContainer.width, hoverArea.width) : Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn;
+        }
+
         anchors {
             top: parent.top
             bottom: parent.bottom
@@ -71,23 +85,15 @@ StyledPanel {
             right: root.rightMode ? parent.right : undefined
         }
 
-        width: {
-            if (!hoverMode)
-                return visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0);
-            return reveal ? Math.max(visualContainer.width, hoverArea.width) : Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn;
-        }
-
-        Behavior on width {
-            Anim {}
-        }
-
         MouseArea {
             id: hoverArea
+
             enabled: root.hoverMode
             z: 1000
             hoverEnabled: true
             acceptedButtons: Qt.NoButton
             width: root.reveal ? visualContainer.width : Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn
+
             anchors {
                 top: parent.top
                 bottom: parent.bottom
@@ -108,9 +114,9 @@ StyledPanel {
 
         StyledRect {
             id: visualContainer
+
             width: root.sidebarWidth
             color: sidebarContent.colors.colLayer0
-
             topRightRadius: !root.rightMode && root.appearanceMode === 1 ? root.rounding : 0
             bottomRightRadius: !root.rightMode && root.appearanceMode === 1 ? root.rounding : 0
             topLeftRadius: root.rightMode && root.appearanceMode === 1 ? root.rounding : 0
@@ -129,6 +135,7 @@ StyledPanel {
 
             Content {
                 id: sidebarContent
+
                 panelWindow: root
             }
 
@@ -138,24 +145,28 @@ StyledPanel {
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }
+
             Behavior on anchors.rightMargin {
                 Anim {
                     duration: Animations.durations.small
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }
+
             Behavior on width {
                 Anim {
                     duration: Animations.durations.normal
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }
+
             Behavior on color {
                 CAnim {
                     duration: Animations.durations.verylarge
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }
+
             Behavior on radius {
                 Anim {
                     duration: Animations.durations.normal
@@ -166,10 +177,12 @@ StyledPanel {
 
         SidebarBubble {
             id: bubble
+
             show: !hoverMode
             rightMode: root.rightMode
             selectedCategory: sidebarContent.selectedCategory
             colors: sidebarContent.colors
+
             anchors {
                 right: !root.rightMode ? undefined : visualContainer.left
                 left: root.rightMode ? undefined : visualContainer.right
@@ -180,10 +193,12 @@ StyledPanel {
 
         RoundCorner {
             id: c1
+
             visible: root.appearanceMode === 2
             corner: root.rightMode ? cornerEnum.bottomRight : cornerEnum.bottomLeft
             color: visualContainer.color
             size: root.rounding
+
             anchors {
                 left: root.rightMode ? undefined : visualContainer.right
                 right: root.rightMode ? visualContainer.left : undefined
@@ -197,6 +212,7 @@ StyledPanel {
             corner: root.rightMode ? cornerEnum.topRight : cornerEnum.topLeft
             color: visualContainer.color
             size: c1.size
+
             anchors {
                 top: visualContainer.top
                 left: root.rightMode ? undefined : visualContainer.right
@@ -204,17 +220,19 @@ StyledPanel {
                 topMargin: root.barPosition === "top" ? 0 : Sizes.frameThickness
             }
         }
+
+        Behavior on width {
+            Anim {}
+        }
     }
 
     HyprlandFocusGrab {
         windows: [root]
         active: show
-        onCleared: if (!pinned)
-            hide()
-    }
-
-    mask: Region {
-        item: wrapperItem
+        onCleared: {
+            if (!pinned)
+                hide();
+        }
     }
 
     Binding {
@@ -224,18 +242,26 @@ StyledPanel {
     }
 
     IpcHandler {
-        target: "sidebar"
         function reveal_aux(cat: string) {
             sidebarContent.toggleAux(cat);
         }
+
         function reveal(cat: string) {
             sidebarContent.changeContent(cat);
         }
+
         function toggle_pin() {
             root.pinned = !root.pinned;
         }
+
         function hide() {
             root.hide();
         }
+
+        target: "sidebar"
+    }
+
+    mask: Region {
+        item: wrapperItem
     }
 }

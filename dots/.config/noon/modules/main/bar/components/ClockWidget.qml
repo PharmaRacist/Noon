@@ -15,7 +15,7 @@ BarGroup {
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Fonts.sizes.large
         color: Colors.colOnLayer1
-        text: DateTimeService.gnomeClockWidgetFormat
+        text: DateTimeService.gnome_format
     }
 
     MouseArea {

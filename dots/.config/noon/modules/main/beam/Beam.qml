@@ -20,17 +20,17 @@ Scope {
             property var modelData
             property string state: "ai"
             property string query: ""
-            property int detectionArea: scrollReveal ? 20 : 4
-            property bool scrollReveal: Mem.options.beam.behavior.scrollToReveal
-            property bool hoverReveal: Mem.options.beam.behavior.hoverToReveal
-            property bool revealLauncherOnAction: true // For Revealing More Info panels if needed
-            property bool reveal: GlobalStates.main.showBeam || (hoverReveal && beamMouseArea.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !GlobalStates.topLevel.activated)
-            property bool addSeparatorForNotes: true
-            property int expandedLitterThreshhold: 10
-            property int mainRounding: Rounding.huge
-            property int elevationValue: Mem.options.bar.behavior.position === "bottom" ? BarData.currentBarSize + Sizes.elevationValue : Sizes.elevationMargin
-            property bool clearAiChatBeforeSearch: Mem.options.beam.behavior.clearAiChatBeforeSearch ?? false
-            property string currentSearchSubstate: "search"
+            readonly property int detectionArea: scrollReveal ? 20 : 4
+            readonly property bool scrollReveal: Mem.options.beam.behavior.scrollToReveal
+            readonly property bool hoverReveal: Mem.options.beam.behavior.hoverToReveal
+            readonly property bool revealLauncherOnAction: true // For Revealing More Info panels if needed
+            readonly property bool reveal: GlobalStates.main.showBeam || (hoverReveal && beam_mouse_area.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !GlobalStates.topLevel.activated)
+            readonly property bool addSeparatorForNotes: true
+            readonly property int expandedLitterThreshhold: 10
+            readonly property int mainRounding: Rounding.huge
+            readonly property int elevationValue: Mem.options.bar.behavior.position === "bottom" ? BarData.currentBarSize + Sizes.elevationValue : Sizes.elevationMargin
+            readonly property bool clearAiChatBeforeSearch: Mem.options.beam.behavior.clearAiChatBeforeSearch ?? false
+            readonly property string currentSearchSubstate: "search"
             property var suggestedApp: null
             property int mode: Mem.states.beam.appearance.mode ?? 0
             property var reg: ({
@@ -195,7 +195,7 @@ Scope {
             Timer {
                 id: idleTimer
                 repeat: true
-                running: root.reveal && query.length < 1 && !beamMouseArea.containsMouse
+                running: root.reveal && query.length < 1 && !beam_mouse_area.containsMouse
                 interval: 5000
                 onTriggered: root.hide()
             }
@@ -476,11 +476,11 @@ Scope {
             }
 
             MouseArea {
-                id: beamMouseArea
+                id: beam_mouse_area
                 z: 0
                 hoverEnabled: true
                 anchors.fill: parent
-
+                readonly property int _hidden_offset: -(Sizes.beamSize.height + elevationValue - 2)
                 propagateComposedEvents: true
                 scrollGestureEnabled: true
                 onWheel: function (wheel) {
@@ -501,7 +501,7 @@ Scope {
                 }
 
                 anchors {
-                    bottomMargin: root.reveal && !GlobalStates.main.showOsdValues ? 0 : -(Sizes.beamSize.height + elevationValue - 2)
+                    bottomMargin: root.reveal && !GlobalStates.main.showOsdValues ? 0 : _hidden_offset
 
                     Behavior on bottomMargin {
                         Anim {}
@@ -509,6 +509,7 @@ Scope {
                 }
 
                 Item {
+                    opacity: beam_mouse_area.anchors.bottomMargin > beam_mouse_area._hidden_offset ? 1 : 0
                     anchors.fill: parent
                     StyledRect {
                         id: bg

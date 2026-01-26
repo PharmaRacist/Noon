@@ -17,15 +17,13 @@ Scope {
         screen: GlobalStates.focusedScreen ?? null
         name: "notificationPopup"
         WlrLayershell.layer: WlrLayer.Overlay
-        exclusiveZone: Mem.options.bar.currentLayout === 3 ? -1 : 0
+        exclusiveZone: 0
         aboveWindows: true
-        property bool rightMode: GlobalStates?.main?.sidebar.expanded || GlobalStates.main.sidebar.show || Mem.options.bar.behavior.position !== "right"
 
         anchors {
             top: true
             bottom: true
-            right: rightMode
-            left: !rightMode
+            right: true
         }
 
         mask: Region {
@@ -41,12 +39,13 @@ Scope {
                 top: parent.top
                 bottom: parent.bottom
                 right: parent.right
-                rightMargin: Sizes.elevationMargin + Sizes.frameThickness
-                topMargin: Sizes.elevationMargin + Sizes.frameThickness
-                leftMargin: Sizes.elevationMargin + Sizes.frameThickness
+                margins:Padding.massive
             }
             implicitWidth: Sizes.notificationPopupWidth - anchors.rightMargin * 2
             popup: true
+            clip: false
+            animateMovement:true
+            animateAppearance:true
         }
     }
 }

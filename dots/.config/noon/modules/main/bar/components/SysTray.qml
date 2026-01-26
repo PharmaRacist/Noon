@@ -25,7 +25,6 @@ Item {
                 rows: -1
                 columns: 1
             }
-
         },
         State {
             when: !verticalMode
@@ -35,7 +34,6 @@ Item {
                 rows: 1
                 columns: -1
             }
-
         }
     ]
 
@@ -57,9 +55,6 @@ Item {
                 implicitWidth: root.iconSize
                 item: modelData
             }
-
         }
-
     }
-
 }

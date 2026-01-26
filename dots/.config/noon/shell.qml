@@ -12,21 +12,24 @@ import qs.common
 import qs.common.utils
 import qs.modules.main
 import qs.modules.xp
+import qs.modules.nobuntu
 import qs.modules.applications
 
 ShellRoot {
-    property string mode: Mem.options.desktop.shell.mode ?? "main" // "xp" "main:noon"
+    readonly property string mode: Mem.options.desktop.shell.mode ?? "main" // "xp" "main" "nobuntu"
+    readonly property Component main: Main {}
+    readonly property Component xp: XP {}
+    readonly property Component noBuntu: NoBuntu {}
+    readonly property var _shell_map: {
+        "main": main,
+        "xp": xp,
+        "nobuntu": noBuntu
+    }
 
     WidgetLoader {
-        active: mode === "xp"
-
-        XP {}
+        component: noBuntu // _shell_map[mode]
     }
-    WidgetLoader {
-        active: mode !== "xp"
 
-        Main {}
-    }
     WidgetLoader {
         Applications {}
     }
