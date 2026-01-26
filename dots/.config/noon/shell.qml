@@ -30,8 +30,5 @@ ShellRoot {
         reloadOn: mode
         component: _shell_map[mode]
     }
-
-    WidgetLoader {
-        Applications {}
-    }
+    AppsIPC {}
 }

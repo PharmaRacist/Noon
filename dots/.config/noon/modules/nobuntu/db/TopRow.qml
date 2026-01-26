@@ -12,6 +12,7 @@ Item {
     id: root
     Layout.fillWidth: true
     Layout.preferredHeight: 60
+
     readonly property var icons_model: [
         {
             icon: "camera-photo-symbolic",
@@ -19,7 +20,7 @@ Item {
         },
         {
             icon: "emblem-system-symbolic",
-            action: () => NoonUtils.execDetached(Mem.options.apps.settings)
+            action: () => NoonUtils.callIpc("apps settings")
         },
         {
             icon: "system-lock-screen-symbolic",
@@ -43,7 +44,10 @@ Item {
 
             GButtonWithIcon {
                 iconSource: modelData.icon
-                onPressed: modelData.action()
+                onPressed:  {
+                    modelData.action()
+                    GlobalStates.nobuntu.db.show = false
+                }
             }
         }
     }

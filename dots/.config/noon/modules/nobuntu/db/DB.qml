@@ -44,7 +44,8 @@ StyledPanel {
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: Padding.verylarge
-            TopRow {}
+            TopRow {
+            }
             // GBrightnessSlider {}
             // BottomRow {}
             Spacer {}
