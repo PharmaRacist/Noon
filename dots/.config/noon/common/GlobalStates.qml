@@ -107,6 +107,10 @@ Singleton {
             property bool show: false
         }
 
+        property QtObject clipboard: QtObject {
+            property bool show: false
+        }
+
         property QtObject overview: QtObject {
             property bool show: false
         }

@@ -18,5 +18,8 @@ Scope {
         function toggle_notifs() {
             GlobalStates.nobuntu.notifs.show = !GlobalStates.nobuntu.notifs.show;
         }
+        function toggle_clipboard() {
+            GlobalStates.nobuntu.clipboard.show = !GlobalStates.nobuntu.clipboard.show;
+        }
     }
 }

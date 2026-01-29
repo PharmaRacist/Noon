@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import qs.services
 import qs.common
 import qs.common.utils
 import "startMenu"
@@ -45,11 +46,10 @@ Scope {
     WidgetLoader {
         Run {}
     }
+
     WidgetLoader {
-        IPC {}
-    }
-    WidgetLoader {
-        enabled: Mem.options.desktop.bg.useQs && Mem.states.desktop.bg.currentBg.length > 1 && !ToplevelManager?.activeToplevel?.fullscreen && !Mem.states.desktop.bg.isLive
+        enabled: WallpaperService._loaded
         Wallpaper {}
     }
+    XIPC {}
 }

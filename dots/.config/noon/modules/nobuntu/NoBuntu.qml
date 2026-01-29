@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.services
 import qs.common
 import qs.common.utils
 import qs.modules.main
@@ -12,14 +13,24 @@ import "notifs"
 import "db"
 
 Scope {
-    GWallpaper {}
-    GIPC {}
-    GBar {}
-    GDock {}
-    OSDs {}
-    // temp
-    Sidebar {
-        rightMode: true
+    WidgetLoader {
+        enabled: WallpaperService._loaded
+        GWallpaper {}
+    }
+    WidgetLoader {
+        GBar {}
+    }
+    WidgetLoader {
+        GDock {}
+    }
+    WidgetLoader {
+        Sidebar {
+            rightMode: true
+        }
+    }
+    WidgetLoader {
+        enabled: Mem.options.osd.enabled
+        OSDs {}
     }
     WidgetLoader {
         enabled: GlobalStates.nobuntu.db.show
@@ -29,4 +40,5 @@ Scope {
         enabled: GlobalStates.nobuntu.notifs.show
         GNotifs {}
     }
+    GIPC {}
 }

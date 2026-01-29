@@ -28,7 +28,6 @@ Scope {
             margins {
                 left: -70
             }
-            // WlrLayershell.layer: WlrLayer.Overlay
             implicitHeight: 40
             exclusiveZone: implicitHeight
             mask: Region {
@@ -52,8 +51,6 @@ Scope {
                     anchors {
                         right: status_icons.left
                         rightMargin: Padding.large
-                        top: parent.top
-                        bottom: parent.bottom
                     }
                 }
                 GStatusIcons {

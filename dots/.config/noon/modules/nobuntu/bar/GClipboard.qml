@@ -9,11 +9,27 @@ import qs.common.widgets
 
 StyledIconImage {
     id: root
-    source: NoonUtils.iconPath("edit-paste-symbolic")
-    implicitSize: 18
-    z: 99
     required property var bar
-    property Component _clipboard_popup: GClipboardPopup {}
+    readonly property Component _clipboard_popup: GClipboardPopup {}
+
+    _source: "edit-paste-symbolic"
+    implicitSize: 16
+    colorize: true
+    tint: 0.15
+    tintColor: Colors.colSubtext
+
+    anchors {
+        top: parent.top
+        bottom: parent.bottom
+    }
+
+    Connections {
+        target: GlobalStates.nobuntu.clipboard
+        function onShowChanged() {
+            _popup_loader.active = GlobalStates.nobuntu.clipboard.show;
+        }
+    }
+
     Loader {
         id: _popup_loader
         active: false
@@ -27,6 +43,7 @@ StyledIconImage {
             _popup_loader.item.visible = true;
         }
     }
+
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true

@@ -20,6 +20,16 @@ Singleton {
     property var wallpaperSelectorCachedModel
     property string thumbnailSize: "large"
     property alias _generatingThumbnails: thumbnailGenerator.running
+    readonly property bool _loaded: {
+        if (currentWallpaper.length > 1 && Mem.options.desktop.bg.useQs) {
+            if (Mem.options.desktop.bg.deloadOnFullscreen && !Mem.states.desktop.bg.isLive) {
+                return !GlobalStates?.topLevel?.fullscreen ?? true;
+            } else {
+                return !Mem.states.desktop.bg.isLive;
+            }
+        }
+        return true;
+    }
     Component.onCompleted: refreshFolderDelayed()
 
     onCurrentWallpaperChanged: NoonUtils.playSound("pressed")
