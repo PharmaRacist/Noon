@@ -152,7 +152,7 @@ Item {
             active: root.auxVisible
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.maximumWidth: SidebarData.currentSize(false, false, category)
+            Layout.maximumWidth: SidebarData.currentSize(false, false, root.selectedCategory)
 
             sourceComponent: ContentChild {
                 anchors.fill: parent

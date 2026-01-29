@@ -26,8 +26,7 @@ Item {
             topMargin: Padding.normal
         }
 
-        UptimeRow {
-        }
+        UptimeRow {}
 
         ColumnLayout {
             visible: Mem.options.sidebar.appearance.showSliders ?? false
@@ -35,15 +34,11 @@ Item {
             Layout.fillWidth: true
             Layout.rightMargin: Padding.normal
 
-            BrightnessSlider {
-            }
+            BrightnessSlider {}
 
-            VolumeOutputSlider {
-            }
+            VolumeOutputSlider {}
 
-            VolumeInputSlider {
-            }
-
+            VolumeInputSlider {}
         }
 
         Grid {
@@ -52,49 +47,34 @@ Item {
             rowSpacing: Padding.normal
             columnSpacing: Padding.normal
 
-            NetworkToggle {
-            }
+            NetworkToggle {}
 
-            BluetoothToggle {
-            }
+            BluetoothToggle {}
 
-            NightLightToggle {
-            }
+            NightLightToggle {}
 
-            AppearanceToggle {
-            }
+            AppearanceToggle {}
 
-            KdeConnectToggle {
-            }
+            KdeConnectToggle {}
 
-            TransparencyToggle {
-            }
-
+            TransparencyToggle {}
         }
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
 
-            CaffieneToggle {
-            }
+            CaffieneToggle {}
 
-            EasyEffectsToggle {
-            }
+            EasyEffectsToggle {}
 
-            RecordToggle {
-            }
+            RecordToggle {}
 
-            GameModeToggle {
-            }
+            GameModeToggle {}
 
-            InputToggle {
-            }
+            InputToggle {}
 
-            BacklightToggle {
-            }
-
+            BacklightToggle {}
         }
-
     }
 
     component UptimeRow: StyledText {
@@ -104,5 +84,4 @@ Item {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft
     }
-
 }

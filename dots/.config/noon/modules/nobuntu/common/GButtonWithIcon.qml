@@ -10,7 +10,7 @@ import qs.services
 GButton {
     property string iconSource
     property int iconSize: 22
-    property int implicitSize: 32
+    property int implicitSize: 45
     implicitWidth: implicitSize
     implicitHeight: implicitSize
 

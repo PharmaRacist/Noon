@@ -19,11 +19,10 @@ StyledRect {
 
     color: {
         if (_event_area.pressed)
-            Colors.colLayer0Active;
-        else if (_event_area.containsMouse)
-            Colors.colLayer0Hover;
-        else
-            "transparent";
+            return Colors.colLayer0Active;
+        if (_event_area.containsMouse)
+            return Colors.colLayer0Hover;
+        return "transparent";
     }
 
     RowLayout {
@@ -68,6 +67,7 @@ StyledRect {
                 }
             }
         }
+
         RowLayout {
             visible: BatteryService.available
             spacing: Padding.tiny
@@ -76,7 +76,7 @@ StyledRect {
                 implicitSize: iconSize
             }
             StyledText {
-                text: BatteryService.percentage * 100 + " %"
+                text: Math.round(BatteryService.percentage * 100) + "%"
                 font {
                     family: "Roboto"
                     weight: Font.DemiBold
@@ -91,12 +91,20 @@ StyledRect {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onPressed: NoonUtils.callIpc("nobuntu toggle_db")
+        onClicked: NoonUtils.callIpc("nobuntu toggle_db")
     }
 
     function getNetIcon() {
-        if ((NetworkService.networkName || "") !== "" && NetworkService.networkName !== "lo") {
-            const s = NetworkService.networkStrength ?? 0;
+        if (NetworkService.ethernet) {
+            return "network-wired";
+        }
+
+        if (!NetworkService.wifiEnabled) {
+            return "network-wireless-offline";
+        }
+
+        if (NetworkService.wifi && NetworkService.networkName !== "") {
+            const s = NetworkService.networkStrength;
             if (s > 80)
                 return "network-wireless-signal-excellent";
             if (s > 60)
@@ -107,7 +115,8 @@ StyledRect {
                 return "network-wireless-signal-weak";
             return "network-wireless-signal-none";
         }
-        return (NetworkInformation.TransportMedium?.Ethernet) ? "network-connected" : "network-wireless-offline";
+
+        return "network-wireless-offline";
     }
 
     function getBtIcon() {
@@ -115,13 +124,13 @@ StyledRect {
             return "bluetooth-active";
         return BluetoothService.bluetoothEnabled ? "bluetooth" : "bluetooth-disabled";
     }
+
     function getBatteryIcon() {
         if (!BatteryService.available)
             return "";
 
         const p = BatteryService.percentage * 100;
         const charging = BatteryService.charging;
-
         let icon = "";
 
         if (p >= 95)
@@ -137,10 +146,6 @@ StyledRect {
         else
             icon = "battery-caution";
 
-        if (charging) {
-            return `${icon}-charging-symbolic`;
-        }
-
-        return icon;
+        return charging ? `${icon}-charging-symbolic` : icon;
     }
 }

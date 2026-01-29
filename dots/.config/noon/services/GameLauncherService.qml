@@ -102,9 +102,18 @@ Singleton {
     }
     Process {
         id: gameProcess
-        command: ["gamemoderun", root.currentGame.executablePath]
+        command: currentGame ? ["gamemoderun", root.currentGame.executablePath] : []
         running: false
-        environment: Mem.options.services.games.launchEnv ?? []
+        environment: {
+            let envObj = {};
+            const list = Mem.options.services.games.launchEnv || [];
+            list.forEach(item => {
+                let [key, val] = item.split('=');
+                if (key && val)
+                    envObj[key] = val;
+            });
+            return envObj;
+        }
         workingDirectory: {
             if (!root.currentGame)
                 return "";
@@ -140,6 +149,6 @@ Singleton {
     PaletteGenerator {
         id: colorsgen
         active: Mem.options.services.games.adaptiveTheme
-        source: root.selectedInfo.coverImage
+        source: (root.selectedInfo && root.selectedInfo.coverImage) ? root.selectedInfo.coverImage : ""
     }
 }

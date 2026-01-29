@@ -31,10 +31,10 @@ StyledPanel {
 
     StyledRect {
         id: bg
-        color: Colors.colLayer3
+        color: Colors.colLayer2
         radius: 34
         implicitWidth: 435
-        implicitHeight: 290
+        implicitHeight: content.implicitHeight + Padding.massive * 1.5
         enableBorders: true
         anchors {
             top: parent.top
@@ -42,11 +42,19 @@ StyledPanel {
             margins: Padding.normal
         }
         ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: Padding.verylarge
-            TopRow {
+            id: content
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                margins: Padding.gigantic
+                // topMargin:Padding.verylarge
             }
-            // GBrightnessSlider {}
+
+            GDBTopRow {}
+            GBrightnessSlider {}
+            GVolumeSlider {}
+            GDBGrid {}
             // BottomRow {}
             Spacer {}
         }

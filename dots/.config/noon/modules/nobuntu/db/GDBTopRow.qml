@@ -12,6 +12,8 @@ Item {
     id: root
     Layout.fillWidth: true
     Layout.preferredHeight: 60
+    Layout.rightMargin: Padding.normal
+    Layout.leftMargin: Padding.normal
 
     readonly property var icons_model: [
         {
@@ -23,38 +25,50 @@ Item {
             action: () => NoonUtils.callIpc("apps settings")
         },
         {
-            icon: "system-lock-screen-symbolic",
-            action: () => LockService.lock()
+            icon: "system-shutdown-symbolic",
+            action: () => NoonUtils.callIpc("sidebar reveal Session")
         },
         {
-            icon: "system-shutdown-symbolic",
-            action: () => NoonUtils.execDetached("wlogout")
+            icon: "system-lock-screen-symbolic",
+            action: () => NoonUtils.callIpc("global lock")
         }
     ]
     RowLayout {
         anchors.fill: parent
-        anchors.margins: Padding.massive
         spacing: Padding.normal
 
         GBattery {}
-        Spacer {}
-
         Repeater {
-            model: root.icons_model
+            model: root.icons_model.slice(0, 2)
 
             GButtonWithIcon {
                 iconSource: modelData.icon
-                onPressed:  {
-                    modelData.action()
-                    GlobalStates.nobuntu.db.show = false
+                implicitSize: 38
+                iconSize: 18
+                onPressed: {
+                    modelData.action();
+                    GlobalStates.nobuntu.db.show = false;
+                }
+            }
+        }
+        Spacer {}
+        Repeater {
+            model: root.icons_model.slice(2)
+
+            GButtonWithIcon {
+                iconSource: modelData.icon
+                implicitSize: 38
+                iconSize: 18
+                onPressed: {
+                    modelData.action();
+                    GlobalStates.nobuntu.db.show = false;
                 }
             }
         }
     }
 
-    component GBattery: Item {
-        implicitHeight: 30
-        implicitWidth: content.implicitWidth + Padding.massive
+    component GBattery: GButton {
+        implicitWidth: content.implicitWidth + Padding.massive * 1.5
         visible: BatteryService.available
 
         RowLayout {
@@ -62,7 +76,7 @@ Item {
             spacing: Padding.small
             anchors.centerIn: parent
 
-            IconImage {
+            StyledIconImage {
                 readonly property string icon: {
                     if (!BatteryService.available)
                         return "";
@@ -85,7 +99,7 @@ Item {
                     return "battery-empty-symbolic";
                 }
 
-                source: NoonUtils.iconPath(icon)
+                _source: icon
                 implicitSize: 22
                 visible: icon !== ""
             }
@@ -94,7 +108,8 @@ Item {
                 text: Math.round(100 * BatteryService.percentage) + " %"
                 color: Colors.colOnLayer3
                 font.family: "Roboto"
-                font.pixelSize: 16
+                font.pixelSize: 13
+                font.weight: 700
                 horizontalAlignment: Text.AlignRight | Text.AlignVCenter
             }
         }

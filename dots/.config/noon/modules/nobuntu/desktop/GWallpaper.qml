@@ -99,6 +99,12 @@ Scope {
                             duration: Animations.durations.large
                         }
                     }
+                    Behavior on anchors.bottomMargin {
+                        Anim {
+                            duration: Animations.durations.large
+                        }
+                    }
+
                     CroppedImage {
                         id: bgImage
                         z: 0

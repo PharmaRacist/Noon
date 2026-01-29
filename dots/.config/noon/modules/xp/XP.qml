@@ -33,7 +33,6 @@ import "run"
 */
 
 Scope {
-    Component.onCompleted: NoonUtils.playSound("init", "xp")
     WidgetLoader {
         Bar {}
     }

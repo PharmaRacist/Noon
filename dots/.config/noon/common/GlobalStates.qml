@@ -26,6 +26,27 @@ Singleton {
         name: "superHeld"
         // onPressed: GlobalStates.superPressed = !GlobalStates.superPressed
     }
+    function handle_init(mode) {
+        KeyringStorage.reload();
+        NightLightService.reload();
+        HyprlandParserService.reload();
+        ClipboardService.init();
+        switch (mode) {
+        case "main":
+            TimerService.reload();
+            AlarmService.reload();
+            AmbientSoundsService.reload();
+            NoonUtils.playSound("device_unlocked");
+            break;
+        case "nobuntu":
+            NoonUtils.playSound("device_unlocked");
+            break;
+        case "xp":
+            NoonUtils.playSound("init", "xp");
+            break;
+        }
+        console.log("Initialized " + mode);
+    }
 
     applications: QtObject {
         property QtObject mediaplayer: QtObject {
@@ -47,19 +68,6 @@ Singleton {
     main: QtObject {
         id: main
         property var sidebar
-
-        function handle_init() {
-            KeyringStorage.reload();
-            NightLightService.reload();
-            TimerService.reload();
-            AlarmService.reload();
-            AmbientSoundsService.reload();
-            HyprlandParserService.reload();
-            NoonUtils.playSound("device_unlocked");
-            ClipboardService.init();
-            console.log("Initialized Main");
-        }
-
         property bool locked: false
         property bool oskOpen: false
         property bool exposeView: false
@@ -88,24 +96,12 @@ Singleton {
 
         property bool locked: false
 
-        function handle_init() {
-            HyprlandParserService.getAll();
-            NoonUtils.playSound("init", "xp");
-            ClipboardService.init();
-        }
         property bool showRun: false
         property bool showStartMenu: false
         property bool showControlPanel: false
     }
     nobuntu: QtObject {
         id: nobuntu
-
-        function handle_init() {
-            HyprlandParserService.getAll();
-            NoonUtils.playSound("init", "xp");
-            ClipboardService.init();
-            console.log("Initialized NoBuntu");
-        }
 
         property QtObject db: QtObject {
             property bool show: false

@@ -19,23 +19,23 @@ import qs.modules.applications
 Scope {
     id: root
 
-    readonly property string mode: Mem.options.desktop.shell.mode
-
     readonly property Component main: Main {}
     readonly property Component xp: XP {}
     readonly property Component nobuntu: NoBuntu {}
 
-    readonly property var shellMap: ({
-            "main": main,
-            "xp": xp,
-            "nobuntu": nobuntu
-        })
-
-    WidgetLoader {
-        id: widgetLoader
-        reloadOn: mode
-        component: shellMap[mode]
+    readonly property string mode: Mem.options.desktop.shell.mode
+    readonly property var shellMap: {
+        "main": main,
+        "xp": xp,
+        "nobuntu": nobuntu
     }
 
+    Loader {
+        id: widgetLoader
+        sourceComponent: shellMap[mode]
+        onLoaded: GlobalStates.handle_init(root.mode)
+    }
+
+    GlobalIPC {}
     AppsIPC {}
 }

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Wayland
 import qs.common
 import qs.common.utils
 import qs.common.widgets
@@ -27,7 +28,7 @@ Scope {
             margins {
                 left: -70
             }
-            WlrLayershell.layer: WlrLayer.Overlay
+            // WlrLayershell.layer: WlrLayer.Overlay
             implicitHeight: 40
             exclusiveZone: implicitHeight
             mask: Region {
@@ -37,7 +38,7 @@ Scope {
             StyledRect {
                 id: bg
                 anchors.fill: parent
-                color: "#070707"
+                color: Colors.colLayer0
                 GClock {}
 
                 GWs {

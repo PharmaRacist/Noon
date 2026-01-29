@@ -22,7 +22,7 @@ Scope {
             screen: modelData
             name: "gdock"
             shell: "nobuntu"
-            WlrLayershell.layer: WlrLayer.Top
+
             anchors {
                 top: true
                 left: true

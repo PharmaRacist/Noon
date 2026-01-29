@@ -13,6 +13,7 @@ RowLayout {
     id: root
     spacing: 0
     property int commonIconSize: 24
+
     Revealer {
         reveal: AudioService.sink?.audio?.muted ?? false
         Layout.fillHeight: true
@@ -29,7 +30,6 @@ RowLayout {
         }
     }
 
-    // Muted microphone indicator
     Revealer {
         reveal: AudioService.source?.audio?.muted ?? false
         Layout.fillHeight: true
@@ -53,14 +53,21 @@ RowLayout {
         }
     }
 
-    // Network indicator
     Item {
         Layout.rightMargin: XPadding.tiny
         width: commonIconSize
         height: commonIconSize
 
         readonly property string networkIcon: {
-            if ((NetworkService.networkName ?? "") !== "" && (NetworkService.networkName ?? "") !== "lo") {
+            if (NetworkService.ethernet) {
+                return "network-connected";
+            }
+
+            if (!NetworkService.wifiEnabled) {
+                return "network-wireless-offline";
+            }
+
+            if (NetworkService.wifi && (NetworkService.networkName ?? "") !== "") {
                 const strength = NetworkService.networkStrength ?? 0;
                 if (strength > 80)
                     return "network-wireless-signal-excellent";
@@ -71,9 +78,8 @@ RowLayout {
                 if (strength > 20)
                     return "network-wireless-signal-weak";
                 return "network-wireless-signal-none";
-            } else if (NetworkInformation.TransportMedium?.Ethernet ?? false) {
-                return "network-connected";
             }
+
             return "network-wireless-offline";
         }
 
@@ -92,11 +98,11 @@ RowLayout {
         }
     }
 
-    // Bluetooth indicator
     Item {
         width: commonIconSize
         height: commonIconSize
         visible: BluetoothService.available
+
         readonly property string bluetoothIcon: {
             const connected = BluetoothService.bluetoothConnected ?? false;
             const enabled = BluetoothService.bluetoothEnabled ?? false;

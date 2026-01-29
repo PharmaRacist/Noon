@@ -8,7 +8,7 @@ import qs.common.widgets
 import qs.services
 
 Button {
-    property color colBackground: "transparent"
+    property color colBackground: Colors.colLayer3
     property color colBackgroundHover: Colors.colLayer3Hover
     property color colBackgroundActive: Colors.colLayer3Active
 

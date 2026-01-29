@@ -19,7 +19,7 @@ Item {
     Layout.alignment: Qt.AlignHCenter
     RowLayout {
         id: row
-        spacing: Padding.medium
+        spacing: Padding.normal
         anchors.centerIn: parent
         Repeater {
             model: {

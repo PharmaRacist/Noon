@@ -25,7 +25,7 @@ Item {
     property real contentYOffset: 0
 
     readonly property var parentRoot: GlobalStates.main.sidebar
-    readonly property QtObject colors: parentRoot.colors
+    readonly property QtObject colors: parentRoot.colors || Colors
     readonly property var contentItem: if (content_loader.item && content_loader.item !== null)
         content_loader.item
 
@@ -88,7 +88,7 @@ Item {
         Binding {
             target: GlobalStates
             property: "web_session"
-            value: web_loader.item.web_view
+            value: web_loader.item && web_loader.item !== null ? web_loader.item.web_view : null
             when: Mem.options.sidebar.content.web && web_loader.item !== null
         }
 

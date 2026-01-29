@@ -13,8 +13,6 @@ import "view"
 import "screenshot"
 
 Scope {
-    Component.onCompleted: GlobalStates.main.handle_init()
-
     WidgetLoader {
         enabled: Mem.options.desktop.bg.useQs && Mem.states.desktop.bg.currentBg.length > 1 && (Mem.options.desktop.bg.deloadOnFullscreen ? !GlobalStates.topLevel.fullscreen : true) && !Mem.states.desktop.bg.isLive
 
