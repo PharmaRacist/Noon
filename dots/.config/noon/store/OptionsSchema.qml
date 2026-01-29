@@ -34,7 +34,6 @@ JsonAdapter {
             property bool blur: true
             property bool enabled: false
             property real scale: 0.7
-            property bool applications: false
         }
 
         rounding: JsonObject {
@@ -61,6 +60,7 @@ JsonAdapter {
         property int ai: 1
         property int translator: 1
         property int medicalDictionary: 1
+        property int todoist: 1
     }
 
     property JsonObject ai: JsonObject {
@@ -90,7 +90,7 @@ JsonAdapter {
             - DO NOT yap alot just Concise & Precise.
         "
         property string tool: "functions"
-        property list<var> extraModels: []
+        // property list<var> extraModels: []
         property string model: "gemini-2.5-flash"
         property real temperature: 0.5
         property JsonObject context: JsonObject {
@@ -169,9 +169,6 @@ JsonAdapter {
             property bool inhibit: false
         }
 
-        todo: JsonObject {
-            property bool enableTodoist: true
-        }
         nightLight: JsonObject {
             property bool autoNightLightCycle: false
         }
@@ -314,7 +311,6 @@ JsonAdapter {
         property JsonObject clock
         property JsonObject view
         property JsonObject lock
-        property JsonObject greetd
         property JsonObject icons
         property JsonObject hyprland
         property JsonObject behavior
@@ -322,8 +318,9 @@ JsonAdapter {
         property bool desktopClock: true
         property int screenCorners: 1
         property bool timerOverlayMode: true
+
         shell: JsonObject {
-            property string mode: "main"
+            property string mode: ""
         }
         osd: JsonObject {
             property string mode: "bottom_pill"
@@ -363,14 +360,9 @@ JsonAdapter {
             property bool enabled: true
         }
 
-        greetd: JsonObject {
-            property bool enabled: false
-        }
-
         icons: JsonObject {}
 
         hyprland: JsonObject {
-            property bool playSoundOnFocusChanged: false
             property string tilingLayout: "dwindle"
             property int blurPasses: 1
             property bool shadows: true
@@ -426,12 +418,12 @@ JsonAdapter {
             property bool visualizer: false
         }
 
-        keyboard: JsonObject {
-            property list<var> keyboardLayoutShortNames: ({
-                    "English (US)": "US",
-                    "Arabic": "AR"
-                })
-        }
+        keyboard:
+        // property list<var> keyboardLayoutShortNames: ({
+        //     "English (US)": "US",
+        //     "Arabic": "AR"
+        // })
+        JsonObject {}
 
         workspaces: JsonObject {
             property int shownWs: 4
@@ -457,7 +449,5 @@ JsonAdapter {
 
     property JsonObject hacks: JsonObject {
         property int arbitraryRaceConditionDelay: 100
-        property bool eglFallbacks: true
-        property int superHeldInterval: 300
     }
 }

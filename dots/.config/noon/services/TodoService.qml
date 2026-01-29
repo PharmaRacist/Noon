@@ -18,7 +18,7 @@ Singleton {
 
     property var list: []
     property string todoistApiToken: KeyringStorage?.keyringData.todoistApiKey || ""
-    property bool todoistEnabled: Mem.options.services.todo.enableTodoist ?? false
+    property bool todoistEnabled: Mem.options.policies.todoist > 0 ?? false
     property bool syncEnabled: todoistEnabled && todoistApiToken.length > 0
     property int syncInterval: 10000
     property var pendingSyncIds: []
@@ -169,6 +169,7 @@ Singleton {
     function refresh() {
         loadFromConfig();
     }
+
 
     // Todoist API Operations
     function syncWithTodoist() {
@@ -350,7 +351,7 @@ Singleton {
     Component.onCompleted: {
         loadFromConfig();
         if (syncEnabled) {
-             syncWithTodoist();
+            syncWithTodoist();
         }
     }
     // Ai Helpers
@@ -375,5 +376,4 @@ Singleton {
 
         return output;
     }
-
 }

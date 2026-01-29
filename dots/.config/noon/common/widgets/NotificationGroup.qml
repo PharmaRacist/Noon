@@ -24,6 +24,8 @@ Item { // Notification group area
     property bool expanded: false
     property bool popup: false
     property real padding: Padding.verylarge
+    property int radius: Rounding.verylarge
+    property color color:Colors.colLayer1
     implicitHeight: background.implicitHeight
 
     property real dragConfirmThreshold: 70 // Drag further to discard notification
@@ -107,8 +109,8 @@ Item { // Notification group area
         id: background
         anchors.left: parent.left
         width: parent.width
-        color: Colors.colLayer0
-        radius: Rounding.verylarge
+        color: root.color
+        radius: root.radius
         anchors.leftMargin: root.xOffset
         border {
             color:Colors.colOutline

@@ -24,7 +24,6 @@ public:
             if (engine) {
                 QQmlEngine::setObjectOwnership(instance, QQmlEngine::CppOwnership);
             }
-        } else {
         }
         return instance;
     }
@@ -32,11 +31,14 @@ public:
     QStringList entries() const {
         return m_entries;
     }
+
     int maxEntries() const {
         return m_maxEntries;
     }
+
     void setMaxEntries(int max);
 
+    Q_INVOKABLE void init();
     Q_INVOKABLE void copy(int index);
     Q_INVOKABLE void deleteEntry(int index);
     Q_INVOKABLE void wipe();
@@ -72,6 +74,7 @@ private:
     QTimer* m_reloadTimer;
     bool m_isProcessing = false;
     QString m_lastClipboardHash;
+    bool m_initialized = false;
 
     struct Entry {
         int id;
@@ -80,5 +83,6 @@ private:
         QString imagePath;
         qint64 timestamp;
     };
+
     QList<Entry> m_fullEntries;
 };

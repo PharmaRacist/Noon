@@ -15,7 +15,7 @@ ColumnLayout {
     Layout.alignment: Qt.AlignHCenter
 
     readonly property var pinned: Mem.states.favorites.apps ?? []
-    readonly property int iconSize: 50
+    readonly property int iconSize: 54
     readonly property var runningUnpinned: {
         const running = new Set(ToplevelManager.toplevels.values.map(t => (t.appId || "").toLowerCase()));
         const pinnedSet = new Set(pinned.map(p => (p || "").toLowerCase()));
@@ -116,6 +116,7 @@ ColumnLayout {
             StyledMenu {
                 id: contextMenu
                 z: 1000
+                width: 180
                 content: {
                     const isPinned = root.pinned.includes(appId);
                     const hasSessions = sessions.length > 0;
@@ -152,7 +153,7 @@ ColumnLayout {
 
             StyledToolTip {
                 extraVisibleCondition: mouseArea.containsMouse
-                content: DesktopEntries.byId(appId).name
+                content: DesktopEntries?.byId(appId)?.name || appId
             }
         }
     }

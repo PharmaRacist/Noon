@@ -7,18 +7,14 @@ import qs.services
 Loader {
     id: root
     asynchronous: true
-    source: switch (currentVariant) {
-    case "center_island":
-        return "variants/CenterIsland.qml";
-    case "bottom_pill":
-        return "variants/BottomPill.qml";
-    case "side_bay":
-        return "variants/SideBay.qml";
-    case "windows_10":
-        return "variants/Windows_10.qml";
-    default:
-        return "variants/CenterIsland.qml";
-    }
+    readonly property var variants: ({
+            "center_island": "CenterIsland.qml",
+            "bottom_pill": "BottomPill.qml",
+            "side_bay": "SideBay.qml",
+            "windows_10": "Windows_10.qml",
+            "nobuntu": "Nobuntu.qml"
+        })
+    source: "variants/" + variants[currentVariant] || "variants/CenterIsland.qml"
 
     required property real value
     required property string icon

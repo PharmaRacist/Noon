@@ -20,13 +20,18 @@ Singleton {
     function openFile(path: string) {
         Quickshell.execDetached(["xdg-open", path]);
     }
+
     function iconPath(icon: string): string {
-        let iconName;
-        if (Mem.states.desktop.appearance.mode === "dark") {
-            iconName = "noon-dark.png";
+        const noon_icon = `noon-${Mem.states.desktop.appearance.mode}.png`;
+        const fallback = "image-missing-symbolic";
+        const subs = ({
+                "org.quickshell": noon_icon,
+                "dev.zed.zed": "zed"
+            });
+        if (subs[icon] !== undefined) {
+            return Quickshell.iconPath(subs[icon.toLowerCase()], fallback);
         } else
-            iconName = "noon-light.png";
-        return Quickshell.iconPath(icon, iconName);
+            return Quickshell.iconPath(icon, fallback);
     }
 
     function sudoExec(content: var) {

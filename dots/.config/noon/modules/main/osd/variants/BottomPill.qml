@@ -19,7 +19,7 @@ StyledPanel {
     signal valueModified(real newValue)
     signal interactionStarted
     signal interactionEnded
-    visible:true
+    visible: true
     anchors.bottom: true
 
     mask: Region {
@@ -45,7 +45,6 @@ StyledPanel {
         color: Colors.colLayer0
         radius: Rounding.normal
         clip: true
-
 
         Rectangle {
             id: sideRect

@@ -43,9 +43,6 @@ GroupButton {
                 font.pixelSize: Fonts.sizes.small
                 color: button.colText
             }
-
         }
-
     }
-
 }

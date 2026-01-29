@@ -10,15 +10,16 @@ import "components/web"
 
 Item {
     id: panel
-    visible: category !== ""
+    visible: category.length > 0
     Layout.fillHeight: true
     Layout.fillWidth: true
-    // Layout.margins: Padding.normal
+    Layout.margins: Padding.normal
 
-    property string category
+    required property string category
+    readonly property bool effectiveSearchable: SidebarData.isSearchable(category)
+
     property string previousCategory: ""
     property bool _aux: false
-    property bool effectiveSearchable: SidebarData.isSearchable(category)
     property alias contentOpacity: content_loader.opacity
     property alias searchInput: searchBar.searchInput
     property real contentYOffset: 0
@@ -83,26 +84,24 @@ Item {
             asynchronous: true
             sourceComponent: WebBrowser {}
         }
+
         Binding {
             target: GlobalStates
             property: "web_session"
             value: web_loader.item.web_view
-            when: web_loader.item && web_loader.item !== null
+            when: Mem.options.sidebar.content.web && web_loader.item !== null
         }
+
         Loader {
             id: content_loader
             Layout.fillWidth: true
             Layout.fillHeight: true
             opacity: contentOpacity
-            focus: true
+            focus: active
             visible: active
             active: selectedCategory !== "Web"
-            // asynchronous: _aux || SidebarData.isAsync(category)
             source: SidebarData.getComponentPath(category)
             onLoaded: if (item) {
-                if ("selectedCategory" in item)
-                    item.selectedCategory = Qt.binding(() => panel.category);
-
                 if ("searchQuery" in item)
                     item.searchQuery = Qt.binding(() => searchBar.searchText);
 
@@ -111,19 +110,16 @@ Item {
 
                 if ("panelWindow" in item)
                     item.panelWindow = Qt.binding(() => parentRoot);
-            }
 
-            Connections {
-                target: content_loader.item
-                ignoreUnknownSignals: true
-
-                function onSearchFocusRequested() {
-                    if (!_aux && searchBar.searchInput && panel.effectiveSearchable)
-                        searchBar.searchInput.forceActiveFocus();
+                if (item.searchFocusRequested) {
+                    item.searchFocusRequested.connect(() => {
+                        if (!_aux && searchBar.searchInput && panel.effectiveSearchable)
+                            searchBar.searchInput.forceActiveFocus();
+                    });
                 }
 
-                function onDismiss() {
-                    parentRoot.hide();
+                if (item.dismiss) {
+                    item.dismiss.connect(parentRoot.hide);
                 }
             }
 
@@ -135,7 +131,6 @@ Item {
         SearchBar {
             id: searchBar
             root: panel
-            // action: Qt.callLater(() => panel.contentItem.first_action())
             onContentFocusRequested: if (panel.contentItem && "contentFocusRequested" in panel.contentItem)
                 panel.contentItem.contentFocusRequested()
         }

@@ -14,9 +14,10 @@ StyledPanel {
     visible: GlobalStates.nobuntu.notifs.show
     anchors {
         top: true
+        right: true
+        left: true
+        bottom: true
     }
-    implicitHeight: 520
-    implicitWidth: 800
     mask: Region {
         item: bg
     }
@@ -27,10 +28,38 @@ StyledPanel {
     }
     StyledRect {
         id: bg
-        anchors.topMargin: Padding.normal
-        anchors.fill: parent
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            horizontalCenterOffset: -30
+            top: parent.top
+            topMargin: Padding.large
+        }
+        implicitHeight: 620
+        implicitWidth: 750
         radius: 40
         enableBorders: true
-        color: Colors.colLayer0 //Colors.colLayer2
+        color: Colors.colLayer2
+        RowLayout {
+            anchors.fill: parent
+            anchors.margins: Padding.massive
+            spacing: Padding.large
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                GNotifList {}
+                GNotifsMedia {}
+            }
+            VerticalSeparator {}
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.maximumWidth: bg.implicitWidth / 2.25
+                GCalendarHeader {}
+                GCalendar {}
+                GNotifEvents {}
+            }
+        }
     }
 }

@@ -1,4 +1,3 @@
-import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -36,16 +35,15 @@ Item {
     function focusMainSearchInput() {
         if (main_child && main_child.searchInput && effectiveSearchable)
             main_child.searchInput.forceActiveFocus();
-
     }
 
     function changeContent(newCategoryKey) {
         if (!newCategoryKey || !SidebarData.enabledCategories.includes(newCategoryKey) && !SidebarData.isStealth(newCategoryKey))
-            return ;
+            return;
 
         if (selectedCategory === newCategoryKey) {
             panelWindow.hide();
-            return ;
+            return;
         }
         if (!panelWindow.show)
             panelWindow.hoverMode = false;
@@ -56,11 +54,11 @@ Item {
     function toggleAux(categoryKey) {
         const enabled = SidebarData.enabledCategories.includes(categoryKey);
         if (!categoryKey || !enabled || categoryKey === "")
-            return ;
+            return;
 
         if (auxVisible && auxCategory === categoryKey) {
             closeAux();
-            return ;
+            return;
         }
         openAux(categoryKey);
     }
@@ -82,58 +80,41 @@ Item {
     clip: true
     focus: true
     onAuxCategoryChanged: toggleAux()
-    onEffectiveSearchableChanged: {
-        if (effectiveSearchable) {
-            focusMainSearchInput();
+    onEffectiveSearchableChanged: effectiveSearchable ? focusMainSearchInput() : null
+
+    Keys.onPressed: event => {
+        const {
+            key,
+            modifiers: mods
+        } = event;
+        const isCtrl = mods === Qt.ControlModifier;
+        const isShift = mods === Qt.ShiftModifier || mods === (Qt.ControlModifier | Qt.ShiftModifier);
+
+        // Single-key actions
+        if (key === Qt.Key_Slash)
+            return focusMainSearchInput(), event.accepted = true;
+        if (key === Qt.Key_Escape)
+            return dismiss(), event.accepted = true;
+        if (key === Qt.Key_Tab || key === Qt.Key_Backtab) {
+            const target = SidebarData[isShift ? "getPreviousEnabledCategory" : "getNextEnabledCategory"](selectedCategory);
+            return target && changeContent(target), event.accepted = true;
         }
-    }
-    Keys.onPressed: (event) => {
-        const key = event.key;
-        const mods = event.modifiers;
-        const isCtrl = (mods === Qt.ControlModifier);
-        if (key === Qt.Key_Slash) {
-            focusMainSearchInput();
-        } else if (key === Qt.Key_Escape) {
-            dismiss();
-        } else if (key === Qt.Key_Tab || key === Qt.Key_Backtab) {
-            const isBack = (mods === Qt.ShiftModifier || mods === (Qt.ControlModifier | Qt.ShiftModifier));
-            const target = isBack ? SidebarData.getPreviousEnabledCategory(selectedCategory) : SidebarData.getNextEnabledCategory(selectedCategory);
-            if (target)
-                changeContent(target);
 
-        } else if (isCtrl) {
-            switch (key) {
-            case Qt.Key_O:
-                if (SidebarData.isExpandable(selectedCategory) && !auxVisible)
-                    root.panelWindow.expanded = !root.panelWindow.expanded;
+        // Modifier actions (Ctrl + Key)
+        const ctrlMap = {
+            [Qt.Key_O]: () => SidebarData.isExpandable(selectedCategory) && !auxVisible && (panelWindow.expanded = !panelWindow.expanded),
+            [Qt.Key_P]: () => panelWindow.pinned = !panelWindow.pinned,
+            [Qt.Key_Q]: () => Qt.callLater(closeAux),
+            [Qt.Key_R]: () => selectedCategory === "History" && ClipboardService.wipe()
+        };
 
-                break;
-            case Qt.Key_P:
-                root.panelWindow.pinned = !root.panelWindow.pinned;
-                break;
-            case Qt.Key_Q:
-                Qt.callLater(() => {
-                    return closeAux();
-                });
-                break;
-            case Qt.Key_R:
-                if (selectedCategory === "History")
-                    ClipboardService.wipe();
-
-                break;
-            default:
-                return false;
-            }
-        } else {
-            return false;
-        }
-        event.accepted = true;
-        return true;
+        if (isCtrl && ctrlMap[key])
+            return ctrlMap[key](), event.accepted = true;
     }
 
     Connections {
         function onFlowChanged() {
-            if (PolkitService.flow !== null)
+            if (PolkitService.flow)
                 changeContent("Auth");
             else
                 root.panelWindow.hide();
@@ -144,7 +125,7 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        layoutDirection: panelWindow.rightMode ? Qt.RightToLeft : Qt.LeftToRight
+        layoutDirection: !panelWindow.rightMode ? Qt.LeftToRight : Qt.RightToLeft
         spacing: Padding.large
 
         SidebarNavigationRail {
@@ -157,7 +138,7 @@ Item {
 
             Layout.maximumWidth: root.auxVisible ? SidebarData.currentSize(false, false, category) : Sizes.infinity
             _aux: false
-            category: selectedCategory
+            category: root.selectedCategory
         }
 
         VerticalSeparator {
@@ -166,26 +147,12 @@ Item {
 
         Loader {
             id: aux_loader
-
+            asynchronous: true
             visible: active
             active: root.auxVisible
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.maximumWidth: SidebarData.currentSize(false, false, category)
-            onLoaded: {
-                if (item) {
-                    if ("parentRoot" in item)
-                        item.parentRoot = Qt.binding(() => {
-                        return root;
-                    });
-
-                    if ("category" in item)
-                        item.category = Qt.binding(() => {
-                        return root.auxCategory;
-                    });
-
-                }
-            }
 
             sourceComponent: ContentChild {
                 anchors.fill: parent
@@ -193,8 +160,11 @@ Item {
                 category: auxCategory
             }
 
+            onLoaded: if (item && ("category" in item)) {
+                item.category = Qt.binding(() => {
+                    return root.auxCategory;
+                });
+            }
         }
-
     }
-
 }

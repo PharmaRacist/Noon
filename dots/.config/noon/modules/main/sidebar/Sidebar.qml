@@ -67,6 +67,10 @@ StyledPanel {
         bottom: true
     }
 
+    margins {
+        top: !pinned && Mem.options.desktop.shell.mode === "nobuntu" ? 40 : 0
+    }
+
     Item {
         id: wrapperItem
 
@@ -242,6 +246,7 @@ StyledPanel {
     }
 
     IpcHandler {
+        target: "sidebar"
         function reveal_aux(cat: string) {
             sidebarContent.toggleAux(cat);
         }
@@ -257,8 +262,6 @@ StyledPanel {
         function hide() {
             root.hide();
         }
-
-        target: "sidebar"
     }
 
     mask: Region {

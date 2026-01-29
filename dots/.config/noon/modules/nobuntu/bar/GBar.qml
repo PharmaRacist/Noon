@@ -39,6 +39,7 @@ Scope {
                 anchors.fill: parent
                 color: "#070707"
                 GClock {}
+
                 GWs {
                     bar: bar_panel
                 }

@@ -18,7 +18,6 @@ Singleton {
 
         state: false
         fileName: "options"
-
         OptionsSchema {}
     }
 
@@ -26,7 +25,6 @@ Singleton {
         id: todoView
 
         fileName: "todo"
-
         TodoSchema {}
     }
 
@@ -34,7 +32,6 @@ Singleton {
         id: statesView
 
         fileName: "states"
-
         StatesSchema {}
     }
 
@@ -42,7 +39,6 @@ Singleton {
         id: timersView
 
         fileName: "timers"
-
         TimersSchema {}
     }
 
@@ -50,7 +46,6 @@ Singleton {
         id: colorsView
 
         fileName: "colors"
-
         ColorsSchema {}
     }
 
@@ -59,7 +54,6 @@ Singleton {
 
         watchChanges: false
         fileName: "store"
-
         StoreSchema {}
     }
 }

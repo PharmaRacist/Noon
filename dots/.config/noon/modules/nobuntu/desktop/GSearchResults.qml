@@ -79,7 +79,10 @@ Item {
                         z: 99
                         anchors.fill: parent
                         hoverEnabled: true
-                        onClicked: modelData.execute()
+                        onClicked: {
+                            modelData.execute();
+                            GlobalStates.nobuntu.overview.show = false;
+                        }
                     }
                 }
 

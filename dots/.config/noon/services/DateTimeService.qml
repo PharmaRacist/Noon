@@ -9,6 +9,8 @@ import Quickshell
  * A nice wrapper for date and time strings.
  */
 Singleton {
+    property alias clock: clock
+
     property string time: {
         if (Mem.options.services.time.use12HourFormat) {
             return Qt.formatDateTime(clock.date, "hh:mm ap");
@@ -53,7 +55,6 @@ Singleton {
 
     // Arabic week day name
     property string arabicDayName: clock.date.toLocaleDateString(Qt.locale("ar_SA"), "dddd")
-
     property string uptime: "0h, 0m"
     property string collapsedCalendarFormat: Qt.formatDateTime(clock.date, "dd MMMM yyyy")
 

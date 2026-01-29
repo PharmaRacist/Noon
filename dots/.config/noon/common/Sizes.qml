@@ -36,29 +36,30 @@ Singleton {
         property size size: Qt.size(400, 85)
     }
     osd: QtObject {
-        property size bottomPill: Qt.size(180, 42)
-        property size centerIsland: Qt.size(145, 145)
-        property size sideBay: Qt.size(48, 200)
-        property size windows_10: Qt.size(85, 240)
+        readonly property size nobuntu: Qt.size(220, 64)
+        readonly property size bottomPill: Qt.size(180, 42)
+        readonly property size centerIsland: Qt.size(145, 145)
+        readonly property size sideBay: Qt.size(48, 200)
+        readonly property size windows_10: Qt.size(85, 240)
     }
 
     sidebar: QtObject {
-        property real bar: 50
-        property real contentQuarter: Math.round(Screen.width * 0.235) - bar
-        property real half: Math.round(Screen.width * 0.457)
-        property real quarter: Math.round(Screen.width * 0.246)
-        property real largerQuarter: Math.round(Screen.width * 0.28)
-        property real threeQuarter: Math.round(Screen.width * 0.85)
+        readonly property real bar: 50
+        readonly property real contentQuarter: Math.round(Screen.width * 0.235) - bar
+        readonly property real half: Math.round(Screen.width * 0.457)
+        readonly property real quarter: Math.round(Screen.width * 0.246)
+        readonly property real largerQuarter: Math.round(Screen.width * 0.28)
+        readonly property real threeQuarter: Math.round(Screen.width * 0.85)
 
-        property real session: 280
-        property real overview: 1250
-        property real widgetSize: 172
-        property real widgetPillHeight: 72
-        property size shelfItemSize: Qt.size(115, 115)
-        property size shelfPopupSize: Qt.size(300, 200)
+        readonly property real session: 280
+        readonly property real overview: 1250
+        readonly property real widgetSize: 172
+        readonly property real widgetPillHeight: 72
+        readonly property size shelfItemSize: Qt.size(115, 115)
+        readonly property size shelfPopupSize: Qt.size(300, 200)
 
         property QtObject widgets: QtObject {
-            property real expandedWidth: 2 * Sizes.sidebar.widgetSize + Padding.verylarge
+            readonly property real expandedWidth: 2 * Sizes.sidebar.widgetSize + Padding.verylarge
         }
     }
 

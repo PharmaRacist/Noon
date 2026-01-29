@@ -8,7 +8,11 @@ Text {
     property bool animateChange: false
     property real animationDistanceX: 0
     property real animationDistanceY: 6
+    property bool truncate: false
 
+    elide: truncate ? Text.ElideRight : Text.ElideNone
+    wrapMode: truncate ? Text.NoWrap : Text.Wrap
+    maximumLineCount: truncate ? 1 : undefined
     font.variableAxes: Fonts.family.isMono ? ({}) : Fonts.variableAxes.main
     font.family: Fonts.family.main
     renderType: Text.NativeRendering

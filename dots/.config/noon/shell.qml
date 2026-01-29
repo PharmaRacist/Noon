@@ -8,6 +8,7 @@
 
 import QtQuick
 import Quickshell
+import Quickshell.Widgets
 import qs.common
 import qs.common.utils
 import qs.modules.main
@@ -15,20 +16,26 @@ import qs.modules.xp
 import qs.modules.nobuntu
 import qs.modules.applications
 
-ShellRoot {
-    readonly property string mode: Mem.options.desktop.shell.mode ?? "main"
+Scope {
+    id: root
+
+    readonly property string mode: Mem.options.desktop.shell.mode
+
     readonly property Component main: Main {}
     readonly property Component xp: XP {}
     readonly property Component nobuntu: NoBuntu {}
-    readonly property var _shell_map: ({
+
+    readonly property var shellMap: ({
             "main": main,
             "xp": xp,
             "nobuntu": nobuntu
         })
 
     WidgetLoader {
+        id: widgetLoader
         reloadOn: mode
-        component: _shell_map[mode]
+        component: shellMap[mode]
     }
+
     AppsIPC {}
 }

@@ -4,6 +4,7 @@ import qs.common
 import qs.common.utils
 import qs.modules.main
 import qs.modules.main.sidebar
+import qs.modules.main.osd
 import "desktop"
 import "bar"
 import "dock"
@@ -15,7 +16,7 @@ Scope {
     GIPC {}
     GBar {}
     GDock {}
-
+    OSDs {}
     // temp
     Sidebar {
         rightMode: true

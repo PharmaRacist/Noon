@@ -14,7 +14,7 @@ Singleton {
 
     property int selectedPlayerIndex: 0
     readonly property QtObject colors: palette.colors
-    readonly property bool filterPlayersEnabled: true
+    readonly property bool filterPlayersEnabled: false
 
     readonly property string artUrl: player ? StringUtils.cleanMusicTitle(player.trackArtUrl) : ""
     readonly property string title: player ? StringUtils.cleanMusicTitle(player.trackTitle) : "No Title"

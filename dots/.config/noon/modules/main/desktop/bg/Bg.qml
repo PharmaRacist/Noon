@@ -69,25 +69,25 @@ Scope {
                             const workspaceOffset = range > 0 ? ((currentWorkspace - firstId) / range) : 0.5;
                             return Math.max(0, Math.min(1, workspaceOffset));
                         }
-                        function calculate_widget_margin(){
-                            let _widget_direction_offset = Mem.options.bar.behavior.position === "left" ? -1 : 1
-                            let _widget_width = GlobalStates.main.sidebar.sidebarWidth
+                        function calculate_widget_margin() {
+                            let _widget_direction_offset = Mem.options.bar.behavior.position === "left" ? -1 : 1;
+                            let _widget_width = GlobalStates.main.sidebar.sidebarWidth;
                             if (Mem.options.desktop.bg.parallax.widgetParallax && enableParallax)
-                                return _widget_direction_offset * Mem.options.desktop.bg.parallax.parallaxStrength * _widget_width
-                            else return 0
+                                return _widget_direction_offset * Mem.options.desktop.bg.parallax.parallaxStrength * _widget_width;
+                            else
+                                return 0;
                         }
                         sourceSize: Qt.size(screen.width, screen.height)
                         width: parent.width * effectiveWallpaperScale
                         height: parent.height * effectiveWallpaperScale
 
-                        x:  (verticalParallaxMode ? calculate_widget_margin() : -effectiveMovableXSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableXSpace)
-                        y:  (verticalParallaxMode ? -effectiveMovableYSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableYSpace : 0)
+                        x: (verticalParallaxMode ? calculate_widget_margin() : -effectiveMovableXSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableXSpace)
+                        y: (verticalParallaxMode ? -effectiveMovableYSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableYSpace : 0)
 
                         Behavior on x {
                             Anim {
                                 duration: Animations.durations.large
                                 easing.bezierCurve: Animations.curves.standardDecel
-
                             }
                         }
                         Behavior on y {
@@ -117,27 +117,7 @@ Scope {
                     LazyLoader {
                         id: fgLoader
                         active: backgroundPanel.enableDepthMode
-                        component: Image {
-                            id: fgImage
-                            z: 9999
-                            anchors.fill: bgImage
-                            fillMode: Image.PreserveAspectCrop
-                            source: FileUtils.trimFileProtocol(Directories.wallpapers.depthDir + Qt.md5(FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentBg)) + ".png")
-                            asynchronous: true
-                            cache: true
-                            mipmap: true
-                            sourceSize: bgImage.sourceSize
-                            x: bgImage.x
-                            y: bgImage.y
-                            function refresh() {
-                                fgImage.source = "";
-                                fgImage.source = FileUtils.trimFileProtocol(Directories.wallpapers.depthDir + Qt.md5(FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentBg)) + ".png");
-                            }
-                            opacity: fgImage.status === Image.Ready ? 1 : 0
-                            Behavior on opacity {
-                                Anim {}
-                            }
-                        }
+                        component: Fg {}
                     }
                 }
             }

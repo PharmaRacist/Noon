@@ -56,6 +56,8 @@ Singleton {
             AmbientSoundsService.reload();
             HyprlandParserService.reload();
             NoonUtils.playSound("device_unlocked");
+            ClipboardService.init();
+            console.log("Initialized Main");
         }
 
         property bool locked: false
@@ -89,6 +91,7 @@ Singleton {
         function handle_init() {
             HyprlandParserService.getAll();
             NoonUtils.playSound("init", "xp");
+            ClipboardService.init();
         }
         property bool showRun: false
         property bool showStartMenu: false
@@ -96,6 +99,13 @@ Singleton {
     }
     nobuntu: QtObject {
         id: nobuntu
+
+        function handle_init() {
+            HyprlandParserService.getAll();
+            NoonUtils.playSound("init", "xp");
+            ClipboardService.init();
+            console.log("Initialized NoBuntu");
+        }
 
         property QtObject db: QtObject {
             property bool show: false

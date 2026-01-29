@@ -35,7 +35,7 @@ StyledRect {
 
     signal expandToggled
 
-    property var settingsData: SettingsData.tweaks ?? []
+    property var settingsData: TweaksData.tweaks ?? []
     property var itemStates: ({})
 
     function matchesSearch(text) {

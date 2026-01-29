@@ -9,7 +9,6 @@ FloatingWindow {
     visible: true
     maximumSize: Qt.size(1600, 900)
     minimumSize: Qt.size(1280, 720)
-
     readonly property Item contentLoaderItem: contentLoader.item
     readonly property Item sidebarContentLoaderItem: sidebarContentLoader.item
     readonly property Item secondarySidebarContentLoaderItem: secondary_sidebar_loader.item

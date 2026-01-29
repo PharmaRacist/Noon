@@ -17,17 +17,24 @@ ClipboardService::ClipboardService(QObject* parent)
     m_reloadTimer->setSingleShot(true);
     m_reloadTimer->setInterval(50);
     connect(m_reloadTimer, &QTimer::timeout, this, &ClipboardService::performScheduledReload);
-
-    initDatabase();
-    loadHistory();
-
-    connect(m_clipboard, &QClipboard::dataChanged, this, &ClipboardService::onClipboardChanged);
 }
 
 ClipboardService::~ClipboardService() {
     if (m_db.isOpen()) {
         m_db.close();
     }
+}
+
+void ClipboardService::init() {
+    if (m_initialized) {
+        return;
+    }
+
+    initDatabase();
+    loadHistory();
+    connect(m_clipboard, &QClipboard::dataChanged, this, &ClipboardService::onClipboardChanged);
+
+    m_initialized = true;
 }
 
 void ClipboardService::initDatabase() {

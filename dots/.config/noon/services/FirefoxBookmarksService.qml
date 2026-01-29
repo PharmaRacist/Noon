@@ -109,7 +109,6 @@ Singleton {
                         root.error = result.error;
                         Mem.states.services.bookmarks.firefoxBookmarks = [];
                     } else {
-                        console.log("FirefoxBookmarksService: Loaded", result.length, "bookmarks");
                         Mem.states.services.bookmarks.firefoxBookmarks = result;
                         root.error = "";
                     }

@@ -46,7 +46,7 @@ Scope {
                     bottom: parent.bottom
                 }
                 implicitWidth: 70
-                color: ColorUtils.transparentize(Colors.colLayer0, 0.6)
+                color: ColorUtils.transparentize(Colors.colLayer0, 0.25)
 
                 ColumnLayout {
                     anchors.fill: parent

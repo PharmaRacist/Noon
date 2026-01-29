@@ -17,7 +17,8 @@ IconImage {
     property bool colorize: Mem.options.appearance.icons.tint
     property color tintColor: Colors.m3.m3surfaceTint
     property bool cache: backer.cache
-
+    property string _source
+    source: NoonUtils.iconPath(_source)
     backer.cache: cache
     smooth: true
     antialiasing: true
@@ -36,9 +37,6 @@ IconImage {
                 source: root
                 color: root.tintColor
             }
-
         }
-
     }
-
 }

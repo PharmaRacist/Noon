@@ -15,7 +15,6 @@ import Qt5Compat.GraphicalEffects
 StyledListView {
     id: root
     property alias model: root.model
-    property string selectedCategory: ""
     property alias currentIndex: root.currentIndex
     readonly property int iconSize: 36
     signal altLaunched(var app)
@@ -119,8 +118,7 @@ StyledListView {
             },
             State {
                 name: "focused"
-                when: !ColorUtils.isValidColor(model.name || "")
-                      && root.currentIndex === index && root.activeFocus
+                when: !ColorUtils.isValidColor(model.name || "") && root.currentIndex === index && root.activeFocus
                 PropertyChanges {
                     target: clipboardItem
                     colBackground: ColorUtils.transparentize(Colors.colSurfaceContainerHighestHover, 0.3)

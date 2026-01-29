@@ -15,7 +15,7 @@ Item {
 
     StyledRect {
         anchors.fill: parent
-        radius: Rounding.large
+        radius: Rounding.full
         color: {
             if (_event_area.containsMouse)
                 Colors.colLayer0Hover;

@@ -24,6 +24,7 @@ RippleButton {
     property bool expanded: true
     property int extraRightPadding: 0
     property string materialIcon: "music_note"
+    property int fill: 0
     width: parent?.width
     implicitHeight: 64
     colBackgroundToggled: colors.colPrimaryContainer
@@ -63,6 +64,7 @@ RippleButton {
                 iconSize: parent.height / 2.5
                 colSymbol: root.active ? colors.colPrimaryActive : colors.colPrimary
                 text: root.materialIcon
+                fill: root.fill
                 MouseArea {
                     id: shapeHoverArea
                     enabled: !root.expanded

@@ -9,7 +9,7 @@ Menu {
 
     required property var content
     property QtObject colors: Colors
-
+    width: 240
     Material.theme: Colors.m3.darkmode ? Material.Dark : Material.Light
     Material.primary: colors.colPrimaryContainer
     Material.accent: colors.colSecondaryContainer
@@ -28,7 +28,7 @@ Menu {
     }
 
     background: StyledRect {
-        implicitWidth: 240
+        implicitWidth: root.width
         implicitHeight: 26 * parent.contentItem.children.length
         color: Colors.colLayer0
         radius: Rounding.verylarge
