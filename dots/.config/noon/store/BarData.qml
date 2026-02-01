@@ -2,187 +2,67 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import qs.common
-import qs.common.functions
-import qs.services
 
 Singleton {
-    readonly property var horizontalLayouts: ["Dynamic", "Minimal", "HyDe", "NovelKnocks", "Gnome-ish", "Sleek", "WindowsOnRoids"]
-    readonly property var verticalLayouts: ["Dynamic"]
-    readonly property real barPadding: 0.65
-    readonly property string position: Mem.options.bar.behavior.position
-    readonly property bool verticalBar: position === "left" || position === "right"
-    readonly property int horizontalLayout: Mem.options.bar.currentLayout
-    readonly property int verticalLayout: Mem.options.bar.currentVerticalLayout
-    readonly property var barData: verticalBar ? getVerticalBar(verticalLayout) : getHorizontalBar(horizontalLayout)
-    readonly property int currentBarExclusiveSize: getEffectiveExclusiveZone(barData) * 0.9
-    readonly property int currentBarSize: verticalBar ? barData.width : barData.height
-    // Position control properties
-    readonly property int gaps: Sizes.hyprland.gapsOut
-    readonly property int defaultHeight: Mem.options.bar.appearance.height
-    readonly property int defaultWidth: Mem.options.bar.appearance.width
-    readonly property int corners: Mem.options.bar.appearance.mode === 2 ? Rounding.verylarge : 0
-    readonly property int elevationValue: Mem.options.bar.appearance.mode === 0 ? Sizes.barElevation : 0
-    property var bars: [
-        {
-            "name": "Dynamic",
-            "height": defaultHeight,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 0
-        },
-        {
-            "name": "Minimal",
-            "height": 60,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 1
-        },
-        {
-            "name": "HyDe",
-            "height": defaultHeight,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 2
-        },
-        {
-            "name": "NovelKnocks",
-            "height": defaultHeight + 2 * elevationValue,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 3
-        },
-        {
-            "name": "Gnome-ish",
-            "height": defaultHeight,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 4
-        },
-        {
-            "name": "Sleek",
-            "height": 30,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 5
-        },
-        {
-            "name": "WindowsOnRoids",
-            "height": 45,
-            "width": 0,
-            "vertical": false,
-            "layoutIndex": 6
-        },
-        {
-            "name": "Dynamic",
-            "height": 0,
-            "width": defaultWidth,
-            "vertical": true,
-            "layoutIndex": 0
-        }
-    ]
-
-    function getByName(name) {
-        return bars.find(bar => {
-            return bar.name === name;
-        });
+    readonly property QtObject settings: Mem.options.bar
+    readonly property string position: settings.behavior.position
+    readonly property var bars: ["Dynamic", "HyDe", "NovelKnocks", "Sleek", "VDynamic"]
+    readonly property var layoutProps: ["fillHeight", "fillWidth", "preferredWidth", "preferredHeight", "topMargin", "bottomMargin", "leftMargin", "rightMargin", "margins", "implicitWidth", "implicitHeight", "width", "height", "minimumWidth", "minimumHeight", "maximumWidth", "maximumHeight"]
+    readonly property int currentBarExclusiveSize: settings.layout.startsWith("V") ? settings.appearance.width : settings.appearance.height
+    readonly property var contentTable: {
+        "spacer": "Spacer",
+        "power": "PowerIcon",
+        "workspaces": "VWorkspaces",
+        "unicodeWs": "UnicodeWs",
+        "progressWs": "ProgressWs",
+        "systemStatusIcons": "SystemStatusIcons",
+        "materialStatusIcons": "StatusIcons",
+        "sysTray": "SysTray",
+        "utilButtons": "UtilButtons",
+        "title": "CombinedTitle",
+        "resources": "Resources",
+        "circBattery": "MinimalBattery",
+        "weather": "WeatherIndicator",
+        "media": "VMedia",
+        "clock": "VClockWidget",
+        "keyboard": "KeyboardLayout",
+        "logo": "Logo",
+        "battery": "BatteryIndicator",
+        "separator": "HSeparator",
+        "space": "Spacer",
+        "date": "DateWidget",
+        "volume": "VolumeIndicator",
+        "brightness": "BrightnessIndicator"
     }
 
-    function getHorizontalBar(index) {
-        return bars.find(bar => {
-            return !bar.vertical && bar.layoutIndex === index;
-        }) || bars[0];
-    }
-
-    function getVerticalBar(index) {
-        return bars.find(bar => {
-            return bar.vertical && bar.layoutIndex === index;
-        }) || bars[0];
-    }
-
-    function getAllHorizontalBars() {
-        return bars.filter(bar => {
-            return !bar.vertical;
-        });
-    }
-
-    function getAllVerticalBars() {
-        return bars.filter(bar => {
-            return bar.vertical;
-        });
-    }
-
-    function getVisibleBars() {
-        return bars.filter(bar => {
-            return bar.visible;
-        });
-    }
-
-    function getEffectiveAnchors(bar) {
-        if (bar.vertical)
-            return {
-                "left": position === "left",
-                "top": true,
-                "right": position === "right",
-                "bottom": true
-            };
-        else
-            return {
-                "left": true,
-                "top": position === "top",
-                "right": true,
-                "bottom": position === "bottom"
-            };
-    }
-
-    function getEffectiveHeight(bar) {
-        if (bar.vertical)
-            return bar.height;
-        else
-            return bar.height + elevationValue + corners;
-    }
-
-    function getEffectiveWidth(bar) {
-        if (!bar.vertical)
-            return Screen.width;
-        else
-            return bar.width + elevationValue + corners;
-    }
-
-    function getEffectiveExclusiveZone(bar) {
-        return bar.vertical ? bar.width : bar.height;
-    }
-
-    function getLayoutName(vertical, index) {
-        if (vertical)
-            return verticalLayouts[index];
-        else
-            return horizontalLayouts[index];
-    }
-    function switchBarLayout(layoutIndex, vertical) {
-        if (vertical)
-            Mem.options.bar.currentVerticalLayout = layoutIndex
-        else
-            Mem.options.bar.currentLayout = layoutIndex
-    }
-    function getNextMode() {
-        switch (Mem.options.bar.behavior.position) {
-        case "top":
-            return "left";
-        case "bottom":
-            return "right";
-        case "right":
-            return "bottom";
-        case "left":
-            return "top";
-        default:
-            return "left";
-        }
+    // Horizontal-specific component substitutions
+    readonly property var horizontalSubstitutions: {
+        "workspaces": "Workspaces",
+        "title": "ActiveWindow",
+        "media": "Media",
+        "clock": "ClockWidget",
+        "separator": "VerticalSeparator"
     }
 
     function swapPosition() {
-        if (verticalBar)
-            Mem.options.bar.behavior.position = Mem.options.bar.behavior.position === "left" ? "right" : "left";
-        else
-            Mem.options.bar.behavior.position = Mem.options.bar.behavior.position === "top" ? "bottom" : "top";
+        const pairs = {
+            left: "right",
+            right: "left",
+            top: "bottom",
+            bottom: "top"
+        };
+        settings.behavior.position = pairs[position];
+    }
+
+    function cyclePosition() {
+        const positions = ["top", "left", "bottom", "right"];
+        const currentPosition = settings.behavior.position;
+        const position = (positions.indexOf(currentPosition) + 1) % 4;
+        if (position === 0 || position === 2) {
+            settings.layout = "Dynamic";
+        } else {
+            settings.layout = "VDynamic";
+        }
+        settings.behavior.position = positions[position];
     }
 }

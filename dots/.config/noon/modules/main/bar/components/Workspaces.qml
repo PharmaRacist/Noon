@@ -15,7 +15,7 @@ import Qt5Compat.GraphicalEffects
 
 BarGroup {
     id: root
-    required property var bar
+    property var bar
 
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar.screen)
     readonly property Toplevel activeWindow: ToplevelManager.activeToplevel

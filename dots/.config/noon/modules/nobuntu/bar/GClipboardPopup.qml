@@ -15,7 +15,11 @@ PopupWindow {
     color: "transparent"
     implicitWidth: bg.implicitWidth + Padding.massive * 3
     implicitHeight: bg.implicitHeight + Padding.massive * 3
-
+    FocusHandler {
+        windows: [bar]
+        onCleared: root.visible = false
+        active: visible
+    }
     anchor {
         window: bar
         adjustment: PopupAdjustment.None

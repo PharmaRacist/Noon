@@ -8,7 +8,7 @@ import qs.common.widgets
 RowLayout {
     id: root
 
-    required property var bar
+    property var bar
     readonly property int iconSize: 24
     spacing: Padding.tiny
 

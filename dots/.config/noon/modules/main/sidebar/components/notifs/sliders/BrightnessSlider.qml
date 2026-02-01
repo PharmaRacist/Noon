@@ -12,7 +12,7 @@ Item {
     Layout.fillWidth: true
     Layout.preferredHeight: 40
 
-    property var focusedScreen: GlobalStates.focusedScreen
+    property var focusedScreen: MonitorsInfo.focused
     property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
     StyledSlider {
         id: brightnessSlider

@@ -37,7 +37,7 @@ LazyLoader {
         }
         exclusionMode: ExclusionMode.Ignore
 
-        HyprlandFocusGrab {
+        FocusHandler {
             id: grab
             windows: [popupWindow]
             active: root.focus

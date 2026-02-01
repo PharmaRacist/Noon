@@ -14,7 +14,7 @@ MouseArea {
     property bool expanded: false
     property bool userInteracting: false
     property bool autoRevealed: false
-    property var focusedScreen: GlobalStates.focusedScreen
+    property var focusedScreen: MonitorsInfo.focused
     property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
     property int lastScrollX: 0
     property int lastScrollY: 0

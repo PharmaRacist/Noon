@@ -9,7 +9,7 @@ import qs.common.widgets
 
 StyledIconImage {
     id: root
-    required property var bar
+    property var bar
     readonly property Component _clipboard_popup: GClipboardPopup {}
 
     _source: "edit-paste-symbolic"

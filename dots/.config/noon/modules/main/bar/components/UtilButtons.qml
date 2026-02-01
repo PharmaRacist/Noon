@@ -8,6 +8,7 @@ BarGroup {
     id: root
     Layout.preferredWidth: columnLayout.implicitWidth + padding
     Layout.preferredHeight: columnLayout.implicitHeight + padding
+
     readonly property var content: [
         {
             "icon": "colorize",

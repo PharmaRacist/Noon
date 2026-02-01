@@ -21,7 +21,7 @@ StyledPanel {
     visible: true
     margins: Padding.massive
     kbFocus: true
-    Keys.onPressed: (event) => {
+    Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
             root.visible = false;
             event.accepted = true;
@@ -35,7 +35,7 @@ StyledPanel {
         bottom: true
     }
 
-    HyprlandFocusGrab {
+    FocusHandler {
         // onCleared: visible = false
 
         windows: [root]
@@ -93,13 +93,10 @@ StyledPanel {
                         family: Fonts.family.main
                         pixelSize: Fonts.sizes.normal
                     }
-
                 }
-
             }
 
-            Spacer {
-            }
+            Spacer {}
 
             RippleButtonWithIcon {
                 materialIcon: "keyboard_arrow_down"
@@ -123,7 +120,6 @@ StyledPanel {
                     return root.visible = false;
                 }
             }
-
         }
 
         RLayout {
@@ -155,13 +151,12 @@ StyledPanel {
                         family: Fonts.family.main
                         pixelSize: Fonts.sizes.large
                     }
-
                 }
 
                 StyledText {
                     text: {
                         let lines = root.description.split(/\r\n|\r|\n/);
-                        let errorLines = lines.filter((line) => {
+                        let errorLines = lines.filter(line => {
                             return line.trim().startsWith('caused by');
                         });
                         let errors = errorLines.slice(root.expand ? -20 : -4);
@@ -180,11 +175,8 @@ StyledPanel {
                         family: Fonts.family.monospace
                         pixelSize: Fonts.sizes.normal
                     }
-
                 }
-
             }
-
         }
 
         RLayout {
@@ -209,9 +201,6 @@ StyledPanel {
                     root.visible = false;
                 }
             }
-
         }
-
     }
-
 }

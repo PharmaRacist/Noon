@@ -8,7 +8,7 @@ import "./../common"
 
 StyledRect {
     id: root
-    required property var bar
+    property var bar
     anchors.left: parent.left
     anchors.leftMargin: Padding.verylarge
     anchors.verticalCenter: parent.verticalCenter

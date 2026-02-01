@@ -45,15 +45,10 @@ ColumnLayout {
                     radius: height / 2
 
                     Behavior on width {
-                        Anim {
-                        }
-
+                        Anim {}
                     }
-
                 }
-
             }
-
         }
 
         StyledText {
@@ -63,7 +58,6 @@ ColumnLayout {
             Layout.minimumWidth: 45
             horizontalAlignment: Text.AlignRight
         }
-
     }
 
     // CPU Resource
@@ -96,15 +90,10 @@ ColumnLayout {
                     radius: height / 2
 
                     Behavior on width {
-                        Anim {
-                        }
-
+                        Anim {}
                     }
-
                 }
-
             }
-
         }
 
         StyledText {
@@ -114,7 +103,6 @@ ColumnLayout {
             Layout.minimumWidth: 45
             horizontalAlignment: Text.AlignRight
         }
-
     }
 
     // Memory Resource
@@ -147,15 +135,10 @@ ColumnLayout {
                     radius: height / 2
 
                     Behavior on width {
-                        Anim {
-                        }
-
+                        Anim {}
                     }
-
                 }
-
             }
-
         }
 
         StyledText {
@@ -165,7 +148,6 @@ ColumnLayout {
             Layout.minimumWidth: 45
             horizontalAlignment: Text.AlignRight
         }
-
     }
 
     // Swap Resource
@@ -198,15 +180,10 @@ ColumnLayout {
                     radius: height / 2
 
                     Behavior on width {
-                        Anim {
-                        }
-
+                        Anim {}
                     }
-
                 }
-
             }
-
         }
 
         StyledText {
@@ -216,7 +193,5 @@ ColumnLayout {
             Layout.minimumWidth: 45
             horizontalAlignment: Text.AlignRight
         }
-
     }
-
 }

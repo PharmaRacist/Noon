@@ -22,5 +22,4 @@ MouseArea {
         text: DateTimeService.verticalDate
         font.weight: root.fWeight
     }
-
 }

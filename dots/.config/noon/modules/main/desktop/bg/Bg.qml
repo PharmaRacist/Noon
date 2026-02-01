@@ -110,6 +110,7 @@ Scope {
                         sourceComponent: LayerClock {}
                         asynchronous: true
                     }
+                    DesktopPinnedWidgets {}
                     DesktopClock {
                         z: 9999
                         visible: Mem.options.desktop.clock.enabled && (!backgroundPanel.enableDepthMode || !layerClock.active)

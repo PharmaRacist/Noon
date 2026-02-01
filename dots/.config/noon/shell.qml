@@ -31,7 +31,6 @@ Scope {
     }
 
     Loader {
-        id: widgetLoader
         sourceComponent: shellMap[mode]
         onLoaded: GlobalStates.handle_init(root.mode)
     }

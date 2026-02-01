@@ -14,7 +14,7 @@ Scope {
     StyledPanel {
         id: root
         visible: (Notifications.popupList.length > 0)
-        screen: GlobalStates.focusedScreen ?? null
+        screen: MonitorsInfo.focused ?? null
         name: "notificationPopup"
         WlrLayershell.layer: WlrLayer.Overlay
         exclusiveZone: 0
@@ -39,13 +39,13 @@ Scope {
                 top: parent.top
                 bottom: parent.bottom
                 right: parent.right
-                margins:Padding.massive
+                margins: Padding.massive
             }
             implicitWidth: Sizes.notificationPopupWidth - anchors.rightMargin * 2
             popup: true
             clip: false
-            animateMovement:true
-            animateAppearance:true
+            animateMovement: true
+            animateAppearance: true
         }
     }
 }

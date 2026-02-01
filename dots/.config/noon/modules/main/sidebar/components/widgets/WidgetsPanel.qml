@@ -1,14 +1,14 @@
 import QtQuick
 import QtQuick.Controls
-import qs.common
 import qs.store
+import qs.common
 import qs.common.widgets
 import QtQuick.Layouts
 import "widgets"
 
 Item {
     id: root
-    anchors.fill:parent
+    anchors.fill: parent
     property bool expanded: false
     property bool isDragging: false
     property int pinnedCount: 0
@@ -18,62 +18,7 @@ Item {
     readonly property int gridSpacing: 20
     readonly property int unit: cellSize + gridSpacing
 
-    property var db: [
-        {
-            id: "resources",
-            expandable: true,
-            component: "Resources",
-            materialIcon: "memory"
-        },
-        {
-            id: "battery",
-            expandable: false,
-            component: "Battery",
-            materialIcon: "battery_full"
-        },
-        {
-            id: "simple_clock",
-            expandable: false,
-            component: "Clock_Simple",
-            materialIcon: "schedule"
-        },
-        {
-            id: "bluetooth",
-            expandable: false,
-            component: "Bluetooth",
-            materialIcon: "bluetooth"
-        },
-        {
-            id: "media",
-            expandable: true,
-            component: "Media",
-            materialIcon: "music_note"
-        },
-        {
-            id: "combo",
-            expandable: true,
-            component: "ClockWeatherCombo",
-            materialIcon: "wb_twilight"
-        },
-        {
-            id: "net",
-            expandable: false,
-            component: "NetworkSpeed",
-            materialIcon: "network_check"
-        },
-        {
-            id: "cal",
-            expandable: true,
-            component: "Calendar",
-            materialIcon: "calendar_today"
-        },
-        {
-            id: "pill",
-            expandable: false,
-            component: "Weather_Simple",
-            materialIcon: "cloud"
-        }
-    ]
+    readonly property var db: WidgetsData.db
 
     function arrangeAll() {
         let pinned = [], unpinned = [];
@@ -200,6 +145,7 @@ Item {
                     property int gY: 0
                     property bool isExpanded: false
                     property bool isPinned: Mem.states.sidebar.widgets.pinned.indexOf(modelData.id) !== -1
+                    property bool isDesktop: Mem.states.sidebar.widgets.desktop.indexOf(modelData.id) !== -1
                     property bool isPill: Mem.states.sidebar.widgets.pilled.indexOf(modelData.id) !== -1
                     readonly property bool canExpand: modelData.expandable
                     readonly property string widgetId: modelData.id
@@ -301,6 +247,21 @@ Item {
                                     }
                                 },
                                 {
+                                    text: loader.isDesktop ? "Remove from desktop" : "Send To Desktop",
+                                    materialIcon: "open_in_new",
+                                    action: () => {
+                                        let list = Mem.states.sidebar.widgets.desktop;
+                                        let idx = list.indexOf(loader.widgetId);
+                                        if (idx === -1) {
+                                            list.push(loader.widgetId);
+                                        } else {
+                                            list.splice(idx, 1);
+                                        }
+                                        Mem.states.sidebar.widgets.desktop = list.slice();
+                                        widgetMenu.close();
+                                    }
+                                },
+                                {
                                     text: loader.isPill ? "Island" : "Pill",
                                     materialIcon: loader.isPill ? "capture" : "pill",
                                     action: () => {
@@ -377,11 +338,11 @@ Item {
         }
     }
     PagePlaceholder {
-        icon:"widgets"
+        icon: "widgets"
         title: "No Enabled Widgets"
-        description:"Scroll Below To Reveal Avilable Widgets"
-        anchors.centerIn:parent
-        shape:MaterialShapes.Shapes.SoftBoom
+        description: "Scroll Below To Reveal Available Widgets"
+        anchors.centerIn: parent
+        shape: MaterialShape.Shapes.SoftBoom
         shown: Mem.states.sidebar.widgets.enabled.length === 0
     }
     WidgetsSpawnerDialog {

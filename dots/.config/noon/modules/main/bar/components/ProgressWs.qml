@@ -13,7 +13,7 @@ import Quickshell.Wayland
 import Qt5Compat.GraphicalEffects
 
 Item {
-    required property var bar
+    property var bar
     property bool borderless: !Mem.options.bar.appearance.modulesBg
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar.screen)
     readonly property Toplevel activeWindow: ToplevelManager.activeToplevel

@@ -24,7 +24,7 @@ Scope {
             readonly property bool scrollReveal: Mem.options.beam.behavior.scrollToReveal
             readonly property bool hoverReveal: Mem.options.beam.behavior.hoverToReveal
             readonly property bool revealLauncherOnAction: true // For Revealing More Info panels if needed
-            readonly property bool reveal: GlobalStates.main.showBeam || (hoverReveal && beam_mouse_area.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !GlobalStates.topLevel.activated)
+            readonly property bool reveal: GlobalStates.main.showBeam || (hoverReveal && beam_mouse_area.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !MonitorsInfo.topLevel.activated)
             readonly property bool addSeparatorForNotes: true
             readonly property int expandedLitterThreshhold: 10
             readonly property int mainRounding: Rounding.huge
@@ -200,7 +200,7 @@ Scope {
                 onTriggered: root.hide()
             }
 
-            HyprlandFocusGrab {
+            FocusHandler {
                 windows: [root]
                 active: root.reveal
                 onCleared: root.hide()

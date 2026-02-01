@@ -10,7 +10,7 @@ import qs.store
 Item {
     id: root
 
-    required property var bar
+    property var bar
     property int iconSize: BarData.currentBarExclusiveSize / 2.5
     property bool verticalMode: Mem.options.bar.behavior.position === "left" || Mem.options.bar.behavior.position === "right"
 

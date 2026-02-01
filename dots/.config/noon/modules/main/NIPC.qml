@@ -20,8 +20,12 @@ Scope {
                 GlobalStates.main.exposeView = false;
             }
         }
+        function toggle_beam() {
+            GlobalStates.main.showBeam = !GlobalStates.main.showBeam;
+        }
+
         function toggle_bar_mode() {
-            Mem.options.bar.behavior.position = BarData.getNextMode();
+            Mem.options.bar.behavior.position = BarData.cyclePosition();
         }
         function swap_bar_position() {
             BarData.swapPosition();

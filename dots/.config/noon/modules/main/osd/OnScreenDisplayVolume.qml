@@ -13,7 +13,7 @@ Scope {
     property bool showOsdValues: false
     property bool userInteracting: false
     property string protectionMessage: ""
-    property var focusedScreen: GlobalStates.focusedScreen
+    property var focusedScreen: MonitorsInfo.focused
 
     Binding {
         target: GlobalStates.main

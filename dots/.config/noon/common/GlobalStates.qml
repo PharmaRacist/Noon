@@ -18,7 +18,6 @@ Singleton {
 
     property bool superPressed: false
     readonly property var topLevel: ToplevelManager.activeToplevel
-    readonly property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
     readonly property bool superHeld: superHeldShortcut.pressed
 
     CustomShortcut {

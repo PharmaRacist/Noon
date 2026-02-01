@@ -12,7 +12,7 @@ import Quickshell.Widgets
 import Qt5Compat.GraphicalEffects
 
 Item {
-    required property var bar
+    property var bar
     property bool borderless: !Mem.options.bar.appearance.modulesBg
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar.screen)
     readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
@@ -29,7 +29,7 @@ Item {
     property string workspaceIcon: "\uf004"
 
     // New: auto orientation mode (horizontal / vertical)
-    property bool verticalMode:false
+    property bool verticalMode: false
 
     property int workspaceIndexInGroup: (monitor.activeWorkspace?.id - 1) % Mem.options.bar.workspaces.shown
 
@@ -103,60 +103,90 @@ Item {
         }
     }
 
-        component WorkspaceIndicator :Item {
-            id: workspaceItem
-            property int workspaceValue: workspaceGroup * Mem.options.bar.workspaces.shown + index + 1
-            property bool isActive: monitor.activeWorkspace?.id === workspaceValue
-            property bool isOccupied: workspaceOccupied[index]
-            property bool shouldShow: isActive || isOccupied
+    component WorkspaceIndicator: Item {
+        id: workspaceItem
+        property int workspaceValue: workspaceGroup * Mem.options.bar.workspaces.shown + index + 1
+        property bool isActive: monitor.activeWorkspace?.id === workspaceValue
+        property bool isOccupied: workspaceOccupied[index]
+        property bool shouldShow: isActive || isOccupied
 
-            implicitWidth: shouldShow ? iconText.implicitWidth : 0
-            implicitHeight: shouldShow ? iconText.implicitHeight : 0
-            visible: shouldShow
+        implicitWidth: shouldShow ? iconText.implicitWidth : 0
+        implicitHeight: shouldShow ? iconText.implicitHeight : 0
+        visible: shouldShow
 
-            states: [
-                State {
-                    name: "active"
-                    when: workspaceItem.isActive
-                    PropertyChanges { target: iconText; color: activeColor; scale: 1.2 }
-                    PropertyChanges { target: workspaceItem; opacity: 1.0 }
-                },
-                State {
-                    name: "inactive"
-                    when: !workspaceItem.isActive && workspaceItem.shouldShow
-                    PropertyChanges { target: iconText; color: inactiveColor; scale: 1.0 }
-                    PropertyChanges { target: workspaceItem; opacity: 1.0 }
-                },
-                State {
-                    name: "hidden"
-                    when: !workspaceItem.shouldShow
-                    PropertyChanges { target: workspaceItem; opacity: 0.0 }
+        states: [
+            State {
+                name: "active"
+                when: workspaceItem.isActive
+                PropertyChanges {
+                    target: iconText
+                    color: activeColor
+                    scale: 1.2
                 }
-            ]
-
-            transitions: [
-                Transition {
-                    from: "*"; to: "*"
-                    CAnim { target: iconText; property: "color"; }
-                    Anim { target: iconText; property: "scale" }
-                    Anim { target: workspaceItem; property: "opacity"; }
-                    Anim { target: workspaceItem; property: "implicitWidth" }
+                PropertyChanges {
+                    target: workspaceItem
+                    opacity: 1.0
                 }
-            ]
-
-            Text {
-                id: iconText
-                text: displayMode === "numbers" ? (index + 1).toString() : workspaceIcon
-                font.pixelSize: fontSize
-                anchors.centerIn: parent
-                font.family: Fonts.family.monospace
+            },
+            State {
+                name: "inactive"
+                when: !workspaceItem.isActive && workspaceItem.shouldShow
+                PropertyChanges {
+                    target: iconText
+                    color: inactiveColor
+                    scale: 1.0
+                }
+                PropertyChanges {
+                    target: workspaceItem
+                    opacity: 1.0
+                }
+            },
+            State {
+                name: "hidden"
+                when: !workspaceItem.shouldShow
+                PropertyChanges {
+                    target: workspaceItem
+                    opacity: 0.0
+                }
             }
+        ]
 
-            MouseArea {
-                anchors.fill: parent
-                anchors.margins: -4
-                onClicked: Hyprland.dispatch(`workspace ${workspaceItem.workspaceValue}`)
-                cursorShape: Qt.PointingHandCursor
+        transitions: [
+            Transition {
+                from: "*"
+                to: "*"
+                CAnim {
+                    target: iconText
+                    property: "color"
+                }
+                Anim {
+                    target: iconText
+                    property: "scale"
+                }
+                Anim {
+                    target: workspaceItem
+                    property: "opacity"
+                }
+                Anim {
+                    target: workspaceItem
+                    property: "implicitWidth"
+                }
             }
+        ]
+
+        Text {
+            id: iconText
+            text: displayMode === "numbers" ? (index + 1).toString() : workspaceIcon
+            font.pixelSize: fontSize
+            anchors.centerIn: parent
+            font.family: Fonts.family.monospace
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            anchors.margins: -4
+            onClicked: Hyprland.dispatch(`workspace ${workspaceItem.workspaceValue}`)
+            cursorShape: Qt.PointingHandCursor
+        }
     }
 }

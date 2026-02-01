@@ -33,7 +33,7 @@ JsonAdapter {
         transparency: JsonObject {
             property bool blur: true
             property bool enabled: false
-            property real scale: 0.7
+            property real scale: 0
         }
 
         rounding: JsonObject {
@@ -393,10 +393,11 @@ JsonAdapter {
         property bool enabled: true
         property int batteryLowThreshold: 20
         property int spacing: 4
-        property int currentLayout: 0
-        property int currentVerticalLayout: 0
-        property list<string> vLayout: ["materialStatusIcons", "nightlight", "weather", "separator", "battery", "separator", "sysTray", "spacer", "title", "spacer", "media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
-        property list<string> hLayout: ["power", "separator", "title", "spacer", "resources", "separator", "media", "separator", "workspaces", "separator", "clock", "separator", "utilButtons", "spacer", "sysTray", "nightlight", "battery", "weather", "materialStatusIcons"]
+        property string layout: "VDynamic"
+
+        property list<string> vMap: ["materialStatusIcons", "battery", "weather", "separator", "sysTray", "spacer", "media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
+        property list<string> hMap: ["power", "separator", "title", "spacer", "resources", "separator", "media", "separator", "workspaces", "separator", "clock", "separator", "utilButtons", "separator", "battery", "spacer", "sysTray", "weather", "materialStatusIcons"]
+        property list<string> bars: ["Dynamic", "HyDe", "NovelKnocks", "Sleek", "VDynamic"]
 
         appearance: JsonObject {
             property int mode: 2
@@ -404,26 +405,21 @@ JsonAdapter {
             property bool useBg: true
             property bool barGroup: false
             property bool outline: true
-            property int height: 38
-            property int width: 36
+            property int height: 45
+            property int width: 50
         }
 
         behavior: JsonObject {
             property string position: "left"
             property bool autoHide: false
-            property bool showOnAll: true
+            property bool showOnAll: false
         }
 
         modules: JsonObject {
             property bool visualizer: false
         }
 
-        keyboard:
-        // property list<var> keyboardLayoutShortNames: ({
-        //     "English (US)": "US",
-        //     "Arabic": "AR"
-        // })
-        JsonObject {}
+        keyboard: JsonObject {}
 
         workspaces: JsonObject {
             property int shownWs: 4

@@ -7,7 +7,7 @@ import Quickshell.Services.SystemTray
 import Quickshell.Services.UPower
 import qs.common
 import qs.common.widgets
-import qs.modules.main.bar.components as Components
+import qs.modules.main.bar.components
 import qs.services
 
 Item {
@@ -29,7 +29,7 @@ Item {
         anchors.leftMargin: 20
         anchors.rightMargin: 20
 
-        Components.MinimalBattery {
+        MinimalBattery {
             id: battery
 
             visible: UPower.displayDevice.isLaptopBattery
@@ -58,10 +58,9 @@ Item {
                 width: wsChunk.width
                 height: wsChunk.height
                 acceptedButtons: Qt.RightButton
-                onClicked: (event) => {
+                onClicked: event => {
                     if (event.button === Qt.RightButton)
                         NoonUtils.callIpc("sidebar reveal View");
-
                 }
             }
 
@@ -69,56 +68,13 @@ Item {
                 width: parent.width
                 height: parent.height
 
-                Components.GnomeWs {
+                ProgressWs {
                     id: workspaces
 
-                    activeColor: Colors.colPrimary
                     Layout.alignment: Qt.AlignCenter
                     bar: barRoot
                 }
-
             }
-
-        }
-
-        Rectangle {
-            id: waveContainer
-
-            border.color: borderColor
-            border.width: borderWidth
-            visible: shouldShow
-            height: chunkHeight
-            width: 250
-            radius: commonRadius
-            color: Colors.colLayer0
-            clip: true
-
-            StyledRectangularShadow {
-                target: waveContainer
-                radius: commonRadius
-            }
-
-            Visualizer {
-                id: visualizer
-
-                mode: "atom"
-                anchors.fill: parent
-            }
-
-            Lyrics {
-                z: 99
-                implicitHeight: parent.height
-                implicitWidth: parent.width
-                anchors.centerIn: parent
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onPressed: {
-                    visualizer.active = !visualizer.active;
-                }
-            }
-
         }
 
         Rectangle {
@@ -131,11 +87,10 @@ Item {
             border.color: borderColor
             border.width: borderWidth
 
-            Components.InlineWindowTitle {
+            InlineWindowTitle {
                 bar: barRoot
                 anchors.fill: parent
             }
-
         }
 
         Item {
@@ -168,22 +123,17 @@ Item {
                 anchors.centerIn: parent
                 Layout.fillWidth: true
 
-                Components.SysTray {
+                SysTray {
                     bar: barRoot
                     Layout.fillWidth: true
                     visible: SystemTray.items.values.length > 0
                 }
 
-                Components.StatusIcons {
-                }
+                StatusIcons {}
 
-                Components.Logo {
-                }
-
+                Logo {}
             }
-
         }
-
     }
 
     Rectangle {
@@ -212,7 +162,7 @@ Item {
             anchors.rightMargin: 16
             anchors.leftMargin: 16
 
-            Components.Weather {
+            Weather {
                 Layout.preferredHeight: 18
                 Layout.preferredWidth: 40
                 Layout.alignment: Qt.AlignHCenter
@@ -227,14 +177,17 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
             }
 
-            Components.GnomeClock {
+            StyledText {
                 id: clock
-
+                font {
+                    family: Fonts.family.title
+                    variableAxes: Fonts.variableAxes.title
+                    pointSize: Fonts.sizes.normal
+                }
+                color: Colors.colOnLayer0
+                text: Qt.formatTime(DataTimeService.clock.date, "hh:mm")
                 Layout.alignment: Qt.AlignHCenter
             }
-
         }
-
     }
-
 }

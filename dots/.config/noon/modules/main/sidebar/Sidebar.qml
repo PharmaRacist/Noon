@@ -230,7 +230,7 @@ StyledPanel {
         }
     }
 
-    HyprlandFocusGrab {
+    FocusHandler {
         windows: [root]
         active: show
         onCleared: {

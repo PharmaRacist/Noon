@@ -252,8 +252,7 @@ Singleton {
             root.list = JSON.parse(fileContents).map(notif => {
                 return notifComponent.createObject(root, {
                     "notificationId": notif.notificationId,
-                    "actions": [] // Notification actions are meaningless if they're not tracked by the server or the sender is dead
-                    ,
+                    "actions": [],
                     "appIcon": notif.appIcon,
                     "appName": notif.appName,
                     "body": notif.body,

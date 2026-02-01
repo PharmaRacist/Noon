@@ -26,7 +26,7 @@ ColumnLayout {
         font {
             variableAxes:Fonts.variableAxes.title
             pixelSize:Fonts.sizes.huge
-            weight:Font.Bold
+            weight:700
         }
         truncate:true
         text:  Qt.formatDateTime(DateTimeService.clock.date, "MMMM dd yyyy")

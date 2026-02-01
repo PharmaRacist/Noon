@@ -15,14 +15,14 @@ BarGroup {
 
     property bool verticalMode: false
     property real iconSpacing: 10
-    property real commonIconSize: Fonts.sizes.verylarge
+    property real commonIconSize: Fonts.sizes.large
     property color commonIconColor: Colors.colOnLayer1
 
-    Layout.fillWidth: verticalMode
-    Layout.preferredWidth: verticalMode ? grid.implicitWidth + Padding.large : 0
-    Layout.preferredHeight: verticalMode ? grid.implicitHeight + Padding.large : 0
-    Layout.margins: Padding.small
     Layout.fillHeight: !verticalMode
+    Layout.fillWidth: verticalMode
+    Layout.preferredWidth: !verticalMode ? grid.implicitWidth + Padding.huge : 0
+    Layout.preferredHeight: verticalMode ? grid.implicitHeight + Padding.huge : 0
+    Layout.margins: Padding.tiny
 
     states: [
         State {
@@ -81,7 +81,7 @@ BarGroup {
             id: networkIcon
 
             fill: 1
-            font.pixelSize: commonIconSize
+            font.pixelSize: root.commonIconSize
             color: commonIconColor
             text: {
                 if (NetworkService.ethernet)
@@ -112,7 +112,7 @@ BarGroup {
         Symbol {
             visible: RecordingService.isRecording ?? false
             text: "radio_button_checked"
-            font.pixelSize: commonIconSize
+            font.pixelSize: root.commonIconSize
             color: commonIconColor
             fill: 1
             MouseArea {
@@ -127,7 +127,7 @@ BarGroup {
 
         Symbol {
             text: BluetoothService.currentDeviceIcon
-            font.pixelSize: commonIconSize
+            font.pixelSize: root.commonIconSize
             color: commonIconColor
             fill: 1
 

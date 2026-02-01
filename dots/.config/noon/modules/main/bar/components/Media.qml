@@ -76,7 +76,7 @@ BarGroup {
             Layout.rightMargin: rowLayout.spacing
             Layout.maximumWidth: root.expand ? parent.width - 30 : 130
             horizontalAlignment: Text.AlignHCenter
-            elide: Text.ElideRight
+            truncate: true
             color: Colors.colOnLayer1
             text: `${cleanedTitle}${activePlayer?.trackArtist ? ' • ' + activePlayer.trackArtist : ''}`
         }

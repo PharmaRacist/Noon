@@ -6,19 +6,17 @@ import qs.common.functions
 Process {
     id: root
 
-    signal done(string path, int width, int height);
-    required property string filePath;
-    required property string sourceUrl;
+    signal done(string path, int width, int height)
+    required property string filePath
+    required property string sourceUrl
     property string downloadUserAgent: Mem.options?.networking.userAgent ?? ""
-    
+
     function processFilePath() {
         return StringUtils.shellSingleQuoteEscape(FileUtils.trimFileProtocol(filePath));
     }
 
     running: true
-    command: ["bash", "-c", 
-        `mkdir -p $(dirname '${processFilePath(filePath)}'); [ -f '${processFilePath(filePath)}' ] || curl -sSL '${sourceUrl}' -o '${processFilePath(filePath)}' && magick identify -format '%w %h' '${processFilePath(filePath)}'[0]`
-    ]
+    command: ["bash", "-c", `mkdir -p $(dirname '${processFilePath(filePath)}'); [ -f '${processFilePath(filePath)}' ] || curl -sSL '${sourceUrl}' -o '${processFilePath(filePath)}' && magick identify -format '%w %h' '${processFilePath(filePath)}'[0]`]
     stdout: StdioCollector {
         id: imageSizeOutputCollector
         onStreamFinished: {

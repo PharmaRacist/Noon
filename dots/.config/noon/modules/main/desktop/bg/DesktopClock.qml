@@ -1,11 +1,7 @@
-import Qt5Compat.GraphicalEffects
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
 import qs.common
-import qs.common.functions
 import qs.common.widgets
 import qs.modules.main.bar.components
 import qs.services
@@ -19,15 +15,15 @@ GridLayout {
 
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
-    z: 999
+    z: 9999
     rowSpacing: -20
     columns: 1
 
     anchors {
         bottom: centerClock ? undefined : parent.bottom
         left: centerClock ? undefined : parent.left
-        leftMargin: Mem.options.bar.behavior.position === "left" ? BarData.currentBarSize + Sizes.elevationMargin + Sizes.hyprland.gapsOut : Sizes.hyprland.gapsOut
-        bottomMargin: Math.max(Sizes.elevationMargin, Sizes.hyprland.gapsOut) + (Mem.options.bar.behavior.position === "bottom" ? BarData.currentBarSize : 0)
+        leftMargin: Mem.options.bar.behavior.position === "left" ? Mem.options.bar.appearance.width + Sizes.elevationMargin + Sizes.hyprland.gapsOut : Sizes.hyprland.gapsOut
+        bottomMargin: Math.max(Sizes.elevationMargin, Sizes.hyprland.gapsOut) + (Mem.options.bar.behavior.position === "bottom" ? Mem.options.bar.appearance.height : 0)
     }
 
     Loader {

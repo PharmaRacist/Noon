@@ -9,7 +9,7 @@ import qs.store
 Item {
     id: root
 
-    readonly property string appId: GlobalStates.topLevel.appId ?? ""
+    readonly property string appId: MonitorsInfo.topLevel.appId ?? ""
     readonly property var titleSubstitutions: ({
             "org.kde.dolphin": "File Manager",
             "dev.zed.Zed": "Zed Editor",

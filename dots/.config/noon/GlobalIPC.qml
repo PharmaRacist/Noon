@@ -101,8 +101,5 @@ Scope {
         function medical_key(key: string) {
             MedicalDictionaryService.setApiKey(key);
         }
-        function toggle_beam() {
-            GlobalStates.main.showBeam = !GlobalStates.main.showBeam;
-        }
     }
 }

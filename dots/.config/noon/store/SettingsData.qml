@@ -408,6 +408,12 @@ Singleton {
                         },
                         {
                             "icon": "palette",
+                            "name": "Mode",
+                            "key": "bar.appearance.mode",
+                            "type": "spin"
+                        },
+                        {
+                            "icon": "palette",
                             "name": "Use Background",
                             "key": "bar.appearance.useBg"
                         },
@@ -425,6 +431,12 @@ Singleton {
                             "icon": "reorder",
                             "name": "Separators",
                             "key": "bar.appearance.enableSeparators"
+                        },
+                        {
+                            "icon": "width_full",
+                            "name": "Bar Width",
+                            "key": "bar.appearance.width",
+                            "type": "spin"
                         },
                         {
                             "icon": "height",
@@ -473,6 +485,12 @@ Singleton {
                 {
                     "name": "Launcher Behavior",
                     "items": [
+                        {
+                            "icon": "palette",
+                            "name": "Appearance Mode",
+                            "key": "sidebar.appearance.mode",
+                            "type": "spin"
+                        },
                         {
                             "icon": "layers",
                             "name": "Overlay Mode",

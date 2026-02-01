@@ -4,10 +4,11 @@ import qs.common.widgets
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
+import Quickshell.Wayland
 
 StyledText {
     id: title
-    required property var bar
+    property var bar
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar?.screen)
     readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
     WorkspacePopup {

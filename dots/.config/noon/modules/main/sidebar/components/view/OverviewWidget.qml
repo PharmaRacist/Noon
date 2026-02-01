@@ -26,7 +26,7 @@ Item {
     property var windowByAddress: HyprlandService.windowByAddress
     property var windowAddresses: HyprlandService.addresses
     property real wsWidthMultiplier: 1
-    property var monitorData: HyprlandService.monitors.find(m => m.id === root.monitor?.id) ?? null
+    property var monitorData: HyprlandService.MonitorsInfo.find(m => m.id === root.monitor?.id) ?? null
     property real scale: 0.18
     property color activeBorderColor: Colors.colSecondary
     property bool expanded: false

@@ -39,7 +39,6 @@ Singleton {
         for (let i = 0; i < source.length; i++) {
             const p = source[i];
 
-            // Fix: Strict DBus and Validity Check
             if (!p || !p.dbusName || p.dbusName === "" || !isRealPlayer(p))
                 continue;
 
@@ -71,7 +70,7 @@ Singleton {
     function isRealPlayer(player) {
         if (!player || !player.dbusName)
             return false;
-        if (!filterPlayersEnabled)
+        else if (!filterPlayersEnabled)
             return true;
         const name = player.dbusName.toLowerCase();
         return !excludedPlayers.some(pattern => name.includes(pattern.toLowerCase()));

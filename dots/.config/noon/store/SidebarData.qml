@@ -125,7 +125,6 @@ Singleton {
                 icon: "sentiment_calm",
                 componentPath: "emojis/Emojis",
                 searchable: true,
-                shell: "main",
                 shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.emojis
             },

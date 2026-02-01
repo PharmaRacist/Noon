@@ -16,7 +16,7 @@ MouseArea {
     property bool hovered: false
     property int iconSize: BarData.currentBarExclusiveSize * 0.85
     property bool bordered: bg && Mem.options.bar.appearance.modulesBg
-    property bool bg: true
+    property bool bg: false
 
     hoverEnabled: true
     Layout.alignment: Qt.AlignCenter

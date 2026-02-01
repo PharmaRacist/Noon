@@ -8,7 +8,7 @@ import qs.services
 import "../common"
 
 StyledRect {
-    readonly property real iconSize: 20
+    readonly property real iconSize: 18
 
     implicitHeight: Math.round(parent.height * 0.75)
     implicitWidth: layout.implicitWidth + Padding.large * 2
@@ -44,7 +44,7 @@ StyledRect {
                 },
                 {
                     show: BluetoothService.available,
-                    icon: getBtIcon(),
+                    icon: BluetoothService.getLinuxSymbolicIcon(BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices)),
                     cmd: null
                 },
                 {
@@ -54,9 +54,9 @@ StyledRect {
                 }
             ]
 
-            IconImage {
+            StyledIconImage {
                 visible: modelData.show
-                source: NoonUtils.iconPath(modelData.icon)
+                _source: modelData.icon
                 implicitSize: iconSize
 
                 MouseArea {
@@ -71,8 +71,8 @@ StyledRect {
         RowLayout {
             visible: BatteryService.available
             spacing: Padding.tiny
-            IconImage {
-                source: NoonUtils.iconPath(getBatteryIcon())
+            StyledIconImage {
+                _source: getBatteryIcon()
                 implicitSize: iconSize
             }
             StyledText {
@@ -117,12 +117,6 @@ StyledRect {
         }
 
         return "network-wireless-offline";
-    }
-
-    function getBtIcon() {
-        if (BluetoothService.bluetoothConnected)
-            return "bluetooth-active";
-        return BluetoothService.bluetoothEnabled ? "bluetooth" : "bluetooth-disabled";
     }
 
     function getBatteryIcon() {

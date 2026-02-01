@@ -41,7 +41,7 @@ StyledPanel {
     implicitWidth: contentRow.implicitWidth + Sizes.elevationMargin * 2
     implicitHeight: contentRow.implicitHeight + Math.abs(2 * contentRow.anchors.verticalCenterOffset) + Sizes.elevationMargin * 2
 
-    HyprlandFocusGrab {
+    FocusHandler {
         id: grab
         active: root.visible
     }

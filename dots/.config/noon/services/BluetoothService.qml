@@ -13,16 +13,15 @@ Singleton {
     readonly property bool enabled: adapter ? adapter.enabled : false
     readonly property bool discovering: adapter ? adapter.discovering : false
     readonly property var devices: adapter ? adapter.devices : null
-    readonly property string currentDeviceIcon: {
-        if (filterConnectedDevices(pairedDevices).length > 0)
-            return getDeviceIcon(filterConnectedDevices(pairedDevices)[0]);
-        else if (connectedDevices.length > 0)
-            return "bluetooth_connected";
-        else if (enabled)
-            return "bluetooth";
-        else
-            "bluetooth_disabled";
-    }
+    readonly property string currentDeviceIcon: if (filterConnectedDevices(pairedDevices).length > 0)
+        return getDeviceIcon(filterConnectedDevices(pairedDevices)[0])
+    else if (connectedDevices.length > 0)
+        return "bluetooth_connected"
+    else if (enabled)
+        return "bluetooth"
+    else
+        "bluetooth_disabled"
+
     readonly property var pairedDevices: {
         if (!adapter || !adapter.devices)
             return [];
@@ -123,35 +122,93 @@ Singleton {
         });
     }
 
+    function getLinuxSymbolicIcon(device) {
+        if (!root.enabled)
+            return "bluetooth-disabled-symbolic";
+        if (!device)
+            return "bluetooth-active-symbolic";
+
+        const searchStr = `${device.name} ${device.alias} ${device.deviceName} ${device.icon}`.toLowerCase();
+
+        const mappings = [
+            {
+                icon: "audio-headphones-symbolic",
+                terms: ["headphone", "airpod", "arctis"]
+            },
+            {
+                icon: "audio-headset-symbolic",
+                terms: ["headset", "audio", "mic"]
+            },
+            {
+                icon: "input-mouse-symbolic",
+                terms: ["mouse"]
+            },
+            {
+                icon: "input-keyboard-symbolic",
+                terms: ["keyboard"]
+            },
+            {
+                icon: "phone-smart-symbolic",
+                terms: ["phone", "iphone", "android"]
+            },
+            {
+                icon: "smartwatch-symbolic",
+                terms: ["watch"]
+            },
+            {
+                icon: "audio-speakers-symbolic",
+                terms: ["speaker"]
+            },
+            {
+                icon: "video-display-symbolic",
+                terms: ["display", "tv"]
+            }
+        ];
+
+        const match = mappings.find(m => m.terms.some(t => searchStr.includes(t)));
+
+        // If it's a known device type, return it; otherwise, use the generic "paired" icon
+        return match ? match.icon : "bluetooth-paired-symbolic";
+    }
     function getDeviceIcon(device) {
         if (!device)
             return "bluetooth";
 
-        var name = (device.name || device.alias || device.deviceName || "").toLowerCase();
-        var icon = (device.icon || "").toLowerCase();
+        const str = `${device.name} ${device.alias} ${device.deviceName} ${device.icon}`.toLowerCase();
 
-        if (icon.includes("headset") || icon.includes("audio") || name.includes("headphone") || name.includes("airpod") || name.includes("headset") || name.includes("arctis"))
-            return "headset";
+        const mappings = [
+            {
+                icon: "headset",
+                terms: ["headset", "audio", "headphone", "airpod", "arctis"]
+            },
+            {
+                icon: "mouse",
+                terms: ["mouse"]
+            },
+            {
+                icon: "keyboard",
+                terms: ["keyboard"]
+            },
+            {
+                icon: "smartphone",
+                terms: ["phone", "iphone", "android", "samsung"]
+            },
+            {
+                icon: "watch",
+                terms: ["watch"]
+            },
+            {
+                icon: "speaker",
+                terms: ["speaker"]
+            },
+            {
+                icon: "tv",
+                terms: ["display", "tv"]
+            }
+        ];
 
-        if (icon.includes("mouse") || name.includes("mouse"))
-            return "mouse";
-
-        if (icon.includes("keyboard") || name.includes("keyboard"))
-            return "keyboard";
-
-        if (icon.includes("phone") || name.includes("phone") || name.includes("iphone") || name.includes("android") || name.includes("samsung"))
-            return "smartphone";
-
-        if (icon.includes("watch") || name.includes("watch"))
-            return "watch";
-
-        if (icon.includes("speaker") || name.includes("speaker"))
-            return "speaker";
-
-        if (icon.includes("display") || name.includes("tv"))
-            return "tv";
-
-        return "bluetooth";
+        const match = mappings.find(m => m.terms.some(term => str.includes(term)));
+        return match ? match.icon : "bluetooth";
     }
 
     function getSignalStrength(device) {

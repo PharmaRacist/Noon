@@ -35,12 +35,9 @@ Item {
                 Layout.fillWidth: true
             }
 
-            Spacer {
-            }
+            Spacer {}
 
-            Resources {
-            }
-
+            Resources {}
         }
 
         // Middle Chunk (Workspaces)
@@ -55,14 +52,11 @@ Item {
                 Workspaces {
                     id: workspaces
 
-                    borders: false
                     anchors.centerIn: parent
                     Layout.alignment: Qt.AlignCenter
                     bar: barRoot
                 }
-
             }
-
         }
 
         // Right Chunk
@@ -71,21 +65,16 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
 
-            Logo {
-            }
+            Logo {}
 
-            StackedClockWidget {
-                Layout.fillWidth: true
-            }
+            // StackedClockWidget {
+            //     Layout.fillWidth: true
+            // }
 
-            Spacer {
-            }
+            Spacer {}
 
-            StatusIcons {
-            }
-
+            StatusIcons {}
         }
-
     }
 
     // Chunk with inner rectangle
@@ -113,9 +102,7 @@ Item {
                 anchors.rightMargin: Padding.large
                 spacing: 18
             }
-
         }
-
     }
 
     // Simple chunk without inner rectangle
@@ -134,7 +121,5 @@ Item {
             anchors.rightMargin: Padding.small
             spacing: Padding.small
         }
-
     }
-
 }

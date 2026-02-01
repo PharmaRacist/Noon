@@ -21,7 +21,7 @@ StyledPanel {
     mask: Region {
         item: bg
     }
-    HyprlandFocusGrab {
+    FocusHandler {
         windows: [root]
         active: root.visible
         onCleared: GlobalStates.nobuntu.notifs.show = false

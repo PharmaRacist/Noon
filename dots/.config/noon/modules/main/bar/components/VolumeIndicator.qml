@@ -26,53 +26,53 @@ MouseArea {
         running: false
         onTriggered: {
             if (!root.userInteracting && root.autoRevealed) {
-                root.expanded = false
-                root.autoRevealed = false
+                root.expanded = false;
+                root.autoRevealed = false;
             } else {
-                restart()
+                restart();
             }
         }
     }
 
     function triggerAutoReveal() {
-        root.expanded = true
-        root.autoRevealed = true
+        root.expanded = true;
+        root.autoRevealed = true;
         if (!userInteracting) {
-            autoHideTimer.restart()
+            autoHideTimer.restart();
         }
     }
 
     function restartTimeoutIfNotInteracting() {
         if (!userInteracting && autoRevealed) {
-            autoHideTimer.restart()
+            autoHideTimer.restart();
         }
     }
 
     onContainsMouseChanged: {
-        userInteracting = containsMouse
+        userInteracting = containsMouse;
         if (containsMouse) {
-            autoHideTimer.stop()
+            autoHideTimer.stop();
         } else {
-            restartTimeoutIfNotInteracting()
+            restartTimeoutIfNotInteracting();
         }
     }
 
     onClicked: expanded = !expanded
 
     WheelHandler {
-        onWheel: (event) => {
-            const currentVolume = AudioService.value
-            const step = currentVolume < 0.1 ? 0.01 : 0.02
+        onWheel: event => {
+            const currentVolume = AudioService.value;
+            const step = currentVolume < 0.1 ? 0.01 : 0.02;
             if (event.angleDelta.y < 0)
-                AudioService.sink.audio.volume -= step
+                AudioService.sink.audio.volume -= step;
             else if (event.angleDelta.y > 0)
-                AudioService.sink.audio.volume = Math.min(1, AudioService.sink.audio.volume + step)
-            root.lastScrollX = event.x
-            root.lastScrollY = event.y
-            root.trackingScroll = true
-            root.userInteracting = true
-            root.triggerAutoReveal()
-            autoHideTimer.stop()
+                AudioService.sink.audio.volume = Math.min(1, AudioService.sink.audio.volume + step);
+            root.lastScrollX = event.x;
+            root.lastScrollY = event.y;
+            root.trackingScroll = true;
+            root.userInteracting = true;
+            root.triggerAutoReveal();
+            autoHideTimer.stop();
         }
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
     }
@@ -80,12 +80,14 @@ MouseArea {
     Connections {
         target: AudioService.sink?.audio ?? null
         function onVolumeChanged() {
-            if (!AudioService.ready) return
-            root.triggerAutoReveal()
+            if (!AudioService.ready)
+                return;
+            root.triggerAutoReveal();
         }
         function onMutedChanged() {
-            if (!AudioService.ready) return
-            root.triggerAutoReveal()
+            if (!AudioService.ready)
+                return;
+            root.triggerAutoReveal();
         }
     }
 
@@ -101,35 +103,32 @@ MouseArea {
             vertical: root.verticalMode
             Layout.alignment: Qt.AlignHCenter
 
-                ClippedProgressBar {
+            ClippedProgressBar {
                 visible: parent.reveal
                 anchors.centerIn: parent
 
-                    vertical: root.verticalMode
-                    value: AudioService.sink?.audio.volume ?? 0
-                    valueBarHeight: 50
-                    valueBarWidth: (BarData.currentBarExclusiveSize * 0.55) * BarData.barPadding
-                    text: ""
-                    font {
-                        pixelSize: 13
-                        weight: Font.DemiBold
-                    }
-                    Behavior on value {
-                        Anim {}
-                    }
+                vertical: root.verticalMode
+                value: AudioService.sink?.audio.volume ?? 0
+                valueBarHeight: 50
+                valueBarWidth: (BarData.currentBarExclusiveSize * 0.55) * BarData.barPadding
+                text: ""
+                font {
+                    pixelSize: 13
+                    weight: Font.DemiBold
                 }
-
+                Behavior on value {
+                    Anim {}
+                }
+            }
         }
-                Symbol {
-                    fill:1
-                    font.family: revealer.reveal ?Fonts.family.main  :Fonts.family.iconMaterial
-                    text:revealer.reveal ?  Math.round(100 * AudioService.sink?.audio.volume) : AudioService.sink?.audio.muted ? "volume_off" : "volume_up"
-                    font.pixelSize: revealer.reveal ? verticalMode ? Fonts.sizes.small : Fonts.sizes.normal : BarData.currentBarExclusiveSize / 2
-                    color: Colors.colOnLayer1
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.alignment: Qt.AlignHCenter
-               }
-
-
+        Symbol {
+            fill: 1
+            font.family: revealer.reveal ? Fonts.family.main : Fonts.family.iconMaterial
+            text: revealer.reveal ? Math.round(100 * AudioService.sink?.audio.volume) : AudioService.sink?.audio.muted ? "volume_off" : "volume_up"
+            font.pixelSize: revealer.reveal ? verticalMode ? Fonts.sizes.small : Fonts.sizes.normal : BarData.currentBarExclusiveSize / 2
+            color: Colors.colOnLayer1
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter
+        }
     }
 }

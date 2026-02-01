@@ -1,4 +1,5 @@
 import QtQuick
+import qs.services
 import qs.common
 import qs.common.utils
 import "bar"
@@ -29,6 +30,7 @@ Scope {
     }
     WidgetLoader {
         enabled: true
+        reloadOn: Mem.options.bar.behavior.position
         Sidebar {}
     }
 

@@ -72,11 +72,7 @@ MouseArea {
                     color: Colors.colOnLayer1
                     visible: Math.round(percentage * 100) >= 100
                 }
-
             }
-
         }
-
     }
-
 }

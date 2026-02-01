@@ -18,7 +18,7 @@ StyledPopup {
     Item {
         id: root
 
-        readonly property var focusedScreen: GlobalStates.focusedScreen
+        readonly property var focusedScreen: MonitorsInfo.focused
         readonly property var focusedWindow: Hyprland.focusedWindow
         readonly property var toplevel: Hyprland.toplevelForAddress(focusedWindow.address)
         readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
@@ -69,13 +69,8 @@ StyledPopup {
                         right: parent.right
                         margins: 18
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }

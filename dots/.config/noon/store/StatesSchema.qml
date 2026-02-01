@@ -139,7 +139,7 @@ JsonAdapter {
         }
         widgets: JsonObject {
             property list<string> enabled: []
-            property list<string> overlayed: []
+            property list<string> desktop: []
             property list<string> pilled: []
             property list<string> pinned: []
             property list<string> expanded: []
@@ -153,9 +153,10 @@ JsonAdapter {
         }
     }
     property JsonObject favorites: JsonObject {
-        property list<var> apps: ["firefox", "dolphin"]
-        property list<var> recentApps: ["vesktop", "kitty", "spotify", "heroic", "foot", "firefox"]
-        property list<var> fastLaunchApps: ["heroic", "codium", "steam"]
+        property list<string> apps: ["firefox", "dolphin"]
+        property list<string> recentApps: ["vesktop", "kitty", "spotify", "heroic", "foot", "firefox"]
+        property list<string> fastLaunchApps: ["heroic", "codium", "steam"]
+        property list<string> desktopApps: ["org.kde.dolphin", "foot"]
     }
     property JsonObject mediaPlayer: JsonObject {
         property string currentTrackPath: ""

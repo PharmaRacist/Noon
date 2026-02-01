@@ -9,6 +9,7 @@ import Quickshell.Hyprland
 import Quickshell.Widgets
 import qs.common
 import qs.common.widgets
+import qs.common.utils
 import qs.common.functions
 import qs.services
 import qs.store
@@ -44,7 +45,7 @@ Scope {
                 left: true
                 right: true
             }
-            HyprlandFocusGrab {
+            FocusHandler {
                 windows: [backgroundPanel]
                 active: _overview
                 onActiveChanged: searchbar.searchInput.focus = active
@@ -115,6 +116,8 @@ Scope {
                         mipmap: true
                         anchors.fill: enableParallax ? undefined : bgLayerWrapper
                         radius: 30
+                        opacity: imageLoaded ? 1.0 : 0.0
+
                         property bool imageLoaded: status === Image.Ready
                         property bool verticalParallaxMode: Mem.options.desktop.bg.parallax.verticalParallax
                         property int widgetMargin: Mem.options.desktop.bg.parallax.widgetParallax && enableParallax && GlobalStates.main.sidebar.expanded ? (Mem.options.bar.behavior.position === "left" ? -1 : 1) * Math.max(Mem.options.desktop.bg.parallax.parallaxStrength, 0.1) * 12 * (SidebarData.launcherWidth > 500 ? 20 : 50) : 0
@@ -134,6 +137,10 @@ Scope {
                         x: imageLoaded ? (verticalParallaxMode ? widgetMargin : -effectiveMovableXSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableXSpace) : 0
                         y: imageLoaded ? (verticalParallaxMode ? -effectiveMovableYSpace - (parallaxFactor - 0.5) * 2 * effectiveMovableYSpace : 0) : 0
 
+                        GDesktopApplications {
+                            anchors.fill: parent
+                            anchors.leftMargin: 100
+                        }
                         Behavior on x {
                             Anim {
                                 duration: Animations.durations.verylarge
@@ -145,7 +152,6 @@ Scope {
                             }
                         }
 
-                        opacity: imageLoaded ? 1.0 : 0.0
                         Behavior on opacity {
                             Anim {
                                 duration: Animations.durations.verylarge
