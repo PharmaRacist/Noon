@@ -11,19 +11,19 @@ import qs.common
 import qs.common.utils
 
 /**
- * For managing brightness of MonitorsInfo. Supports both brightnessctl and ddcutil.
+ * For managing brightness of monitors. Supports both brightnessctl and ddcutil.
  */
 Singleton {
     id: root
 
     signal brightnessChanged
-    property var focusedScreen: MonitorsInfo.focused
+    property var focusedScreen: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name)
     property var ddcMonitors: []
     readonly property list<BrightnessMonitor> monitors: Quickshell.screens.map(screen => monitorComp.createObject(root, {
             screen
         }))
     readonly property string iconMaterial: {
-        const focused = MonitorsInfo.find(m => m.screen.name === Hyprland.focusedMonitor?.name);
+        const focused = monitors.find(m => m.screen.name === Hyprland.focusedMonitor?.name);
         const value = Math.round(100 * (focused?.brightness ?? 1));
 
         if (value < 25)
@@ -37,19 +37,19 @@ Singleton {
     }
 
     function getMonitorForScreen(screen: ShellScreen): var {
-        return MonitorsInfo.find(m => m.screen === screen);
+        return monitors.find(m => m.screen === screen);
     }
 
     function increaseBrightness(): void {
         const focusedName = Hyprland.focusedMonitor.name;
-        const monitor = MonitorsInfo.find(m => focusedName === m.screen.name);
+        const monitor = monitors.find(m => focusedName === m.screen.name);
         if (monitor)
             monitor.setBrightness(monitor.brightness + 0.05);
     }
 
     function decreaseBrightness(): void {
         const focusedName = Hyprland.focusedMonitor.name;
-        const monitor = MonitorsInfo.find(m => focusedName === m.screen.name);
+        const monitor = monitors.find(m => focusedName === m.screen.name);
         if (monitor)
             monitor.setBrightness(monitor.brightness - 0.05);
     }
@@ -70,7 +70,7 @@ Singleton {
             onRead: data => {
                 if (data.startsWith("Display ")) {
                     const lines = data.split("\n").map(l => l.trim());
-                    root.ddcMonitorsInfo.push({
+                    root.ddcMonitors.push({
                         model: lines.find(l => l.startsWith("Monitor:")).split(":")[2],
                         busNum: lines.find(l => l.startsWith("I2C bus:")).split("/dev/i2c-")[1]
                     });
@@ -88,8 +88,8 @@ Singleton {
         id: monitor
 
         required property ShellScreen screen
-        readonly property bool isDdc: root.ddcMonitorsInfo.some(m => m.model === screen.model)
-        readonly property string busNum: root.ddcMonitorsInfo.find(m => m.model === screen.model)?.busNum ?? ""
+        readonly property bool isDdc: root.ddcMonitors.some(m => m.model === screen.model)
+        readonly property string busNum: root.ddcMonitors.find(m => m.model === screen.model)?.busNum ?? ""
         property real brightness
         property bool ready: false
 

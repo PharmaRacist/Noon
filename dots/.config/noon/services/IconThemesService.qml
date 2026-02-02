@@ -3,6 +3,7 @@ import Quickshell
 import qs.common
 import qs.common.utils
 pragma Singleton
+pragma ComponentBehavior: Bound
 
 // Wrapper for the icon_theme_manager.py
 Singleton {

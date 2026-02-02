@@ -108,7 +108,7 @@ Item { // Notification item area
         visible: opacity > 0
 
         Behavior on opacity {
-            FAnim {}
+            Anim {}
         }
 
         image: notificationObject.image
@@ -143,7 +143,7 @@ Item { // Notification item area
             spacing: 3
 
             Behavior on anchors.margins {
-                FAnim {}
+                Anim {}
             }
 
             RowLayout { // Summary row
@@ -165,7 +165,7 @@ Item { // Notification item area
                     visible: opacity > 0
                     Layout.fillWidth: true
                     Behavior on opacity {
-                        FAnim {}
+                        Anim {}
                     }
                     font.pixelSize: root.fontSize
                     color: Colors.colSubtext
@@ -188,7 +188,7 @@ Item { // Notification item area
                 StyledText { // Notification body (expanded)
                     id: notificationBodyText
                     Behavior on opacity {
-                        FAnim {}
+                        Anim {}
                     }
                     Layout.fillWidth: true
                     font.pixelSize: root.fontSize
@@ -216,13 +216,13 @@ Item { // Notification item area
                     clip: !onlyNotification
 
                     Behavior on opacity {
-                        FAnim {}
+                        Anim {}
                     }
                     Behavior on height {
-                        FAnim {}
+                        Anim {}
                     }
                     Behavior on implicitHeight {
-                        FAnim {}
+                        Anim {}
                     }
 
                     RowLayout {

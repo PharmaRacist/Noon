@@ -49,7 +49,7 @@ RadioButton {
                 opacity: checked ? 1 : 0
 
                 Behavior on opacity {
-                    FAnim {
+                    Anim {
                     }
 
                 }
@@ -78,7 +78,7 @@ RadioButton {
                 opacity: root.hovered ? 0.1 : 0
 
                 Behavior on opacity {
-                    FAnim {
+                    Anim {
                     }
 
                 }

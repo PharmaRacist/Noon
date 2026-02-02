@@ -14,9 +14,9 @@ BarGroup {
     id: root
 
     property bool verticalMode: false
-    property real iconSpacing: 10
-    property real commonIconSize: Fonts.sizes.large
-    property color commonIconColor: Colors.colOnLayer1
+    readonly property real iconSpacing: Padding.normal
+    readonly property real commonIconSize: Fonts.sizes.large
+    readonly property color commonIconColor: Colors.colSecondary
 
     Layout.fillHeight: !verticalMode
     Layout.fillWidth: verticalMode

@@ -1,4 +1,3 @@
-pragma ComponentBehavior: Bound
 
 import qs.services
 import qs.common
@@ -195,7 +194,7 @@ ColumnLayout {
                         visible: opacity > 0
 
                         Behavior on opacity {
-                            FAnim {}
+                            Anim {}
                         }
 
                         contentItem: Rectangle {

@@ -89,8 +89,8 @@ StyledPanel {
                         when: mode === 0
                         PropertyChanges {
                             target: bg
-                            anchors.topMargin: pos === "top" ? elevation : 0
-                            anchors.bottomMargin: pos === "bottom" ? elevation : 0
+                            anchors.topMargin: pos === "top" ? elevation : -elevation
+                            anchors.bottomMargin: pos === "bottom" ? elevation : -elevation
                             anchors.leftMargin: Sizes.hyprland.gapsOut
                             anchors.rightMargin: Sizes.hyprland.gapsOut
                             radius: Rounding.verylarge
@@ -136,19 +136,25 @@ StyledPanel {
                             target: c1
                             visible: true
                             corner: pos === "bottom" ? cornerEnum.bottomLeft : cornerEnum.topLeft
+                            anchors.leftMargin: Sizes.frameThickness
+                        }
+                        AnchorChanges {
+                            target: c1
                             anchors.left: bg.left
                             anchors.top: pos === "bottom" ? undefined : bg.bottom
                             anchors.bottom: pos === "bottom" ? bg.top : undefined
-                            anchors.leftMargin: Sizes.frameThickness
                         }
                         PropertyChanges {
                             target: c2
                             visible: true
                             corner: pos === "bottom" ? cornerEnum.bottomRight : cornerEnum.topRight
+                            anchors.rightMargin: Sizes.frameThickness
+                        }
+                        AnchorChanges {
+                            target: c2
                             anchors.right: bg.right
                             anchors.top: pos === "bottom" ? undefined : bg.bottom
                             anchors.bottom: pos === "bottom" ? bg.top : undefined
-                            anchors.rightMargin: Sizes.frameThickness
                         }
                     }
                 ]
@@ -165,13 +171,11 @@ StyledPanel {
 
                 RoundCorner {
                     id: c1
-                    parent: bg
                     visible: false
                 }
 
                 RoundCorner {
                     id: c2
-                    parent: bg
                     visible: false
                 }
             }

@@ -19,7 +19,7 @@ IconImage {
     property bool cache: backer.cache
     property string _source
 
-    source: NoonUtils.iconPath(_source)
+    source: NoonUtils.iconPath(_source.toLowerCase()) || ""
     backer.cache: cache
     smooth: true
     antialiasing: true

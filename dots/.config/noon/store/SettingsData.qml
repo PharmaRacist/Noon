@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 
@@ -81,6 +82,12 @@ Singleton {
                             "icon": "font_download",
                             "name": "Main Font",
                             "key": "appearance.fonts.main",
+                            "type": "text"
+                        },
+                        {
+                            "icon": "font_download",
+                            "name": "Main Font",
+                            "key": "appearance.fonts.scale",
                             "type": "text"
                         },
                         {
@@ -237,6 +244,18 @@ Singleton {
                     "name": "Wallpaper",
                     "items": [
                         {
+                            "icon": "dashboard",
+                            "name": "Widgets",
+                            "key": "desktop.widgets.enabled"
+                        },
+                        {
+                            "icon": "palette",
+                            "name": "Widgets Mode",
+                            "key": "desktop.widgets.mode",
+                            "type": "combobox",
+                            "comboBoxValues": ["col", "grad"]
+                        },
+                        {
                             "icon": "3d_rotation",
                             "name": "Parallax Enabled",
                             "key": "desktop.bg.parallax.enabled"
@@ -373,11 +392,6 @@ Singleton {
                             "icon": "keyboard_double_arrow_down",
                             "name": "Scroll Reveal",
                             "key": "beam.behavior.scrollToReveal"
-                        },
-                        {
-                            "icon": "ads_click",
-                            "name": "Hover Reveal",
-                            "key": "beam.behavior.hoverToReveal"
                         },
                         {
                             "icon": "cleaning_services",

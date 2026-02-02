@@ -1,6 +1,7 @@
 // Simple Gowall Wrapper for upscale / scheme processing
 
 pragma Singleton
+pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell

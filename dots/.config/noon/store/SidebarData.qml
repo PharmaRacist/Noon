@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
@@ -21,7 +22,8 @@ Singleton {
                 searchable: true,
                 customSize: sizePresets.quarter,
                 shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.apps
+                enabled: Mem.options.sidebar.content.apps,
+                async: true
             },
             "API": {
                 icon: "neurology",
@@ -52,8 +54,8 @@ Singleton {
             "Walls": {
                 icon: "image",
                 componentPath: "wallpapers/WallpaperSelector",
-                searchable: true,
                 async: true,
+                searchable: true,
                 shape: MaterialShape.Shape.Ghostish,
                 enabled: Mem.options.sidebar.content.wallpapers
             },
@@ -161,6 +163,12 @@ Singleton {
                 searchable: true,
                 shell: "main",
                 stealth: true
+            },
+            "Lock": {
+                enabled: false,
+                icon: "lock",
+                componentPath: "lock/Lock"
+                // stealth: true
             },
             "Auth": {
                 componentPath: "polkit/Polkit",

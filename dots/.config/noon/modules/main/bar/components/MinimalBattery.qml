@@ -5,73 +5,65 @@ import Quickshell.Services.UPower
 import qs.common
 import qs.common.widgets
 
-MouseArea {
-    id: mouse
-
-    readonly property var chargeState: UPower.displayDevice.state
-    readonly property bool isCharging: chargeState == UPowerDeviceState.Charging
-    readonly property bool isPluggedIn: isCharging || chargeState == UPowerDeviceState.PendingCharge
-    readonly property real percentage: UPower.displayDevice.percentage
-    readonly property bool isLow: percentage <= Mem.options.bar.batteryLowThreshold / 100
-    readonly property color batteryLowBackground: Colors.m3.darkmode ? Colors.m3.m3error : Colors.m3.m3errorContainer
-    readonly property color batteryLowOnBackground: Colors.m3.darkmode ? Colors.m3.m3errorContainer : Colors.m3.m3error
+Item {
+    id: root
 
     width: 26
     height: 26
-    hoverEnabled: true
 
-    Item {
-        id: batteryWidget
-
+    MouseArea {
+        id: mouse
         anchors.fill: parent
-        width: 26
-        height: 26
+        hoverEnabled: true
 
         BatteryPopup {
             id: batteryPopup
-
             hoverTarget: mouse
         }
+    }
 
-        CircularProgress {
+    CircularProgress {
+        anchors.centerIn: parent
+        size: 26
+        lineWidth: 2
+
+        value: UPower.displayDevice.percentage
+
+        readonly property bool isCharging: UPower.displayDevice.state === UPowerDeviceState.Charging
+        readonly property bool isLow: value <= (Mem.options.bar.batteryLowThreshold / 100)
+
+        fill: isLow && !isCharging
+
+        primaryColor: (isLow && !isCharging) ? (Colors.m3.darkmode ? Colors.m3.m3errorContainer : Colors.m3.m3error) : Colors.m3.m3onSecondaryContainer
+        secondaryColor: (isLow && !isCharging) ? (Colors.m3.darkmode ? Colors.m3.m3error : Colors.m3.m3errorContainer) : Colors.m3.m3secondaryContainer
+        Symbol {
             anchors.centerIn: parent
-            lineWidth: 2
-            value: percentage
-            size: 26
-            secondaryColor: (isLow && !isCharging) ? batteryLowBackground : Colors.m3.m3secondaryContainer
-            primaryColor: (isLow && !isCharging) ? batteryLowOnBackground : Colors.m3.m3onSecondaryContainer
-            fill: (isLow && !isCharging)
+            text: "bolt"
+            font.pixelSize: Fonts.sizes.normal
+            color: Colors.m3.m3onSecondaryContainer
+            visible: parent.isCharging
+        }
+
+        Item {
+            anchors.centerIn: parent
+            visible: !parent.isCharging
+            width: parent.width
+            height: parent.height
+
+            StyledText {
+                anchors.centerIn: parent
+                color: Colors.colOnLayer1
+                text: `${Math.round(UPower.displayDevice.percentage * 100)}`
+                font.pixelSize: Fonts.sizes.normal - 3.6
+                visible: Math.round(UPower.displayDevice.percentage * 100) < 100
+            }
 
             Symbol {
                 anchors.centerIn: parent
-                text: "bolt"
+                text: "battery_full"
                 font.pixelSize: Fonts.sizes.normal
-                color: Colors.m3.m3onSecondaryContainer
-                visible: isCharging
-            }
-
-            // Show battery_full icon when 100%, otherwise show percentage
-            Item {
-                anchors.centerIn: parent
-                visible: !isCharging
-                width: parent.width
-                height: parent.height
-
-                StyledText {
-                    anchors.centerIn: parent
-                    color: Colors.colOnLayer1
-                    text: `${Math.round(percentage * 100)}`
-                    font.pixelSize: Fonts.sizes.normal - 3.6
-                    visible: Math.round(percentage * 100) < 100
-                }
-
-                Symbol {
-                    anchors.centerIn: parent
-                    text: "battery_full"
-                    font.pixelSize: Fonts.sizes.normal
-                    color: Colors.colOnLayer1
-                    visible: Math.round(percentage * 100) >= 100
-                }
+                color: Colors.colOnLayer1
+                visible: Math.round(UPower.displayDevice.percentage * 100) >= 100
             }
         }
     }

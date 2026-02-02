@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -80,8 +81,9 @@ Singleton {
     }
     // Atomic Changes
     function setHyprKey(key: string, value) {
-        HyprlandParserService.set(key, value);
+        HyprlandParserService.variables[key] = value;
     }
+
     function installPkg(app: string) {
         const terminal = Mem.options.apps.terminal || "kitty";
         Quickshell.execDetached(["kitty", "-e", "fish", "-c", ` yay -S --noconfirm  ${app}`]);
@@ -193,7 +195,7 @@ Singleton {
     }
     Connections {
         target: Mem.options.desktop.hyprland
-        property QtObject conf: Mem.options.desktop.hyprland
+        readonly property QtObject conf: Mem.options.desktop.hyprland
 
         function onShadowsPowerChanged() {
             NoonUtils.setHyprKey("shadows_power", conf.shadowsPower);

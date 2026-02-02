@@ -7,10 +7,7 @@ import qs.services
 
 StyledPopup {
     id: root
-
-    Visualizer {
-        z: 99
-    }
+    extraVisibilityCondition: BeatsService.title.length > 0
 
     StyledRect {
         id: bg
@@ -24,12 +21,22 @@ StyledPopup {
         clip: true
         radius: Rounding.verylarge
 
+        Visualizer {
+            z: 1
+            active: true
+            visualizerColor: BeatsService.colors.colPrimary
+            maxVisualizerValue: 5000
+        }
+
         BlurImage {
             z: 0
             anchors.fill: parent
             source: BeatsService.artUrl
             asynchronous: true
             blur: true
+            tint: true
+            tintColor: BeatsService.colors.colPrimaryContainer
+            tintLevel: 0.4
         }
 
         RowLayout {
@@ -42,7 +49,6 @@ StyledPopup {
 
             // Cover Art
             MusicCoverArt {
-                visible: BeatsService.artUrl.length > 1
                 radius: Rounding.verylarge - Padding.normal
                 Layout.preferredWidth: parent.height * 0.86
                 Layout.preferredHeight: parent.height * 0.86
@@ -50,6 +56,9 @@ StyledPopup {
 
             // Track Info
             ColumnLayout {
+                Layout.topMargin: Padding.huge
+                Layout.bottomMargin: Padding.huge
+                Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.rightMargin: Padding.massive
                 z: 2
@@ -57,23 +66,33 @@ StyledPopup {
 
                 StyledText {
                     font.pixelSize: Fonts.sizes.huge
-                    font.variableAxes: Fonts.variableAxes.title
+                    font.variableAxes: Fonts.variableAxes.subTitle
                     color: Colors.colOnLayer0
-                    text: BeatsService.title || "No Media Playing"
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
-                    wrapMode: TextEdit.Wrap
+                    text: BeatsService.title.charAt(0).toUpperCase() + BeatsService.title.slice(1) || "No Media Playing"
+                    truncate: true
                     Layout.fillWidth: true
+                    maximumLineCount: 2
+                    Layout.maximumWidth: 300
                 }
 
                 StyledText {
-                    maximumLineCount: 1
-                    wrapMode: TextEdit.Wrap
-                    font.pixelSize: Fonts.sizes.large
+                    truncate: true
+                    font.pixelSize: Fonts.sizes.normal
                     font.variableAxes: Fonts.variableAxes.main
                     color: Colors.colSubtext
                     text: BeatsService.artist || "No Current Artist"
-                    elide: Text.ElideRight
+                    Layout.maximumWidth: 200
+                }
+                Spacer {}
+                StyledProgressBar {
+                    sperm: true
+                    highlightColor: BeatsService.colors.colPrimary
+                    trackColor: BeatsService.colors.colPrimaryContainer
+                    indicatorColor: BeatsService.colors.colOnLayer0
+                    valueBarGap: 8
+                    Layout.preferredHeight: 12
+                    Layout.fillWidth: true
+                    value: BeatsService.currentTrackProgressRatio()
                 }
             }
         }

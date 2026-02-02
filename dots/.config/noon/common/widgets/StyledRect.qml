@@ -15,6 +15,7 @@ Rectangle {
     property int topRadius
     property int bottomRadius
     property int implicitSize
+    property int animationDuration: Animations.durations.normal
     property QtObject borders: QtObject {
         property int size
         property color color
@@ -46,24 +47,36 @@ Rectangle {
     }
 
     Behavior on color {
-        CAnim {}
+        CAnim {
+            duration: animationDuration
+        }
     }
 
     Behavior on opacity {
-        Anim {}
+        Anim {
+            duration: animationDuration
+        }
     }
     Behavior on width {
-        Anim {}
+        Anim {
+            duration: animationDuration
+        }
     }
     Behavior on height {
-        Anim {}
+        Anim {
+            duration: animationDuration
+        }
     }
 
     Behavior on implicitWidth {
-        Anim {}
+        Anim {
+            duration: animationDuration
+        }
     }
     Behavior on implicitHeight {
-        Anim {}
+        Anim {
+            duration: animationDuration
+        }
     }
     Loader {
         anchors.fill: parent

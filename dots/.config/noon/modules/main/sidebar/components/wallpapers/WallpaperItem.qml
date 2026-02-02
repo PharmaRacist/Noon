@@ -11,13 +11,10 @@ import qs.services
 StyledRect {
     id: wallpaperItem
 
-    property string fileUrl
+    required property string fileUrl
     property bool isKeyboardSelected: false
     property bool isCurrentWallpaper: false
     readonly property bool isVideoFile: {
-        if (!fileUrl)
-            return false;
-
         const name = fileUrl.toString().toLowerCase();
         for (let i = 0; i < NameFilters.video.length; i++) {
             if (name.endsWith(NameFilters.video[i]))
@@ -26,59 +23,44 @@ StyledRect {
         return false;
     }
 
-    signal clicked
+    readonly property Component imageComp: StyledImage {
+        mipmap: true
+        sourceSize: Qt.size(width, height)
+        cache: false
+    }
+    readonly property Component vidComp: VideoPreview {
+        Symbol {
+            text: "play_circle"
+            color: Colors.m3.m3onSurface
+            font.pixelSize: 24
+            anchors {
+                top: parent.top
+                right: parent.right
+                margins: 8
+            }
+        }
+    }
 
     anchors.fill: parent
-    anchors.margins: isKeyboardSelected ? Padding.massive : Padding.normal
+    anchors.margins: isKeyboardSelected ? Padding.massive : Padding.large
     radius: Rounding.large
-    color: ColorUtils.transparentize(Colors.colLayer0, isKeyboardSelected ? 0 : 0.8)
-    enableBorders: isKeyboardSelected
+    color: "transparent"
     clip: true
+
     Behavior on anchors.margins {
         Anim {}
     }
-    StyledRectangularShadow {
-        target: imageObject
-        enabled: isKeyboardSelected
-    }
-    CroppedImage {
-        id: imageObject
 
+    StyledLoader {
+        id: _loader
+        z: 999
         anchors.fill: parent
-        sourceSize: Qt.size(wallpaperItem.cellWidth, wallpaperItem.cellHeight)
-        source: isVideoFile ? "" : WallpaperService.getThumbnailPath(wallpaperItem.fileUrl, "large")
-        radius: Rounding.large
-        asynchronous: true
-        visible: !isVideoFile
-    }
-
-    VideoPreview {
-        id: videoPlayer
-
-        anchors.fill: parent
-        source: isVideoFile ? wallpaperItem.fileUrl : ""
-        visible: isVideoFile
-    }
-
-    Rectangle {
-        visible: isVideoFile
-        width: 40
-        height: 40
-        radius: 20
-        color: ColorUtils.transparentize(Colors.colLayer0, 0.3)
-
-        anchors {
-            top: parent.top
-            right: parent.right
-            margins: 8
-        }
-
-        Symbol {
-            anchors.centerIn: parent
-            text: "play_circle"
-            fill: 1
-            color: Colors.m3.m3onSurface
-            font.pixelSize: 24
+        sourceComponent: isVideoFile ? vidComp : imageComp
+        onLoaded: if (ready) {
+            if (!isVideoFile)
+                item.source = Qt.binding(() => WallpaperService.getThumbnailPath(wallpaperItem.fileUrl));
+            else
+                item.source = Qt.binding(() => Qt.resolvedUrl(wallpaperItem.fileUrl));
         }
     }
 
@@ -91,7 +73,7 @@ StyledRect {
             if (event.button === Qt.RightButton)
                 wallpaperMenu.popup(event.x, event.y);
             else if (event.button === Qt.LeftButton)
-                wallpaperItem.clicked();
+                WallpaperService.applyWallpaper(fileUrl);
         }
         onEntered: {
             if (isVideoFile && videoPlayer.playbackState !== MediaPlayer.PlayingState)
@@ -116,20 +98,17 @@ StyledRect {
             bottom: parent.bottom
             right: parent.right
         }
-    }
 
-    Symbol {
-        z: 999
-        visible: checkmark.visible
-        text: "check"
-        fill: 1
-        color: Colors.m3.m3onPrimary
-        font.pixelSize: 25
-
-        anchors {
-            bottom: parent.bottom
-            right: parent.right
-            margins: 0
+        Symbol {
+            z: 999
+            text: "check"
+            fill: 1
+            color: Colors.m3.m3onPrimary
+            font.pixelSize: 25
+            anchors {
+                bottom: parent.bottom
+                right: parent.right
+            }
         }
     }
 

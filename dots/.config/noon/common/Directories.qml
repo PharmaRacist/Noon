@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Qt.labs.platform
@@ -16,7 +17,7 @@ Singleton {
     readonly property string shellDir: FileUtils.trimFileProtocol(standard.config + "/noon")
     readonly property string scriptsDir: shellDir + "/scripts"
     readonly property string favicons: FileUtils.trimFileProtocol(standard.cache + "/media/favicons")
-
+    readonly property string hyprConfigs: FileUtils.trimFileProtocol(shellDir + "/hypr")
     // standard directories
     readonly property QtObject standard: QtObject {
         readonly property string home: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
@@ -41,6 +42,7 @@ Singleton {
     // wallpapers directories
     readonly property QtObject wallpapers: QtObject {
         readonly property string switchScript: FileUtils.trimFileProtocol(root.scriptsDir + "/appearance_service.py")
+        readonly property string thumbScript: FileUtils.trimFileProtocol(root.scriptsDir + "/thumbnails_service.py")
         readonly property string main: FileUtils.trimFileProtocol(standard.pictures + "/Wallpapers/")
         readonly property string depthDir: FileUtils.trimFileProtocol(standard.cache + "/user/generated/depth/")
         readonly property string gowallDir: FileUtils.trimFileProtocol(standard.cache + "/user/generated/gowall/")
@@ -50,7 +52,7 @@ Singleton {
     // beats directories
     readonly property QtObject beats: QtObject {
         readonly property string main: FileUtils.trimFileProtocol(standard.cache + "/beats")
-        readonly property string downloads: FileUtils.trimFileProtocol(standard.home + "/Downloads")
+        readonly property string downloads: FileUtils.trimFileProtocol(standard.home + "/Music")
         readonly property string coverArt: FileUtils.trimFileProtocol(main + "/coverart")
         readonly property string lyrics: FileUtils.trimFileProtocol(main + "/lyrics")
         readonly property string tracks: FileUtils.trimFileProtocol(standard.music)

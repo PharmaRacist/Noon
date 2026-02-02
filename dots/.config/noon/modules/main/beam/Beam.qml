@@ -12,194 +12,44 @@ import qs.store
 
 Scope {
     Variants {
-        model: Quickshell.screens
+        model: [MonitorsInfo.focusedScreen]
+
         StyledPanel {
             id: root
             name: "slide_layer"
-            visible: reveal || hoverReveal || scrollReveal
-            property var modelData
-            property string state: "ai"
-            property string query: ""
+            required property var modelData
+
             readonly property int detectionArea: scrollReveal ? 20 : 4
             readonly property bool scrollReveal: Mem.options.beam.behavior.scrollToReveal
-            readonly property bool hoverReveal: Mem.options.beam.behavior.hoverToReveal
-            readonly property bool revealLauncherOnAction: true // For Revealing More Info panels if needed
-            readonly property bool reveal: GlobalStates.main.showBeam || (hoverReveal && beam_mouse_area.containsMouse) || (Mem.options.beam.behavior.revealOnEmpty && !MonitorsInfo.topLevel.activated)
-            readonly property bool addSeparatorForNotes: true
-            readonly property int expandedLitterThreshhold: 10
-            readonly property int mainRounding: Rounding.huge
-            readonly property int elevationValue: Mem.options.bar.behavior.position === "bottom" ? BarData.currentBarSize + Sizes.elevationValue : Sizes.elevationMargin
-            readonly property bool clearAiChatBeforeSearch: Mem.options.beam.behavior.clearAiChatBeforeSearch ?? false
-            readonly property string currentSearchSubstate: "search"
-            property var suggestedApp: null
-            property int mode: Mem.states.beam.appearance.mode ?? 0
-            property var reg: ({
-                    "ai": {
-                        prefix: "",
-                        icon: "thread_unread",
-                        shape: MaterialShape.Shape.Ghostish,
-                        placeholder: "Ask " + Ai.getModel(Mem.options.ai?.model).name + " Any Thing ..",
-                        showHint: false,
-                        showOsrButton: true
-                    },
-                    "commands": {
-                        prefix: ";",
-                        icon: "keyboard_return",
-                        shape: MaterialShape.Shape.Oval,
-                        placeholder: "Command Master ..",
-                        showHint: true,
-                        showOsrButton: false
-                    },
-                    "calc": {
-                        prefix: "=",
-                        icon: "calculate",
-                        shape: MaterialShape.Shape.Hexagon,
-                        placeholder: "Calculate ..",
-                        showHint: true,
-                        showOsrButton: false
-                    },
-                    "install": {
-                        prefix: "$",
-                        icon: "deployed_code_update",
-                        shape: MaterialShape.Shape.SoftBurst,
-                        placeholder: "Install ..",
-                        showHint: false,
-                        showOsrButton: false
-                    },
-                    "note": {
-                        prefix: ",",
-                        icon: "stylus",
-                        shape: MaterialShape.Shape.Slanted,
-                        placeholder: "Note ..",
-                        showHint: false,
-                        showOsrButton: false
-                    },
-                    "alarm": {
-                        prefix: "`",
-                        icon: "timer",
-                        shape: MaterialShape.Shape.Diamond,
-                        placeholder: "I Can Wake You ..",
-                        showHint: false,
-                        showOsrButton: false
-                    },
-                    "launch": {
-                        prefix: ".",
-                        icon: "rocket_launch",
-                        shape: MaterialShape.Shape.Pentagon,
-                        placeholder: "Launch App ..",
-                        showHint: true,
-                        showOsrButton: false
-                    },
-                    "timer": {
-                        prefix: "~",
-                        icon: "hourglass",
-                        shape: MaterialShape.Shape.Clover8Leaf,
-                        placeholder: "How Long ..",
-                        showHint: false,
-                        showOsrButton: false
-                    },
-                    "todo": {
-                        prefix: "/",
-                        icon: "task_alt",
-                        shape: MaterialShape.Shape.Cookie4Sided,
-                        placeholder: "Any plans ..?",
-                        showHint: false,
-                        showOsrButton: false
-                    },
-                    "ipc": {
-                        prefix: "!",
-                        icon: "moon_stars",
-                        shape: MaterialShape.Shape.Pentagon,
-                        placeholder: "Just Order ..?",
-                        showHint: true,
-                        showOsrButton: false
-                    },
-                    "search": {
-                        prefix: "?",
-                        icon: "search",
-                        shape: MaterialShape.Shape.PixelCircle,
-                        placeholder: "Wanna Search Google ..?",
-                        showHint: true,
-                        showOsrButton: false,
-                        subStates: ({
-                                "search": {
-                                    prefix: "",
-                                    icon: "search",
-                                    searchQuery: Mem.options.networking.searchPrefix,
-                                    shape: MaterialShape.Shape.PixelCircle
-                                },
-                                "yt_music": {
-                                    prefix: "m",
-                                    icon: "music_note",
-                                    searchQuery: "https://music.youtube.com/search?q=",
-                                    shape: MaterialShape.Shape.Bun
-                                },
-                                "spotify": {
-                                    prefix: "s",
-                                    icon: "music_cast",
-                                    searchQuery: "https://open.spotify.com/search/",
-                                    shape: MaterialShape.Shape.Cookie7Sided
-                                },
-                                "m3": {
-                                    prefix: "i",
-                                    icon: "glyphs",
-                                    searchQuery: "https://fonts.google.com/icons?icon.query=",
-                                    shape: MaterialShape.Shape.Cookie12Sided
-                                },
-                                "github": {
-                                    prefix: "g",
-                                    icon: "commit",
-                                    searchQuery: "https://github.com/search?q=",
-                                    shape: MaterialShape.Shape.Oval
-                                }
-                            })
-                    },
-                    "translate": {
-                        prefix: ">",
-                        icon: "translate",
-                        shape: MaterialShape.Shape.Arrow,
-                        placeholder: "Translate ..?",
-                        showHint: true,
-                        showOsrButton: false
-                    },
-                    "terminology": {
-                        prefix: "<",
-                        icon: "healing",
-                        shape: MaterialShape.Shape.Pill,
-                        placeholder: "Medical Term ..?",
-                        showHint: true,
-                        showOsrButton: false
-                    }
-                })
+            readonly property bool reveal: GlobalStates.main.showBeam || (Mem.options.beam.behavior.revealOnEmpty && !MonitorsInfo.topLevel.activated)
+            readonly property int expandedThreshold: 25
+            readonly property int mainRounding: 50
+            readonly property int elevationValue: (Mem.options.bar.behavior.position === "bottom" ? Mem.options.bar.appearance.height : 0) + Sizes.elevationMargin
 
-            anchors.bottom: true
-            implicitWidth: Sizes.beamSizeExpanded.width + 2 * Rounding.huge
-            implicitHeight: Sizes.beamSize.height + elevationValue + 100
+            visible: reveal || scrollReveal
+            implicitWidth: Sizes.beamSizeExpanded.width + 999
+            implicitHeight: Sizes.beamSize.height + elevationValue + 999
             kbFocus: true
             exclusiveZone: -1
 
+            anchors.left: true
+            anchors.right: true
+            anchors.bottom: true
+
             mask: Region {
-                item: hoverDetectionArea
-            }
-            Item {
-                id: hoverDetectionArea
-                visible: root.hoverReveal
-                anchors {
-                    bottom: parent.bottom
-                    horizontalCenter: parent.horizontalCenter
-                }
-                width: bg.implicitWidth
-                height: root.detectionArea
+                item: bg
             }
 
+            // Auto-hide timer
             Timer {
                 id: idleTimer
                 repeat: true
-                running: root.reveal && query.length < 1 && !beam_mouse_area.containsMouse
+                running: root.reveal && BeamData.query.length === 0 && !beam_mouse_area.containsMouse
                 interval: 5000
                 onTriggered: root.hide()
             }
 
+            // Focus handling
             FocusHandler {
                 windows: [root]
                 active: root.reveal
@@ -213,282 +63,49 @@ Scope {
                 ignoreUnknownSignals: true
 
                 property bool waiting: false
-                property bool autoSend: false
 
                 function onEntriesRefreshed() {
                     const img = ClipboardService.getImagePath(0);
                     if (ClipboardService.isImage(img)) {
                         Ai.attachFile(img);
-                        root.revealSidebar("API");
-
-                        if (clip_watcher.autoSend) {
-                            const command = Mem.options.ai.beamScreenshotHintCommand;
-                            if (command) {
-                                Qt.callLater(() => Ai.sendUserMessage(command));
-                            }
-                        }
+                        GlobalStates.main.showBeam = true;
                     }
-
-                    // Done, turn off
                     clip_watcher.waiting = false;
-                    clip_watcher.autoSend = false;
                 }
             }
 
             function takeScreenshot() {
                 clip_watcher.waiting = true;
-                clip_watcher.autoSend = false;
                 ScreenShotService.takeScreenShot();
-            }
-
-            function handleAutoSendScreenshot() {
-                clip_watcher.waiting = true;
-                clip_watcher.autoSend = true;
-                ScreenShotService.takeScreenShot();
-            }
-            function getSearchSuggestions() {
-                if (FirefoxBookmarksService.bookmarkTitles.length > 0) {
-                    for (let i = 0; i < FirefoxBookmarksService.bookmarkTitles.length; i++) {
-                        const bookmark = FirefoxBookmarksService.bookmarkTitles[i];
-                        if (bookmark.toLowerCase().startsWith(root.query.substring(1))) {
-                            return bookmark;
-                        }
-                    }
-                }
-            }
-            function getIpcSuggestion() {
-                if (NoonUtils.avilableIpcCommands.length < 1) {
-                    NoonUtils.fetchIpcCommands();
-                }
-                for (let i = 0; i < NoonUtils.avilableIpcCommands.length; i++) {
-                    const cmd = NoonUtils.avilableIpcCommands[i];
-                    if (cmd.toLowerCase().startsWith(root.query.substring(2).toLowerCase())) {
-                        return cmd;
-                    }
-                }
-            }
-            function updateSearchSubstate() {
-                if (!root.query.startsWith("?")) {
-                    root.currentSearchSubstate = "search";
-                    return;
-                }
-                const secondChar = root.query.charAt(1);
-                const subStates = reg.search.subStates;
-                for (const [subName, subConfig] of Object.entries(subStates)) {
-                    if (subConfig.prefix && secondChar === subConfig.prefix) {
-                        root.currentSearchSubstate = subName;
-                        return;
-                    }
-                }
-                root.currentSearchSubstate = "search";
-            }
-
-            function getCommandSuggestion() {
-                if (NoonUtils.avilableSystemCommands.length < 1) {
-                    NoonUtils.fetchCommands();
-                }
-                for (let i = 0; i < NoonUtils.avilableSystemCommands.length; i++) {
-                    const cmd = NoonUtils.avilableSystemCommands[i];
-                    if (cmd.toLowerCase().startsWith(root.query.substring(2).toLowerCase())) {
-                        return cmd;
-                    }
-                }
-            }
-
-            function revealSidebar(cat: string) {
-                NoonUtils.callIpc(`sidebar reveal ${cat}`);
             }
 
             function hide() {
                 GlobalStates.main.showBeam = false;
             }
-            function getAppSuggestion() {
-                const q = root.query.substring(1).trim().toLowerCase();
-
-                if (q === "") {
-                    root.suggestedApp = null;
-                    return "";
-                }
-
-                const allApps = [...DesktopEntries.applications.values];
-                let bestMatch = null;
-                let bestScore = 0;
-
-                for (let i = 0; i < allApps.length; i++) {
-                    const app = allApps[i];
-                    const name = (app.name || "").toLowerCase();
-                    const genericName = (app.genericName || "").toLowerCase();
-                    let score = 0;
-
-                    if (name.startsWith(q)) {
-                        score = 100 + (100 - name.length);
-                    } else if (name.includes(q)) {
-                        score = 50;
-                    }
-
-                    if (genericName.startsWith(q)) {
-                        score = 90;
-                    } else if (genericName.includes(q)) {
-                        score = 45;
-                    }
-
-                    const words = name.split(/\s+/);
-                    const acronym = words.map(w => w[0]).join('').toLowerCase();
-                    if (acronym === q) {
-                        score = 95;
-                    }
-
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMatch = app;
-                    }
-                }
-
-                root.suggestedApp = bestMatch;
-                return bestMatch ? bestMatch.name : "";
-            }
 
             function sendMessage() {
-                root.processQuery();
-                const text = inputField.text.trim();
-                const prefixLength = reg[root.state]?.prefix?.length || 0;
-                const cleanQuery = text.substring(prefixLength).trim();
-
-                switch (root.state) {
-                case "ai":
-                    if (root.clearAiChatBeforeSearch) {
-                        Ai.clearMessages();
-                    }
-                    root.revealSidebar("API");
-                    Ai.sendUserMessage(root.query);
-                    break;
-                case "launch":
-                    if (root.suggestedApp) {
-                        const entry = DesktopEntries.byId(root.suggestedApp.id);
-                        if (entry) {
-                            entry.execute();
-                        }
-                    }
-                    break;
-                case "timer":
-                    const duration = TimerService.parseTimeString(cleanQuery);
-                    if (duration > 0) {
-                        const id = TimerService.addTimer("Focus Time", duration);
-                        TimerService.startTimer(id);
-                        if (root.revealLauncherOnAction) {
-                            Mem.states.sidebar.misc.selectedTabIndex = 2;
-                            NoonUtils.callIpc("sidebar reveal Misc");
-                        }
-                    }
-                    break;
-                case "todo":
-                    if (cleanQuery.length > 0) {
-                        TodoService.addTask(cleanQuery);
-                    }
-                    break;
-                case "install":
-                    if (cleanQuery.length > 0) {
-                        NoonUtils.installPkg(cleanQuery);
-                    }
-                    break;
-                case "calc":
-                    if (cleanQuery.length > 0) {
-                        QalcService.calculate(cleanQuery);
-                        ClipboardService.copy(QalcService.result);
-                    }
-                    break;
-                case "ipc":
-                    if (cleanQuery.length > 0) {
-                        NoonUtils.callIpc(cleanQuery);
-                    }
-                    break;
-                case "search":
-                    if (cleanQuery.length > 0) {
-                        const currentData = reg.search.subStates[root.currentSearchSubstate];  // CHANGE THIS
-                        const subPrefix = currentData.prefix;
-                        const searchQuery = cleanQuery.substring(subPrefix.length);
-                        const cmd = currentData.searchQuery + encodeURIComponent(searchQuery);
-                        Quickshell.execDetached(["xdg-open", cmd]);
-                    }
-                    break;
-                case "commands":
-                    if (cleanQuery.length > 0) {
-                        Quickshell.execDetached(["bash", "-c", cleanQuery]);
-                    }
-                    break;
-                case "translate":
-                    if (cleanQuery.length > 0) {
-                        ClipboardService.copy(hintText.text);
-                    }
-                    break;
-                case "note":
-                    NotesService.note(cleanQuery + (root.addSeparatorForNotes ? "\n - - - " : ""));
-                    break;
-                case "alarm":
-                    AlarmService.addTimer(cleanQuery, "Beam Timer");
-                    if (root.revealLauncherOnAction) {
-                        Mem.states.sidebar.misc.selectedTabIndex = 3;
-                        NoonUtils.callIpc("sidebar reveal Misc");
-                    }
-                    break;
-                }
-
-                root.query = "";
-                root.suggestedApp = null;
+                BeamData.executeCommand();
+                BeamData.reset();
                 root.hide();
-            }
-
-            function handleHintText() {
-                switch (root.state) {
-                case "translate":
-                    TranslatorService.translate(root.query.substring(1));
-                    return TranslatorService.translatedText;
-                case "launch":
-                    return getAppSuggestion();
-                case "search":
-                    return getSearchSuggestions();
-                case "calc":
-                    QalcService.calculate(root.query.substring(1));
-                    return QalcService.result;
-                case "ipc":
-                    return getIpcSuggestion();
-                case "commands":
-                    return getCommandSuggestion();
-                case "terminology":
-                    const query = root.query.substring(1);
-                    MedicalDictionaryService.search(query);  // Service handles debounce
-                    return MedicalDictionaryService.getResult(query);
-                }
-                return "";
-            }
-
-            function processQuery() {
-                const text = inputField.text.trim();
-
-                for (const [stateName, config] of Object.entries(reg)) {
-                    if (config.prefix && text.startsWith(config.prefix)) {
-                        root.state = stateName;
-                        return;
-                    }
-                }
-
-                root.state = "ai";
             }
 
             MouseArea {
                 id: beam_mouse_area
-                z: 0
+                readonly property int _hidden_offset: -(Sizes.beamSize.height + elevationValue - 2)
+                z: 999
                 hoverEnabled: true
                 anchors.fill: parent
-                readonly property int _hidden_offset: -(Sizes.beamSize.height + elevationValue - 2)
                 propagateComposedEvents: true
                 scrollGestureEnabled: true
+                acceptedButtons: Qt.NoButton
                 onWheel: function (wheel) {
                     if (!root.scrollReveal)
                         return;
+
                     let scrollSum = 0;
                     let toggleThreshold = 20;
                     scrollSum += wheel.angleDelta.y;
+
                     if (!root.reveal && scrollSum <= -toggleThreshold) {
                         GlobalStates.main.showBeam = true;
                         scrollSum = 0;
@@ -502,279 +119,217 @@ Scope {
 
                 anchors {
                     bottomMargin: root.reveal && !GlobalStates.main.showOsdValues ? 0 : _hidden_offset
-
                     Behavior on bottomMargin {
                         Anim {}
                     }
                 }
-
                 Item {
-                    opacity: beam_mouse_area.anchors.bottomMargin > beam_mouse_area._hidden_offset ? 1 : 0
+                    id: container
+                    z: 999
                     anchors.fill: parent
+                    property alias input: inputField
+                    property string hintText: BeamData.getHint()
+                    readonly property var appData: DesktopEntries.byId(container.hintText)
+
+                    BeamPopup {
+                        id: popup
+                        mainBg: bg
+                        reveal: root.reveal
+                    }
+                    StyledRectangularShadow {
+                        target: popup
+                        intensity: 0.25
+                        visible: target.visible
+                    }
                     StyledRect {
                         id: bg
                         anchors {
                             horizontalCenter: parent.horizontalCenter
                             bottom: parent.bottom
+                            bottomMargin: elevationValue
                         }
 
+                        radius: root.mainRounding
+                        enableBorders: true
+
                         implicitHeight: Sizes.beamSize.height
-                        implicitWidth: hintText.text.length > root.expandedLitterThreshhold || root.query.length > root.expandedLitterThreshhold ? Sizes.beamSizeExpanded.width : Sizes.beamSize.width
+                        implicitWidth: {
+                            const hintLength = BeamData.getHint().length;
+                            const queryLength = BeamData.query.length;
+                            return (hintLength > root.expandedThreshold || queryLength > root.expandedThreshold) ? Sizes.beamSizeExpanded.width : Sizes.beamSize.width;
+                        }
 
                         Behavior on implicitWidth {
                             Anim {}
                         }
 
-                        states: [
-                            State {
-                                name: "floating"
-                                when: root.mode === 0
-                                PropertyChanges {
-                                    target: bg
-                                    anchors.bottomMargin: elevationValue
-                                    bottomRadius: Rounding.huge
-                                    topRadius: Rounding.huge
-                                    enableBorders: true
-                                }
-                                PropertyChanges {
-                                    target: c1
-                                    visible: false
-                                }
-                            },
-                            State {
-                                name: "notch"
-                                when: root.mode === 1
-                                PropertyChanges {
-                                    target: bg
-                                    anchors.bottomMargin: -1
-                                    bottomRadius: 0
-                                    topRadius: Rounding.huge
-                                    enableBorders: true
-                                }
-                                PropertyChanges {
-                                    target: c1
-                                    visible: false
-                                }
-                            },
-                            State {
-                                name: "corners"
-                                when: root.mode === 2
-                                PropertyChanges {
-                                    target: bg
-                                    anchors.bottomMargin: -1
-                                    bottomRadius: 0
-                                    topRadius: Rounding.huge
-                                    enableBorders: false
-                                }
-                                PropertyChanges {
-                                    target: c1
-                                    visible: true
-                                }
-                            }
-                        ]
-                        transitions: [
-                            Transition {
-                                Anim {
-                                    properties: "anchors.margins,anchors.bottomMargin,radius,topLeftRadius,topRightRadius,bottomLeftRadius,bottomRightRadius"
-                                }
-
-                                Anim {
-                                    properties: "anchors.topMargin,anchors.bottomMargin,opacity"
-                                    targets: [c1, c2]
-                                }
-                            }
-                        ]
                         color: Colors.colLayer0
-                        enableBorders: true
-                        clip: true
+                        Symbol {
+                            z: 999
+                            font.pixelSize: 18
+                            fill: 1
+                            color: inputField.focus ? Colors.colOnPrimary : Colors.colOnLayer3
+                            anchors.centerIn: icon
+                            text: BeamData.getIcon()
+                        }
 
-                        StyledRect {
-                            id: sideRect
+                        MaterialShape {
+                            id: icon
                             anchors {
-                                top: parent.top
                                 left: parent.left
-                                bottom: parent.bottom
-                                margins: 1
+                                verticalCenter: parent.verticalCenter
+                                leftMargin: Padding.gigantic
                             }
-                            topLeftRadius: bg.topLeftRadius
-                            color: "transparent" // Colors.colLayer2
-                            implicitWidth: 60
+                            readonly property string inputText: inputField.text
 
-                            MaterialShapeWrappedMaterialSymbol {
-                                id: icon
-                                anchors {
-                                    centerIn: parent
-                                    horizontalCenterOffset: Padding.tiny
-                                }
-                                implicitSize: 42
-                                iconSize: 20
-                                text: root.state === "search" ? (reg.search.subStates[root.currentSearchSubstate]?.icon || reg.search.icon) : (reg[root.state]?.icon || "search")
-                                shape: root.state === "search" ? (reg.search.subStates[root.currentSearchSubstate]?.shape || reg.search.shape) : (reg[root.state]?.shape || MaterialShape.Shape.Bun)
-                                fill: 1
-                                colSymbol: inputField.focus ? Colors.colPrimary : Colors.colOnLayer3
-                                color: inputField.focus ? Colors.colPrimaryContainer : Colors.colLayer3
+                            implicitSize: 36
+                            color: inputField.focus ? Colors.colPrimary : Colors.colLayer3
+                            shape: BeamData.getShape()
+                            onInputTextChanged: if (inputField.text.length === 0)
+                                rotation = 0
+
+                            RotationAnimation on rotation {
+                                running: icon.inputText.length > 0
+                                loops: Animation.Infinite
+                                from: 0
+                                to: 360
+                                duration: 9000
+                                easing.type: Easing.Linear
+                            }
+                            Behavior on color {
+                                CAnim {}
+                            }
+                            Behavior on rotation {
+                                Anim {}
                             }
                         }
-
-                        TextField {
-                            id: inputField
-                            z: 10
+                        StyledRect {
                             anchors {
                                 top: parent.top
-                                right: buttonsRow.left
-                                left: sideRect.right
                                 bottom: parent.bottom
-                                rightMargin: Padding.large
-                                leftMargin: Padding.large
-                            }
-                            focus: root.reveal
-                            objectName: "inputField"
-                            placeholderText: reg[root.state]?.placeholder || "Ask any thing ..."
-                            text: root.query
-                            background: null
-                            selectionColor: Colors.colPrimaryContainer
-                            selectedTextColor: Colors.m3.m3onPrimaryContainer
-                            color: Colors.colOnLayer0
-                            placeholderTextColor: Colors.colSubtext
-                            selectByMouse: true
-
-                            onTextChanged: {
-                                root.query = text;
-                                root.processQuery();
-                                if (root.state === "search" && Object.keys(root.reg.search.subStates).length > 1) {
-                                    root.updateSearchSubstate();
-                                }
+                                right: sendButton.left
+                                left: icon.right
+                                margins: Padding.normal
+                                rightMargin: Padding.small
+                                leftMargin: Padding.huge
                             }
 
-                            StyledText {
-                                id: hintText
-                                anchors {
-                                    top: parent.top
-                                    right: parent.right
-                                    bottom: parent.bottom
-                                    rightMargin: Padding.normal
-                                }
-                                animateChange: true
-                                horizontalAlignment: Text.AlignRight
-                                width: 450
-                                elide: Text.ElideRight
-                                wrapMode: TextEdit.Wrap
-                                maximumLineCount: 2
-                                font.pixelSize: Fonts.sizes.normal
-                                color: Colors.colSubtext
-                                opacity: 0.6
-                                visible: reg[root.state]?.showHint || false
-                                text: root?.handleHintText() || ""
-                            }
+                            radius: Rounding.full
+                            color: Colors.colLayer2
 
-                            font {
-                                pixelSize: Fonts.sizes.normal
-                                family: Fonts.family.main
-                            }
-
-                            Keys.onPressed: event => {
-                                if (event.key === Qt.Key_Escape) {
-                                    root.hide();
-                                    event.accepted = true;
-                                }
-                                if (event.key === Qt.Key_Return) {
-                                    root.sendMessage();
-                                    event.accepted = true;
+                            TextField {
+                                id: inputField
+                                z: 10
+                                anchors.fill: parent
+                                focus: root.reveal
+                                objectName: "inputField"
+                                placeholderText: BeamData.config?.placeholder || "Ask any thing ..."
+                                text: BeamData.query
+                                background: null
+                                selectionColor: Colors.colPrimaryContainer
+                                selectedTextColor: Colors.m3.m3onPrimaryContainer
+                                color: Colors.colOnLayer0
+                                placeholderTextColor: Colors.colSubtext
+                                selectByMouse: true
+                                leftPadding: Padding.huge
+                                rightPadding: Padding.huge + osrButton.width
+                                onTextChanged: {
+                                    BeamData.updateStateFromQuery(text);
                                 }
 
-                                if (event.key === Qt.Key_Tab) {
-                                    if (root.state === "launch" && root.suggestedApp) {
-                                        root.query = "." + root.suggestedApp.name;
-                                        event.accepted = true;
-                                    } else if (root.state === "translate" && hintText.text) {
-                                        root.query = ">" + hintText.text;
-                                        event.accepted = true;
-                                    } else if (root.state === "commands" && hintText.text) {
-                                        root.query = ";" + hintText.text;
-                                        event.accepted = true;
-                                    } else if (root.state === "ipc" && hintText.text) {
-                                        root.query = "!" + hintText.text;
-                                        event.accepted = true;
-                                    } else if (root.state === "search" && hintText.text) {
-                                        root.query = "?" + hintText.text;
-                                        event.accepted = true;
-                                    } else if (root.state === "calc" && hintText.text) {
-                                        root.query = "=" + hintText.text;
+                                // StyledText {
+                                //     id: hintText
+                                //     anchors {
+                                //         top: parent.top
+                                //         right: parent.right
+                                //         bottom: parent.bottom
+                                //         rightMargin: Padding.huge
+                                //     }
+                                //     animateChange: true
+                                //     horizontalAlignment: Text.AlignRight
+                                //     width: 450
+                                //     elide: Text.ElideRight
+                                //     wrapMode: TextEdit.Wrap
+                                //     maximumLineCount: 2
+                                //     font.pixelSize: Fonts.sizes.normal
+                                //     color: Colors.colSubtext
+                                //     opacity: 0.6
+                                //     visible: BeamData.config?.showHint || false
+                                //     text: BeamData.getHint()
+                                // }
+
+                                font {
+                                    pixelSize: Fonts.sizes.normal
+                                    family: Fonts.family.main
+                                }
+
+                                Keys.onPressed: event => {
+                                    if (event.key === Qt.Key_Escape) {
+                                        root.hide();
                                         event.accepted = true;
                                     }
-                                }
 
-                                if (event.modifiers === Qt.ControlModifier) {
-                                    if (event.key === Qt.Key_S) {
-                                        root.handleAutoSendScreenshot();
+                                    if (event.key === Qt.Key_Return) {
+                                        root.sendMessage();
                                         event.accepted = true;
                                     }
-                                }
-                            }
-                        }
 
-                        RowLayout {
-                            id: buttonsRow
-                            z: 10
-                            spacing: Padding.verysmall
-                            anchors {
-                                top: bg.top
-                                bottom: bg.bottom
-                                right: bg.right
-                                rightMargin: Padding.normal
-                            }
+                                    if (event.key === Qt.Key_Tab) {
+                                        const hint = BeamData.getHint();
+                                        if (hint) {
+                                            BeamData.query = BeamData.autocomplete(hint);
+                                            event.accepted = true;
+                                        }
+                                    }
 
-                            RippleButtonWithIcon {
-                                id: sendButton
-                                releaseAction: () => root.sendMessage()
-                                buttonRadius: root.mainRounding
-                                visible: opacity > 0
-                                opacity: inputField.text.length > 0 ? 1 : 0
-                                materialIcon: "send"
-                                implicitSize: bg.height * 0.75
-                                Behavior on opacity {
-                                    Anim {}
+                                    if (event.modifiers === Qt.ControlModifier && event.key === Qt.Key_S) {
+                                        root.takeScreenshot();
+                                        event.accepted = true;
+                                    }
                                 }
                             }
 
                             RippleButtonWithIcon {
                                 id: osrButton
+                                z: 999
                                 buttonRadius: root.mainRounding
-                                releaseAction: () => {
-                                    root.takeScreenshot();
-                                }
+                                releaseAction: () => root.takeScreenshot()
+                                colBackground: "transparent"
                                 materialIcon: "screenshot_region"
                                 implicitSize: bg.height * 0.75
                                 enabled: !ScreenShotService.isBusy
-                                visible: reg[root.state]?.showOsrButton || false
+                                visible: BeamData.config?.showOsrButton || false
                                 Behavior on opacity {
                                     Anim {}
                                 }
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                anchors.right: parent.right
+                                anchors.rightMargin: Padding.large
+                            }
+                        }
+
+                        RippleButtonWithIcon {
+                            id: sendButton
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
+                            anchors.rightMargin: Padding.large
+                            releaseAction: () => root.sendMessage()
+                            buttonRadius: root.mainRounding
+                            // visible: opacity > 0
+                            // opacity: inputField.text.length > 0 ? 1 : 0
+                            colBackground: "transparent"
+                            materialIcon: "send"
+                            implicitSize: bg.height * 0.75
+                            Behavior on opacity {
+                                Anim {}
                             }
                         }
                     }
+
                     StyledRectangularShadow {
                         show: root.reveal
                         target: bg
-                    }
-                    RoundCorner {
-                        id: c1
-                        corner: cornerEnum.bottomLeft
-                        size: root.mainRounding
-                        anchors {
-                            bottom: bg.bottom
-                            left: bg.right
-                        }
-                    }
-                    RoundCorner {
-                        id: c2
-                        visible: c1.visible
-                        corner: cornerEnum.bottomRight
-                        size: root.mainRounding
-                        anchors {
-                            bottom: bg.bottom
-                            right: bg.left
-                        }
                     }
                 }
             }

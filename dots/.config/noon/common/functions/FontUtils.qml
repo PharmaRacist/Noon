@@ -1,5 +1,6 @@
 import Quickshell
 pragma Singleton
+pragma ComponentBehavior: Bound
 
 Singleton {
     id: root

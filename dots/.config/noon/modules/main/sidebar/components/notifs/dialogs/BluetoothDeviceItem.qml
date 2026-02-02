@@ -70,7 +70,7 @@ DialogListItem {
                 color: Colors.colOnLayer3
                 rotation: root.expanded ? 180 : 0
                 Behavior on rotation {
-                    FAnim {}
+                    Anim {}
                 }
             }
         }

@@ -117,11 +117,11 @@ ColumnLayout {
 
             Behavior on x {
                 enabled: root.enableIndicatorAnimation
-                FAnim {}
+                Anim {}
             }
             Behavior on implicitWidth {
                 enabled: root.enableIndicatorAnimation
-                FAnim {}
+                Anim {}
             }
         }
     }

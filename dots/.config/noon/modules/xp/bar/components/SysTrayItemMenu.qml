@@ -253,7 +253,7 @@ PopupWindow {
         }
 
         Behavior on opacity {
-            FAnim {
+            Anim {
             }
 
         }

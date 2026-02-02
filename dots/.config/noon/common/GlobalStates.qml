@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import Noon
 import QtQuick
 import Quickshell
@@ -28,8 +29,8 @@ Singleton {
     function handle_init(mode) {
         KeyringStorage.reload();
         NightLightService.reload();
-        HyprlandParserService.reload();
         ClipboardService.init();
+        Hyprland.dispatch("submap " + Mem.options.desktop.hyprland.tilingLayout);
         switch (mode) {
         case "main":
             TimerService.reload();
@@ -67,6 +68,8 @@ Singleton {
     main: QtObject {
         id: main
         property var sidebar
+        property var lock
+
         property bool locked: false
         property bool oskOpen: false
         property bool exposeView: false

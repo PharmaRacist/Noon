@@ -12,6 +12,7 @@ import "osd"
 import "sidebar"
 import "view"
 import "screenshot"
+import "toolbar"
 
 Scope {
     WidgetLoader {
@@ -50,7 +51,13 @@ Scope {
     }
 
     WidgetLoader {
+        enabled: false
+        NotifPanel {}
+    }
+
+    WidgetLoader {
         enabled: Mem.options.bar.enabled
+        reloadOn: Mem.options.bar.behavior.position
         Bar {}
     }
 

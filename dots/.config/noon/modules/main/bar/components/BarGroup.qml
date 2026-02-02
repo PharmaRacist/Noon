@@ -4,8 +4,11 @@ import qs.common
 import qs.common.widgets
 
 StyledRect {
-    property bool vertical: false
+    id: root
+    property bool vertical: vertical
+    property bool verticalMode: false
     readonly property real padding: Padding.small
+
     color: Mem.options.bar.appearance.barGroup ? Colors.colLayer2 : "transparent"
     radius: Rounding.large
     clip: true

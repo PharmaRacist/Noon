@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Qt.labs.folderlistmodel
@@ -31,7 +32,7 @@ Singleton {
         return true;
     }
     Component.onCompleted: refreshFolderDelayed()
-
+    signal thumbnailsDone
     onCurrentWallpaperChanged: NoonUtils.playSound("pressed")
 
     onCurrentFolderPathChanged: {
@@ -53,33 +54,31 @@ Singleton {
         onExited: exitcode => {
             if (exitcode === 0)
                 NoonUtils.notify("Thumbnails Done");
+            thumbnailsDone();
         }
         stdout: StdioCollector {
             onStreamFinished: _thumbnailCache = {}
         }
     }
 
-    function generateThumbnails(directory, size, workers, recursive) {
+    function generateThumbnails(directory) {
         if (thumbnailGenerator.running)
             return false;
 
         const cleanDir = FileUtils.trimFileProtocol(directory);
-        const cmd = ["python3", Directories.wallpapers.switchScript, "--gen-thumbnails", cleanDir, "--thumb-size", size, "--thumb-workers", (workers || 4).toString()];
+        // Aligned with thumbnail script: -d (dir), -s (size), -w (workers), -i (only images flag)
+        const cmd = ["python3", Directories.wallpapers.thumbScript, "-d", cleanDir, "-s", thumbnailSize, "-i"];
         console.log(cmd);
-        if (recursive === false)
-            cmd.push("--thumb-no-recursive");
-
         thumbnailGenerator.command = cmd;
         thumbnailGenerator.running = true;
         return true;
     }
 
-    function getThumbnailPath(fileUrl, size) {
+    function getThumbnailPath(fileUrl) {
         if (!fileUrl?.startsWith("file://"))
             return fileUrl;
 
-        const thumbSize = size;
-        const cacheKey = `${fileUrl}_${thumbSize}`;
+        const cacheKey = `${fileUrl}`;
 
         if (_thumbnailCache[cacheKey])
             return _thumbnailCache[cacheKey];
@@ -89,19 +88,19 @@ Singleton {
             cleanPath = "/" + cleanPath;
 
         const hash = Qt.md5(`file://${cleanPath}`);
-        const thumbnailPath = `${FileUtils.trimFileProtocol(Directories.standard.home)}/.cache/thumbnails/${thumbSize}/${hash}.png`;
+        // Thumbnail path matches GnomeDesktop standard location based on size
+        // Script uses: normal, large, x-large, xx-large
+        // Standard uses: normal (128x128), large (256x256), x-large (512x512), xx-large (1024x1024)
+        const sizeDir = thumbnailSize === "normal" ? "normal" : "large"; // Map to standard dirs
+        const thumbnailPath = `${FileUtils.trimFileProtocol(Directories.standard.home)}/.cache/thumbnails/${sizeDir}/${hash}.png`;
 
         _thumbnailCache[cacheKey] = `file://${thumbnailPath}`;
+        console.log(_thumbnailCache[cacheKey]);
         return _thumbnailCache[cacheKey];
     }
 
-    function getFileWithThumbnail(index, useThumbnail) {
-        const fileUrl = _wallpaperModel.getFile(index);
-        return useThumbnail && fileUrl ? getThumbnailPath(fileUrl, thumbnailSize) : fileUrl;
-    }
-
-    function generateThumbnailsForCurrentFolder(size) {
-        generateThumbnails(FileUtils.trimFileProtocol(currentFolderPath), size || thumbnailSize, 4);
+    function generateThumbnailsForCurrentFolder() {
+        generateThumbnails(currentFolderPath);
     }
 
     function clearThumbnailCache() {

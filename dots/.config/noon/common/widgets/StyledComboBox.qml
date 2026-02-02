@@ -7,29 +7,32 @@ import qs.services
 
 ComboBox {
     id: root
-    Layout.preferredHeight: 40
+    Layout.preferredHeight: 45
     Layout.preferredWidth: 210
 
     delegate: ItemDelegate {
+        id: delegated
         width: ListView.view.width
-        height: 40
+        height: 45
         highlighted: root.highlightedIndex === index
 
-        contentItem: Row {
-            anchors.verticalCenter: parent.verticalCenter
+        contentItem: RowLayout {
+            anchors.centerIn: parent
             spacing: Padding.normal
 
             Symbol {
+                fill: 1
                 text: modelData?.icon ?? ""
                 font.pixelSize: 20
-                color: Colors.colOnLayer1
-                anchors.verticalCenter: parent.verticalCenter
+                color: delegated.highlighted ? Colors.m3.m3primary : Colors.colOnLayer1
             }
 
             StyledText {
+                Layout.fillWidth: true
                 text: modelData?.name ?? modelData ?? ""
-                anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 14
+                truncate: true
+                color: delegated.highlighted ? Colors.m3.m3primary : Colors.colOnLayer1
             }
         }
 
@@ -40,12 +43,15 @@ ComboBox {
     }
 
     contentItem: StyledText {
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
         text: root.displayText
         color: Colors.colOnLayer1
         leftPadding: Padding.large
         rightPadding: Padding.verylarge
-        elide: Text.ElideRight
-        maximumLineCount: 1
+        truncate: true
     }
 
     background: Rectangle {
@@ -80,13 +86,14 @@ ComboBox {
         }
 
         background: StyledRect {
-            color: Colors.colLayer0
+            color: Colors.colLayer2
             radius: Rounding.verylarge
-            enableBorders: true
+            // enableBorders: true
         }
 
         contentItem: StyledListView {
             clip: true
+            hint: false
             radius: Rounding.large
             implicitHeight: contentHeight
             currentIndex: root.highlightedIndex

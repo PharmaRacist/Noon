@@ -10,7 +10,7 @@ Singleton {
     property alias agent: polkitAgent
     property alias active: polkitAgent.isActive
     property alias flow: polkitAgent.flow
-    property bool interactionAvailable: false
+    property bool interactionAvailable: true
 
     function cancel() {
         root.flow.cancelAuthenticationRequest();

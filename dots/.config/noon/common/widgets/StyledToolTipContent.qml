@@ -43,19 +43,19 @@ Item {
         }
 
         Behavior on implicitWidth {
-            FAnim {
+            Anim {
             }
 
         }
 
         Behavior on implicitHeight {
-            FAnim {
+            Anim {
             }
 
         }
 
         Behavior on opacity {
-            FAnim {
+            Anim {
             }
 
         }

@@ -116,7 +116,7 @@ GroupButton {
             visible: showButtonName
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHLeft
-            elide: Text.ElideRight // Truncates the text on the right
+            truncate:true
             font.pixelSize: Fonts.sizes.normal
             color: toggled ? Colors.colOnPrimary : Colors.colOnLayer2
             text: buttonName

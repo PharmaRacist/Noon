@@ -51,6 +51,7 @@ ColumnLayout {
                 font.weight: Font.Medium
                 color: root.trackColors.colOnLayer0
                 elide: Text.ElideRight
+                maximumLineCount: 2
                 text: root.player.trackTitle || "No Title"
                 horizontalAlignment: Text.AlignLeft
             }
@@ -60,6 +61,7 @@ ColumnLayout {
                 font.pixelSize: 17
                 color: root.trackColors.colOnLayer2
                 elide: Text.ElideRight
+                maximumLineCount: 1
                 text: root.player.trackArtist || "No Artist"
                 horizontalAlignment: Text.AlignLeft
             }

@@ -29,7 +29,7 @@ RippleButton {
     }
 
     Behavior on opacity {
-        FAnim {
+        Anim {
         }
 
     }

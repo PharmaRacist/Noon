@@ -208,7 +208,7 @@ Item {
                 opacity: previewPopup.show ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity {
-                    FAnim {}
+                    Anim {}
                 }
             }
             Rectangle {
@@ -217,7 +217,7 @@ Item {
                 opacity: previewPopup.show ? 1 : 0
                 visible: opacity > 0
                 Behavior on opacity {
-                    FAnim {}
+                    Anim {}
                 }
                 clip: true
                 color: Colors.colSurfaceContainer
@@ -228,10 +228,10 @@ Item {
                 implicitHeight: previewRowLayout.implicitHeight + padding * 2
                 implicitWidth: previewRowLayout.implicitWidth + padding * 2
                 Behavior on implicitWidth {
-                    FAnim {}
+                    Anim {}
                 }
                 Behavior on implicitHeight {
-                    FAnim {}
+                    Anim {}
                 }
 
                 RowLayout {

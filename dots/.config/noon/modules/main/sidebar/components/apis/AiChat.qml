@@ -300,7 +300,7 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                 opacity: messageListView.atYBeginning ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity {
-                    FAnim {}
+                    Anim {}
                 }
             }
             Rectangle {
@@ -347,7 +347,7 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                 id: messageListView
                 z: 0
                 anchors.fill: parent
-                spacing: 10
+                spacing: Padding.veryhuge
                 animateMovement: true
                 popin: true
                 topMargin: statusBg.implicitHeight + statusBg.anchors.topMargin * 2

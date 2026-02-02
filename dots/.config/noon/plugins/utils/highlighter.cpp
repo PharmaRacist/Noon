@@ -1,4 +1,4 @@
-#include "highlighter.h"
+#include "highlighter.hpp"
 
 JsonHighlighter::JsonHighlighter(QObject *parent)
     : QSyntaxHighlighter(parent)

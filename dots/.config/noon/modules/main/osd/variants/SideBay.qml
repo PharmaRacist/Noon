@@ -21,9 +21,11 @@ StyledPanel {
     property var volumeModel
     property bool volumeMode: false
     property PwNode selectedDevice
+
     readonly property list<PwNode> appPwNodes: Pipewire.nodes.values.filter(node => {
-        return node.isSink && node.isStream;
+        return node.isStream && node.audio !== null;
     })
+
     signal valueModified(real newValue)
     signal interactionStarted
     signal interactionEnded
@@ -45,6 +47,7 @@ StyledPanel {
         id: grab
         active: root.visible
     }
+
     Connections {
         target: root
         function onTargetScreenChanged() {
@@ -59,8 +62,9 @@ StyledPanel {
             verticalCenterOffset: -100
         }
         implicitHeight: childrenRect.height
-        implicitWidth: Sizes.osd.sideBay.width * (root.volumeMode ? root.appPwNodes.length : 1)
+        implicitWidth: Sizes.osd.sideBay.width * (root.volumeMode ? Math.max(1, root.appPwNodes.length) : 1)
         spacing: Padding.normal
+
         StyledRect {
             id: content
             implicitWidth: Sizes.osd.sideBay.width
@@ -86,12 +90,13 @@ StyledPanel {
                     Layout.fillHeight: true
                     value: root.value
                     valueBarGap: 24
+                    showProgressIndicator: false
                 }
                 StyledText {
                     font {
                         family: Fonts.family.numbers
                         variableAxes: Fonts.variableAxes.numbers
-                        pixelSize: 19
+                        pixelSize: Fonts.sizes.small
                     }
                     text: Math.round(root.value * 100)
                     color: Colors.colSecondary
@@ -101,9 +106,9 @@ StyledPanel {
                 }
             }
         }
+
         Repeater {
             id: repeater
-            visible: root.volumeMode
             model: root.volumeMode ? root.appPwNodes : []
             SideBayVEntry {
                 required property var modelData
@@ -113,8 +118,9 @@ StyledPanel {
             }
         }
     }
+
     component SideBayVEntry: StyledRect {
-        id: root
+        id: entryRoot
         implicitWidth: Sizes.osd.sideBay.width
         implicitHeight: Sizes.osd.sideBay.height
         color: Colors.colLayer0
@@ -125,16 +131,18 @@ StyledPanel {
         signal interactionEnded
 
         PwObjectTracker {
-            objects: [node]
+            objects: [entryRoot.node, entryRoot.node.audio]
         }
+
         ColumnLayout {
             anchors {
                 fill: parent
                 topMargin: Padding.large
-                bottomMargin: Padding.large
+                bottomMargin: Padding.huge
                 margins: Padding.normal
             }
             spacing: Padding.normal
+
             StyledProgressBar {
                 id: slider
                 vertical: true
@@ -142,48 +150,39 @@ StyledPanel {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 valueBarGap: 24
-                // TODO
-                // value: root?.node.audio.volume ?? null
-                // onValueChanged: root.node.audio.volume = value
+                value: entryRoot.node.audio ? entryRoot.node.audio.volume : 0
+                showProgressIndicator: false
                 MouseArea {
                     anchors.fill: parent
                     onPressed: event => {
                         event.accepted = false;
                     }
                     onEntered: {
-                        root.interactionStarted();
-                        console.log("entered");
+                        entryRoot.interactionStarted();
                     }
                     onExited: {
-                        root.interactionEnded();
-                        console.log("exited");
+                        entryRoot.interactionEnded();
                     }
-                    onReleased: {
-                        console.log("released");
-                    }
-                    // cursorShape: slider.pressed ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+                    cursorShape: slider.pressed ? Qt.ClosedHandCursor : Qt.PointingHandCursor
                     onWheel: wheel => {
-                        var delta = wheel.angleDelta.y / 120;
-                        var newValue = slider.value + (delta * 0.05);
-                        slider.value = Math.max(1, Math.min(1, newValue));
+                        var delta = wheel.angleDelta.y / 1200;
+                        var newValue = Math.max(0, Math.min(1, slider.value + delta));
+                        if (entryRoot.node.audio) {
+                            entryRoot.node.audio.volume = newValue;
+                        }
                         wheel.accepted = true;
-                        console.log("wheel", newValue);
                     }
                 }
             }
+
             StyledIconImage {
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                visible: source != ""
-                implicitSize: 24
+                Layout.alignment: Qt.AlignHCenter
+                Layout.maximumHeight: 30
+                implicitSize: 28
                 source: {
-                    let icon;
-                    icon = AppSearch.guessIcon(root.node.properties["application.icon-name"]);
-                    if (AppSearch.iconExists(icon))
-                        return NoonUtils.iconPath(icon);
-
-                    icon = AppSearch.guessIcon(root.node.properties["node.name"]);
-                    return NoonUtils.iconPath(icon);
+                    var iconName = entryRoot.node.properties["application.icon-name"] || entryRoot.node.name.toLowerCase();
+                    return NoonUtils.iconPath(AppSearch.guessIcon(iconName));
                 }
             }
         }

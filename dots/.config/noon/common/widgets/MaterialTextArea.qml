@@ -47,13 +47,8 @@ TextArea {
             }
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
-
     }
-
 }

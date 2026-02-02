@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import qs.store
 import qs.common
 import qs.common.utils
@@ -156,10 +157,18 @@ Singleton {
         dlpProc.running = true;
     }
 
+    function downloadByCommand(command) {
+        dlpProc._cmd = command;
+        dlpProc.running = true;
+    }
+
     Process {
         id: dlpProc
         property string query
-        command: ["bash", "-c", `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:${query.replace(/'/g, "")}'`]
+        property string _cmd
+        property string cmd: `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:${query.replace(/'/g, "")}'`
+
+        command: ["bash", "-c", _cmd ?? cmd]
 
         onStarted: NoonUtils.notify(`Started Downloading: ${query}`)
         onExited: exitCode => {

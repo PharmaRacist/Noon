@@ -12,7 +12,7 @@ ColumnLayout {
     id: root
     // These are needed on the parent loader
     property bool editing: false
-    property bool renderMarkdown: true
+    property bool renderMarkdown: false
     property bool enableMouseSelection: false
     property var segmentContent: ({})
     property var messageData: {}

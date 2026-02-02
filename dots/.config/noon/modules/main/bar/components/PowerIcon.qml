@@ -6,45 +6,38 @@ import qs.services
 
 MaterialShapeWrappedMaterialSymbol {
     visible: BatteryService.available
-    text: PowerService.icon
-    shape: {
-        switch (PowerService.modeName) {
-        case "Power Saver":
-            return MaterialShape.Cookie4Sided;
-        case "Balanced":
-            return MaterialShape.Cookie6Sided;
-        case "Performance":
-            return MaterialShape.Cookie9Sided;
-        default:
-            return MaterialShape.Cookie6Sided;
-        }
-    }
     fill: 1
-    color: {
-        switch (PowerService.modeName) {
-        case "Power Saver":
-            return Colors.colLayer2;
-        case "Balanced":
-            return Colors.colTertiaryActive;
-        case "Performance":
-            return Colors.colSecondaryActive;
-        default:
-            return Colors.colLayer2;
+    readonly property var aMap: [
+        {
+            name: "Power Saver",
+            icon: "eco",
+            color: Colors.colTertiary,
+            sColor: Colors.colOnTertiary,
+            shape: MaterialShape.Cookie4Sided
+        },
+        {
+            name: "Balanced",
+            icon: "balance",
+            color: Colors.colSecondary,
+            sColor: Colors.colOnSecondary,
+            shape: MaterialShape.Cookie6Sided
+        },
+        {
+            name: "Performance",
+            icon: "bolt",
+            color: Colors.colPrimary,
+            sColor: Colors.colOnPrimary,
+            shape: MaterialShape.Cookie9Sided
         }
-    }
-    colSymbol: {
-        switch (PowerService.modeName) {
-        case "Power Saver":
-            return Colors.colOnLayer2;
-        case "Balanced":
-            return Colors.colTertiary;
-        case "Performance":
-            return Colors.colSecondary;
-        default:
-            return Colors.colOnLayer2;
-        }
-    }
-    iconSize: parent.width / 2.4
+    ]
+
+    readonly property var currentModeData: aMap.filter(mode => mode.name === PowerService.modeName)[0]
+
+    implicitSize: 32
+    text: currentModeData.icon
+    shape: currentModeData.shape
+    color: currentModeData.color
+    colSymbol: currentModeData.sColor
 
     MouseArea {
         id: mouse

@@ -61,30 +61,21 @@ Rectangle { // App icon
         anchors.fill: parent
         sourceComponent: Item {
             anchors.fill: parent
-            Image {
+            CroppedImage {
                 id: notifImage
                 anchors.fill: parent
                 readonly property int size: parent.width
 
-                source: root?.image ?? ""
+                source: root.image || ""
                 fillMode: Image.PreserveAspectCrop
                 cache: false
                 antialiasing: true
+                radius: Rounding.full
                 asynchronous: true
 
                 width: size
                 height: size
-                sourceSize.width: size
-                sourceSize.height: size
-
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Rectangle {
-                        width: notifImage.size
-                        height: notifImage.size
-                        radius: Rounding.full
-                    }
-                }
+                sourceSize: Qt.size(size, size)
             }
             Loader {
                 id: notifImageAppIconLoader

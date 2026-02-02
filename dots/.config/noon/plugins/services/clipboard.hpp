@@ -39,12 +39,12 @@ public:
     void setMaxEntries(int max);
 
     Q_INVOKABLE void init();
-    Q_INVOKABLE void copy(int index);
+    Q_INVOKABLE void copyByIndex(int index);
+    Q_INVOKABLE void copy(const QString& text);
     Q_INVOKABLE void deleteEntry(int index);
     Q_INVOKABLE void wipe();
     Q_INVOKABLE bool isImage(int index) const;
     Q_INVOKABLE QString getImagePath(int index) const;
-    Q_INVOKABLE QString getText(int index) const;
 
 signals:
     void entriesChanged();
@@ -69,7 +69,7 @@ private:
     QClipboard* m_clipboard;
     QSqlDatabase m_db;
     QStringList m_entries;
-    int m_maxEntries = 150;
+    int m_maxEntries = 300;
     bool m_ignoreNextChange = false;
     QTimer* m_reloadTimer;
     bool m_isProcessing = false;

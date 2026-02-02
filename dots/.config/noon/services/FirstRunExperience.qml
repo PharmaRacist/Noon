@@ -3,6 +3,7 @@ import qs.common
 import qs.common.functions
 import qs.common.utils
 pragma Singleton
+pragma ComponentBehavior: Bound
 
 Singleton {
     id: root

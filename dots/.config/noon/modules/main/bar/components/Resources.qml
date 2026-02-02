@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -11,13 +12,13 @@ import qs.store
 BarGroup {
     id: root
 
-    vertical: verticalMode
-    property bool verticalMode: false
     readonly property bool isCharging: UPower.displayDevice.state == UPowerDeviceState.Charging
     property bool revealAll: false
-    readonly property int itemSize: Math.round((vertical ? width : height) * 0.75)
+    readonly property int itemSize: Math.round((vertical ? width : height) * 0.7)
+
     Layout.preferredHeight: content.implicitHeight + Padding.massive + (revealAll ? 20 : 0)
     Layout.preferredWidth: content.implicitWidth + Padding.massive + (revealAll ? 20 : 0)
+
     MouseArea {
         id: mouse
 
@@ -40,34 +41,33 @@ BarGroup {
         columnSpacing: Padding.normal
         rows: !verticalMode ? 1 : -1
         columns: verticalMode ? 1 : -1
-
-        Resource {
-            iconName: "memory"
-            collapsed: !root.revealAll
-            percentage: (ResourcesService.stats.mem_total - ResourcesService.stats.mem_available) / ResourcesService.stats.mem_total
-            itemSize: root.itemSize
-        }
-
-        Resource {
-            iconName: "swap_horiz"
-            collapsed: !root.revealAll
-            percentage: (ResourcesService.stats.swap_total - ResourcesService.stats.swap_free) / ResourcesService.stats.swap_total
-            // visible: percentage > 0
-            itemSize: root.itemSize
-        }
-
-        Resource {
-            collapsed: !root.revealAll
-            iconName: "settings_slow_motion"
-            percentage: ResourcesService.stats.cpu_percent / 100
-            itemSize: root.itemSize
-        }
-
-        Resource {
-            collapsed: !root.revealAll
-            iconName: "thermometer"
-            percentage: ResourcesService.stats.cpu_temp / 100
-            itemSize: root.itemSize
+        Repeater {
+            model: [
+                {
+                    icon: "settings_slow_motion",
+                    percentage: (ResourcesService.stats.mem_total - ResourcesService.stats.mem_available) / ResourcesService.stats.mem_total
+                },
+                {
+                    icon: "swap_horiz",
+                    percentage: (ResourcesService.stats.swap_total - ResourcesService.stats.swap_free) / ResourcesService.stats.swap_total
+                },
+                {
+                    icon: "memory",
+                    percentage: ResourcesService.stats.cpu_percent / 100
+                },
+                {
+                    icon: "thermometer",
+                    percentage: ResourcesService.stats.cpu_temp / 100
+                }
+            ]
+            delegate: Resource {
+                required property var modelData
+                iconName: modelData.icon
+                percentage: modelData.percentage
+                shown: true
+                collapsed: !root.revealAll
+                itemSize: root.itemSize
+            }
         }
     }
 
@@ -90,22 +90,28 @@ BarGroup {
         GridLayout {
             id: resourceLayout
 
-            rowSpacing: 4
-            columnSpacing: 4
+            rowSpacing: Padding.normal
+            columnSpacing: Padding.huge
             x: shown ? 0 : -resourceLayout.width
             columns: verticalMode ? 1 : 2
-
-            ClippedFilledCircularProgress {
+            Item {
                 Layout.alignment: Qt.AlignVCenter
-                value: percentage
-                implicitSize: root.itemSize
+                implicitWidth: root.itemSize
+                implicitHeight: root.itemSize
+
+                ClippedFilledCircularProgress {
+                    anchors.centerIn: parent
+                    value: percentage
+                    implicitSize: root.itemSize
+                }
 
                 Symbol {
+                    z: 99
                     anchors.centerIn: parent
                     fill: 1
                     text: iconName
-                    font.pixelSize: root.itemSize * BarData.barPadding
-                    color: Colors.m3.m3onSecondaryContainer
+                    font.pixelSize: Math.round(root.itemSize * 0.8)
+                    color: Colors.colLayer0
                 }
             }
 
@@ -117,8 +123,12 @@ BarGroup {
                 StyledText {
                     visible: parent.reveal
                     anchors.centerIn: parent
-                    color: Colors.colOnLayer1
-                    text: `${Math.round(percentage * 100)}`
+                    color: Colors.colOnLayer0
+                    text: Math.round(root.percentage * 100)
+                    font.pixelSize: Fonts.sizes.verysmall
+                    font.letterSpacing: 1.5
+                    font.weight: 900
+                    font.family: Fonts.family.monospace
                 }
             }
         }

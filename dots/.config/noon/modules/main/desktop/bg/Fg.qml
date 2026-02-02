@@ -5,8 +5,9 @@ import qs.common.functions
 
 Image {
     id: fgImage
-    z: 9999
-    anchors.fill: bgImage
+    z: 99999
+    visible: status === Image.Ready
+    anchors.fill: parent
     fillMode: Image.PreserveAspectCrop
     source: FileUtils.trimFileProtocol(Directories.wallpapers.depthDir + Qt.md5(FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentBg)) + ".png")
     asynchronous: true

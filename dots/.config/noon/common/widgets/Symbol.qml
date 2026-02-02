@@ -7,6 +7,7 @@ StyledText {
     property real iconSize: Fonts.sizes.small ?? 16
     property real fill: 0
     property real truncatedFill: fill.toFixed(1)
+
     property var variableAxes: {
         "FILL": truncatedFill,
         "opsz": iconSize
@@ -26,6 +27,6 @@ StyledText {
     }
 
     Behavior on fill {
-        FAnim {}
+        Anim {}
     }
 }

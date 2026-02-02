@@ -36,7 +36,5 @@ Item {
             source: iconImage
             color: root.color
         }
-
     }
-
 }

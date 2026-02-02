@@ -29,7 +29,7 @@ Item {
         }
         implicitWidth: contentWidth
         Behavior on implicitWidth {
-            FAnim {}
+            Anim {}
         }
 
         model: ScriptModel {

@@ -28,7 +28,7 @@ RippleButton {
 
         Symbol {
             id: icon
-
+            fill: current ? 1 : 0
             anchors.verticalCenter: parent.verticalCenter
             iconSize: 22
             text: root.materialSymbol
@@ -40,7 +40,5 @@ RippleButton {
             anchors.verticalCenter: parent.verticalCenter
             text: root.text
         }
-
     }
-
 }

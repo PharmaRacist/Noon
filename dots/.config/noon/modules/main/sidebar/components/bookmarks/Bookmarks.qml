@@ -9,7 +9,7 @@ import qs.store
 
 StyledRect {
     id: root
-    color: "transparent"
+    color: Colors.colLayer1
     radius: Rounding.verylarge
     property string searchQuery: ""
 
@@ -24,21 +24,34 @@ StyledRect {
         }
     }
 
+    ScriptModel {
+        id: filteredBookmarks
+        values: {
+            const data = FirefoxBookmarksService.bookmarks;
+            const query = root.searchQuery.toLowerCase();
+            if (!query)
+                return data;
+
+            return data.filter(item => (item.title && item.title.toLowerCase().includes(query)) || (item.url && item.url.toLowerCase().includes(query)));
+        }
+    }
+
     StyledListView {
         id: listView
         anchors.fill: parent
         anchors.margins: Padding.normal
-        model: Models.bookmarkModel
+        model: filteredBookmarks
         spacing: Padding.small
         currentIndex: -1
 
         delegate: StyledDelegateItem {
             width: listView.width
             required property var modelData
+            required property int index
 
-            title: modelData.name
+            title: modelData.title
             subtext: modelData.url
-            iconSource: modelData.icon
+            iconSource: modelData.favicon_local
             toggled: listView.currentIndex === index
             shape: MaterialShape.Shape.Clover4Leaf
 
@@ -57,7 +70,7 @@ StyledRect {
                 currentIndex++;
             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                 if (currentIndex >= 0) {
-                    FirefoxBookmarksService.openUrl(model.values[currentIndex].url);
+                    FirefoxBookmarksService.openUrl(filteredBookmarks.values[currentIndex].url);
                     root.dismiss();
                 }
             } else

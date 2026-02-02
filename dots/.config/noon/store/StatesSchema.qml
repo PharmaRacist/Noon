@@ -54,6 +54,8 @@ JsonAdapter {
         property JsonObject kdeconnect
         property JsonObject bookmarks
         property JsonObject ai
+        property JsonObject radio
+        property JsonObject rembg
         property JsonObject emojis
         property JsonObject nightLight
         property JsonObject ambientSounds
@@ -66,6 +68,12 @@ JsonAdapter {
                 property int output
                 property int total
             }
+        }
+        radio: JsonObject {
+            property string url: ""
+        }
+        rembg: JsonObject {
+            property bool initialized: false
         }
         power: JsonObject {
             property string controller: ""
@@ -111,14 +119,6 @@ JsonAdapter {
                 property int slnt: 100
                 property int opsz: 100
             }
-        }
-    }
-
-    property JsonObject beam: JsonObject {
-        property JsonObject appearance
-
-        appearance: JsonObject {
-            property int mode: 0
         }
     }
 

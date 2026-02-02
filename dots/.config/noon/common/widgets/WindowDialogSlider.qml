@@ -1,4 +1,3 @@
-pragma ComponentBehavior: Bound
 import qs.common
 import qs.common.widgets
 import qs.services

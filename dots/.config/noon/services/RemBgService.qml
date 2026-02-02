@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
@@ -28,7 +29,7 @@ Singleton {
     // --- Internal ---
     property string _inputPath: ""
     property string _outputPath: ""
-    property string _current_depth_path:""
+    property string _current_depth_path: ""
     // --- States ---
     property string state: "idle" // idle, running, success, error, aborted
 
@@ -68,9 +69,7 @@ Singleton {
     // --- Helper: build base command ---
     function _buildCommand(args) {
         const venvPath = FileUtils.trimFileProtocol(Directories.venv);
-        const scriptPath = FileUtils.trimFileProtocol(
-            Directories.scriptsDir + "/create_depth_image_rembg.py"
-        );
+        const scriptPath = FileUtils.trimFileProtocol(Directories.scriptsDir + "/create_depth_image_rembg.py");
 
         return ["uv", "--directory", venvPath, "run", scriptPath].concat(args);
     }
@@ -80,11 +79,7 @@ Singleton {
         const trimmedInput = FileUtils.trimFileProtocol(inputPath);
         const trimmedOutput = FileUtils.trimFileProtocol(outputPath);
 
-        const args = [
-            trimmedInput,
-            trimmedOutput,
-            "-m", opts?.model ?? model
-        ];
+        const args = [trimmedInput, trimmedOutput, "-m", opts?.model ?? model];
 
         if (opts?.alphaMatting ?? alphaMatting) {
             args.push("-a");
@@ -125,14 +120,10 @@ Singleton {
             root.state = "aborted";
         }
     }
-    function process_current_bg(){
+    function process_current_bg() {
         const inputPath = FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentBg);
-        const outputPath = FileUtils.trimFileProtocol(
-            Directories.wallpapers.depthDir +
-            Qt.md5(inputPath) +
-            ".png"
-        );
-        root._current_depth_path = outputPath
+        const outputPath = FileUtils.trimFileProtocol(Directories.wallpapers.depthDir + Qt.md5(inputPath) + ".png");
+        root._current_depth_path = outputPath;
         removeBackground(inputPath, outputPath);
     }
     function reset() {
@@ -141,30 +132,48 @@ Singleton {
         root._inputPath = "";
         root._outputPath = "";
     }
-
+    function setup() {
+        if (Mem.states.services.rembg.initialized) {
+            console.log("RemBG service is already initialized");
+            return;
+        }
+        console.log("Checking RemBG service");
+        setupProc.running = true;
+        setupProc.onExited.connect(exitCode => {
+            if (exitCode === 0) {
+                Mem.states.rembg.initialized = true;
+                console.log("RemBG service setup completed");
+            }
+        });
+    }
+    Process {
+        id: setupProc
+        command: ["kitty", "-e", "fish", "-c", `uv run ${Directories.scriptsDir}/create_depth_image_rembg.py`]
+        workingDirectory: FileUtils.trimFileProtocol(Directories.standard.state)
+    }
     // --- Preset Configurations ---
 
     // Fast mode: No alpha matting, fastest processing
     readonly property var presetFast: ({
-        "model": "isnet-general-use",
-        "alphaMatting": false
-    })
+            "model": "isnet-general-use",
+            "alphaMatting": false
+        })
 
     // Quality mode: Alpha matting enabled for better edges
     readonly property var presetQuality: ({
-        "model": "isnet-general-use",
-        "alphaMatting": true,
-        "foregroundThreshold": 240,
-        "backgroundThreshold": 10,
-        "erodeSize": 10
-    })
+            "model": "isnet-general-use",
+            "alphaMatting": true,
+            "foregroundThreshold": 240,
+            "backgroundThreshold": 10,
+            "erodeSize": 10
+        })
 
     // Fine detail mode: For images with complex edges (hair, fur)
     readonly property var presetFineDetail: ({
-        "model": "isnet-general-use",
-        "alphaMatting": true,
-        "foregroundThreshold": 240,
-        "backgroundThreshold": 10,
-        "erodeSize": 3  // Less erosion for finer details
-    })
+            "model": "isnet-general-use",
+            "alphaMatting": true,
+            "foregroundThreshold": 240,
+            "backgroundThreshold": 10,
+            "erodeSize": 3  // Less erosion for finer details
+        })
 }

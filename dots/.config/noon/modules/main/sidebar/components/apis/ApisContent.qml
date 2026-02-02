@@ -11,24 +11,76 @@ import qs.modules.main.sidebar.components.apis.translator
 
 Item {
     id: root
-    onFocusChanged: swipeView.currentItem.forceActiveFocus()
     signal expandRequested
-    property var tabButtonList: [...(Mem.options.policies.ai ? [
-                {
-                    "icon": "neurology",
-                    "name": qsTr(" AI ")
+
+    readonly property var tabButtonList: [
+        {
+            "icon": "neurology",
+            "enabled": Mem.options.policies.ai > 0,
+            "name": " AI ",
+            "component": "AiChat"
+        },
+        {
+            "icon": "rib_cage",
+            "enabled": Mem.options.policies.medicalDictionary > 0,
+            "name": "Medical",
+            "component": "medicalDictionary/MedicalDictionary"
+        },
+        {
+            "icon": "translate",
+            "enabled": Mem.options.policies.translator > 0,
+            "name": "Dicts",
+            "component": "translator/Translator"
+        }
+    ]
+
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 4
+
+        // Tab strip
+        Toolbar {
+            visible: tabBar.tabButtonList.length > 1
+            Layout.alignment: Qt.AlignHCenter
+            ToolbarTabBar {
+                id: tabBar
+                Layout.alignment: Qt.AlignHCenter
+                tabButtonList: root.tabButtonList.filter(item => item.enabled)
+                currentIndex: swipeView.currentIndex
+                onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
+            }
+        }
+
+        // Content pages
+        SwipeView {
+            id: swipeView
+
+            Layout.topMargin: Padding.large
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 10
+            currentIndex: Mem.states.sidebar.apis.selectedTab
+            onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
+            clip: true
+            layer.enabled: true
+            Repeater {
+                model: root.tabButtonList.filter(item => item.enabled).map(item => item.component)
+                delegate: Loader {
+                    required property var modelData
+                    asynchronous: true
+                    source: modelData + ".qml"
                 }
-            ] : []), ...(Mem.options.policies.medicalDictionary ? [
-                {
-                    "icon": "rib_cage",
-                    "name": qsTr("Medical")
+            }
+            layer.effect: OpacityMask {
+                maskSource: Rectangle {
+                    width: swipeView.width
+                    height: swipeView.height
+                    radius: Rounding.small
                 }
-            ] : []), ...(Mem.options.policies.translator ? [
-                {
-                    "icon": "translate",
-                    "name": qsTr("Dicts")
-                }
-            ] : []),]
+            }
+        }
+    }
+
     Keys.onPressed: event => {
         if (event.modifiers === Qt.ControlModifier) {
             switch (event.key) {
@@ -53,67 +105,6 @@ Item {
                 event.accepted = true;
                 break;
             }
-        }
-    }
-
-    ColumnLayout {
-        anchors.fill: parent
-        spacing: 4
-
-        // Tab strip
-        Toolbar {
-            visible: tabBar.tabButtonList.length > 1
-            Layout.alignment: Qt.AlignHCenter
-            ToolbarTabBar {
-                id: tabBar
-                Layout.alignment: Qt.AlignHCenter
-                tabButtonList: root.tabButtonList
-                currentIndex: swipeView.currentIndex
-                onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
-            }
-        }
-
-        // Content pages
-        SwipeView {
-            id: swipeView
-
-            Layout.topMargin: Padding.large
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 10
-            currentIndex: Mem.states.sidebar.apis.selectedTab
-            onCurrentIndexChanged: Mem.states.sidebar.apis.selectedTab = currentIndex
-            clip: true
-            layer.enabled: true
-            contentChildren: [...(Mem.options.policies.ai ? [aiChat.createObject()] : []), ...(Mem.options.policies.medicalDictionary ? [medical.createObject()] : []), ...(Mem.options.policies.translator ? [translator.createObject()] : [])]
-
-            layer.effect: OpacityMask {
-
-                maskSource: Rectangle {
-                    width: swipeView.width
-                    height: swipeView.height
-                    radius: Rounding.small
-                }
-            }
-        }
-
-        Component {
-            id: aiChat
-
-            AiChat {
-                onExpandRequested: root.expandRequested()
-            }
-        }
-        Component {
-            id: translator
-
-            Translator {}
-        }
-
-        Component {
-            id: medical
-
-            MedicalDictionary {}
         }
     }
 }

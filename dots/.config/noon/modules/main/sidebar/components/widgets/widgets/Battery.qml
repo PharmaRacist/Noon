@@ -35,12 +35,9 @@ IslandComponent {
                     weight: Font.Medium
                     pixelSize: Fonts.sizes.normal
                 }
-
             }
 
-            Spacer {
-            }
-
+            Spacer {}
         }
 
         StyledText {
@@ -51,7 +48,6 @@ IslandComponent {
                 family: Fonts.family.numbers
                 variableAxes: Fonts.variableAxes.longNumbers
             }
-
         }
         // This row is hidden when the battery is full.
 
@@ -100,11 +96,8 @@ IslandComponent {
             }
 
             Behavior on opacity {
-                FAnim {
-                }
-
+                Anim {}
             }
-
         }
 
         RowLayout {
@@ -146,13 +139,8 @@ IslandComponent {
             }
 
             Behavior on opacity {
-                FAnim {
-                }
-
+                Anim {}
             }
-
         }
-
     }
-
 }

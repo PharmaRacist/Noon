@@ -1,180 +1,32 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import qs.common
 import qs.common.widgets
-import qs.modules.main.bar.components
 import qs.services
-import qs.store
+import "../clockVariants"
 
-GridLayout {
+Loader {
     id: root
+    z: 999
 
-    property bool centerClock: Mem.states.desktop.clock.center
-    property bool verticalClock: Mem.options.desktop.clock.verticalMode ?? false
+    readonly property Component verticalVariant: VDesktopClock {}
+    readonly property Component normalVariant: DesktopClock {}
 
-    x: (parent.width - width) / 2
-    y: (parent.height - height) / 2
-    z: 9999
-    rowSpacing: -20
-    columns: 1
+    readonly property bool isCentered: Mem.states.desktop.clock.center
+    readonly property bool isVertical: Mem.options.desktop.clock.verticalMode
 
     anchors {
-        bottom: centerClock ? undefined : parent.bottom
-        left: centerClock ? undefined : parent.left
-        leftMargin: Mem.options.bar.behavior.position === "left" ? Mem.options.bar.appearance.width + Sizes.elevationMargin + Sizes.hyprland.gapsOut : Sizes.hyprland.gapsOut
+        centerIn: isCentered ? parent : undefined
+        left: isCentered ? undefined : parent.left
+        bottom: isCentered ? undefined : parent.bottom
+        leftMargin: (Mem.options.bar.behavior.position === "left" ? Mem.options.bar.appearance.width + Sizes.elevationMargin : 0) + Sizes.hyprland.gapsOut
         bottomMargin: Math.max(Sizes.elevationMargin, Sizes.hyprland.gapsOut) + (Mem.options.bar.behavior.position === "bottom" ? Mem.options.bar.appearance.height : 0)
     }
-
-    Loader {
-        Layout.row: verticalClock ? 0 : 2
-        Layout.fillWidth: true
-        sourceComponent: root.verticalClock ? verticalClockComponent : horizontalClockComponent
-    }
-
-    // Media indicator
-    MediaIndicator {
-        visible: !verticalClock && BeatsService._playing
-        Layout.row: verticalClock ? 1 : 0
-    }
-
-    // Date text - only visible in vertical mode
-    StyledText {
-        visible: root.verticalClock && !root.centerClock
-        Layout.row: 3
-        Layout.leftMargin: 3
-        font.family: Fonts.family.clock
-        font.variableAxes: Fonts.variableAxes.display
-        color: Colors.colOnBackground
-        font.pixelSize: 40 * Mem.states.desktop.clock.scale
-        opacity: 0.75
-        text: DateTimeService.date
-        renderType: Text.NativeRendering
-    }
-
-    Component {
-        id: verticalClockComponent
-
-        VerticalClockComponent {}
-    }
-
-    Component {
-        id: horizontalClockComponent
-
-        HorizontalClockComponent {}
-    }
-
     Behavior on anchors.leftMargin {
         Anim {}
     }
-
     Behavior on anchors.bottomMargin {
         Anim {}
     }
-
-    transitions: Transition {
-        Anim {
-            properties: "x,y"
-            easing.type: Easing.InOutQuad
-        }
-    }
-    // Clock loader
-
-    component VerticalClockComponent: Column {
-        spacing: -25
-
-        StyledText {
-            font.variableAxes: Fonts.variableAxes.display
-            font.pixelSize: 100 * Mem.states.desktop.clock.scale
-            color: Colors.colOnBackground
-            text: DateTimeService.cleanHour
-        }
-
-        StyledText {
-            font.pixelSize: 100 * Mem.states.desktop.clock.scale
-            font.variableAxes: Fonts.variableAxes.display
-            color: Colors.colOnBackground
-            text: DateTimeService.cleanMinute
-        }
-    }
-
-    component HorizontalClockComponent: ColumnLayout {
-        spacing: -18
-
-        StyledText {
-            id: clockText
-
-            font.family: Fonts.family.clock
-            font.variableAxes: Fonts.variableAxes.display
-            color: Colors.colOnBackground
-            font.pixelSize: 100 * Mem.states.desktop.clock.scale
-            text: DateTimeService.time
-        }
-
-        StyledText {
-            Layout.leftMargin: 3
-            font.family: Fonts.family.clock
-            font.variableAxes: Fonts.variableAxes.display
-            color: clockText.color
-            font.pixelSize: 40 * Mem.states.desktop.clock.scale
-            opacity: 0.75
-            text: DateTimeService.date
-            renderType: Text.NativeRendering
-        }
-    }
-
-    component MediaIndicator: RowLayout {
-        visible: opacity > 0.1
-        opacity: BeatsService.player ? 1 : 0
-        spacing: Padding.huge
-        Layout.leftMargin: 5
-        Layout.preferredHeight: 120
-
-        MusicCoverArt {
-            Layout.preferredHeight: 75
-            Layout.preferredWidth: 75
-        }
-
-        Column {
-            spacing: -Padding.verysmall
-
-            StyledText {
-                width: 340
-                font.weight: 600
-                font.pixelSize: 33
-                font.family: Fonts.family.clock
-                font.variableAxes: Fonts.variableAxes.display
-                color: Colors.colOnBackground
-                text: BeatsService.title
-                elide: Text.ElideRight
-                animateChange: true
-
-                MouseArea {
-                    id: titleMouse
-
-                    anchors.fill: parent
-                    onPressed: NoonUtils.callIpc("sidebar Beats")
-                    cursorShape: Qt.PointingHandCursor
-                }
-            }
-
-            StyledText {
-                font.weight: 500
-                color: Colors.colOnBackgroundSubtext
-                width: 200
-                font.family: Fonts.family.clock
-                font.variableAxes: Fonts.variableAxes.display
-                font.pixelSize: 20
-                text: BeatsService.artist
-                elide: Text.ElideRight
-                animateChange: true
-            }
-        }
-
-        Spacer {}
-
-        Behavior on opacity {
-            Anim {}
-        }
-    }
+    sourceComponent: isVertical ? verticalVariant : normalVariant
 }

@@ -7,7 +7,7 @@ import qs.common.widgets
 IslandComponent {
     id: root
 
-    property var currentDevice: BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices)[0]
+    readonly property var currentDevice: BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices)[0]
 
     ColumnLayout {
         id: columnLayout
@@ -15,13 +15,13 @@ IslandComponent {
         anchors.centerIn: parent
         spacing: Padding.small
 
-        Row {
+        RowLayout {
             id: header
-
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             spacing: Padding.normal
 
             Symbol {
-                anchors.verticalCenter: parent.verticalCenter
                 fill: 1
                 font.weight: Font.Medium
                 text: BluetoothService.filterConnectedDevices(BluetoothService.pairedDevices).length > 0 ? BluetoothService.getDeviceIcon(root.currentDevice) : "bluetooth"
@@ -30,10 +30,11 @@ IslandComponent {
             }
 
             StyledText {
-                anchors.verticalCenter: parent.verticalCenter
                 text: root.currentDevice?.name || "No Current Device"
                 color: Colors.m3.m3onSurfaceVariant
-
+                truncate: true
+                Layout.maximumWidth: 100
+                Layout.fillWidth: true
                 font {
                     weight: Font.Medium
                     pixelSize: Fonts.sizes.small
@@ -68,6 +69,7 @@ IslandComponent {
                     BluetoothService.getDeviceStatus(root.currentDevice);
                 }
                 color: Colors.m3.m3onSurfaceVariant
+                truncate: true
             }
         }
     }

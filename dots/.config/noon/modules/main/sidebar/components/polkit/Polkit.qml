@@ -1,30 +1,15 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import qs.services
 import qs.common
 import qs.common.widgets
 
 StyledRect {
     id: root
-    readonly property bool usePasswordChars: !PolkitService.flow?.responseVisible ?? true
-
-    signal searchFocusRequested
-
-    onSearchFocusRequested: {
-        Qt.callLater(() => inputField.forceActiveFocus());
-    }
-
     anchors.fill: parent
     color: Colors.colLayer1
     radius: Rounding.verylarge
-
-    Keys.onPressed: event => {
-        if (event.key === Qt.Key_Escape) {
-            PolkitService.cancel();
-        }
-    }
 
     function submit() {
         PolkitService.submit(inputField.text);
@@ -36,28 +21,20 @@ StyledRect {
             if (!PolkitService.interactionAvailable)
                 return;
             inputField.text = "";
-            Qt.callLater(() => inputField.forceActiveFocus());
+            inputField.focus = true;
         }
 
         function onFlowChanged() {
             if (PolkitService.flow !== null) {
-                Qt.callLater(() => {
-                    Qt.callLater(() => inputField.forceActiveFocus());
-                });
+                inputField.focus = true;
             }
-        }
-    }
-
-    Component.onCompleted: {
-        if (PolkitService.interactionAvailable) {
-            Qt.callLater(() => inputField.forceActiveFocus());
         }
     }
 
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: Padding.veryhuge
-        spacing: Padding.veryhuge
+        spacing: Padding.huge
 
         Spacer {}
 
@@ -72,48 +49,40 @@ StyledRect {
             id: titleText
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
-            text: qsTr("Authentication")
+            text: "Permission Request"
         }
 
         ColumnLayout {
             Layout.alignment: Qt.AlignHCenter
             Layout.margins: Padding.huge
-            spacing: Padding.normal
-
-            WindowDialogParagraph {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignLeft
-                text: {
-                    if (!PolkitService.flow)
-                        return "";
-                    return PolkitService.flow.message.endsWith(".") ? PolkitService.flow.message.slice(0, -1) : PolkitService.flow.message;
-                }
-            }
+            spacing: Padding.huge
 
             MaterialTextField {
                 id: inputField
                 Layout.fillWidth: true
                 focus: true
                 enabled: PolkitService.interactionAvailable
-                placeholderText: {
-                    const inputPrompt = PolkitService.flow?.inputPrompt.trim() ?? "";
-                    const cleanedInputPrompt = inputPrompt.endsWith(":") ? inputPrompt.slice(0, -1) : inputPrompt;
-                    return cleanedInputPrompt || (root.usePasswordChars ? qsTr("Password") : qsTr("Input"));
-                }
-                echoMode: root.usePasswordChars ? TextInput.Password : TextInput.Normal
+                placeholderText: PolkitService.flow?.inputPrompt.trim().slice(0, -1) || ""
+                echoMode: !PolkitService.flow?.responseVisible ? TextInput.Password : TextInput.Normal
                 onAccepted: root.submit()
-
-                onVisibleChanged: {
-                    if (visible && enabled) {
-                        Qt.callLater(() => forceActiveFocus());
-                    }
-                }
 
                 Keys.onPressed: event => {
                     if (event.key === Qt.Key_Escape) {
                         PolkitService.cancel();
                     }
                 }
+            }
+
+            StyledText {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignLeft
+                text: PolkitService?.flow?.message ?? ""
+                color: Colors.colOnSurfaceVariant
+                wrapMode: Text.Wrap
+
+                font.weight: 900
+                font.family: Fonts.family.monospace
+                font.pixelSize: Fonts.sizes.normal
             }
         }
 
@@ -124,12 +93,12 @@ StyledRect {
                 Layout.fillWidth: true
             }
             DialogButton {
-                buttonText: qsTr("Cancel")
+                buttonText: "Cancel"
                 onClicked: PolkitService.cancel()
             }
             DialogButton {
                 enabled: PolkitService.interactionAvailable
-                buttonText: qsTr("OK")
+                buttonText: "OK"
                 onClicked: root.submit()
             }
         }

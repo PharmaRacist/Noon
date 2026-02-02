@@ -4,6 +4,7 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 import qs.store
 import qs.common
+import qs.common.widgets
 import qs.common.utils
 
 import "components"
@@ -14,24 +15,15 @@ Scope {
     readonly property var settings: Mem.options.bar
     Variants {
         model: settings.behavior.showOnAll ? [MonitorsInfo.all] : [MonitorsInfo.main]
-        Loader {
+        StyledLoader {
             id: loader
             required property var modelData
-            asynchronous: true
             readonly property string mode: settings.layout
             readonly property bool vertical: mode.startsWith("V")
             readonly property string path: vertical ? "layouts/vertical/" : "layouts/horizontal/"
             source: `${path}${mode}.qml`
-
+            asynchronous: true
             onLoaded: item ? item.screen = modelData : null
-
-            Connections {
-                target: Mem.options.bar.behavior
-                function onPositionChanged() {
-                    loader.active = false;
-                    loader.active = true;
-                }
-            }
         }
     }
 }

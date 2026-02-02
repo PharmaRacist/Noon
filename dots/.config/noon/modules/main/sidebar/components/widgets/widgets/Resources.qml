@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import qs.services
@@ -35,19 +36,19 @@ IslandComponent {
                 spacing: Padding.normal
                 Item {
                     Layout.topMargin: 5
-                    implicitHeight: 64
-                    implicitWidth: 64
+                    implicitHeight: 56
+                    implicitWidth: 56
                     ClippedFilledCircularProgress {
                         anchors.centerIn: parent
                         value: modelData.percentage
-                        implicitSize: 64
+                        implicitSize: 56
                     }
                     Symbol {
                         anchors.centerIn: parent
                         fill: 1
                         text: modelData.iconName
                         font.pixelSize: 38
-                        color: Colors.m3.m3secondaryContainer
+                        color: Colors.colOnPrimary
                     }
                 }
                 StyledText {

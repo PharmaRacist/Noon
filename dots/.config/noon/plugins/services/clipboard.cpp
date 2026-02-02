@@ -1,4 +1,4 @@
-#include "clipboard.h"
+#include "clipboard.hpp"
 #include <QGuiApplication>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -263,7 +263,7 @@ void ClipboardService::storeImage(const QImage& image) {
     }
 }
 
-void ClipboardService::copy(int index) {
+void ClipboardService::copyByIndex(int index) {
     if (index < 0 || index >= m_fullEntries.size()) return;
 
     const Entry& entry = m_fullEntries[index];
@@ -279,6 +279,12 @@ void ClipboardService::copy(int index) {
     } else {
         m_clipboard->setText(entry.content);
     }
+}
+
+void ClipboardService::copy(const QString& text) {
+    m_ignoreNextChange = true;
+    m_lastClipboardHash.clear();
+    m_clipboard->setText(text, QClipboard::Clipboard);
 }
 
 void ClipboardService::deleteEntry(int index) {
@@ -330,11 +336,6 @@ QString ClipboardService::getImagePath(int index) const {
         return m_fullEntries[index].imagePath;
     }
     return "";
-}
-
-QString ClipboardService::getText(int index) const {
-    if (index < 0 || index >= m_fullEntries.size()) return "";
-    return m_fullEntries[index].content;
 }
 
 void ClipboardService::setMaxEntries(int max) {

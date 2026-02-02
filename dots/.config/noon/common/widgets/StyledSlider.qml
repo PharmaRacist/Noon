@@ -58,7 +58,7 @@ Slider {
     }
 
     Behavior on handleMargins {
-        FAnim {}
+        Anim {}
     }
 
     background: Item {
@@ -119,7 +119,7 @@ Slider {
         }
 
         Behavior on implicitWidth {
-            FAnim {}
+            Anim {}
         }
     }
 }

@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
@@ -6,7 +7,7 @@ import Quickshell
 import qs.services
 import qs.common
 import qs.common.widgets
-import "../components"
+import "../../components"
 
 StyledPanel {
     id: root

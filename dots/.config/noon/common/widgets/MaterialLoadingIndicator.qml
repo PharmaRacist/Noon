@@ -1,4 +1,3 @@
-pragma ComponentBehavior: Bound
 import QtQuick
 import qs.common
 import qs.common.functions
@@ -80,6 +79,6 @@ Rectangle {
         }
         color: root.shapeColor
 
-        FAnim {}
+        Anim {}
     }
 }

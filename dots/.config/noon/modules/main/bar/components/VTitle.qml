@@ -11,8 +11,8 @@ Item {
 
     readonly property string appId: MonitorsInfo.topLevel.appId ?? ""
     readonly property var titleSubstitutions: ({
-            "org.kde.dolphin": "File Manager",
-            "dev.zed.Zed": "Zed Editor",
+            "org.kde.dolphin": "Files",
+            "dev.zed.Zed": "Zed",
             "hyprland-share-picker": "Screen Share",
             "org.kde.kdeconnect.app": "KDE Connect",
             "kcm_bluetooth": "Bluetooth",
@@ -50,8 +50,8 @@ Item {
     }
 
     z: 999
-    height: Math.max(rotatedContainer.height, BarData.currentBarExclusiveSize * 4)
-    width: BarData.currentBarExclusiveSize
+    Layout.fillHeight: true
+    Layout.fillWidth: true
 
     MouseArea {
         id: eventArea

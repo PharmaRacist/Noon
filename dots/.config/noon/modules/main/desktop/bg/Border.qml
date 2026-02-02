@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Wayland
 import qs.common
 import qs.common.utils
 import qs.common.widgets
@@ -55,9 +56,7 @@ StyledPanel {
                     blurMax: 60
                     blurMultiplier: 1
                 }
-
             }
-
         }
 
         // Background with masked border effect
@@ -73,7 +72,6 @@ StyledPanel {
                 maskThresholdMin: 0.5
                 maskSpreadAtMin: 1
             }
-
         }
 
         // Mask layer (invisible, used for effect)
@@ -97,11 +95,8 @@ StyledPanel {
                     topMargin: Mem.options.bar.enabled && Mem.options.bar.behavior.position === "top" ? 0 : root.frameThickness
                     bottomMargin: Mem.options.bar.enabled && Mem.options.bar.behavior.position === "bottom" ? 0 : root.frameThickness
                 }
-
             }
-
         }
-
     }
     // Mask configuration for border effect
 
@@ -109,5 +104,4 @@ StyledPanel {
         item: container
         intersection: Intersection.Xor
     }
-
 }

@@ -1,3 +1,4 @@
+import Noon
 import QtQuick
 import QtQuick.Layouts
 import qs.common
@@ -9,286 +10,129 @@ StyledPopup {
 
     ColumnLayout {
         anchors.centerIn: parent
-        spacing: 8
+        spacing: 12
 
-        Row {
-            spacing: 6
+        StyledText {
+            text: "System Resources"
+            color: Colors.m3.m3onSurface
+            font.pixelSize: Fonts.sizes.large
+            font.weight: Font.Bold
+            Layout.bottomMargin: 8
+        }
 
-            Symbol {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "memory"
-                fill: 1
-                font.pixelSize: Fonts.sizes.large
-                color: Colors.m3.m3onSurfaceVariant
-            }
+        Repeater {
+            model: [
+                {
+                    label: "CPU Usage",
+                    value: `${ResourcesService.stats.cpu_percent.toFixed(1)}%`
+                },
+                {
+                    label: "CPU Temp",
+                    value: `${ResourcesService.stats.cpu_temp.toFixed(1)} °C`
+                },
+                {
+                    label: "CPU Clock",
+                    value: `${ResourcesService.stats.cpu_freq_ghz.toFixed(2)} GHz`
+                },
+                {
+                    label: "Memory",
+                    value: (() => {
+                            let used = ResourcesService.stats.mem_total - ResourcesService.stats.mem_available;
+                            let pct = (used / ResourcesService.stats.mem_total) * 100;
+                            return `${pct.toFixed(1)}% (${(used / 1073741824).toFixed(1)}G / ${(ResourcesService.stats.mem_total / 1073741824).toFixed(1)}G)`;
+                        })()
+                }
+            ]
 
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 0
+            delegate: RowLayout {
+                Layout.fillWidth: true
 
                 StyledText {
-                    text: qsTr("System Resources")
+                    text: modelData.label
                     color: Colors.m3.m3onSurfaceVariant
-                    font.pixelSize: Fonts.sizes.large
+                    font.pixelSize: Fonts.sizes.normal
                     font.weight: Font.Medium
                 }
 
+                StyledText {
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                    text: modelData.value
+                    color: Colors.m3.m3primary
+                    font.pixelSize: Fonts.sizes.normal
+                    font.weight: Font.DemiBold
+                }
             }
-
-        }
-
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-
-            Symbol {
-                text: "speed"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("CPU Usage:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                font.weight: Font.Medium
-                color: Colors.m3.m3onSurfaceVariant
-                text: `${ResourcesService.stats.cpu_percent.toFixed(1)}%`
-            }
-
-        }
-
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-
-            Symbol {
-                text: "device_thermostat"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("CPU Temp:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: `${ResourcesService.stats.cpu_temp.toFixed(1)} °C`
-            }
-
-        }
-
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-
-            Symbol {
-                text: "speed"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("CPU Clock:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: `${ResourcesService.stats.cpu_freq_ghz.toFixed(2)} GHz`
-            }
-
-        }
-
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-
-            Symbol {
-                text: "memory_alt"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Mem:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                property double memUsed: ResourcesService.stats.mem_total - ResourcesService.stats.mem_available
-                property double memPercent: (memUsed / ResourcesService.stats.mem_total) * 100
-
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: `${memPercent.toFixed(1)}% (${(memUsed / 1073741824).toFixed(1)} / ${(ResourcesService.stats.mem_total / 1073741824).toFixed(1)} GB)`
-            }
-
-        }
-
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-            visible: ResourcesService.stats.swap_total > 0
-
-            Symbol {
-                text: "sync_alt"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Swap:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                property double swapUsed: ResourcesService.stats.swap_total - ResourcesService.stats.swap_free
-                property double swapPercent: (swapUsed / ResourcesService.stats.swap_total) * 100
-
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: `${swapPercent.toFixed(1)}% (${(swapUsed / 1073741824).toFixed(1)} / ${(ResourcesService.stats.swap_total / 1073741824).toFixed(1)} GB)`
-            }
-
         }
 
         Repeater {
             model: ResourcesService.stats.gpus
-
-            Column {
-                spacing: 4
+            delegate: ColumnLayout {
                 Layout.fillWidth: true
+                spacing: 4
 
                 Rectangle {
-                    width: parent.width
+                    Layout.fillWidth: true
                     height: 1
                     color: Colors.m3.m3outlineVariant
-                    opacity: 0.5
+                    opacity: 0.2
+                    Layout.topMargin: 10
+                    Layout.bottomMargin: 4
                 }
 
                 StyledText {
-                    text: `GPU ${modelData.index}: ${modelData.name}`
+                    text: modelData.name.toUpperCase()
                     color: Colors.m3.m3onSurfaceVariant
-                    font.weight: Font.Medium
-                    font.pixelSize: Fonts.sizes.normal
+                    font.pixelSize: Fonts.sizes.small
+                    font.weight: Font.Black
+                    font.letterSpacing: 1.1
+                    opacity: 0.8
                 }
 
-                RowLayout {
-                    spacing: 5
-                    width: parent.width
-
-                    Symbol {
-                        text: "monitor_heart"
-                        color: Colors.m3.m3onSurfaceVariant
-                        font.pixelSize: Fonts.sizes.large
-                    }
-
-                    StyledText {
-                        text: qsTr("Utilization:")
-                        color: Colors.m3.m3onSurfaceVariant
-                    }
-
-                    StyledText {
+                Repeater {
+                    model: [
+                        {
+                            l: "Utilization",
+                            v: `${modelData.utilization.toFixed(1)}%`,
+                            vis: true
+                        },
+                        {
+                            l: "Temperature",
+                            v: `${modelData.temperature.toFixed(1)} °C`,
+                            vis: modelData.temperature > 0
+                        },
+                        {
+                            l: "VRAM",
+                            v: `${((modelData.memory_used / modelData.memory_total) * 100).toFixed(1)}%`,
+                            vis: modelData.memory_total > 1
+                        },
+                        {
+                            l: "Power",
+                            v: `${modelData.power_draw.toFixed(1)}W`,
+                            vis: modelData.power_draw > 0
+                        }
+                    ]
+                    delegate: RowLayout {
                         Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                        color: Colors.m3.m3onSurfaceVariant
-                        text: `${modelData.utilization.toFixed(1)}%`
-                    }
+                        visible: modelData.vis
 
+                        StyledText {
+                            text: modelData.l
+                            color: Colors.m3.m3onSurfaceVariant
+                            font.pixelSize: Fonts.sizes.small
+                            opacity: 0.7
+                        }
+                        StyledText {
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignRight
+                            text: modelData.v
+                            color: Colors.m3.m3onSurface
+                            font.pixelSize: Fonts.sizes.small
+                            font.weight: Font.Medium
+                        }
+                    }
                 }
-
-                RowLayout {
-                    spacing: 5
-                    width: parent.width
-                    visible: modelData.temperature > 0
-
-                    Symbol {
-                        text: "device_thermostat"
-                        color: Colors.m3.m3onSurfaceVariant
-                        font.pixelSize: Fonts.sizes.large
-                    }
-
-                    StyledText {
-                        text: qsTr("Temperature:")
-                        color: Colors.m3.m3onSurfaceVariant
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                        color: Colors.m3.m3onSurfaceVariant
-                        text: `${modelData.temperature.toFixed(1)} °C`
-                    }
-
-                }
-
-                RowLayout {
-                    spacing: 5
-                    width: parent.width
-                    visible: modelData.memory_total > 1
-
-                    Symbol {
-                        text: "memory"
-                        color: Colors.m3.m3onSurfaceVariant
-                        font.pixelSize: Fonts.sizes.large
-                    }
-
-                    StyledText {
-                        text: qsTr("VRAM:")
-                        color: Colors.m3.m3onSurfaceVariant
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                        color: Colors.m3.m3onSurfaceVariant
-                        text: `${((modelData.memory_used / modelData.memory_total) * 100).toFixed(1)}% (${modelData.memory_used.toFixed(0)} / ${modelData.memory_total.toFixed(0)} MB)`
-                    }
-
-                }
-
-                RowLayout {
-                    spacing: 5
-                    width: parent.width
-                    visible: modelData.power_draw > 0
-
-                    Symbol {
-                        text: "bolt"
-                        color: Colors.m3.m3onSurfaceVariant
-                        font.pixelSize: Fonts.sizes.large
-                    }
-
-                    StyledText {
-                        text: qsTr("Power:")
-                        color: Colors.m3.m3onSurfaceVariant
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignRight
-                        color: Colors.m3.m3onSurfaceVariant
-                        text: `${modelData.power_draw.toFixed(1)} / ${modelData.power_limit.toFixed(0)} W`
-                    }
-
-                }
-
             }
-
         }
-
     }
-
 }

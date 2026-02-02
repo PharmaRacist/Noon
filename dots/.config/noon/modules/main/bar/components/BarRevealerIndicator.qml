@@ -46,7 +46,7 @@ Item {
             id: icon
             fill: 1
             font.pixelSize: Math.round(root.width / 3)
-            color: Colors.colOnLayer1
+            color: Colors.colSecondary
             horizontalAlignment: Text.AlignHCenter
             Layout.alignment: Qt.AlignHCenter
         }
@@ -62,7 +62,7 @@ Item {
                 id: text
                 visible: parent.reveal
                 anchors.centerIn: parent
-                font.pixelSize: verticalMode ? Fonts.sizes.small : Fonts.sizes.normal
+                font.pixelSize: Fonts.sizes.verysmall
                 color: Colors.colOnLayer1
                 horizontalAlignment: Text.AlignHCenter
             }

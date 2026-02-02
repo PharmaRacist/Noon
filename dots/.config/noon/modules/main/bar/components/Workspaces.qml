@@ -188,7 +188,7 @@ BarGroup {
                 }
 
                 readonly property var windowToplevel: root.findToplevelForWindow(biggestWindow)
-                readonly property string appIconSource: NoonUtils.iconPath(AppSearch.guessIcon(biggestWindow?.class))
+                readonly property string appIconSource: biggestWindow?.class ? NoonUtils.iconPath(DesktopEntries?.byId(biggestWindow.class).icon) : ""
                 readonly property bool showNumber: Mem.options.bar.workspaces.alwaysShowNumbers || GlobalStates.superHeld || !biggestWindow
 
                 Layout.fillHeight: true
@@ -206,6 +206,7 @@ BarGroup {
                         fill: 1
                         opacity: button.showNumber ? 0.8 : 0
                         anchors.centerIn: parent
+                        anchors.verticalCenterOffset: button.currentMode === "custom" ? -2 : 0
                         font.family: WorkspaceLabelManager.getFontFamily(button.currentMode)
                         font.weight: WorkspaceLabelManager.getFontWeight(button.currentMode)
                         font.pixelSize: WorkspaceLabelManager.getFontPixelSize(button.currentMode, button.displayText)

@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import qs.common
 import qs.store
@@ -7,6 +6,6 @@ import qs.store
 Rectangle {
     color: Colors.colOutlineVariant
     implicitHeight: 1
-    implicitWidth: BarData.currentBarExclusiveSize * BarData.barPadding
+    implicitWidth: Layout.fillWidth
     Layout.margins: 4
 }

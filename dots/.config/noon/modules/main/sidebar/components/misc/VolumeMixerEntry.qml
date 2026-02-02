@@ -42,7 +42,6 @@ Item {
                         return media != undefined ? `${app} • ${media}` : app;
                     }
                 }
-
             }
 
             RowLayout {
@@ -72,11 +71,7 @@ Item {
                     value: root.node.audio.volume
                     onValueChanged: root.node.audio.volume = value
                 }
-
             }
-
         }
-
     }
-
 }

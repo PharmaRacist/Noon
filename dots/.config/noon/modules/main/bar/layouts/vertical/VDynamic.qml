@@ -78,7 +78,6 @@ StyledPanel {
 
             StyledRect {
                 id: bg
-
                 anchors.fill: parent
                 enableBorders: false
                 color: useBg ? Colors.colLayer0 : "transparent"
@@ -89,8 +88,8 @@ StyledPanel {
                         when: mode === 0
                         PropertyChanges {
                             target: bg
-                            anchors.rightMargin: pos === "right" ? elevation : 0
-                            anchors.leftMargin: pos === "left" ? elevation : 0
+                            anchors.rightMargin: pos === "right" ? elevation : -elevation
+                            anchors.leftMargin: pos === "left" ? elevation : -elevation
                             anchors.topMargin: Sizes.hyprland.gapsOut
                             anchors.bottomMargin: Sizes.hyprland.gapsOut
                             radius: Rounding.verylarge
@@ -136,18 +135,30 @@ StyledPanel {
                             target: c1
                             visible: true
                             corner: pos === "right" ? cornerEnum.topRight : cornerEnum.topLeft
+                        }
+                        AnchorChanges {
+                            target: c1
                             anchors.top: bg.top
                             anchors.left: pos === "right" ? undefined : bg.right
                             anchors.right: pos === "right" ? bg.left : undefined
+                        }
+                        PropertyChanges {
+                            target: c1
                             anchors.topMargin: Sizes.frameThickness
                         }
                         PropertyChanges {
                             target: c2
                             visible: true
                             corner: pos === "right" ? cornerEnum.bottomRight : cornerEnum.bottomLeft
+                        }
+                        AnchorChanges {
+                            target: c2
                             anchors.bottom: bg.bottom
                             anchors.left: pos === "right" ? undefined : bg.right
                             anchors.right: pos === "right" ? bg.left : undefined
+                        }
+                        PropertyChanges {
+                            target: c2
                             anchors.bottomMargin: Sizes.frameThickness
                         }
                     }
@@ -165,13 +176,11 @@ StyledPanel {
 
                 RoundCorner {
                     id: c1
-                    parent: bg
                     visible: false
                 }
 
                 RoundCorner {
                     id: c2
-                    parent: bg
                     visible: false
                 }
             }

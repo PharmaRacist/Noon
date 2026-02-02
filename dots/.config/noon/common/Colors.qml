@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
@@ -61,6 +62,7 @@ Singleton {
     readonly property color colInverseSurface: m3.m3inverseSurface
     readonly property color colInverseOnSurface: m3.m3inverseOnSurface
     readonly property color colTertiary: m3.m3tertiary
+    readonly property color colOnTertiary: m3.m3onTertiary
     readonly property color colTertiaryContainer: ColorUtils.transparentize(m3.m3tertiaryContainer, contentTransparency)
     readonly property color colTertiaryHover: ColorUtils.mix(colTertiary, colLayer1Hover, 0.85)
     readonly property color colTertiaryActive: ColorUtils.mix(colTertiary, colLayer1Active, 0.4)

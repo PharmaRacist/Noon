@@ -16,7 +16,8 @@ ProgressBar {
 
     property real valueBarWidth: 120
     property real valueBarHeight: 4
-    property real valueBarGap: 8
+    property real valueBarGap: 12 // 8
+    property color indicatorColor: Colors.colOnLayer0
     property color highlightColor: Colors.colPrimary ?? "#685496"
     property color trackColor: Colors.m3.m3secondaryContainer ?? "#F1D3F9"
     property bool sperm: false // If true, the progress bar will have a wavy fill effect
@@ -25,18 +26,15 @@ ProgressBar {
     property real spermFrequency: 6
     property real spermFps: 60
     property real rounding: Rounding.full
+    property bool showProgressIndicator: true
     property bool vertical: false // If true, progress bar grows vertically to the top
     property bool showDot: false // If true, a dot will be displayed at the end of the progress bar
     Behavior on spermAmplitudeMultiplier {
-        FAnim {
-        }
-
+        Anim {}
     }
 
     Behavior on value {
-        FAnim {
-        }
-
+        Anim {}
     }
 
     background: Rectangle {
@@ -130,16 +128,30 @@ ProgressBar {
                 repeat: root.sperm
                 onTriggered: wavyFill.requestPaint()
             }
-
         }
 
         Rectangle {
+            visible:root.showProgressIndicator
+            id: gapIndicator
+            z: 9999
+            radius: root.rounding
+            color: root.indicatorColor
+
+            implicitWidth: vertical ? root.width * 2.25 : 4
+            implicitHeight: vertical ? 4 : root.height * 2.25
+
+            anchors.centerIn: parent
+            anchors.horizontalCenterOffset: vertical ? 0 : (-parent.width / 2) + (root.visualPosition * parent.width) + (valueBarGap * 1.5)
+            anchors.verticalCenterOffset: !vertical ? 0 : (parent.height / 2) - (root.visualPosition * parent.height) - (valueBarGap * 1.5)
+        }
+        Rectangle {
+            id: remaining
             // Right remaining part fill (horizontal) / Top remaining part fill (vertical)
             radius: root.rounding
             color: root.trackColor
             visible: !vertical
             anchors.right: parent.right
-            width: (1 - root.visualPosition) * parent.width - valueBarGap
+            width: (1 - root.visualPosition) * parent.width - valueBarGap * 2
             height: parent.height
         }
 
@@ -156,7 +168,6 @@ ProgressBar {
                 right: parent.right
                 top: parent.top
             }
-
         }
 
         Rectangle {
@@ -173,7 +184,5 @@ ProgressBar {
             radius: root.rounding
             color: root.highlightColor
         }
-
     }
-
 }

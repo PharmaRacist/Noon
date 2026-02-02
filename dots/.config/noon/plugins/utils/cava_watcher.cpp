@@ -1,4 +1,4 @@
-#include "cava_watcher.h"
+#include "cava_watcher.hpp"
 #include <algorithm>
 #include <QUrl>
 

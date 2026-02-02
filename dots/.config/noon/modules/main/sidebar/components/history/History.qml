@@ -11,7 +11,7 @@ StyledRect {
     id: root
     visible: opacity > 0
     opacity: width > 320 ? 1 : 0
-    color: "transparent"
+    color: Colors.colLayer1
     radius: Rounding.verylarge
 
     property string searchQuery: ""
@@ -148,7 +148,7 @@ StyledRect {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        ClipboardService.copy(itemData.index);
+                        ClipboardService.copyByIndex(itemData.index);
                         NoonUtils.playSound("event_accepted");
                         root.dismiss();
                     }
@@ -171,7 +171,7 @@ StyledRect {
                 materialIcon: "content_paste"
 
                 releaseAction: () => {
-                    ClipboardService.copy(itemData.index);
+                    ClipboardService.copyByIndex(itemData.index);
                     NoonUtils.playSound("event_accepted");
                     root.dismiss();
                 }
@@ -195,7 +195,7 @@ StyledRect {
                 event.accepted = true;
             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                 if (currentIndex >= 0 && currentIndex < model.values.length) {
-                    ClipboardService.copy(model.values[currentIndex].index);
+                    ClipboardService.copyByIndex(model.values[currentIndex].index);
                     NoonUtils.playSound("event_accepted");
                     root.dismiss();
                 }

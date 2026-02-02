@@ -5,9 +5,7 @@ import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 
-/**
- * A progress bar with both ends rounded and text acts as clipping like OneUI 7's battery indicator.
- */
+
 ProgressBar {
     id: root
     property bool vertical: false
@@ -16,26 +14,16 @@ ProgressBar {
     property color highlightColor: Colors.colOnSecondaryContainer ?? "#685496"
     property color trackColor: ColorUtils.transparentize(highlightColor, 0.5) ?? "#F1D3F9"
     property alias radius: contentItem.radius
+    property bool showEndPoint: true
     property string text
-    default property Item textMask: Item {
-        width: valueBarWidth
-        height: valueBarHeight
-        StyledText {
-            anchors.centerIn: parent
-            font: root.font
-            text: root.text
-        }
-    }
-
-    text: Math.round(value * 100)
-    font {
-        pixelSize: 13
-        weight: text.length > 2 ? Font.Medium : Font.DemiBold
-    }
+    text: ""
 
     background: Item {
         implicitHeight: valueBarHeight
         implicitWidth: valueBarWidth
+    }
+    Behavior on value {
+        Anim {}
     }
 
     contentItem: Rectangle {
@@ -43,7 +31,6 @@ ProgressBar {
         anchors.fill: parent
         radius: 9999
         color: root.trackColor
-        visible: false
 
         Rectangle {
             id: progressFill
@@ -80,22 +67,18 @@ ProgressBar {
         }
     }
 
-    OpacityMask {
-        id: roundingMask
-        visible: false
-        anchors.fill: parent
-        source: contentItem
-        maskSource: Rectangle {
-            width: contentItem.width
-            height: contentItem.height
-            radius: contentItem.radius
+    StyledRect {
+        visible:root.showEndPoint
+        z: 9999
+        anchors {
+            top: parent.top
+            margins: Padding.normal
+            horizontalCenter: parent.horizontalCenter
         }
+        radius: 999
+        implicitWidth: parent.width / 4
+        implicitHeight: parent.width / 4
+        color: progressFill.height === contentItem.height ? Colors.colLayer3 : Colors.colPrimary
     }
 
-    OpacityMask {
-        anchors.fill: parent
-        source: roundingMask
-        invert: true
-        maskSource: root.textMask
-    }
 }

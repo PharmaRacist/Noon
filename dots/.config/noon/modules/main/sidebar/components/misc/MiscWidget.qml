@@ -15,22 +15,27 @@ StyledRect {
     property var tabButtonList: [
         {
             "icon": "discover_tune",
-            "name": qsTr("Mixer"),
+            "name": "Mixer",
             "component": "VolumeMixer"
         },
         {
             "icon": "relax",
-            "name": qsTr("Ambients"),
+            "name": "Ambients",
             "component": "AmbientSounds"
         },
         {
+            "icon": "radio",
+            "name": "Radio",
+            "component": "RadioWidget"
+        },
+        {
             "icon": "hourglass",
-            "name": qsTr("Pomo"),
+            "name": "Pomo",
             "component": "PomoWidget"
         },
         {
             "icon": "alarm",
-            "name": qsTr("Alarms"),
+            "name": "Alarms",
             "component": "AlarmWidget"
         }
     ]
@@ -68,11 +73,14 @@ StyledRect {
                     radius: Rounding.verylarge
                 }
             }
-
-            VolumeMixer {}
-            AmbientSounds {}
-            PomoWidget {}
-            AlarmWidget {}
+            Repeater {
+                model: tabButtonList.map(item => item.component)
+                Loader {
+                    required property var modelData
+                    source: modelData + ".qml"
+                    asynchronous: true
+                }
+            }
             Keys.onPressed: event => {
                 if (event.modifiers === Qt.ControlModifier) {
                     if (event.key === Qt.Key_PageDown) {

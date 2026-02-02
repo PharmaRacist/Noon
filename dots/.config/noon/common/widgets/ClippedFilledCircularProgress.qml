@@ -11,7 +11,7 @@ Item {
     property int lineWidth: 2
     property real value: 0
     property color colSecondary: colors.colSecondaryContainer
-    property color colPrimary: colors.colSecondary
+    property color colPrimary: colors.colPrimary
     property real gapAngle: 360 / 18
     property bool fill: true
     property int fillOverflow: 2

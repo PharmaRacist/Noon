@@ -36,21 +36,21 @@ Text {
             alwaysRunToEnd: true
 
             ParallelAnimation {
-                FAnim {
+                Anim {
                     target: root
                     property: "x"
                     to: textAnimationBehavior.originalX - root.animationDistanceX
                     easing.type: Easing.InSine
                 }
 
-                FAnim {
+                Anim {
                     target: root
                     property: "y"
                     to: textAnimationBehavior.originalY - root.animationDistanceY
                     easing.type: Easing.InSine
                 }
 
-                FAnim {
+                Anim {
                     target: root
                     property: "opacity"
                     to: 0
@@ -74,21 +74,21 @@ Text {
             }
 
             ParallelAnimation {
-                FAnim {
+                Anim {
                     target: root
                     property: "x"
                     to: textAnimationBehavior.originalX
                     easing.type: Easing.OutSine
                 }
 
-                FAnim {
+                Anim {
                     target: root
                     property: "y"
                     to: textAnimationBehavior.originalY
                     easing.type: Easing.OutSine
                 }
 
-                FAnim {
+                Anim {
                     target: root
                     property: "opacity"
                     to: 1

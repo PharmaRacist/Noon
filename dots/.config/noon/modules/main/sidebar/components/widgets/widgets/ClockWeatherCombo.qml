@@ -6,7 +6,7 @@ import qs.common
 import qs.common.widgets
 
 IslandComponent {
-    id:root
+    id: root
     SwipeView {
         id: view
         orientation: Qt.Horizontal
@@ -45,12 +45,12 @@ IslandComponent {
                 anchors.fill: parent
                 anchors.margins: Padding.massive
                 columns: root.expanded ? 3 : 1
-                rows:  2
+                rows: 2
                 MaterialShapeWrappedMaterialSymbol {
                     Layout.topMargin: 5
                     Layout.leftMargin: root.expanded ? Padding.massive : 0
-                    Layout.fillWidth:!root.expanded
-                    Layout.alignment:Qt.AlignVCenter
+                    Layout.fillWidth: !root.expanded
+                    Layout.alignment: Qt.AlignVCenter
                     shape: MaterialShape.Shape.Cookie6Sided
                     color: Colors.colSecondary
                     padding: Padding.massive
@@ -96,7 +96,7 @@ IslandComponent {
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.margins: 4
-        anchors.rightMargin: 8
+        anchors.margins: Padding.huge
+        anchors.rightMargin: Padding.huge
     }
 }

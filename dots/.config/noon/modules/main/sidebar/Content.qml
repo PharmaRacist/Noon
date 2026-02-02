@@ -15,6 +15,7 @@ import "components/tasks"
 import "components/view"
 import "components/wallpapers"
 import "components/web"
+import "components/lock"
 import "components/widgets"
 import qs.common
 import qs.common.widgets

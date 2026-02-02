@@ -107,7 +107,7 @@ StyledRect {
 
                 StyledText {
                     text: modelData.name
-                    font.pixelSize: 12
+                    font.pixelSize: Fonts.sizes.small
                     color: Colors.colOnLayer2
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter

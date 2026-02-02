@@ -5,6 +5,7 @@ import qs.common
 import qs.common.functions
 import qs.common.utils
 pragma Singleton
+pragma ComponentBehavior: Bound
 
 Singleton {
     // Replace the startRecording() function with this corrected version:

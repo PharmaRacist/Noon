@@ -47,16 +47,16 @@ Rectangle { // Window
         target: parent
     }
     Behavior on x {
-        FAnim {}
+        Anim {}
     }
     Behavior on y {
-        FAnim {}
+        Anim {}
     }
     Behavior on width {
-        FAnim {}
+        Anim {}
     }
     Behavior on height {
-        FAnim {}
+        Anim {}
     }
     clip: true
 

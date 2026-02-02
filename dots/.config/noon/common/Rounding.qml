@@ -1,18 +1,19 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
-pragma Singleton
 
 Singleton {
     property real scale: Mem.options.appearance.rounding.scale
-    property int tiny: 2 * scale
-    property int verysmall: 4 * scale
-    property int small: 6 * scale
-    property int normal: 8 * scale
-    property int large: 10 * scale
-    property int verylarge: 16 * scale
-    property int huge: 18 * scale
-    property int massive: 24 * scale
+    property int tiny: 6 * scale
+    property int verysmall: 8 * scale
+    property int small: 10 * scale
+    property int normal: 12 * scale
+    property int large: 16 * scale
+    property int verylarge: 18 * scale
+    property int huge: 20 * scale
+    property int massive: 26 * scale
     property int full: 999
 
     onScaleChanged: NoonUtils.setHyprKey("rounding", verylarge)

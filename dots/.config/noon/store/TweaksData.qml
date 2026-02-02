@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
@@ -488,13 +489,6 @@ Singleton {
             "shell": "Main",
             "items": [
                 {
-                    "icon": "palette",
-                    "name": "Mode",
-                    "state": true,
-                    "type": "spin",
-                    "key": "beam.appearance.mode"
-                },
-                {
                     "icon": "clear_all",
                     "name": "Clear Chat on Search",
                     "key": "beam.behavior.clearAiChatBeforeSearch"
@@ -503,11 +497,6 @@ Singleton {
                     "icon": "arrow_upward_alt",
                     "name": "Scroll to Reveal",
                     "key": "beam.behavior.scrollToReveal"
-                },
-                {
-                    "icon": "height",
-                    "name": "Hover to Reveal",
-                    "key": "beam.behavior.hoverToReveal"
                 },
                 {
                     "icon": "height",
@@ -768,5 +757,4 @@ Singleton {
             ]
         }
     ]
-
 }

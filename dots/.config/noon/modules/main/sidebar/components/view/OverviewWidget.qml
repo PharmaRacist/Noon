@@ -312,10 +312,10 @@ Item {
             border.width: 2
             border.color: root.activeBorderColor
             Behavior on x {
-                FAnim {}
+                Anim {}
             }
             Behavior on y {
-                FAnim {}
+                Anim {}
             }
         }
     }

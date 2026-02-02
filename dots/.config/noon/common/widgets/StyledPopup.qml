@@ -15,9 +15,10 @@ LazyLoader {
     default property Item contentItem
     property real popupBackgroundMargin: 0
     property int contentMargins: 40
+    property bool extraVisibilityCondition: true
     // unified bar position property
     readonly property string barPosition: Mem.options.bar.behavior.position
-    active: hoverTarget && hoverTarget.containsMouse
+    active: hoverTarget && hoverTarget.containsMouse && extraVisibilityCondition
     property bool focus: false
     component: StyledPanel {
         id: popupWindow

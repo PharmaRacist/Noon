@@ -102,7 +102,7 @@ StyledPopup {
             }
 
             Behavior on opacity {
-                FAnim {
+                Anim {
                 }
 
             }
@@ -148,7 +148,7 @@ StyledPopup {
             }
 
             Behavior on opacity {
-                FAnim {
+                Anim {
                 }
 
             }

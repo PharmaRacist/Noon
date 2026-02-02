@@ -210,7 +210,6 @@ JsonAdapter {
     property JsonObject beam: JsonObject {
         property JsonObject behavior: JsonObject {
             property bool scrollToReveal: true
-            property bool hoverToReveal: false
             property bool revealOnEmpty: false
             property bool clearAiChatBeforeSearch: false
         }
@@ -220,12 +219,9 @@ JsonAdapter {
         property JsonObject content
         property JsonObject behavior
         property JsonObject appearance
-        property JsonObject web
         property JsonObject shelf
         property bool pinned: false
-        web: JsonObject {
-            property string landingUrl: "https:www.google.com"
-        }
+
         shelf: JsonObject {
             property int previewDelay: 250
         }
@@ -267,7 +263,7 @@ JsonAdapter {
 
     property JsonObject osd: JsonObject {
         property int timeout: 3000
-        property bool enabled: false
+        property bool enabled: true
     }
 
     property JsonObject osk: JsonObject {
@@ -314,6 +310,7 @@ JsonAdapter {
         property JsonObject icons
         property JsonObject hyprland
         property JsonObject behavior
+        property JsonObject widgets
 
         property bool desktopClock: true
         property int screenCorners: 1
@@ -321,6 +318,10 @@ JsonAdapter {
 
         shell: JsonObject {
             property string mode: ""
+        }
+        widgets: JsonObject {
+            property bool enabled: true
+            property string mode: "col"
         }
         osd: JsonObject {
             property string mode: "bottom_pill"
@@ -396,7 +397,7 @@ JsonAdapter {
         property string layout: "VDynamic"
 
         property list<string> vMap: ["materialStatusIcons", "battery", "weather", "separator", "sysTray", "spacer", "media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
-        property list<string> hMap: ["power", "separator", "title", "spacer", "resources", "separator", "media", "separator", "workspaces", "separator", "clock", "separator", "utilButtons", "separator", "battery", "spacer", "sysTray", "weather", "materialStatusIcons"]
+        property list<string> hMap: ["power", "separator", "title", "resources", "separator", "media", "separator", "workspaces", "separator", "clock", "separator", "utilButtons", "separator", "battery", "spacer", "sysTray", "weather", "materialStatusIcons"]
         property list<string> bars: ["Dynamic", "HyDe", "NovelKnocks", "Sleek", "VDynamic"]
 
         appearance: JsonObject {

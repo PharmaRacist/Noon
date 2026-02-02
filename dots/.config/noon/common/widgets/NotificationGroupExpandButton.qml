@@ -50,7 +50,7 @@ RippleButton {
                 rotation: expanded ? 180 : 0
 
                 Behavior on rotation {
-                    FAnim {
+                    Anim {
                     }
 
                 }

@@ -26,9 +26,16 @@ thumbnail_size_map = {
 }
 
 factory = None
+current_size = "normal"
 logger.remove()
 logger.add(sys.stdout, level="INFO")
 logger.add("/tmp/thumbnails_service.log", level="DEBUG", rotation="100 MB")
+
+
+def init_worker(size: str) -> None:
+    """Initialize the factory in each worker process."""
+    global factory
+    factory = GnomeDesktop.DesktopThumbnailFactory.new(thumbnail_size_map[size])
 
 
 def make_thumbnail(fpath: str) -> bool:
@@ -64,6 +71,7 @@ def thumbnail_folder(
     workers: int,
     only_images: bool,
     recursive: bool,
+    size: str,
     machine_progress: bool = False,
 ) -> None:
     all_files = get_all_files(dir_path=dir_path, recursive=recursive)
@@ -73,13 +81,13 @@ def thumbnail_folder(
     if machine_progress:
         completed = 0
         total = len(all_files)
-        with Pool(processes=workers) as p:
+        with Pool(processes=workers, initializer=init_worker, initargs=(size,)) as p:
             for result in p.imap(make_thumbnail, all_files):
                 completed += 1
                 print(f"PROGRESS {completed}/{total} FILE {all_files[completed - 1]}")
                 sys.stdout.flush()
     else:
-        with Pool(processes=workers) as p:
+        with Pool(processes=workers, initializer=init_worker, initargs=(size,)) as p:
             list(tqdm(p.imap(make_thumbnail, all_files), total=len(all_files)))
 
 
@@ -120,7 +128,13 @@ def get_all_files(*, dir_path: Path, recursive: bool) -> List[Path]:
     type=click.Choice(["normal", "large", "x-large", "xx-large"]),
     help="Thumbnail size: normal, large, x-large, xx-large",
 )
-@click.option("-w", "--workers", default=1, help="no of cpus to use for processing")
+@click.option(
+    "-w",
+    "--workers",
+    default=None,
+    type=int,
+    help="no of cpus to use for processing (default: all available cores)",
+)
 @click.option(
     "-i",
     "--only_images",
@@ -144,20 +158,19 @@ def get_all_files(*, dir_path: Path, recursive: bool) -> List[Path]:
 def main(
     img_dirs: str,
     size: str,
-    workers: str,
+    workers: int,
     only_images: bool,
     recursive: bool,
     machine_progress: bool,
 ) -> None:
     img_dirs = [Path(img_dir) for img_dir in img_dirs.split()]
-    global factory
-    factory = GnomeDesktop.DesktopThumbnailFactory.new(thumbnail_size_map[size])
     for img_dir in img_dirs:
         thumbnail_folder(
             dir_path=img_dir,
             workers=workers,
             only_images=only_images,
             recursive=recursive,
+            size=size,
             machine_progress=machine_progress,
         )
     print("Thumbnail Generation Completed!")

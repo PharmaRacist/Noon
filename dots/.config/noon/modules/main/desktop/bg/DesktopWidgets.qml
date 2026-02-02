@@ -12,7 +12,7 @@ StyledRect {
     id: root
     color: "transparent"
 
-    readonly property string widgetsPath: "./../../sidebar/components/widgets/widgets/"
+    readonly property string widgetsPath: "../../sidebar/components/widgets/widgets/"
     readonly property var mem: Mem.states.sidebar.widgets
     readonly property var desktop: mem.desktop
     readonly property var widgetObjects: desktop.map(widgetId => {
@@ -25,23 +25,19 @@ StyledRect {
         };
     })
 
-    anchors {
-        top: parent.top
-        right: parent.right
-        bottom: parent.bottom
-    }
     implicitWidth: 450
-    z: 9999
+    z: 999
 
     RowLayout {
         anchors.fill: parent
         anchors.margins: Padding.massive
+
         Spacer {}
 
         Flow {
             Layout.preferredWidth: 375
             Layout.fillHeight: true
-            layoutDirection: Flow.TopToBottom
+            layoutDirection: rightMode ? Flow.TopToBottom : Flow.BottomToTop
             spacing: Padding.huge
 
             Repeater {
@@ -51,13 +47,15 @@ StyledRect {
                     asynchronous: true
                     source: root.widgetsPath + modelData.component + ".qml"
                     width: modelData.expanded ? parent.width : 180
-                    onLoaded: if (item) {
+                    onLoaded: if (item && modelData) {
                         if ("expanded" in item) {
-                            item.expanded = Qt.binding(() => modelData.expanded);
+                            item.expanded = Qt.binding(() => modelData?.expanded ?? false);
                         }
                         if ("pill" in item) {
-                            item.pill = Qt.binding(() => modelData.pilled);
+                            item.pill = Qt.binding(() => modelData?.pilled ?? false);
                         }
+                        if (!item.pill)
+                            item.radius = 1.25 * Rounding.massive;
                     }
                 }
             }

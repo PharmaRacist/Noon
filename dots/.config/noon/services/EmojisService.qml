@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import qs.common
 import qs.store
 import qs.common.utils

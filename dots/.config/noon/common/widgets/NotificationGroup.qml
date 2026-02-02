@@ -126,7 +126,7 @@ Item { // Notification group area
 
         Behavior on implicitHeight {
             id: implicitHeightAnim
-            FAnim {}
+            Anim {}
         }
 
         RowLayout { // Left column for icon, right column for content
@@ -152,7 +152,7 @@ Item { // Notification group area
                 spacing: expanded ? (root.multipleNotifications ? (notificationGroup?.notifications[root.notificationCount - 1].image != "") ? 35 : 5 : 0) : 0
                 // spacing: 00
                 Behavior on spacing {
-                    FAnim {}
+                    Anim {}
                 }
 
                 Item { // App name (or summary when there's only 1 notif) and time
@@ -208,7 +208,7 @@ Item { // Notification group area
                     // clip: true
                     interactive: false
                     Behavior on spacing {
-                        FAnim {}
+                        Anim {}
                     }
                     model: ScriptModel {
                         values: root.expanded ? root.notifications.slice().reverse() : root.notifications.slice().reverse().slice(0, 2)

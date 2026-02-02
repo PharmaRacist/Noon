@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
@@ -19,7 +20,7 @@ Singleton {
         "materialStatusIcons": "StatusIcons",
         "sysTray": "SysTray",
         "utilButtons": "UtilButtons",
-        "title": "CombinedTitle",
+        "title": "VTitle",
         "resources": "Resources",
         "circBattery": "MinimalBattery",
         "weather": "WeatherIndicator",

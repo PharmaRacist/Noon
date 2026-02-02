@@ -8,9 +8,6 @@ find_package(
     Gui
     Qml
     Quick
-    WebEngineCore
-    WebEngineQuick
-    WebView
     Sql
 )
 qt_standard_project_setup(REQUIRES 6.5)

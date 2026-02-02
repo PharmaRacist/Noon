@@ -9,181 +9,84 @@ StyledPopup {
 
     ColumnLayout {
         id: columnLayout
-
         anchors.centerIn: parent
-        spacing: 8
+        width: parent.width * 0.9
+        spacing: 12
 
-        Row {
-            spacing: 6
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 2
 
-            Symbol {
-                anchors.verticalCenter: parent.verticalCenter
-                text: WeatherService.weatherData.currentEmoji
-                fill: 1
+            StyledText {
+                text: WeatherService.currentCity
+                color: Colors.m3.m3onSurface
                 font.pixelSize: Fonts.sizes.large
+                font.weight: Font.Bold
+            }
+
+            StyledText {
+                text: WeatherService.weatherData.currentCondition
                 color: Colors.m3.m3onSurfaceVariant
+                font.pixelSize: Fonts.sizes.small
+                opacity: 0.7
             }
-
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 0
-
-                StyledText {
-                    text: WeatherService.currentCity
-                    color: Colors.m3.m3onSurfaceVariant
-
-                    font {
-                        weight: Font.Medium
-                        pixelSize: Fonts.sizes.normal
-                    }
-
-                }
-
-                StyledText {
-                    text: WeatherService.weatherData.currentCondition
-                    color: Colors.m3.m3onSurfaceVariant
-                    opacity: 0.8
-
-                    font {
-                        pixelSize: Fonts.sizes.small
-                    }
-
-                }
-
-            }
-
         }
 
-        // Current Temperature
         RowLayout {
-            spacing: 5
             Layout.fillWidth: true
 
-            Symbol {
-                text: "thermostat"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
             StyledText {
-                text: qsTr("Temperature:")
+                text: "Temperature"
                 color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: WeatherService.weatherData.currentTemp
+                font.pixelSize: Fonts.sizes.normal
                 font.weight: Font.Medium
             }
 
-        }
-
-        // Feels Like
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-            visible: WeatherService.weatherData.feelsLike !== ""
-
-            Symbol {
-                text: "sentiment_satisfied"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Feels like:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
             StyledText {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: WeatherService.weatherData.feelsLike
+                text: WeatherService.weatherData.currentTemp
+                color: Colors.m3.m3primary
+                font.pixelSize: Fonts.sizes.normal
+                font.weight: Font.DemiBold
             }
-
         }
 
-        // Humidity
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-            visible: WeatherService.weatherData.humidity !== ""
+        Rectangle {
+            Layout.fillWidth: true; height: 1
+            color: Colors.m3.m3outlineVariant; opacity: 0.2
+            Layout.topMargin: 4
+            Layout.bottomMargin: 4
+        }
 
-            Symbol {
-                text: "water_drop"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
+        Repeater {
+            model: [
+                { label: "Feels like", value: WeatherService.weatherData.feelsLike },
+                { label: "Humidity",   value: WeatherService.weatherData.humidity },
+                { label: "Wind",       value: WeatherService.weatherData.windSpeed },
+                { label: "Visibility", value: WeatherService.weatherData.visibility }
+            ]
 
-            StyledText {
-                text: qsTr("Humidity:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
+            delegate: RowLayout {
                 Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: WeatherService.weatherData.humidity
-            }
+                visible: modelData.value !== ""
 
+                StyledText {
+                    text: modelData.label
+                    color: Colors.m3.m3onSurfaceVariant
+                    font.pixelSize: Fonts.sizes.small
+                    opacity: 0.7
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                    text: modelData.value
+                    color: Colors.m3.m3onSurface
+                    font.pixelSize: Fonts.sizes.small
+                    font.weight: Font.Medium
+                }
+            }
         }
-
-        // Wind Speed
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-            visible: WeatherService.weatherData.windSpeed !== ""
-
-            Symbol {
-                text: "air"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Wind:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: WeatherService.weatherData.windSpeed
-            }
-
-        }
-
-        // Visibility
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-            visible: WeatherService.weatherData.visibility !== ""
-
-            Symbol {
-                text: "visibility"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Visibility:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: WeatherService.weatherData.visibility
-            }
-
-        }
-
     }
-
 }

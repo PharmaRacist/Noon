@@ -10,11 +10,7 @@ import Quickshell
 Item {
     id: root
 
-    anchors {
-        fill: parent
-        rightMargin: Padding.normal
-        leftMargin: Padding.normal
-    }
+    anchors.fill: parent
 
     property bool active: false
     property string mode: "filled"

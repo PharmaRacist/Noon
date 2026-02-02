@@ -14,156 +14,62 @@ StyledPopup {
         implicitWidth: 350
 
         // Header
-        Row {
-            spacing: 6
-
-            Symbol {
-                anchors.verticalCenter: parent.verticalCenter
-                fill: 0
-                font.weight: Font.Medium
-                text: NetworkService.materialSymbol
-                font.pixelSize: Fonts.sizes.large
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Network"
-                color: Colors.m3.m3onSurfaceVariant
-                font.weight: Font.Medium
-                font.pixelSize: Fonts.sizes.large
-            }
-
+        StyledText {
+            text: qsTr("Network")
+            color: Colors.m3.m3onSurfaceVariant
+            font.weight: Font.Medium
+            font.pixelSize: Fonts.sizes.large
+            Layout.bottomMargin: 4
         }
 
-        // Connection Type
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
+        // Data List
+        Repeater {
+            model: [
+                {
+                    label: qsTr("Connection:"),
+                    value: NetworkService.ethernet ? "Ethernet" : NetworkService.wifi ? "Wi-Fi" : "Disconnected",
+                    show: true
+                },
+                {
+                    label: qsTr("Network:"),
+                    value: NetworkService.networkName,
+                    show: NetworkService.networkName.length > 0
+                },
+                {
+                    label: qsTr("Signal:"),
+                    value: NetworkService.networkStrengthText,
+                    show: NetworkService.wifi && NetworkService.networkStrength > 0
+                },
+                {
+                    label: qsTr("Download:"),
+                    value: NetworkService.downloadSpeedText,
+                    show: true
+                },
+                {
+                    label: qsTr("Upload:"),
+                    value: NetworkService.uploadSpeedText,
+                    show: true
+                }
+            ]
 
-            Symbol {
-                text: NetworkService.ethernet ? "lan" : "wifi"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Connection:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
+            delegate: RowLayout {
+                spacing: 5
                 Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.ethernet ? "Ethernet" : NetworkService.wifi ? "Wi-Fi" : "Disconnected"
-            }
+                visible: modelData.show
 
+                StyledText {
+                    text: modelData.label
+                    color: Colors.m3.m3onSurfaceVariant
+                }
+
+                StyledText {
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                    color: Colors.m3.m3onSurfaceVariant
+                    text: modelData.value
+                    elide: Text.ElideRight
+                }
+            }
         }
-
-        // Network Name
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-            visible: NetworkService.networkName.length > 0
-
-            Symbol {
-                text: "router"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Network:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.networkName
-                elide: Text.ElideRight
-            }
-
-        }
-
-        // Signal Strength (Wi-Fi only)
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-            visible: NetworkService.wifi && NetworkService.networkStrength > 0
-
-            Symbol {
-                text: "signal_cellular_alt"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Signal:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.networkStrengthText
-            }
-
-        }
-
-        // Download Speed
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-
-            Symbol {
-                text: "download"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Download:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.downloadSpeedText
-            }
-
-        }
-
-        // Upload Speed
-        RowLayout {
-            spacing: 5
-            Layout.fillWidth: true
-
-            Symbol {
-                text: "upload"
-                color: Colors.m3.m3onSurfaceVariant
-                font.pixelSize: Fonts.sizes.large
-            }
-
-            StyledText {
-                text: qsTr("Upload:")
-                color: Colors.m3.m3onSurfaceVariant
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignRight
-                color: Colors.m3.m3onSurfaceVariant
-                text: NetworkService.uploadSpeedText
-            }
-
-        }
-
     }
-
 }

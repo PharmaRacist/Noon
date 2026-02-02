@@ -20,7 +20,7 @@ Item {
         Symbol {
             fill: 1
             anchors.centerIn: parent
-            font.pixelSize: progress.implicitSize * BarData.barPadding
+            font.pixelSize: progress.implicitSize
             text: BeatsService?.isPlaying ? "pause" : "music_note"
             color: Colors.m3.m3onSecondaryContainer
         }

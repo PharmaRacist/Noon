@@ -1,4 +1,5 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
@@ -13,8 +14,8 @@ Singleton {
     readonly property real elevationValue: Padding.verylarge
     readonly property real frameThickness: Mem.options.desktop.bg.borderMultiplier * (hyprland.gapsOut - Padding.normal)
     readonly property real elevationMargin: Math.round(frameThickness + elevationValue)
-    readonly property size beamSize: Qt.size(450, 60)
-    readonly property size beamSizeExpanded: Qt.size(800, 100)
+    readonly property size beamSize: Qt.size(540, 65)
+    readonly property size beamSizeExpanded: Qt.size(1000, 100)
     readonly property size gameLauncherItemSize: Qt.size(225, 360)
     property QtObject hyprland
     property QtObject sidebar
@@ -64,11 +65,11 @@ Singleton {
     }
 
     hyprland: QtObject {
-        property real borders: HyprlandParserService.get("borders") || 0
-        property real gapsOut: HyprlandParserService.get("gaps_out") || 0
-        property real gapsIn: HyprlandParserService.get("gaps_in") || 0
-        property real blurSize: HyprlandParserService.get("blur_size") || 0
-        property real blurPasses: HyprlandParserService.get("blur_passes") || 0
-        property real shadowsRange: HyprlandParserService.get("shadows_range") || 0
+        property real borders: HyprlandParserService.variables.borders
+        property real gapsOut: HyprlandParserService.variables.gaps_out
+        property real gapsIn: HyprlandParserService.variables.gaps_in
+        property real blurSize: HyprlandParserService.variables.blur_size
+        property real blurPasses: HyprlandParserService.variables.blur_passes
+        property real shadowsRange: HyprlandParserService.variables.shadows_range
     }
 }

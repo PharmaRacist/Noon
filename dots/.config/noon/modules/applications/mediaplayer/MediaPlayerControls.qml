@@ -123,7 +123,7 @@ Item {
     StyledRectangularShadow {
         target: bg
     }
-    FAnim on implicitHeight {
+    Anim on implicitHeight {
         from: -Sizes.mediaPlayer.controlsSize.height
         to: Sizes.mediaPlayer.controlsSize.height
         duration: 600

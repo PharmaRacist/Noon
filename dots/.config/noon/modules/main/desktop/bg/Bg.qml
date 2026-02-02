@@ -110,15 +110,43 @@ Scope {
                         sourceComponent: LayerClock {}
                         asynchronous: true
                     }
-                    DesktopPinnedWidgets {}
+                    StyledLoader {
+                        id: _loader
+                        active: Mem.options.desktop.widgets.enabled
+                        asynchronous: true
+
+                        readonly property string pos: Mem.options.bar.behavior.position
+                        readonly property bool rightMode: pos === "left"
+
+                        Behavior on anchors.rightMargin {
+                            Anim {}
+                        }
+                        Behavior on anchors.leftMargin {
+                            Anim {}
+                        }
+
+                        anchors {
+                            top: parent.top
+                            bottom: parent.bottom
+                            left: !rightMode ? parent.left : undefined
+                            right: rightMode ? parent.right : undefined
+                            margins: Sizes.hyprland.gapsOut + Padding.large
+                        }
+
+                        sourceComponent: DesktopWidgets {}
+                    }
                     DesktopClock {
                         z: 9999
                         visible: Mem.options.desktop.clock.enabled && (!backgroundPanel.enableDepthMode || !layerClock.active)
                     }
-                    LazyLoader {
+                    Loader {
                         id: fgLoader
+                        anchors.fill: parent
+                        visible: active
+
+                        asynchronous: true
                         active: backgroundPanel.enableDepthMode
-                        component: Fg {}
+                        sourceComponent: Fg {}
                     }
                 }
             }

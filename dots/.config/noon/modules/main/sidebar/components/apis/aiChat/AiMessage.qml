@@ -1,3 +1,4 @@
+import Noon
 import qs.services
 import qs.common
 import qs.common.widgets
@@ -7,27 +8,27 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 
-Rectangle {
+StyledRect {
     id: root
     property int messageIndex
     property var messageData
     property var messageInputField
 
-    property real messagePadding: 7
-    property real contentSpacing: 3
-
     property bool enableMouseSelection: false
     property bool renderMarkdown: true
     property bool editing: false
-
+    property bool rightMode: messageData.role === "user"
     property list<var> messageBlocks: StringUtils.splitMarkdownBlocks(root.messageData?.content)
+    property size loadingSize: Qt.size(62, 32)
+    color: rightMode ? Colors.colPrimaryContainer : Colors.colLayer1
+    clip: true
+    anchors.left: !rightMode ? parent?.left : undefined
+    anchors.right: rightMode ? parent?.right : undefined
 
-    anchors.left: parent?.left
-    anchors.right: parent?.right
-    implicitHeight: columnLayout.implicitHeight + root.messagePadding * 2
-
-    radius: Rounding.normal
-    color: Colors.colLayer1
+    implicitHeight: Math.max(loadingSize.height, columnLayout.implicitHeight)
+    implicitWidth: Math.max(loadingSize.width, Math.min(messageData.content.length * (Fonts.sizes.large - 2), parent.width - Padding.massive * 2))
+    radius: Math.max(24, Rounding.verylarge)
+    animationDuration: Animations.durations.small
 
     function saveMessage() {
         if (!root.editing)
@@ -63,166 +64,23 @@ Rectangle {
         }
     }
 
+    StyledText {
+        z:999
+        visible: (root.messageBlocks.length < 1) && (!root.messageData.done)
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: -4
+        text: "..."
+        font.family: "Rubik"
+        font.pixelSize: 30
+        color: Colors.colSubtext
+    }
+
     ColumnLayout { // Main layout of the whole thing
         id: columnLayout
-
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: messagePadding
-        spacing: root.contentSpacing
-
-        Rectangle {
-            Layout.fillWidth: true
-            implicitWidth: headerRowLayout.implicitWidth + 4 * 2
-            implicitHeight: headerRowLayout.implicitHeight + 4 * 2
-            color: Colors.colSecondaryContainer
-            radius: Rounding.small
-
-            RowLayout { // Header
-                id: headerRowLayout
-                anchors {
-                    fill: parent
-                    margins: 4
-                }
-                spacing: 18
-
-                Item { // Name
-                    id: nameWrapper
-                    implicitHeight: Math.max(nameRowLayout.implicitHeight + 5 * 2, 30)
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-
-                    RowLayout {
-                        id: nameRowLayout
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        spacing: 12
-
-                        Item {
-                            Layout.alignment: Qt.AlignVCenter
-                            Layout.fillHeight: true
-                            implicitWidth: messageData?.role == 'assistant' ? modelIcon.width : roleIcon.implicitWidth
-                            implicitHeight: messageData?.role == 'assistant' ? modelIcon.height : roleIcon.implicitHeight
-
-                            CustomIcon {
-                                id: modelIcon
-                                anchors.centerIn: parent
-                                visible: messageData?.role == 'assistant' && Ai.models[messageData?.model].icon
-                                width: Fonts.sizes.large
-                                height: Fonts.sizes.large
-                                source: messageData?.role == 'assistant' ? Ai.models[messageData?.model].icon : messageData?.role == 'user' ? 'linux-symbolic' : 'desktop-symbolic'
-
-                                colorize: true
-                                color: Colors.m3.m3onSecondaryContainer
-                            }
-
-                            Symbol {
-                                id: roleIcon
-                                anchors.centerIn: parent
-                                visible: !modelIcon.visible
-                                iconSize: Fonts.sizes.verylarge
-                                color: Colors.m3.m3onSecondaryContainer
-                                text: messageData?.role == 'user' ? 'person' : messageData?.role == 'interface' ? 'settings' : messageData?.role == 'assistant' ? 'neurology' : 'computer'
-                            }
-                        }
-
-                        StyledText {
-                            id: providerName
-                            Layout.alignment: Qt.AlignVCenter
-                            Layout.fillWidth: true
-                            elide: Text.ElideRight
-                            font.pixelSize: Fonts.sizes.normal
-                            color: Colors.m3.m3onSecondaryContainer
-                            text: messageData?.role == 'assistant' ? Ai.models[messageData?.model].name : (messageData?.role == 'user' && SysInfoService.username) ? SysInfoService.username : qsTr("Interface")
-                        }
-                    }
-                }
-
-                Button { // Not visible to model
-                    id: modelVisibilityIndicator
-                    visible: messageData?.role == 'interface'
-                    implicitWidth: 16
-                    implicitHeight: 30
-                    Layout.alignment: Qt.AlignVCenter
-
-                    background: Item
-
-                    Symbol {
-                        id: notVisibleToModelText
-                        anchors.centerIn: parent
-                        iconSize: Fonts.sizes.small
-                        color: Colors.colSubtext
-                        text: "visibility_off"
-                    }
-                }
-
-                ButtonGroup {
-                    spacing: 5
-
-                    AiMessageControlButton {
-                        id: regenButton
-                        buttonIcon: "refresh"
-                        visible: messageData?.role === 'assistant'
-
-                        onClicked: {
-                            Ai.regenerate(root.messageIndex);
-                        }
-                    }
-
-                    AiMessageControlButton {
-                        id: copyButton
-                        buttonIcon: activated ? "inventory" : "content_copy"
-
-                        onClicked: {
-                            Quickshell.clipboardText = root.messageData?.content;
-                            copyButton.activated = true;
-                            copyIconTimer.restart();
-                        }
-
-                        Timer {
-                            id: copyIconTimer
-                            interval: 1500
-                            repeat: false
-                            onTriggered: {
-                                copyButton.activated = false;
-                            }
-                        }
-                    }
-                    AiMessageControlButton {
-                        id: editButton
-                        activated: root.editing
-                        enabled: root.messageData?.done ?? false
-                        buttonIcon: "edit"
-                        onClicked: {
-                            root.editing = !root.editing;
-                            if (!root.editing) {
-                                // Save changes
-                                root.saveMessage();
-                            }
-                        }
-                    }
-                    AiMessageControlButton {
-                        id: toggleMarkdownButton
-                        activated: !root.renderMarkdown
-                        buttonIcon: "code"
-                        onClicked: {
-                            root.renderMarkdown = !root.renderMarkdown;
-                        }
-                    }
-                    AiMessageControlButton {
-                        id: deleteButton
-                        buttonIcon: "close"
-                        onClicked: {
-                            Ai.removeMessage(root.messageIndex);
-                        }
-                    }
-                }
-            }
-        }
+        anchors.fill: parent
+        anchors.leftMargin: Padding.normal
+        anchors.rightMargin: Padding.normal
+        spacing: Padding.large
 
         Loader {
             Layout.fillWidth: true
@@ -237,24 +95,6 @@ Rectangle {
             id: messageContentColumnLayout
             spacing: 0
 
-            Item {
-                Layout.fillWidth: true
-                implicitHeight: loadingIndicatorLoader.shown ? loadingIndicatorLoader.implicitHeight : 0
-                implicitWidth: loadingIndicatorLoader.implicitWidth
-                visible: implicitHeight > 0
-
-                Behavior on implicitHeight {
-                    Anim {}
-                }
-                FadeLoader {
-                    id: loadingIndicatorLoader
-                    anchors.centerIn: parent
-                    shown: (root.messageBlocks.length < 1) && (!root.messageData.done)
-                    sourceComponent: MaterialLoadingIndicator {
-                        loading: true
-                    }
-                }
-            }
             Repeater {
                 model: ScriptModel {
                     values: root.messageBlocks
@@ -339,4 +179,60 @@ Rectangle {
             }
         }
     }
+    StyledMenu {
+        id: contextMenu
+        content: [
+            {
+                "text": "Copy",
+                "materialIcon": "content_copy",
+                "action": () => {
+                    ClipboardService.copy(root.messageData?.content);
+                }
+            },
+            {
+                "text": "Edit",
+                "materialIcon": "stylus",
+                "action": () => {
+                    root.editing = !root.editing;
+                    if (!root.editing) {
+                        root.saveMessage();
+                    }
+                }
+            },
+            {
+                "text": "Delete",
+                "materialIcon": "delete",
+                "action": () => {
+                    Ai.removeMessage(messageIndex);
+                }
+            },
+            {
+                "materialIcon": "code",
+                "text": "LaTex",
+                "action": () => {
+                    renderMarkdown = !renderMarkdown;
+                }
+            },
+            {
+                "text": "Regenerate",
+                "materialIcon": "restart_alt",
+                "action": () => {
+                    Ai.regenerate(messageIndex);
+                }
+            }
+        ]
+    }
+    MouseArea {
+        id: eventArea
+        z: 999
+        anchors.fill: root
+        hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onPressed: event => {
+            if (event.button === Qt.RightButton) {
+                contextMenu.popup();
+            }
+        }
+    }
+
 }

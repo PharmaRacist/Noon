@@ -119,7 +119,7 @@ TabButton {
             visible: width > 0 && height > 0
 
             Behavior on opacity {
-                FAnim {}
+                Anim {}
             }
 
             RadialGradient {

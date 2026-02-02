@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import qs.common
 import qs.common.functions
@@ -10,12 +9,11 @@ StyledRect {
     id: root
     visible: opacity > 0
     opacity: width > 320 ? 1 : 0
-    color: "transparent"
+    color: Colors.colLayer1
     radius: Rounding.verylarge
     clip: true
     property string searchQuery: ""
     property string _debouncedQuery: ""
-    property var cachedWallpapers: []
 
     signal searchFocusRequested
     signal contentFocusRequested
@@ -24,10 +22,11 @@ StyledRect {
     anchors.fill: parent
 
     onSearchQueryChanged: debounceTimer.restart()
+    Component.onCompleted: load_timer.restart()
 
     Timer {
         id: debounceTimer
-        interval: 150
+        interval: 120
         repeat: false
         onTriggered: root._debouncedQuery = root.searchQuery.trim()
     }
@@ -42,15 +41,9 @@ StyledRect {
         if (!model)
             return;
 
-        if (WallpaperService.wallpaperSelectorCachedModel && WallpaperService.wallpaperSelectorCachedModel.length === model.count) {
-            cachedWallpapers = WallpaperService.wallpaperSelectorCachedModel;
-            return;
-        }
+        let wallpapers = new Array(model.count);
 
-        const count = model.count;
-        let wallpapers = new Array(count);
-
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < model.count; i++) {
             const fileUrl = model.getFile(i);
             if (fileUrl) {
                 wallpapers[i] = {
@@ -61,20 +54,20 @@ StyledRect {
             }
         }
 
-        cachedWallpapers = wallpapers;
         WallpaperService.wallpaperSelectorCachedModel = wallpapers;
     }
 
     ScriptModel {
         id: filteredModel
+
         values: {
-            const baseData = root.cachedWallpapers;
+            const baseData = WallpaperService.wallpaperSelectorCachedModel;
             if (!baseData || baseData.length === 0)
                 return [];
 
             const query = root._debouncedQuery;
             if (!query)
-                return baseData.slice(0, 100);
+                return baseData;
 
             const fuzzyResults = Fuzzy.go(query, baseData, {
                 key: 'fileName',
@@ -97,53 +90,45 @@ StyledRect {
         function onCurrentFolderPathChanged() {
             load_timer.restart();
         }
+        function onThumbnailsDone() {
+            load_timer.restart();
+        }
     }
-    Component.onCompleted: {
-        load_timer.restart();
-    }
+
     StyledListView {
         id: listView
+
         anchors.fill: parent
+
         animateAppearance: true
         animateMovement: true
         popin: true
-        anchors.margins: Padding.normal
+
         spacing: Padding.small
-        clip: true
+        hint: false
         model: filteredModel
         currentIndex: -1
-        reuseItems: true
-        cacheBuffer: height * 2
-
         highlightFollowsCurrentItem: true
-        highlightMoveDuration: 150
+        highlightMoveDuration: 200
 
         delegate: Item {
             id: loader
+            z: 9999
             required property int index
             required property var modelData
-
-            height: width * (9 / 16)
-            width: listView.width
+            implicitWidth: parent.width
+            implicitHeight: width * 9 / 16
 
             WallpaperItem {
                 id: wallpaperItem
-                anchors.fill: parent
-                readonly property int cellWidth: loader.width
-                readonly property int cellHeight: loader.height
-
                 isKeyboardSelected: listView.currentIndex === index
-                isCurrentWallpaper: modelData ? String(modelData.fileUrl) === String(WallpaperService.currentWallpaper) : false
-                fileUrl: modelData ? modelData.fileUrl : ""
-
-                onClicked: if (fileUrl) {
-                    WallpaperService.applyWallpaper(fileUrl);
-                    listView.currentIndex = index;
-                }
+                isCurrentWallpaper: modelData.fileUrl.toString() === WallpaperService.currentWallpaper
+                fileUrl: modelData.fileUrl
             }
 
             StyledRectangularShadow {
                 target: wallpaperItem
+                enabled: wallpaperItem.isKeyboardSelected
                 show: wallpaperItem.isKeyboardSelected
             }
         }
@@ -176,11 +161,9 @@ StyledRect {
             event.accepted = true;
         }
     }
-    ScrollEdgeFade {
-        target: listView
-        anchors.fill: parent
-    }
+
     WallpaperControls {}
+
     PagePlaceholder {
         shown: listView.count === 0
         title: qsTr("No wallpapers found")

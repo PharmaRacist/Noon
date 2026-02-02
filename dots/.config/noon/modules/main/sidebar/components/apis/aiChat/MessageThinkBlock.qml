@@ -1,4 +1,3 @@
-pragma ComponentBehavior: Bound
 
 import qs.services
 import qs.common
@@ -39,7 +38,7 @@ Item {
 
     Behavior on implicitHeight {
         enabled: root.completed ?? false
-        FAnim {}
+        Anim {}
     }
 
     ColumnLayout {
@@ -113,7 +112,7 @@ Item {
                         color: Colors.colOnLayer2
                         rotation: root.collapsed ? 0 : 180
                         Behavior on rotation {
-                            FAnim {}
+                            Anim {}
                         }
                     }
                 }
@@ -128,7 +127,7 @@ Item {
 
             Behavior on implicitHeight {
                 enabled: root.completed ?? false
-                FAnim {}
+                Anim {}
             }
 
             Rectangle {

@@ -20,7 +20,7 @@ RowLayout {
         Layout.rightMargin: reveal ? XPadding.tiny : 0
 
         Behavior on Layout.rightMargin {
-            FAnim {}
+            Anim {}
         }
 
         StyledIconImage {
@@ -36,7 +36,7 @@ RowLayout {
         Layout.rightMargin: reveal ? XPadding.tiny : 0
 
         Behavior on Layout.rightMargin {
-            FAnim {}
+            Anim {}
         }
 
         Item {
