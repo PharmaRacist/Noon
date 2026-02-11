@@ -9,9 +9,7 @@ BottomDialog {
     id: root
 
     collapsedHeight: parent.height * 0.4
-    enableStagedReveal: false
-    onShowChanged: GlobalStates.main.dialogs.showCaffaineDialog = show
-    finishAction: GlobalStates.main.dialogs.showCaffaineDialog = reveal
+    finishAction: GlobalStates.main.dialogs.showCaffaineDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -19,7 +17,8 @@ BottomDialog {
         spacing: Padding.verylarge
 
         BottomDialogHeader {
-            title: qsTr("Caffeine")
+            title: "Caffeine"
+            subTitle: "Control inactive timeout"
         }
 
         BottomDialogSeparator {}

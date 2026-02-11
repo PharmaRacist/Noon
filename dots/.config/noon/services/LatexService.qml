@@ -1,56 +1,86 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
-
+import Noon.Utils.Latex
 import QtQuick
 import Quickshell
-import Quickshell.Io
-import Quickshell.Hyprland
-import qs.common
-import qs.common.functions
 
 Singleton {
     id: root
 
-    readonly property int renderPadding: 4
-    readonly property string microtexBinaryDir: "/opt/MicroTeX"
-    readonly property string microtexBinaryName: "LaTeX"
-    readonly property string latexOutputPath: Directories.services.latex
-
     property var processedHashes: new Set()
     property var renderedImagePaths: ({})
+    property var latexExpressions: ({})
 
     signal renderFinished(string hash, string imagePath)
 
-    function requestRender(expression) {
+    readonly property LatexRenderer renderer: LatexRenderer {
+        fontSize: 18
+        padding: 4
+    }
+
+    function detectAndRenderLatex(content, colorHex = "#000000") {
+        const contentStr = String(content ?? "");
+        if (!contentStr)
+            return [];
+
+        const regex = /\$\$([\s\S]+?)\$\$|\$([^\$\n]+?)\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)/g;
+        let match;
+        const hashes = [];
+
+        while ((match = regex.exec(contentStr)) !== null) {
+            if (!match?.[0])
+                continue;
+
+            const expression = match[1] || match[2] || match[3] || match[4];
+            if (!expression?.trim())
+                continue;
+
+            const fullMatch = match[0];
+            const trimmedExpression = expression.trim();
+            const hash = Qt.md5(trimmedExpression);
+
+            latexExpressions[hash] = fullMatch;
+            hashes.push(hash);
+
+            requestRender(trimmedExpression, colorHex);
+        }
+
+        return hashes;
+    }
+
+    function replaceLatexWithImages(content, hashes) {
+        let result = String(content ?? "");
+
+        for (const hash of hashes) {
+            const imagePath = renderedImagePaths?.[hash];
+            const originalExpression = latexExpressions?.[hash];
+
+            if (imagePath && originalExpression && result.includes(originalExpression)) {
+                const markdownImage = `![latex](${imagePath})`;
+                result = result.replace(originalExpression, markdownImage);
+            }
+        }
+
+        return result;
+    }
+
+    function requestRender(expression, colorHex = "#000000") {
         const hash = Qt.md5(expression);
-        const imagePath = `${latexOutputPath}/${hash}.svg`;
 
         if (processedHashes.has(hash)) {
-            renderFinished(hash, imagePath);
+            const imagePath = renderedImagePaths[hash];
+            Qt.callLater(() => renderFinished(hash, imagePath));
             return [hash, false];
         }
 
         processedHashes.add(hash);
 
-        const commandArgs = ["bash", "-c", `cd ${microtexBinaryDir} && ./${microtexBinaryName} ` + `-headless ` + `'-input=${StringUtils.shellSingleQuoteEscape(StringUtils.escapeBackslashes(expression))}' ` + `'-output=${imagePath}' ` + `'-textsize=${Fonts.sizes.normal}' ` + `'-padding=${renderPadding}' ` + `'-foreground=${Colors.colOnLayer1}' ` + `-maxwidth=0.85`];
+        const imagePath = renderer.render(expression, colorHex);
 
-        const processConfig = {
-            command: commandArgs,
-            running: true
-        };
-
-        const process = Qt.createQmlObject(`import Quickshell.Io; Process {}`, root);
-
-        process.onExited.connect(exitCode => {
-            if (exitCode === 0) {
-                renderedImagePaths[hash] = imagePath;
-                root.renderFinished(hash, imagePath);
-            }
-            process.destroy();
-        });
-
-        process.command = commandArgs;
-        process.running = true;
+        if (imagePath) {
+            renderedImagePaths[hash] = imagePath;
+            Qt.callLater(() => renderFinished(hash, imagePath));
+        }
 
         return [hash, true];
     }

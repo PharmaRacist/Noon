@@ -1,4 +1,4 @@
-import Noon
+import Noon.Utils
 import QtQuick
 import qs.common
 import qs.common.utils

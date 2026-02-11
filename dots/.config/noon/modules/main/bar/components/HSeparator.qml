@@ -11,4 +11,5 @@ Rectangle {
     Layout.leftMargin: Padding.large
     Layout.rightMargin: Padding.large
     Layout.margins: 4
+    visible: Mem.options.bar.appearance.enableSeparators
 }

@@ -94,7 +94,12 @@ StyledRect {
             load_timer.restart();
         }
     }
-
+    Connections {
+        target: WallpaperService.wallpaperModel
+        function onModelUpdated() {
+            load_timer.restart();
+        }
+    }
     StyledListView {
         id: listView
 
@@ -116,7 +121,7 @@ StyledRect {
             z: 9999
             required property int index
             required property var modelData
-            implicitWidth: parent.width
+            implicitWidth: listView.width
             implicitHeight: width * 9 / 16
 
             WallpaperItem {

@@ -1,4 +1,4 @@
-import Noon
+import Noon.Services
 import qs.services
 import qs.common
 import qs.common.widgets
@@ -65,7 +65,7 @@ StyledRect {
     }
 
     StyledText {
-        z:999
+        z: 999
         visible: (root.messageBlocks.length < 1) && (!root.messageData.done)
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -4
@@ -234,5 +234,4 @@ StyledRect {
             }
         }
     }
-
 }

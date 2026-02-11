@@ -1,8 +1,5 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Hyprland
 import qs.common
 import qs.common.widgets
 import qs.services
@@ -10,24 +7,21 @@ import qs.services
 Item {
     id: root
     Layout.fillWidth: true
-    Layout.preferredHeight: 40
+    Layout.preferredHeight: 45
 
     property var focusedScreen: MonitorsInfo.focused
     property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
+
     StyledSlider {
         id: brightnessSlider
         anchors.fill: parent
         from: 0
         to: 1
         stepSize: 0.01
-
-        // Initialize value
-        value: brightnessMonitor?.brightness ?? 0
-
-        onValueChanged: {
-            if (brightnessMonitor) {
-                brightnessMonitor.setBrightness(value);
-            }
+        scale: 1.05
+        value: brightnessMonitor.brightness
+        onValueChanged: if (brightnessMonitor) {
+            brightnessMonitor.setBrightness(value);
         }
 
         Connections {
@@ -43,13 +37,13 @@ Item {
 
     Symbol {
         z: 2
+        visible: brightnessSlider.value >= 0.05
         text: brightnessSlider.value > 0.5 ? "light_mode" : "dark_mode"
         color: Colors.m3.m3onPrimary
-        font.pixelSize: Fonts.sizes.huge - 4
+        font.pixelSize: 18
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: brightnessSlider.left
-        anchors.leftMargin: 10
-        fill: 1
+        anchors.leftMargin: Padding.normal
         animateChange: true
     }
 }

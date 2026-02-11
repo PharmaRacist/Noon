@@ -7,7 +7,7 @@ QuickToggleButton {
     property bool showWifiDialog: false
     showButtonName: true
     hasDialog: true
-
+    buttonSubtext:NetworkService.wifiEnabled ? "enabled": "disabled"
     buttonName: NetworkService.wifiStatus.length > 0 && NetworkService.wifiEnabled ? NetworkService.networkName || StringUtils.capitalizeFirstLetter(NetworkService.wifiStatus) : "Disconnected"
     toggled: NetworkService.networkName.length > 0 && NetworkService.networkName !== "lo"
     buttonIcon: NetworkService.materialSymbol

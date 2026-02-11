@@ -8,7 +8,6 @@ import qs.services
 
 MenuItem {
     id: root
-
     property color colBackground: colors.colLayer2
     property color colBackgroundHover: colors.colLayer2Hover
     property color colBackgroundActive: colors.colLayer2Active

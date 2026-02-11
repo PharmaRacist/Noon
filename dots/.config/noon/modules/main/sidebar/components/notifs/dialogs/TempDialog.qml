@@ -8,13 +8,8 @@ import qs.services
 BottomDialog {
     id: root
 
-    collapsedHeight: 380
-    revealOnWheel: true
-    enableStagedReveal: false
-    bottomAreaReveal: true
-    hoverHeight: 100
-    onShowChanged: GlobalStates.main.dialogs.showTempDialog = show
-    finishAction: GlobalStates.main.dialogs.showTempDialog = reveal
+    collapsedHeight: 420
+    finishAction: GlobalStates.main.dialogs.showTempDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent

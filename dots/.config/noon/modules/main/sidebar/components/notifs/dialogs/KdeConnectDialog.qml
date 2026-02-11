@@ -9,9 +9,7 @@ BottomDialog {
     id: root
 
     collapsedHeight: parent.height * 0.64
-    enableStagedReveal: false
-    onShowChanged: GlobalStates.main.dialogs.showKdeConnectDialog = show
-    finishAction: GlobalStates.main.dialogs.showKdeConnectDialog = reveal
+    finishAction: GlobalStates.main.dialogs.showKdeConnectDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent
@@ -20,6 +18,7 @@ BottomDialog {
 
         BottomDialogHeader {
             title: "Phone Actions"
+            subTitle: "%v Devices Currently Avilable".replace(/%v/g, KdeConnectService.availableDevices.length)
         }
 
         BottomDialogSeparator {}

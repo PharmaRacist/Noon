@@ -7,7 +7,7 @@ import qs.services
 BarGroup {
     id: root
 
-    implicitHeight: columnLayout.implicitHeight
+    implicitHeight: columnLayout.implicitHeight + (active ? Padding.massive : 0)
 
     MouseArea {
         id: event_area
@@ -22,21 +22,11 @@ BarGroup {
         spacing: Padding.tiny
 
         Repeater {
-            model: [
-                {
-                    text: DateTimeService.hour
-                },
-                {
-                    text: DateTimeService.minute
-                },
-                {
-                    text: DateTimeService.dayTime,
-                    visible: DateTimeService.dayTime !== ""
-                },
-            ]
+            model: [DateTimeService.hour, DateTimeService.minute, DateTimeService.dayTime]
             StyledText {
                 required property var modelData
-                text: modelData.text
+                visible: modelData !== ""
+                text: modelData
                 font.weight: 900
                 font.family: Fonts.family.monospace
                 font.pixelSize: Fonts.sizes.normal

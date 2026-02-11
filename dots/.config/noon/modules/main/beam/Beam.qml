@@ -1,4 +1,4 @@
-import Noon
+import Noon.Services
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -25,7 +25,6 @@ Scope {
             readonly property int expandedThreshold: 25
             readonly property int mainRounding: 50
             readonly property int elevationValue: (Mem.options.bar.behavior.position === "bottom" ? Mem.options.bar.appearance.height : 0) + Sizes.elevationMargin
-
             visible: reveal || scrollReveal
             implicitWidth: Sizes.beamSizeExpanded.width + 999
             implicitHeight: Sizes.beamSize.height + elevationValue + 999
@@ -115,6 +114,20 @@ Scope {
                     }
 
                     wheel.accepted = true;
+                }
+                DropArea {
+                    id: dropArea
+                    anchors.fill: parent
+                    keys: ["text/uri-list"]
+                    onDropped: drop => {
+                        let newPaths = drop.urls.map(url => url.toString());
+                        const firstItem = newPaths[0];
+                        NoonUtils.runDownloader(firstItem);
+                    }
+                }
+
+                ScreenActionHint {
+                    target: dropArea
                 }
 
                 anchors {
@@ -237,27 +250,6 @@ Scope {
                                     BeamData.updateStateFromQuery(text);
                                 }
 
-                                // StyledText {
-                                //     id: hintText
-                                //     anchors {
-                                //         top: parent.top
-                                //         right: parent.right
-                                //         bottom: parent.bottom
-                                //         rightMargin: Padding.huge
-                                //     }
-                                //     animateChange: true
-                                //     horizontalAlignment: Text.AlignRight
-                                //     width: 450
-                                //     elide: Text.ElideRight
-                                //     wrapMode: TextEdit.Wrap
-                                //     maximumLineCount: 2
-                                //     font.pixelSize: Fonts.sizes.normal
-                                //     color: Colors.colSubtext
-                                //     opacity: 0.6
-                                //     visible: BeamData.config?.showHint || false
-                                //     text: BeamData.getHint()
-                                // }
-
                                 font {
                                     pixelSize: Fonts.sizes.normal
                                     family: Fonts.family.main
@@ -316,8 +308,6 @@ Scope {
                             anchors.rightMargin: Padding.large
                             releaseAction: () => root.sendMessage()
                             buttonRadius: root.mainRounding
-                            // visible: opacity > 0
-                            // opacity: inputField.text.length > 0 ? 1 : 0
                             colBackground: "transparent"
                             materialIcon: "send"
                             implicitSize: bg.height * 0.75

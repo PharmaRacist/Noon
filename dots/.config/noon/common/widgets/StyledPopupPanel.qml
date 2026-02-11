@@ -1,4 +1,3 @@
-import Noon
 import QtQuick
 import QtQuick.Layouts
 import Quickshell

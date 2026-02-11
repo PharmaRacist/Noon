@@ -6,17 +6,18 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 
-Item {
+BarGroup {
     id: root
 
     Layout.fillWidth: true
-    Layout.preferredHeight: progress.implicitSize
+    Layout.preferredHeight: width
 
     ClippedFilledCircularProgress {
         id: progress
         value: BeatsService.currentTrackProgressRatio()
         anchors.centerIn: parent
-        implicitSize: Math.min(BarData.currentBarExclusiveSize, 35) * 0.75
+        implicitSize: root.width * 0.7
+
         Symbol {
             fill: 1
             anchors.centerIn: parent

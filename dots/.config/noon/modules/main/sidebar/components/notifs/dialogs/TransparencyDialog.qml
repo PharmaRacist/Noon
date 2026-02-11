@@ -9,12 +9,7 @@ BottomDialog {
     id: root
 
     collapsedHeight: 440
-    revealOnWheel: true
-    enableStagedReveal: false
-    bottomAreaReveal: true
-    hoverHeight: 100
-    onShowChanged: GlobalStates.main.dialogs.showTransparencyDialog = show
-    finishAction: GlobalStates.main.dialogs.showTransparencyDialog = reveal
+    finishAction: GlobalStates.main.dialogs.showTransparencyDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent

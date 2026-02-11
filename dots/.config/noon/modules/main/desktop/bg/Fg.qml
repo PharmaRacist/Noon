@@ -5,6 +5,7 @@ import qs.common.functions
 
 Image {
     id: fgImage
+    property var parentImage
     z: 99999
     visible: status === Image.Ready
     anchors.fill: parent
@@ -13,9 +14,9 @@ Image {
     asynchronous: true
     cache: true
     mipmap: true
-    sourceSize: bgImage.sourceSize
-    x: bgImage.x
-    y: bgImage.y
+    sourceSize: parentImage.sourceSize
+    x: parentImage.x
+    y: parentImage.y
     function refresh() {
         fgImage.source = "";
         fgImage.source = FileUtils.trimFileProtocol(Directories.wallpapers.depthDir + Qt.md5(FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentBg)) + ".png");

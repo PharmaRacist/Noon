@@ -55,10 +55,6 @@ StyledRect {
             }
         }
 
-        if (item.dependsOn) {
-            return (root.itemStates[item.dependsOn] ?? false) === true;
-        }
-
         return true;
     }
 
@@ -141,69 +137,39 @@ StyledRect {
                         GridLayout {
                             width: parent.width
                             columns: root.columnNumber
-                            columnSpacing: 10
-                            rowSpacing: 5
+                            columnSpacing: Padding.verysmall
+                            rowSpacing: Padding.verysmall
 
                             Repeater {
+                                id:itemsRepeater
                                 model: modelData.items
 
                                 delegate: SettingsItem {
+                                    required property var modelData
+                                    required property int index
+
+                                    topRadius:index === 0 ? Rounding.huge : Rounding.tiny
+                                    bottomRadius: index === itemsRepeater.model.length -1 ? Rounding.huge : Rounding.tiny
+
                                     icon: modelData?.icon ?? "settings"
                                     name: modelData?.name ?? ""
                                     key: modelData?.key ?? ""
-                                    type: modelData?.type ?? "button"
+                                    type: modelData?.type ?? "switch"
                                     hint: modelData?.hint ?? ""
                                     useStates:modelData?.state ?? false
                                     enableTooltip:modelData?.enableTooltip ?? true
-                                    textPlaceholder:modelData?.textPlaceholder ?? ""
                                     sliderMinValue: modelData?.sliderMinValue ?? 0.0
                                     sliderMaxValue: modelData?.sliderMaxValue ?? 100.0
-                                    sliderValue: modelData?.sliderValue ?? 0.5
+                                    realValue: modelData?.sliderValue ?? 0.5
                                     reloadOnChange:modelData?.reloadOnChange ?? false
                                     customItemHeight:modelData?.customItemHeight ?? 65
                                     actionName: modelData?.actionName ?? ""
-                                    itemValue: modelData?.itemValue ?? 0
-                                    subOption: modelData?.subOption ?? false
                                     comboBoxValues: modelData?.comboBoxValues ?? []
                                     fillHeight:modelData?.fillHeight ?? false
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     visible: (modelData?.visible ?? true) && shouldShowItem(modelData)
-                                    property bool isSearchMatch: root.searchQuery !== "" && matchesSearch(modelData.name)
                                     colors:root.colors
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        color: root.colors.colPrimary
-                                        opacity: parent.isSearchMatch ? 0.1 : 0
-                                        radius: 8
-                                        z: -1
-
-                                        Behavior on opacity {
-                                            Anim {}
-                                        }
-                                    }
-
-                                    onToggledStateChanged: {
-                                        if (modelData.key) {
-                                            root.itemStates[modelData.key] = toggledState;
-                                        }
-                                    }
-
-                                    onIntValueChanged: {
-                                        if (modelData.key) {
-                                            root.itemStates[modelData.key] = intValue;
-                                        }
-                                    }
-
-                                    Component.onCompleted: {
-                                        if (modelData.key) {
-                                            if (type === "spin") {
-                                                root.itemStates[modelData.key] = intValue;
-                                            } else {
-                                                root.itemStates[modelData.key] = toggledState;
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }

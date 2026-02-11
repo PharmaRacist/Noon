@@ -13,7 +13,7 @@ StyledRect {
 
     color: Colors.colLayer1
     radius: Rounding.huge
-    anchors.margins: Padding.normal
+    anchors.margins: Padding.small
     clip: false
 
     // Scrollable window
@@ -38,7 +38,6 @@ StyledRect {
         PagePlaceholder {
             icon: Notifications.silent ? "notifications_off" : "notifications_active"
             shape: MaterialShape.Ghostish
-            title: !Notifications.silent ? "Noisy" : "Shh"
         }
 
         Behavior on opacity {

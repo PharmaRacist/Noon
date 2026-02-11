@@ -6,12 +6,13 @@ import qs.common
 import qs.common.widgets
 import qs.services
 
-Item {
+StyledRect {
     id: root
 
-    property bool editing: true
+    property bool editing: false
     property int autoSaveInterval: 5000
-
+    color: Colors.colLayer1
+    radius: Rounding.verylarge
     Layout.fillWidth: true
     Layout.fillHeight: true
     clip: true
@@ -38,7 +39,6 @@ Item {
         onTriggered: {
             if (!NotesService.isDirty && NotesService.lastSaved)
                 statusLabel.text = "Saved " + DateTimeService.getRelativeTime(NotesService.lastSaved);
-
         }
     }
 
@@ -47,7 +47,6 @@ Item {
         function onContentChanged() {
             if (textArea.text !== NotesService.content)
                 textArea.text = NotesService.content;
-
         }
 
         target: NotesService
@@ -55,12 +54,12 @@ Item {
 
     // Background watermark
     StyledText {
+        z: 0
         visible: true
         font.pixelSize: 500
         text: "text_snippet"
         font.family: Fonts.family.iconMaterial
-        color: Colors.m3.m3secondaryContainer
-        opacity: 0.15
+        color: Colors.colLayer0
 
         anchors {
             left: parent.left
@@ -72,68 +71,37 @@ Item {
         transform: Rotation {
             angle: 45
         }
-
     }
 
     // Main layout
     ColumnLayout {
         anchors.fill: parent
-        spacing: 10
+        anchors.margins: Rounding.verylarge
+        spacing: Padding.massive
 
-        // Header
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.rightMargin: 0
-            Layout.leftMargin: 15
-            spacing: 10
+            Layout.preferredHeight: 50
+            spacing: 0
 
-            ColumnLayout {
+            StyledText {
+                text: "Scratch Pad"
                 Layout.fillWidth: true
-                spacing: 2
-
-                Label {
-                    text: "Notes"
-                    Layout.fillWidth: true
-                    font.family: Fonts.family.main
-                    color: Colors.colOnLayer0
-                    font.pixelSize: Fonts.sizes.title
-                }
-
-                Label {
-                    id: statusLabel
-
-                    text: NotesService.isDirty ? "Unsaved changes..." : (NotesService.lastSaved ? "Saved " + DateTimeService.getRelativeTime(NotesService.lastSaved) : "Ready")
-                    color: NotesService.isDirty ? Colors.m3.m3tertiary : Colors.m3.m3primary
-                    Layout.fillWidth: true
-                    font.family: Fonts.family.main
-                    font.pixelSize: Fonts.sizes.small
-                }
-
+                color: Colors.colOnLayer1
+                font.variableAxes: Fonts.variableAxes.title
+                font.family: Fonts.family.main
+                font.pixelSize: Fonts.sizes.title
             }
 
-            Item {
+            StyledText {
+                id: statusLabel
+                text: NotesService.isDirty ? "Editing..." : (NotesService.lastSaved ? "Saved " + DateTimeService.getRelativeTime(NotesService.lastSaved) : "Ready")
+                color: !NotesService.isDirty ? Colors.colTertiary : Colors.colPrimary
                 Layout.fillWidth: true
+                font.pixelSize: Fonts.sizes.small
             }
-
-            RippleButton {
-                implicitWidth: 36
-                implicitHeight: 36
-                buttonRadius: Rounding.small
-                toggled: root.editing
-                onPressed: root.editing = !root.editing
-
-                contentItem: Symbol {
-                    text: "edit"
-                    font.pixelSize: 20
-                    anchors.centerIn: parent
-                    color: parent.parent.toggled ? Colors.colOnPrimaryContainer : Colors.colOnLayer1
-                }
-
-            }
-
         }
 
-        // Text editor
         ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -162,10 +130,10 @@ Item {
                         autoSaveTimer.restart();
                     }
                 }
-                onLinkActivated: (link) => {
+                onLinkActivated: link => {
                     return Qt.openUrlExternally(link);
                 }
-                Keys.onPressed: (event) => {
+                Keys.onPressed: event => {
                     if (event.modifiers === Qt.ControlModifier) {
                         if (event.key === Qt.Key_S) {
                             NotesService.save();
@@ -183,11 +151,7 @@ Item {
                     hoverEnabled: true
                     cursorShape: parent.hoveredLink !== "" ? Qt.PointingHandCursor : root.editing ? Qt.IBeamCursor : Qt.ArrowCursor
                 }
-
             }
-
         }
-
     }
-
 }

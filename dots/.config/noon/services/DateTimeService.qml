@@ -31,19 +31,7 @@ Singleton {
             return Qt.formatDateTime(clock.date, "HH");
         }
     }
-
-    property string cleanHour: {
-        if (Mem.options.services.time.use12HourFormat) {
-            var hourStr = Qt.formatDateTime(clock.date, "hh AP").split(" ")[0];
-            return String(parseInt(hourStr));
-        } else {
-            var hourStr = Qt.formatDateTime(clock.date, "HH");
-            return String(parseInt(hourStr));
-        }
-    }
-
     property string minute: Qt.formatDateTime(clock.date, "mm")
-    property string cleanMinute: String(parseInt(Qt.formatDateTime(clock.date, "mm")))
 
     property string dayTime: {
         if (Mem.options.services.time.use12HourFormat) {

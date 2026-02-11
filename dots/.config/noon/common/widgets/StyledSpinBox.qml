@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import qs.common
+import qs.common.functions
 
 /**
  * Material 3 styled SpinBox component with debouncing support.
@@ -93,7 +94,6 @@ SpinBox {
                 root.value = parseFloat(text) || 0;
             }
         }
-
     }
 
     down.indicator: Rectangle {
@@ -125,11 +125,8 @@ SpinBox {
         }
 
         Behavior on color {
-            CAnim {
-            }
-
+            CAnim {}
         }
-
     }
 
     up.indicator: Rectangle {
@@ -161,11 +158,7 @@ SpinBox {
         }
 
         Behavior on color {
-            CAnim {
-            }
-
+            CAnim {}
         }
-
     }
-
 }

@@ -10,118 +10,90 @@ GroupButton {
 
     property string buttonIcon
     property string buttonName
+    property string buttonSubtext
+
     property bool showButtonName: buttonName.length > 0
     property bool hasDialog: false
-    property int activeRadius: {
-        const r1 = Rounding.verylarge;
-        const r2 = Rounding.normal;
-        if (toggled)
-            return r2;
-        else
-            return r1;
-    }
 
     signal requestDialog
-
     Layout.fillWidth: showButtonName
     Layout.fillHeight: false
-    baseWidth: !showButtonName ? 48 : (SidebarData.sizePresets.quarter / 2.5) - Padding.normal
-    baseHeight: 48
+    baseWidth: !showButtonName ? baseHeight : (SidebarData.sizePresets.quarter / 2.5) - Padding.huge
+    baseHeight: !showButtonName ? 54 : 62
     clip: true
     clickedWidth: implicitWidth
     toggled: false
-    buttonRadius: toggled ? Rounding.verylarge : Rounding.normal
-    buttonRadiusPressed: activeRadius
-    color: toggled ? Colors.m3.m3primary : Colors.m3.m3surfaceContainer
-    altAction: () => {
-        if (!showButtonName)
-            requestDialog();
-    }
+    buttonRadius: !toggled ? Rounding.huge : Rounding.full
+    buttonRadiusPressed: toggled ? Rounding.huge : Rounding.full
+    color: Colors.colLayer2
+
+    altAction: () => requestDialog()
 
     StyledRect {
-        id: dialogBox
-
-        z: 99
-        color: !toggled ? Colors.m3.m3primary : Colors.m3.m3surfaceContainerHigh
-        visible: hasDialog && showButtonName
-        implicitWidth: 50
-        topRightRadius: root.rightRadius
-        bottomRightRadius: root.rightRadius
-
+        id: sideRect
         anchors {
-            top: parent.top
-            right: parent.right
-            bottom: parent.bottom
-            margins: -0.5
-        }
-
-        Symbol {
-            id: symbol
-
-            text: "keyboard_arrow_right"
-            font.pixelSize: Fonts.sizes.huge
-            fill: 1
-            color: !toggled ? Colors.colOnPrimary : Colors.colOnLayer2
-            anchors.centerIn: parent
-            rotation: dialogBoxMouse.containsMouse ? 90 : 0
-
-            Behavior on rotation {
-                Anim {}
-            }
-        }
-
-        MouseArea {
-            id: dialogBoxMouse
-
-            hoverEnabled: true
-            anchors.fill: parent
-            onReleased: {
-                root.requestDialog();
-                NoonUtils.playSound("pressed");
-            }
-        }
-    }
-
-    Behavior on color {
-        CAnim {}
-    }
-
-    contentItem: RowLayout {
-        spacing: 10
-
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            centerIn: !showButtonName ? parent : undefined
-            right: dialogBox.left
             left: parent.left
-            leftMargin: Padding.large
+            top: parent.top
+            bottom: parent.bottom
+            margins: Padding.verysmall + 1
         }
-
+        implicitWidth: height
+        color: {
+            if (root.toggled && root.hovered)
+                return Colors.colPrimaryHover;
+            else if (root.toggled)
+                return Colors.colPrimary;
+            else if (!root.toggled && !root.hovered)
+                return !root.showButtonName ? "transparent" : Colors.colLayer3;
+            else if (!root.toggled && root.hovered)
+                return Colors.colLayer3Hover;
+            else
+                return Colors.colLayer3;
+        }
+        radius: root.buttonRadius
         Symbol {
-            font.pixelSize: Fonts.sizes.verylarge
-            fill: toggled ? 1 : 0
-            color: toggled ? Colors.colOnPrimary : Colors.colOnLayer2
-            horizontalAlignment: Text.AlignHLeft
-            verticalAlignment: Text.AlignVCenter
-            Layout.leftMargin: parent.spacing / 2
-            text: buttonIcon
+            anchors.centerIn: parent
+            fill: root.toggled
+            text: root.buttonIcon
+            font.pixelSize: 20
+            color: root.toggled ? Colors.colOnPrimary : Colors.colOnLayer3
+        }
+    }
 
-            Behavior on color {
-                CAnim {}
-            }
+    Behavior on buttonRadius {
+        Anim {}
+    }
+
+    ColumnLayout {
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: sideRect.right
+            leftMargin: Padding.large
+            right: parent.right
+            rightMargin: Padding.large
+        }
+        spacing: Padding.tiny
+
+        StyledText {
+            visible: root.showButtonName
+            Layout.fillWidth: true
+            Layout.rightMargin: Padding.massive
+            text: root.buttonName.charAt(0).toUpperCase() + root.buttonName.slice(1)
+            horizontalAlignment: Text.AlignHLeft
+            truncate: true
+            font.pixelSize: Fonts.sizes.normal
+            color: Colors.colOnLayer3
         }
 
         StyledText {
-            visible: showButtonName
+            visible: root.buttonSubtext.length > 0
             Layout.fillWidth: true
+            Layout.rightMargin: Padding.massive
+            text: root.buttonSubtext.charAt(0).toUpperCase() + root.buttonSubtext.slice(1)
             horizontalAlignment: Text.AlignHLeft
-            truncate:true
-            font.pixelSize: Fonts.sizes.normal
-            color: toggled ? Colors.colOnPrimary : Colors.colOnLayer2
-            text: buttonName
+            truncate: true
+            font.pixelSize: Fonts.sizes.small
+            color: Colors.colSubtext
         }
-
-        Spacer {}
     }
 }

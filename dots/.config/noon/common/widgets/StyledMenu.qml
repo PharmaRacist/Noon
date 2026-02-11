@@ -17,7 +17,7 @@ Menu {
     Material.elevation: 8
 
     Repeater {
-        model: content
+        model: content.filter(i => i.visible ?? true)
 
         StyledMenuItem {
             colors: root.colors

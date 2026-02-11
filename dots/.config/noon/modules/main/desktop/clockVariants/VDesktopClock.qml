@@ -23,28 +23,37 @@ Item {
         hoverEnabled: true
     }
 
-    ColumnLayout {
+    GridLayout {
         id: layout
         anchors.centerIn: parent
-        spacing: -25 * clockScale
+        rowSpacing: -25 * clockScale
+        columns: 2
+        rows: 2
 
-        StyledText {
-            text: DateTimeService.cleanHour
-            font.pixelSize: 100 * clockScale
-            color: hovered ? Colors.colPrimary : Colors.colOnBackground
-            font.variableAxes: {
-                "wdth": root.wdth,
-                "wght": root.wght
+        Repeater {
+            model: {
+                const h = DateTimeService.hour;
+                const m = DateTimeService.minute;
+                return [h[0], h[1], m[0], m[1]];
             }
-        }
 
-        StyledText {
-            text: DateTimeService.cleanMinute
-            font.pixelSize: 100 * clockScale
-            color: hovered ? Colors.colSecondary : Colors.colOnBackground
-            font.variableAxes: {
-                "wdth": root.wdth,
-                "wght": root.wght
+            StyledText {
+                id: textItem
+                required property var modelData
+                required property int index
+
+                text: modelData
+                font.pixelSize: 100 * root.clockScale
+                color: root.hovered ? ((Math.floor(index / 2) + index) % 2 === 0 ? Colors.colPrimary : Colors.colSecondaryContainer) : Colors.colOnBackground
+
+                font.variableAxes: {
+                    "wdth": root.wdth,
+                    "wght": root.wght
+                }
+
+                Behavior on color {
+                    CAnim {}
+                }
             }
         }
     }

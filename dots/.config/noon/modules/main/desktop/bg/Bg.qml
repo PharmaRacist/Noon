@@ -139,11 +139,11 @@ Scope {
                         z: 9999
                         visible: Mem.options.desktop.clock.enabled && (!backgroundPanel.enableDepthMode || !layerClock.active)
                     }
-                    Loader {
+                    StyledLoader {
                         id: fgLoader
                         anchors.fill: parent
                         visible: active
-
+                        fade: true
                         asynchronous: true
                         active: backgroundPanel.enableDepthMode
                         sourceComponent: Fg {}

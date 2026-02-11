@@ -1,5 +1,5 @@
 import QtQuick
-import Noon
+import Noon.Services
 import Quickshell
 import Quickshell.Services.Mpris
 import qs.common
@@ -38,7 +38,6 @@ Scope {
         }
         function pick_random_wall() {
             WallpaperService.applyRandomWallpaper();
-            NoonUtils.notify("Picked Random Wall");
         }
         function set_wall(path: string) {
             WallpaperService.applyWallpaper(path);

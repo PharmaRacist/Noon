@@ -89,6 +89,26 @@ Singleton {
         Quickshell.execDetached(["kitty", "-e", "fish", "-c", ` yay -S --noconfirm  ${app}`]);
     }
 
+    function setSidebarUrl(url) {
+        if (!url.startsWith("http"))
+            return;
+        GlobalState.web_session.url = url;
+    }
+
+    function checkIfDlp(url) {
+        const avList = ["youtube.com", "youtu.be", "facebook.com", "twitter.com", "x.com", "instagram.com", "tiktok.com", "twitch.tv", "reddit.com", "soundcloud.com", "spotify.com", "archive.org", "pornhub.com", "crunchyroll.com", "plex.tv", "imgur.com", "streamable.com", "udemy.com", "coursera.org", "khan academy.org"];
+
+        return avList.some(domain => url.toLowerCase().includes(domain));
+    }
+    function runDownloader(url) {
+        if (url.startsWith("http")) {
+            if (checkIfDlp(url)) {
+                GlobalStates.main.sysDialogs.pendingData = url;
+                GlobalStates.main.sysDialogs.mode = "dlp";
+            }
+        }
+    }
+
     function edit(filePath) {
         if (!filePath)
             return;

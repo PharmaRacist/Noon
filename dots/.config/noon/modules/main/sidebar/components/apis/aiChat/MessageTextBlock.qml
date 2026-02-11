@@ -10,11 +10,11 @@ import Quickshell.Hyprland
 
 ColumnLayout {
     id: root
-    // These are needed on the parent loader
+
     property bool editing: false
     property bool renderMarkdown: false
     property bool enableMouseSelection: false
-    property var segmentContent: ({})
+    property string segmentContent: ""
     property var messageData: {}
     property bool done: true
     property bool forceDisableChunkSplitting: false
@@ -25,133 +25,80 @@ ColumnLayout {
     property bool fadeChunkSplitting: !forceDisableChunkSplitting && !editing && !/\n\|/.test(shownText) && Mem.options.sidebar.behavior.aiTextFadeIn
 
     Layout.fillWidth: true
+    spacing: 0
 
     Timer {
         id: renderTimer
-        interval: 1000
+        interval: 100
         repeat: false
         onTriggered: {
-            renderLatex();
-            for (const hash of renderedLatexHashes) {
-                handleRenderedLatex(hash, true);
-            }
+            const color = Colors.colOnLayer1.toString();
+            renderedLatexHashes = LatexService.detectAndRenderLatex(segmentContent, color);
         }
     }
 
-    function renderLatex() {
-        // Regex for $...$, $$...$$, \[...\]
-        // Note: This is a simple approach and may need refinement for edge cases
-        let regex = /(\$\$([\s\S]+?)\$\$)|(\$([^\$]+?)\$)|(\\\[((?:.|\n)+?)\\\])|(\\\(([\s\S]+?)\\\))/g;
-        let match;
-        while ((match = regex.exec(segmentContent)) !== null) {
-            let expression = match[1] || match[2] || match[3] || match[4] || match[5] || match[6] || match[7] || match[8];
-            if (expression) {
-                Qt.callLater(() => {
-                    const [renderHash, isNew] = LatexService.requestRender(expression.trim());
-                    if (!renderedLatexHashes.includes(renderHash)) {
-                        renderedLatexHashes.push(renderHash);
-                    }
-                });
-            }
-        }
+    function updateRenderedContent() {
+        renderedSegmentContent = LatexService.replaceLatexWithImages(segmentContent, renderedLatexHashes);
     }
 
-    function handleRenderedLatex(hash, force = false) {
-        if (renderedLatexHashes.includes(hash) || force) {
-            const imagePath = LatexService.renderedImagePaths[hash];
-            const markdownImage = `![latex](${imagePath})`;
+    onDoneChanged: renderTimer.restart()
 
-            const expression = LatexService.processedExpressions[hash];
-            renderedSegmentContent = renderedSegmentContent.replace(expression, markdownImage);
-        }
-    }
-
-    onDoneChanged: {
-        renderTimer.restart();
-    }
     onEditingChanged: {
         if (!editing) {
-            renderLatex();
+            renderTimer.restart();
         } else {
-            // console.log("Editing mode enabled", segmentContent)
             root.shownText = segmentContent;
         }
     }
 
     onSegmentContentChanged: {
-        // console.log("Segment content changed: " + segmentContent);
-        renderedSegmentContent = segmentContent ?? "";
+        renderedSegmentContent = String(segmentContent ?? "");
         if (!root.editing && segmentContent) {
-            root.renderLatex();
+            renderTimer.restart();
         }
     }
 
     onRenderedSegmentContentChanged: {
-        // console.log("Rendered segment content changed: " + renderedSegmentContent);
         if (renderedSegmentContent) {
             root.shownText = renderedSegmentContent;
         }
     }
 
-    // When something finishes rendering
-    // 1. Check if the hash is in the list
-    // 2. If it is, replace the expression with the image path
     Connections {
         target: LatexService
         function onRenderFinished(hash, imagePath) {
-            const expression = LatexService.processedExpressions[hash];
-            // console.log("Render finished: " + hash + " " + expression);
-            handleRenderedLatex(hash);
+            if (renderedLatexHashes.includes(hash)) {
+                updateRenderedContent();
+            }
         }
     }
 
-    spacing: 0
     Repeater {
         id: textLinesRepeater
         property list<real> textLineOpacities: []
+
         model: ScriptModel {
-            // Split by either double newlines or single newlines in a list
             values: root.fadeChunkSplitting ? root.shownText.split(/\n\n(?= {0,2})|\n(?= {0,2}[-\*])/g).filter(line => line.trim() !== "") : [root.shownText]
             onValuesChanged: {
                 while (textLinesRepeater.textLineOpacities.length < values.length) {
-                    textLinesRepeater?.textLineOpacities.push(root.messageData.done ? 1 : 0);
+                    textLinesRepeater?.textLineOpacities.push(root.messageData?.done ? 1 : 0);
                 }
             }
         }
+
         delegate: TextArea {
             id: textArea
             required property int index
             required property string modelData
 
-            // Fade in animation
-            visible: opacity > 0
-            opacity: fadeChunkSplitting ? (textLinesRepeater.textLineOpacities[index] ?? (root.messageData.done ? 1 : 0)) : 1
-            // Connections {
-            //     target: root.messageData
-            //     function onDoneChanged() {
-            //         if (root.messageData.done) {
-            //             textLinesRepeater.textLineOpacities[textArea.index] = 1;
-            //         }
-            //     }
-            // }
-            Connections {
-                target: textLinesRepeater.model
-                function onValuesChanged() {
-                    if (textLinesRepeater.model.values.length > textArea.index + 1) {
-                        textLinesRepeater.textLineOpacities[textArea.index] = 1;
-                    }
-                }
-            }
-            Behavior on opacity {
-                Anim {}
-            }
-
             Layout.fillWidth: true
+            visible: opacity > 0
+            opacity: fadeChunkSplitting ? (textLinesRepeater.textLineOpacities[index] ?? (root.messageData?.done ? 1 : 0)) : 1
             readOnly: !editing
             selectByMouse: enableMouseSelection || editing
             renderType: Text.NativeRendering
             font.family: Fonts.family.reading
-            font.hintingPreference: Font.PreferNoHinting // Prevent weird bold text
+            font.hintingPreference: Font.PreferNoHinting
             font.pixelSize: Fonts.sizes.large * Mem.states.sidebar.apis.fontScale
             selectedTextColor: Colors.m3.m3onSecondaryContainer
             selectionColor: Colors.colSecondaryContainer
@@ -160,10 +107,22 @@ ColumnLayout {
             textFormat: renderMarkdown ? TextEdit.MarkdownText : TextEdit.PlainText
             text: modelData
 
+            Behavior on opacity {
+                Anim {}
+            }
+
+            Connections {
+                target: textLinesRepeater.model
+                function onValuesChanged() {
+                    if (textLinesRepeater.model.values.length > textArea.index + 1) {
+                        textLinesRepeater.textLineOpacities[textArea.index] = 1;
+                    }
+                }
+            }
+
             onTextChanged: {
-                if (!root.editing)
-                    return;
-                segmentContent = text;
+                if (root.editing)
+                    segmentContent = text;
             }
 
             onLinkActivated: link => {
@@ -172,19 +131,11 @@ ColumnLayout {
             }
 
             MouseArea {
-                // Pointing hand for links
                 anchors.fill: parent
-                acceptedButtons: Qt.NoButton // Only for hover
+                acceptedButtons: Qt.NoButton
                 hoverEnabled: true
                 cursorShape: parent.hoveredLink !== "" ? Qt.PointingHandCursor : (enableMouseSelection || editing) ? Qt.IBeamCursor : Qt.ArrowCursor
             }
-
-            // Rectangle {
-            //     anchors.fill: parent
-            //     color: "#22786378"
-            //     border.width: 1
-            //     border.color: "#7E7E7E"
-            // }
         }
     }
 }

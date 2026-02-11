@@ -10,12 +10,11 @@ import qs.store
 
 StyledRect {
     id: root
+    required property bool listMode
     property bool showPreview: false
     property string path
-    property bool onlineURL: path.toString().startsWith("https:") || path.startsWith("http:")
+    property bool isOnline: path.toString().startsWith("https:") || path.startsWith("http:")
     property string icon: getIcon(path)
-    implicitHeight: Sizes.sidebar.shelfItemSize.height
-    implicitWidth: Sizes.sidebar.shelfItemSize.width
     color: Colors.colLayer2
     radius: Rounding.large
     border.color: eventArea.drag.active ? Colors.colPrimary : "transparent"
@@ -42,11 +41,12 @@ StyledRect {
         return "draft";
     }
 
-    CLayout {
+    GridLayout {
         anchors.centerIn: parent
+        columns: root.listMode ? 4 : 1
         Loader {
             Layout.alignment: Qt.AlignHCenter
-            sourceComponent: root.onlineURL ? favIconComponent : symbolComponent
+            sourceComponent: root.isOnline ? favIconComponent : symbolComponent
 
             Component {
                 id: symbolComponent
@@ -69,7 +69,7 @@ StyledRect {
         StyledText {
             id: title
             text: {
-                if (root.onlineURL) {
+                if (root.isOnline) {
                     StringUtils.getDomain(root.path);
                 } else
                     decodeURIComponent(FileUtils.getEscapedFileNameWithoutExtension(root.path));
@@ -82,6 +82,9 @@ StyledRect {
             Layout.fillWidth: true
             Layout.maximumWidth: root.width - Padding.verysmall
             horizontalAlignment: Text.AlignHCenter
+        }
+        Spacer {
+            visible: root.listMode
         }
     }
 
@@ -159,11 +162,40 @@ StyledRect {
                 }
             },
             {
+                "visible": root.isOnline && Mem.options.sidebar.content.web,
+                "text": "Open In Sidebar",
+                "materialIcon": "globe",
+                "action": () => {
+                    NoonUtils.setSidebarUrl(path);
+                    NoonUtils.callIpc("sidebar reveal Web");
+                }
+            },
+            {
+                "visible": root.isOnline,
+                "text": "Save in Notes",
+                "materialIcon": "stylus",
+                "action": () => {
+                    NotesService.note(path + " \n---");
+                    NoonUtils.callIpc("sidebar reveal Notes");
+                }
+            },
+            {
                 "text": "Forget",
                 "materialIcon": "delete",
                 "action": () => {
                     if (root.index !== undefined) {
                         Mem.states.sidebar.shelf.filePaths.splice(root.index, 1);
+                    }
+                }
+            },
+            {
+                "text": "Download With Dlp",
+                "materialIcon": "download",
+                "visible": NoonUtils.checkIfDlp(root.path),
+                "action": () => {
+                    NoonUtils.runDownloader(path);
+                    if (!GlobalStates.main.sidebar.pinned) {
+                        NoonUtils.callIpc("sidebar hide");
                     }
                 }
             },

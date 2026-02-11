@@ -1,200 +1,159 @@
-import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
-import Quickshell
+import QtQuick
 import qs.common
 import qs.common.widgets
 import qs.services
+import Quickshell
 
-Rectangle {
+StyledRect {
     id: root
-
-    // Meta
-    property string icon: "dock"
+    property string icon: ""
     property string name: ""
     property string key: ""
     property string hint: ""
-    property string type: "button" // button | switch | spin | slider | combobox | text | action
+    property string type: "switch"
     property string actionName: ""
     property bool reloadOnChange: false
     property bool enabled: true
-    property bool subOption: false
     property bool useStates: false
     property bool enableTooltip: true
     property bool hideTitle: type === "field"
-    property string condition: ""
-    property string dependsOn: ""
-    property string id: ""
     property QtObject colors: Colors
     // Values
     property int customItemHeight: 0
-    property int itemValue: 0
+    // TODO ==> merge those values into re
     property int minValue: 0
     property int maxValue: 100
-    property int intValue: itemValue
+    property int intValue: 0
+
     property real sliderMinValue: 0
     property real sliderMaxValue: 1
-    property real sliderValue: 0.5
-    property int sliderDecimals: 2
-    property string sliderSuffix: ""
-    property real realValue: sliderValue
+    property real realValue: 0.1
+
     property var comboBoxValues: []
     property int comboBoxCurrentIndex: 0
     property string comboBoxCurrentValue: comboBoxValues.length > 0 ? comboBoxValues[0] : ""
     property bool toggledState: false
     property bool fillHeight: false
     property string textValue: ""
-    property string textPlaceholder: "Enter text..."
-    // Colors
-    property color backgroundColor: root.colors.colLayer2
-    property color backgroundHoverColor: root.colors.colLayer1Hover
-    property color backgroundDisabledColor: Qt.rgba(root.colors.colLayer1.r, root.colors.colLayer1.g, root.colors.colLayer1.b, 0.5)
-    property color backgroundPressedColor: Qt.darker(root.colors.colLayer1, 1.2)
-    property color iconBackgroundColor: root.colors.colLayer3
-    property color iconBackgroundActiveColor: root.colors.m3.m3primaryContainer
-    property color iconColor: root.colors.colOnLayer2
-    property color iconActiveColor: root.colors.m3.m3onPrimaryContainer
-    property color textColor: root.colors.colOnLayer0
-    property color textDisabledColor: Qt.rgba(root.colors.colOnLayer0.r, root.colors.colOnLayer0.g, root.colors.colOnLayer0.b, 0.5)
-    property color spinBoxBackgroundColor: root.colors.colLayer2
-    property color spinBoxTextColor: root.colors.colOnLayer2
-    property color spinBoxButtonColor: root.colors.colLayer2
-    property color spinBoxButtonHoverColor: root.colors.colLayer2Hover
-    property color spinBoxButtonActiveColor: root.colors.colLayer2Active
-    property color sliderHighlightColor: root.colors.colPrimary
-    property color sliderTrackColor: root.colors.colSecondaryContainer
-    property color sliderHandleColor: root.colors.m3.m3onSecondaryContainer
-    property color switchActiveColor: root.colors.colPrimary
-    property color switchInactiveColor: root.colors.colSurfaceContainerHighest
-    property color switchActiveBorderColor: root.colors.colPrimary
-    property color switchInactiveBorderColor: root.colors.m3.m3outline
-    property color switchButtonActiveColor: root.colors.m3.m3onPrimary
-    property color switchButtonColor: root.colors.m3.m3outline
-    property color switchIconActiveColor: root.colors.m3.m3primary
-    property color switchIconColor: "transparent"
-    property color comboBoxBackgroundColor: root.colors.colLayer2
-    property color comboBoxTextColor: root.colors.colOnLayer2
-    property color comboBoxBorderColor: root.colors.colOutline
-    property color comboBoxHoverColor: root.colors.colLayer2Hover
-    property color comboBoxArrowColor: root.colors.colOnLayer2
-    property bool _ready: false
-    property var _pendingValue: null
-    property string _pendingType: ""
-
+    property string textPlaceholder: "text"
+    property bool _initializing: true
+    readonly property var dict: {
+        "spin": {
+            component: spinComponent,
+            isActive: intValue > minValue
+        },
+        "slider": {
+            component: sliderComponent,
+            isActive: realValue > sliderMinValue,
+            width:120
+        },
+        "combobox": {
+            component: comboboxComponent,
+            width:165
+        },
+        "field": {
+            component: plainFieldComponent,
+            isActive: textValue !== "",
+            fillWidth: true
+        },
+        "text": {
+            component: textFieldComponent,
+            width:165
+        },
+        "action": {
+            component: actionComponent
+        },
+        "switch": {
+            component: switchComponent
+        }
+    }
     signal valueChanged(var newValue)
-    signal clicked()
+    signal clicked
 
-    function debouncedSetValue(value, valueType) {
-        _pendingValue = value;
-        _pendingType = valueType;
-        debounceTimer.restart();
+    function getConfigRoot() {
+        return useStates ? Mem.states : Mem.options;
     }
 
     function getConfigValue() {
         if (key === "" || !Mem)
             return undefined;
 
-        // Use ternary to select root object
-        let root = useStates ? Mem.states : Mem.options;
-        if (!root)
-            return undefined;
-
         let keys = key.split('.');
-        let current = root;
-        for (let i = 0; i < keys.length; i++) {
-            if (current === undefined || current === null)
-                return undefined;
+        let current = getConfigRoot();
 
+        for (let i = 0; i < keys.length && current; i++) {
             current = current[keys[i]];
         }
         return current;
     }
 
     function setConfigValue(value) {
-        if (key === "" || !Mem || !_ready)
-            return ;
-
-        // Use ternary to select root object
-        let root = useStates ? Mem.states : Mem.options;
-        if (!root)
-            return ;
+        if (key === "" || !Mem || _initializing)
+            return;
 
         let keys = key.split('.');
-        let current = root;
+        let current = getConfigRoot();
+
         for (let i = 0; i < keys.length - 1; i++) {
             if (!current[keys[i]])
-                current[keys[i]] = {
-            };
-
+                current[keys[i]] = {};
             current = current[keys[i]];
         }
+
         current[keys[keys.length - 1]] = value;
+        valueChanged(value);
+
+        if (reloadOnChange)
+            Qt.callLater(() => Quickshell.reload(true));
     }
 
-    onValueChanged: function(newValue) {
-        if (reloadOnChange && _ready)
-            Qt.callLater(() => {
-            return Quickshell.reload(true);
-        });
-
-    }
     Component.onCompleted: {
-        _ready = false; // Ensure it's false first
         let val = getConfigValue();
-        if (val !== undefined && val !== null) {
-            if (type === "spin") {
+        if (val === undefined || val === null) {
+            _initializing = false;
+            return;
+        }
+
+        switch (type) {
+            case "spin":
                 intValue = Math.max(minValue, Math.min(maxValue, parseInt(val) || minValue));
-            } else if (type === "slider") {
-                // FIX: Set realValue without triggering the change handler
+                break;
+            case "slider":
                 realValue = Math.max(sliderMinValue, Math.min(sliderMaxValue, parseFloat(val) || sliderMinValue));
-            } else if (type === "combobox") {
+                break;
+            case "combobox":
                 let idx = comboBoxValues.indexOf(val);
                 if (idx >= 0) {
                     comboBoxCurrentIndex = idx;
                     comboBoxCurrentValue = val;
                 }
-            } else if (type === "text" || type === "field") {
+                break;
+            case "text":
+            case "field":
                 textValue = String(val);
-            } else {
+                break;
+            default:
                 toggledState = Boolean(val);
-            }
         }
-        // Enable change tracking only AFTER initial values are loaded
-        Qt.callLater(() => {
-            return _ready = true;
-        });
+
+        _initializing = false;
     }
+
     Layout.fillHeight: fillHeight
     Layout.preferredHeight: (root.fillHeight && mainLoader.item) ? mainLoader.item.implicitHeight + 2 * Padding.normal : 65
     Layout.fillWidth: true
     color: {
         if (!enabled)
-            return backgroundDisabledColor;
+            return colors.colLayer2Disabled;
 
         if (mouseArea.pressed)
-            return backgroundPressedColor;
+            return colors.colLayer2Active;
 
         if (mouseArea.containsMouse)
-            return backgroundHoverColor;
+            return colors.colLayer2Hover;
 
-        return backgroundColor;
-    }
-    radius: 12
-    opacity: enabled ? 1 : 0.6
-
-    Timer {
-        id: debounceTimer
-
-        interval: 100
-        repeat: false
-        onTriggered: {
-            if (_pendingValue !== null) {
-                root.setConfigValue(_pendingValue);
-                root.valueChanged(_pendingValue);
-                _pendingValue = null;
-                _pendingType = "";
-            }
-        }
+        return colors.colLayer2;
     }
 
     MouseArea {
@@ -202,17 +161,85 @@ Rectangle {
 
         anchors.fill: parent
         hoverEnabled: true
-        enabled: root.enabled && (type === "button")
+        enabled: root.enabled && (type === "switch")
         onClicked: {
-            if (type === "button") {
                 toggledState = !toggledState;
-                debounceTimer.stop();
                 setConfigValue(toggledState);
-                root.valueChanged(toggledState);
                 root.clicked();
-            }
+                iconAnimation.start();
         }
         onPressed: feedbackAnimation.start()
+    }
+
+    Loader {
+        active: root.enableTooltip
+
+        sourceComponent: StyledToolTip {
+            extraVisibleCondition: hint !== "" && mouseArea.containsMouse
+            content: hint
+        }
+    }
+
+    RowLayout {
+        anchors.fill: parent
+        anchors.margins: Padding.small
+        anchors.leftMargin: Padding.large
+        anchors.rightMargin: Padding.large
+        spacing: Padding.huge
+
+        StyledRect {
+            visible: !root.hideTitle
+            Layout.preferredHeight: 40
+            Layout.preferredWidth: 40
+            radius: 999
+            color: root.dict[type].isActive ? colors.colPrimary : colors.colLayer3
+
+            Symbol {
+                id: iconSymbol
+
+                fill: 1
+                font.pixelSize: 18
+                text: icon
+                color: root.dict[type].isActive ? colors.colOnPrimary : colors.colOnLayer3
+                anchors.centerIn: parent
+
+                SequentialAnimation {
+                    id: iconAnimation
+
+                    running: false
+
+                    RotationAnimator {
+                        target: iconSymbol
+                        from: 0
+                        to: 360
+                        duration: 250
+                        easing.type: Easing.OutQuad
+                    }
+                }
+
+                Behavior on color {
+                    CAnim {}
+                }
+            }
+        }
+
+        StyledText {
+            visible: !root.hideTitle
+            text: name
+            color: colors.colOnLayer2
+            font.pixelSize: Fonts.sizes.normal
+            truncate:true
+            Layout.fillWidth:true
+        }
+
+        Loader {
+            id: mainLoader
+
+            sourceComponent: root.dict[type].component
+            Layout.fillWidth:root.dict[type].fillWidth || false
+            Layout.minimumWidth:root.dict[type].width || 0
+            Layout.fillHeight: root.fillHeight
+        }
     }
 
     SequentialAnimation {
@@ -231,336 +258,136 @@ Rectangle {
             to: 1
             duration: 100
         }
-
     }
 
-    Loader {
-        active: root.enableTooltip
+    Component {
+        id: spinComponent
 
-        sourceComponent: StyledToolTip {
-            extraVisibleCondition: hint !== "" && mouseArea.containsMouse
-            content: hint
+        StyledSpinBox {
+            value: root.intValue
+            from: root.minValue
+            to: root.maxValue
+            enabled: root.enabled
+            onValueChanged:
+                if (value !== root.intValue) {
+                    root.intValue = value;
+                    root.setConfigValue(value);
+                }
+
         }
-
     }
 
-    RowLayout {
-        anchors.fill: parent
-        anchors.margins: 8
-        anchors.leftMargin: 12
-        anchors.rightMargin: 12
-        spacing: 12
+    Component {
+        id: sliderComponent
 
-        Rectangle {
-            readonly property bool isActive: {
-                switch (type) {
-                case "button":
-                case "switch":
-                    return toggledState;
-                case "slider":
-                    return realValue > sliderMinValue;
-                case "spin":
-                    return intValue > minValue;
-                case "combobox":
-                    return comboBoxCurrentIndex > 0;
-                case "text":
-                case "field":
-                    return textValue !== "";
-                default:
-                    return false;
+        StyledSlider {
+            from: root.sliderMinValue
+            to: root.sliderMaxValue
+            value: root.realValue
+            enabled: root.enabled
+            enableTooltip: root.enableTooltip
+            onMoved: {
+                if (!root._initializing) {
+                    root.realValue = value;
+                    root.setConfigValue(value);
                 }
             }
-
-            visible: !root.hideTitle
-            Layout.preferredHeight: 40
-            Layout.preferredWidth: 40
-            radius: 10
-            color: isActive ? iconBackgroundActiveColor : iconBackgroundColor
-
-            Symbol {
-                id: iconSymbol
-
-                fill: 1
-                font.pixelSize: icon === "" ? 14 : 22
-                text: icon
-                font.family: Fonts.family.iconMaterial
-                color: parent.isActive ? iconActiveColor : iconColor
-                anchors.centerIn: parent
-
-                SequentialAnimation {
-                    id: iconAnimation
-
-                    running: false
-
-                    RotationAnimator {
-                        target: iconSymbol
-                        from: 0
-                        to: 360
-                        duration: 250
-                        easing.type: Easing.OutQuad
-                    }
-
-                }
-
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 200
-                    }
-
-                }
-
-            }
-
-            Behavior on color {
-                ColorAnimation {
-                    duration: 200
-                }
-
-            }
-
         }
+    }
 
-        StyledText {
-            visible: !root.hideTitle
-            text: name
-            color: enabled ? textColor : textDisabledColor
-            font.pixelSize: Fonts.sizes.normal
-        }
+    Component {
+        id: comboboxComponent
 
-        Item {
-            visible: !root.hideTitle
-            Layout.fillWidth: true
-        }
-
-        Loader {
-            id: mainLoader
-
-            sourceComponent: {
-                switch (type) {
-                case "spin":
-                    return spinComponent;
-                case "slider":
-                    return sliderComponent;
-                case "combobox":
-                    return comboboxComponent;
-                case "field":
-                    return plainFieldComponent;
-                case "text":
-                    return textFieldComponent;
-                case "action":
-                    return actionComponent;
-                case "switch":
-                    return switchComponent;
-                case "button":
-                default:
-                    return switchComponent;
-                }
-            }
-            Layout.minimumWidth: root.hideTitle ? parent.width : type === "slider" ? 120 : type === "combobox" ? 165 : type === "text" ? 165 : item ? item.width : 40
-            Layout.preferredWidth: root.type === "field" ? parent.width : Layout.minimumWidth
-            Layout.fillHeight: root.fillHeight
-        }
-
-        Component {
-            id: spinComponent
-
-            StyledSpinBox {
-                value: root.intValue
-                from: root.minValue
-                to: root.maxValue
-                enabled: root.enabled
-                backgroundColor: root.spinBoxBackgroundColor
-                textColor: root.spinBoxTextColor
-                buttonColor: root.spinBoxButtonColor
-                buttonHoverColor: root.spinBoxButtonHoverColor
-                buttonActiveColor: root.spinBoxButtonActiveColor
-                onValueChanged: {
-                    if (value !== root.intValue) {
-                        root.intValue = value;
-                        root.debouncedSetValue(value, "spin");
-                    }
-                }
-            }
-
-        }
-
-        Component {
-            id: sliderComponent
-
-            StyledSlider {
-                Layout.minimumWidth: 140
-                Layout.fillWidth: true
-                from: root.sliderMinValue
-                to: root.sliderMaxValue
-                value: root.realValue
-                enabled: root.enabled
-                highlightColor: root.sliderHighlightColor
-                trackColor: root.sliderTrackColor
-                handleColor: root.sliderHandleColor
-                enableTooltip: root.enableTooltip
-                onMoved: {
-                    if (root._ready) {
-                        root.realValue = value;
-                        root.debouncedSetValue(value, "slider");
-                    }
-                }
-            }
-
-        }
-
-        Component {
-            id: comboboxComponent
-
-            StyledComboBox {
-                Layout.minimumWidth: 140
-                implicitHeight: 40
-                enabled: root.enabled
-                model: root.comboBoxValues
-                currentIndex: root.comboBoxCurrentIndex
-                onActivated: function(index) {
-                    if (index >= 0 && index < root.comboBoxValues.length && index !== root.comboBoxCurrentIndex) {
-                        root.comboBoxCurrentIndex = index;
-                        root.comboBoxCurrentValue = root.comboBoxValues[index];
-                        debounceTimer.stop();
-                        root.setConfigValue(root.comboBoxCurrentValue);
-                        root.valueChanged(root.comboBoxCurrentValue);
-                        iconAnimation.start();
-                    }
-                }
-            }
-
-        }
-
-        Component {
-            id: plainFieldComponent
-
-            MaterialTextField {
-                enabled: root.enabled
-                text: root.textValue
-                font.pixelSize: Fonts.sizes.verylarge
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.alignment: Qt.AlignCenter
-                placeholderText: root.textPlaceholder
-                onTextChanged: {
-                    if (text !== root.textValue) {
-                        root.textValue = text;
-                        root.debouncedSetValue(text, "text");
-                    }
-                }
-                onAccepted: {
-                    debounceTimer.stop();
-                    if (_pendingValue !== null) {
-                        root.setConfigValue(_pendingValue);
-                        root.valueChanged(_pendingValue);
-                        _pendingValue = null;
-                    }
-                    iconAnimation.start();
-                }
-                Keys.onEscapePressed: focus = false
-            }
-
-        }
-
-        Component {
-            id: textFieldComponent
-
-            MaterialTextField {
-                Layout.minimumWidth: 160
-                Layout.preferredHeight: 40
-                implicitHeight: 40
-                enabled: root.enabled
-                text: root.textValue
-                placeholderText: {
-                    let val = root.getConfigValue();
-                    return (val !== undefined && val !== null) ? String(val) : root.textPlaceholder;
-                }
-                horizontalAlignment: Text.AlignHCenter
-                onTextChanged: {
-                    if (text !== root.textValue) {
-                        root.textValue = text;
-                        root.debouncedSetValue(text, "text");
-                    }
-                }
-                onAccepted: {
-                    debounceTimer.stop();
-                    if (_pendingValue !== null) {
-                        root.setConfigValue(_pendingValue);
-                        root.valueChanged(_pendingValue);
-                        _pendingValue = null;
-                    }
+        StyledComboBox {
+            implicitHeight: 40
+            enabled: root.enabled
+            model: root.comboBoxValues
+            currentIndex: root.comboBoxCurrentIndex
+            onActivated: function (index) {
+                if (index >= 0 && index < root.comboBoxValues.length && index !== root.comboBoxCurrentIndex) {
+                    root.comboBoxCurrentIndex = index;
+                    root.comboBoxCurrentValue = root.comboBoxValues[index];
+                    root.setConfigValue(root.comboBoxCurrentValue);
                     iconAnimation.start();
                 }
             }
-
         }
+    }
 
-        Component {
-            id: actionComponent
+    Component {
+        id: plainFieldComponent
 
-            RippleButton {
-                width: 45
-                height: width
-                colBackground: root.colors.colLayer3
-                releaseAction: function() {
-                    let cmd = Directories.scriptsDir + "/" + root.actionName;
-                    NoonUtils.execDetached(cmd);
-                    NoonUtils.callIpc("sidebar hide");
-                }
-
-                Symbol {
-                    font.pixelSize: 24
-                    fill: 1
-                    anchors.centerIn: parent
-                    text: "play_arrow"
-                    color: root.colors.colOnLayer1
-                }
-
+        MaterialTextField {
+            enabled: root.enabled
+            text: root.textValue
+            font.pixelSize: Fonts.sizes.verylarge
+            placeholderText: root.textPlaceholder
+            onTextChanged: {
+                if (text !== root.textValue)
+                    root.textValue = text;
             }
-
+            onAccepted: {
+                root.setConfigValue(root.textValue);
+                iconAnimation.start();
+            }
+            Keys.onEscapePressed: focus = false
         }
+    }
 
-        Component {
-            id: switchComponent
+    Component {
+        id: textFieldComponent
 
-            StyledSwitch {
-                Layout.alignment: Qt.AlignRight
-                checked: root.toggledState
-                scale: 0.85
-                enabled: root.enabled
-                activeColor: root.switchActiveColor
-                inactiveColor: root.switchInactiveColor
-                activeBorderColor: root.switchActiveBorderColor
-                inactiveBorderColor: root.switchInactiveBorderColor
-                buttonActiveColor: root.switchButtonActiveColor
-                buttonColor: root.switchButtonColor
-                iconActiveColor: root.switchIconActiveColor
-                iconColor: root.switchIconColor
-                onCheckedChanged: {
-                    if (checked !== root.toggledState) {
-                        root.toggledState = checked;
-                        debounceTimer.stop();
-                        root.setConfigValue(checked);
-                        root.valueChanged(checked);
-                        iconAnimation.start();
-                    }
+        MaterialTextField {
+            implicitHeight: 40
+            enabled: root.enabled
+            text: root.textValue
+            placeholderText: {
+                let val = root.getConfigValue();
+                return (val !== undefined && val !== null) ? String(val) : root.textPlaceholder;
+            }
+            horizontalAlignment: Text.AlignHCenter
+            onTextChanged: {
+                if (text !== root.textValue)
+                    root.textValue = text;
+            }
+            onAccepted: {
+                root.setConfigValue(root.textValue);
+                iconAnimation.start();
+            }
+        }
+    }
+
+    Component {
+        id: actionComponent
+
+        RippleButtonWithIcon {
+            width: 45
+            height: width
+            colBackground: root.colors.colLayer3
+            materialIcon: "play_arrow"
+            materialIconFill: true
+            releaseAction: function () {
+                let cmd = Directories.scriptsDir + "/" + root.actionName;
+                NoonUtils.execDetached(cmd);
+                NoonUtils.callIpc("sidebar hide");
+            }
+        }
+    }
+
+    Component {
+        id: switchComponent
+
+        StyledSwitch {
+            checked: root.toggledState
+            scale: 0.87
+            enabled: root.enabled
+            onCheckedChanged: {
+                if (checked !== root.toggledState) {
+                    root.toggledState = checked;
+                    root.setConfigValue(checked);
+                    iconAnimation.start();
                 }
             }
-
         }
-
     }
-
-    Behavior on color {
-        CAnim {
-        }
-
-    }
-
-    Behavior on opacity {
-        Anim {
-        }
-
-    }
-
 }

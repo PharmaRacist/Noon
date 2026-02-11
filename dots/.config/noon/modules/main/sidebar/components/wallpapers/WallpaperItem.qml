@@ -53,7 +53,7 @@ StyledRect {
 
     StyledLoader {
         id: _loader
-        z: 999
+        z: 10
         anchors.fill: parent
         sourceComponent: isVideoFile ? vidComp : imageComp
         onLoaded: if (ready) {

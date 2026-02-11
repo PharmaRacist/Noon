@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import qs.common
 import qs.common.widgets
-import "contents"
+import "content"
 
 Item {
     id: root

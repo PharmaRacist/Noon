@@ -1,192 +1,82 @@
-import qs.services
-import qs.common
-import qs.common.widgets
-import qs.common.functions
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import Quickshell.Hyprland
-import Quickshell.Widgets
-import Qt5Compat.GraphicalEffects
+import qs.common
+import qs.common.widgets
 
-Item {
+BarGroup {
+    id: root
     property var bar
-    property bool borderless: !Mem.options.bar.appearance.modulesBg
-    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar.screen)
-    readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
+
+    readonly property int maxWorkspaces: Mem.options.bar.workspaces.shown || 6
     readonly property int workspaceGroup: Math.floor((monitor.activeWorkspace?.id - 1) / 10)
-    property color activeColor: Colors.colOnSecondaryContainer
-    property color inactiveColor: ColorUtils.transparentize(Colors.colOnLayer1, 0.5)
-    property list<bool> workspaceOccupied: []
-    property int widgetPadding: 8
-    property int iconSpacing: 8
-    property int fontSize: 16
-
-    // Display mode: "icons" or "numbers"
-    property string displayMode: "icons"
-    property string workspaceIcon: "\uf004"
-
-    // New: auto orientation mode (horizontal / vertical)
-    property bool verticalMode: false
-
-    property int workspaceIndexInGroup: (monitor.activeWorkspace?.id - 1) % Mem.options.bar.workspaces.shown
-
-    function updateWorkspaceOccupied() {
-        workspaceOccupied = Array.from({
-            length: Mem.options.bar.workspaces.shown
-        }, (_, i) => {
-            return Hyprland.workspaces.values.some(ws => ws.id === workspaceGroup * Mem.options.bar.workspaces.shown + i + 1);
-        });
+    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(bar.screen)
+    implicitHeight: grid.implicitHeight + Padding.massive
+    readonly property string mode: Mem.options.bar.workspaces.unicodeMode || "unicode"
+    readonly property var modeMap: {
+        "unicode": unicodeComp,
+        "rect": rectComp
     }
-
-    Component.onCompleted: updateWorkspaceOccupied()
-
-    Connections {
-        target: Hyprland.workspaces
-        function onValuesChanged() {
-            updateWorkspaceOccupied();
-        }
-    }
-
-    implicitWidth: !verticalMode ? layout.implicitWidth + widgetPadding * 2 : fontSize + widgetPadding * 2
-    implicitHeight: verticalMode ? layout.implicitHeight + widgetPadding * 2 : fontSize + widgetPadding * 2
-
-    WheelHandler {
-        onWheel: event => {
-            if (event.angleDelta.y < 0)
-                Hyprland.dispatch(`workspace r+1`);
-            else if (event.angleDelta.y > 0)
-                Hyprland.dispatch(`workspace r-1`);
-        }
-        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-    }
-
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.BackButton
-        onPressed: event => {
-            if (event.button === Qt.BackButton)
-                Hyprland.dispatch(`togglespecialworkspace`);
+        onWheel: event => {
+            const dir = event.angleDelta.y < 0 ? "+1" : "-1";
+            Hyprland.dispatch(`workspace r${dir}`);
         }
     }
 
-    // Switch between horizontal and vertical layout
-    Loader {
-        id: layout
+    GridLayout {
+        id: grid
         anchors.centerIn: parent
-        sourceComponent: verticalMode ? columnLayout : rowLayout
-    }
+        columns: root.vertical ? 1 : maxWorkspaces
+        rows: root.vertical ? maxWorkspaces : 1
+        columnSpacing: Padding.small
+        rowSpacing: Padding.small
 
-    // Horizontal layout
-    Component {
-        id: rowLayout
-        RowLayout {
-            spacing: iconSpacing
-            Repeater {
-                model: Mem.options.bar.workspaces.shown
-                WorkspaceIndicator {}
+        Repeater {
+            model: maxWorkspaces
+            StyledLoader {
+                sourceComponent: modeMap[root.mode]
+                onLoaded: if (ready) {
+                    item.wsId = Qt.binding(() => workspaceGroup * maxWorkspaces + index + 1);
+                    item.isActive = Qt.binding(() => monitor.activeWorkspace?.id === item.wsId);
+                    item.isVertical = Qt.binding(() => root.vertical);
+                }
             }
         }
     }
-
-    // Vertical layout
-    Component {
-        id: columnLayout
-        ColumnLayout {
-            spacing: iconSpacing
-            Repeater {
-                model: Mem.options.bar.workspaces.shown
-                WorkspaceIndicator {}
-            }
+    readonly property Component unicodeComp: StyledText {
+        property int wsId: -1
+        property bool isActive: false
+        property bool isVertical: false
+        width: root.width
+        height: 18
+        font.family: Fonts.family.iconNerd
+        font.pixelSize: 22
+        color: isActive ? Colors.colPrimary : Colors.colOnLayer0
+        opacity: isActive ? 1.0 : 0.4
+        horizontalAlignment: Text.AlignHCenter
+        text: Mem.options.bar.workspaces.unicodeChar
+        MouseArea {
+            anchors.fill: parent
+            onClicked: Hyprland.dispatch(`workspace ${dot.wsId}`)
         }
     }
+    readonly property Component rectComp: StyledRect {
+        property int wsId: -1
+        property bool isActive: false
+        property bool isVertical: false
+        implicitWidth: root.width * 0.75
+        implicitHeight: isActive ? width * 2 : width
+        radius: Rounding.large
 
-    component WorkspaceIndicator: Item {
-        id: workspaceItem
-        property int workspaceValue: workspaceGroup * Mem.options.bar.workspaces.shown + index + 1
-        property bool isActive: monitor.activeWorkspace?.id === workspaceValue
-        property bool isOccupied: workspaceOccupied[index]
-        property bool shouldShow: isActive || isOccupied
-
-        implicitWidth: shouldShow ? iconText.implicitWidth : 0
-        implicitHeight: shouldShow ? iconText.implicitHeight : 0
-        visible: shouldShow
-
-        states: [
-            State {
-                name: "active"
-                when: workspaceItem.isActive
-                PropertyChanges {
-                    target: iconText
-                    color: activeColor
-                    scale: 1.2
-                }
-                PropertyChanges {
-                    target: workspaceItem
-                    opacity: 1.0
-                }
-            },
-            State {
-                name: "inactive"
-                when: !workspaceItem.isActive && workspaceItem.shouldShow
-                PropertyChanges {
-                    target: iconText
-                    color: inactiveColor
-                    scale: 1.0
-                }
-                PropertyChanges {
-                    target: workspaceItem
-                    opacity: 1.0
-                }
-            },
-            State {
-                name: "hidden"
-                when: !workspaceItem.shouldShow
-                PropertyChanges {
-                    target: workspaceItem
-                    opacity: 0.0
-                }
-            }
-        ]
-
-        transitions: [
-            Transition {
-                from: "*"
-                to: "*"
-                CAnim {
-                    target: iconText
-                    property: "color"
-                }
-                Anim {
-                    target: iconText
-                    property: "scale"
-                }
-                Anim {
-                    target: workspaceItem
-                    property: "opacity"
-                }
-                Anim {
-                    target: workspaceItem
-                    property: "implicitWidth"
-                }
-            }
-        ]
-
-        Text {
-            id: iconText
-            text: displayMode === "numbers" ? (index + 1).toString() : workspaceIcon
-            font.pixelSize: fontSize
-            anchors.centerIn: parent
-            font.family: Fonts.family.monospace
-        }
+        color: isActive ? Colors.colPrimary : Colors.colLayer3
+        opacity: isActive ? 1.0 : 0.4
 
         MouseArea {
             anchors.fill: parent
-            anchors.margins: -4
-            onClicked: Hyprland.dispatch(`workspace ${workspaceItem.workspaceValue}`)
-            cursorShape: Qt.PointingHandCursor
+            onClicked: Hyprland.dispatch(`workspace ${dot.wsId}`)
         }
     }
 }

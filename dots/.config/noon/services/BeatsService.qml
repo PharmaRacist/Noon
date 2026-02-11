@@ -160,6 +160,7 @@ Singleton {
     function downloadByCommand(command) {
         dlpProc._cmd = command;
         dlpProc.running = true;
+        console.log(dlpProc._cmd);
     }
 
     Process {
@@ -169,7 +170,6 @@ Singleton {
         property string cmd: `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:${query.replace(/'/g, "")}'`
 
         command: ["bash", "-c", _cmd ?? cmd]
-
         onStarted: NoonUtils.notify(`Started Downloading: ${query}`)
         onExited: exitCode => {
             exitCode === 0 ? NoonUtils.notify(`Downloaded: ${query}`) : NoonUtils.notify(`Download failed: ${query}`);

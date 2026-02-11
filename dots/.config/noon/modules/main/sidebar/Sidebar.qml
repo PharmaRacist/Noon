@@ -71,6 +71,13 @@ StyledPanel {
         top: !pinned && Mem.options.desktop.shell.mode === "nobuntu" ? 40 : 0
     }
 
+    ScreenActionHint {
+        z: -1
+        icon: "keyboard_double_arrow_right"
+        text: "Drop it Inside Your Shelf !"
+        target: dropArea
+    }
+
     Item {
         id: wrapperItem
 
@@ -106,12 +113,12 @@ StyledPanel {
             }
 
             DropArea {
+                id: dropArea
                 anchors.fill: parent
                 keys: ["text/uri-list"]
                 onEntered: NoonUtils.callIpc("sidebar reveal Shelf")
             }
         }
-
         StyledRectangularShadow {
             target: visualContainer
         }

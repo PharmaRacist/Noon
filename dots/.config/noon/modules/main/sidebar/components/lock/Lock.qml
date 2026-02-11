@@ -32,7 +32,7 @@ StyledRect {
 
         StyledText {
             id: hour
-            text: DateTimeService.cleanHour
+            text: DateTimeService.hour
             font.pixelSize: 100 * clock.scale
             color: clock.active ? Colors.colPrimary : Colors.colOnBackground
             font.variableAxes: {
@@ -43,7 +43,7 @@ StyledRect {
 
         StyledText {
             id: minute
-            text: DateTimeService.cleanMinute
+            text: DateTimeService.minute
             font.pixelSize: 100 * clock.scale
             color: clock.active ? Colors.colSecondary : Colors.colOnBackground
             font.variableAxes: hour.font.variableAxes

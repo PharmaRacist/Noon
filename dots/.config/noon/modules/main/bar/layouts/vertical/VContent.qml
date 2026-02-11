@@ -1,17 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import qs.common
 import qs.common.widgets
 import qs.modules.main.bar.components
-import qs.services
-import qs.store
 
-ColumnLayout {
+Item {
     id: root
     required property var barRoot
-
-    spacing: Padding.normal
+    readonly property var opts: Mem.options.bar.vMap
 
     anchors {
         fill: parent
@@ -19,35 +15,43 @@ ColumnLayout {
         bottomMargin: Padding.huge
     }
 
-    Repeater {
-        model: Mem.options.bar.vMap ?? []
+    CLayout {
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
 
-        delegate: Loader {
-            id: moduleLoader
-            required property var modelData
+        spacing: opts.spacing
+        BarModulesFactory {
+            vertical: true
+            model: opts.topArea
+        }
+    }
 
-            asynchronous: true
-            Layout.alignment: Qt.AlignHCenter
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+    CLayout {
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: parent.left
+            right: parent.right
+        }
+        spacing: opts.spacing
+        BarModulesFactory {
+            vertical: true
+            model: opts.centerArea
+        }
+    }
+    CLayout {
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
 
-            source: {
-                const component = BarData.contentTable[modelData];
-                return component ? "../../components/" + component + ".qml" : "";
-            }
-
-            onLoaded: if (item) {
-                BarData.layoutProps.forEach(prop => {
-                    Layout[prop] = Qt.binding(() => item?.Layout?.[prop]);
-                });
-
-                if ("bar" in item)
-                    item.bar = barRoot;
-                if ("verticalMode" in item)
-                    item.verticalMode = true;
-                if ("vertical" in item)
-                    item.vertical = true;
-            }
+        spacing: opts.spacing
+        BarModulesFactory {
+            vertical: true
+            model: opts.bottomArea
         }
     }
 }

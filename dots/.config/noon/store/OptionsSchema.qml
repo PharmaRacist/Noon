@@ -228,7 +228,7 @@ JsonAdapter {
         content: JsonObject {
             property bool apps: true
             property bool apis: true
-            property bool web: true
+            property bool web: false
             property bool shelf: true
             property bool tasks: true
             property bool history: true
@@ -393,11 +393,19 @@ JsonAdapter {
 
         property bool enabled: true
         property int batteryLowThreshold: 20
-        property int spacing: 4
         property string layout: "VDynamic"
-
-        property list<string> vMap: ["materialStatusIcons", "battery", "weather", "separator", "sysTray", "spacer", "media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
-        property list<string> hMap: ["power", "separator", "title", "resources", "separator", "media", "separator", "workspaces", "separator", "clock", "separator", "utilButtons", "separator", "battery", "spacer", "sysTray", "weather", "materialStatusIcons"]
+        property JsonObject vMap: JsonObject {
+            property int spacing: 8
+            property list<string> topArea: ["materialStatusIcons", "battery", "weather", "sysTray"]
+            property list<string> centerArea: []
+            property list<string> bottomArea: ["media", "resources", "separator", "volume", "brightness", "separator", "workspaces", "separator", "clock", "separator", "keyboard", "separator", "power"]
+        }
+        property JsonObject hMap: JsonObject {
+            property int spacing: 4
+            property list<string> leftArea: ["power", "separator", "title"]
+            property list<string> centerArea: ["resources", "separator", "media", "separator", "workspaces", "separator", "clock", "separator", "utilButtons", "separator", "battery"]
+            property list<string> rightArea: ["sysTray", "weather", "materialStatusIcons"]
+        }
         property list<string> bars: ["Dynamic", "HyDe", "NovelKnocks", "Sleek", "VDynamic"]
 
         appearance: JsonObject {
@@ -429,6 +437,8 @@ JsonAdapter {
             property string customFallback: "●"
             property list<string> avilableModes: ["normal", "japanese", "roman", "custom"]
             property list<string> customMapping: [] // ex: 1: "●"
+            property string unicodeChar: "♡"
+            property string unicodeMode: "unicode" // "unicode" , "rect"
         }
     }
 

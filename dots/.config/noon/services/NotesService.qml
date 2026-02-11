@@ -20,7 +20,7 @@ Singleton {
         path: root.filePath
 
         onLoaded: {
-            root.content = noteFile.text() || getDefaultContent();
+            root.content = noteFile.text();
             root.isDirty = false;
             root.isLoaded = true;
             if (root._pendingNote)
@@ -29,7 +29,7 @@ Singleton {
 
         onLoadFailed: error => {
             if (error == FileViewError.FileNotFound) {
-                root.content = getDefaultContent();
+                root.content = "";
                 root.isLoaded = true;
                 save();
             }
@@ -39,11 +39,6 @@ Singleton {
             root.isDirty = false;
             root.lastSaved = new Date().toISOString();
         }
-    }
-
-    function getDefaultContent() {
-        var date = new Date();
-        return "# " + date.toLocaleDateString() + " - " + date.toLocaleTimeString() + "\n\n";
     }
 
     function save() {

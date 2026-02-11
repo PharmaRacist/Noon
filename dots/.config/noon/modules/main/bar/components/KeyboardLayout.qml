@@ -7,7 +7,7 @@ import qs.services
 BarGroup {
     id: root
 
-    implicitHeight: 25
+    implicitHeight: 20 + (active ? Padding.massive: 0)
 
     StyledText {
         anchors.centerIn: parent

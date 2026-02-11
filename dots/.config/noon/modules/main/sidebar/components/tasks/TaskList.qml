@@ -33,6 +33,7 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: containerPadding
         clip: true
+        hint: false
         model: taskListModel
         spacing: root.todoListItemSpacing
 
@@ -288,31 +289,18 @@ Rectangle {
                         Layout.fillWidth: true
 
                         TodoItemActionButton {
-                            onClicked: root.editRequested(model.originalIndex, model.content)
-                            ToolTip.visible: hovered
-                            ToolTip.text: "Edit (or middle-click)"
-                            ToolTip.delay: 1000
-
-                            contentItem: Symbol {
-                                text: "edit"
-                                fill: 1
-                                font.pixelSize: Fonts.sizes.verylarge
-                                color: Colors.colOnLayer1
-                            }
+                            releaseAction: () => root.editRequested(model.originalIndex, model.content)
+                            hintText: "Edit (or middle-click)"
+                            materialIcon: "edit"
                         }
 
                         TodoItemActionButton {
-                            onClicked: {
+                            releaseAction: () => {
                                 TodoService.deleteItem(model.originalIndex);
                                 updateTaskModels();
                             }
-
-                            contentItem: Symbol {
-                                text: "delete_forever"
-                                fill: 1
-                                font.pixelSize: Fonts.sizes.verylarge
-                                color: Colors.m3.m3error
-                            }
+                            hintText: "Delete Task"
+                            materialIcon: "delete_forever"
                         }
                     }
                 }

@@ -442,6 +442,12 @@ Singleton {
                             "key": "bar.appearance.outline"
                         },
                         {
+                            "icon": "width",
+                            "name": "Spacing",
+                            "key": "bar.spacing",
+                            "type": "spin"
+                        },
+                        {
                             "icon": "reorder",
                             "name": "Separators",
                             "key": "bar.appearance.enableSeparators"

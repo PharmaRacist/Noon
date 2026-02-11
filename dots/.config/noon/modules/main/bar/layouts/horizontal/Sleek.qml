@@ -1,4 +1,4 @@
-import Noon
+import Noon.Services
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland

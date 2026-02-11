@@ -13,7 +13,8 @@ Item {
             "command": "",
             "c": Colors.colSecondaryContainer,
             "hc": Colors.colSecondaryContainerHover,
-            "i": Colors.colOnSecondaryContainer
+            "i": Colors.colOnSecondaryContainer,
+            "shape": "Ghostish"
         },
         {
             "icon": "arrow_warm_up",
@@ -21,7 +22,8 @@ Item {
             "command": "systemctl reboot --firmware-setup",
             "c": Qt.rgba(Colors.m3.m3primary.r, Colors.m3.m3primary.g, Colors.m3.m3primary.b, 0.15),
             "hc": Qt.rgba(Colors.m3.m3primary.r, Colors.m3.m3primary.g, Colors.m3.m3primary.b, 0.25),
-            "i": Colors.m3.m3primary
+            "i": Colors.m3.m3primary,
+            "shape": "Cookie6Sided"
         },
         {
             "icon": "dark_mode",
@@ -29,7 +31,8 @@ Item {
             "command": "systemctl suspend || loginctl suspend",
             "c": Qt.rgba(Colors.m3.m3tertiary.r, Colors.m3.m3tertiary.g, Colors.m3.m3tertiary.b, 0.15),
             "hc": Qt.rgba(Colors.m3.m3tertiary.r, Colors.m3.m3tertiary.g, Colors.m3.m3tertiary.b, 0.25),
-            "i": Colors.m3.m3tertiary
+            "i": Colors.m3.m3tertiary,
+            "shape": "Clover8Leaf"
         },
         {
             "icon": "logout",
@@ -37,7 +40,8 @@ Item {
             "command": "loginctl terminate-user ''",
             "c": Qt.rgba(Colors.m3.m3secondary.r, Colors.m3.m3secondary.g, Colors.m3.m3secondary.b, 0.15),
             "hc": Qt.rgba(Colors.m3.m3secondary.r, Colors.m3.m3secondary.g, Colors.m3.m3secondary.b, 0.25),
-            "i": Colors.m3.m3secondary
+            "i": Colors.m3.m3secondary,
+            "shape": "PixelCircle"
         },
         {
             "icon": "restart_alt",
@@ -45,7 +49,8 @@ Item {
             "command": "reboot || loginctl reboot",
             "c": Qt.rgba(Colors.m3.m3success.r, Colors.m3.m3success.g, Colors.m3.m3success.b, 0.15),
             "hc": Qt.rgba(Colors.m3.m3success.r, Colors.m3.m3success.g, Colors.m3.m3success.b, 0.25),
-            "i": Colors.m3.m3success
+            "i": Colors.m3.m3success,
+            "shape": "Cookie9Sided"
         },
         {
             "icon": "power_settings_new",
@@ -53,7 +58,8 @@ Item {
             "command": "systemctl poweroff || loginctl poweroff",
             "c": Qt.rgba(Colors.m3.m3error.r, Colors.m3.m3error.g, Colors.m3.m3error.b, 0.15),
             "hc": Qt.rgba(Colors.m3.m3error.r, Colors.m3.m3error.g, Colors.m3.m3error.b, 0.25),
-            "i": Colors.m3.m3error
+            "i": Colors.m3.m3error,
+            "shape": "Bun"
         }
     ]
 
@@ -64,19 +70,24 @@ Item {
         Repeater {
             model: root.contentModel
 
-            delegate: RippleButtonWithIcon {
+            delegate: MaterialShapeWrappedMaterialSymbol {
                 required property var modelData
-                readonly property int buttonSize: root.width * 0.8
-                implicitHeight: buttonSize
-                implicitWidth: buttonSize
-                buttonRadius: Rounding.verylarge
-                colBackground: modelData.c
-                materialIconFill: hovered || toggled
-                materialIcon: modelData.icon
+                readonly property int buttonSize: root.width * 0.86
+                implicitSize: buttonSize
+                color: modelData.c
                 iconSize: buttonSize * 0.6
-                iconColor: modelData.i
-                releaseAction: () => {
-                    modelData?.command === "" ? NoonUtils.callIpc("global lock") : NoonUtils.execDetached(modelData.command);
+                colSymbol: modelData.i
+                text: modelData.icon
+                shape: eventArea.containsMouse ? MaterialShape.Shape.Cookie12Sided : MaterialShape.Shape[modelData.shape]
+                fill: eventArea.containsMouse ? 1 : 0
+                MouseArea {
+                    id: eventArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onPressed: () => {
+                        modelData?.command === "" ? NoonUtils.callIpc("global lock") : NoonUtils.execDetached(modelData.command);
+                    }
                 }
             }
         }

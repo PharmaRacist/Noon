@@ -19,6 +19,10 @@ Loader {
         root.active = true;
     }
 
+    function sanitizeSource(basePath, component) {
+        return basePath + component + ".qml";
+    }
+
     function debouncedReload(delay = 100) {
         debounceTimer.interval = delay;
         debounceTimer.restart();

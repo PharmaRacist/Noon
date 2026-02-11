@@ -8,11 +8,8 @@ import qs.services
 BottomDialog {
     id: root
 
-    collapsedHeight: parent.height * 0.55
-    revealOnWheel: false
-    enableStagedReveal: false
-    onShowChanged: GlobalStates.main.dialogs.showAppearanceDialog = show
-    finishAction: GlobalStates.main.dialogs.showAppearanceDialog = reveal
+    collapsedHeight: parent.height * 0.65
+    finishAction: GlobalStates.main.dialogs.showAppearanceDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent

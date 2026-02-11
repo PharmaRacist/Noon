@@ -12,14 +12,9 @@ import Quickshell.Hyprland
 
 BottomDialog {
     id: root
-    expandedHeight: parent.height * 0.65
-    collapsedHeight: parent.height * 0.45
-    enableStagedReveal: true
-    bottomAreaReveal: true
-    hoverHeight: 100
 
-    onShowChanged: GlobalStates.main.dialogs.showBluetoothDialog = show
-    finishAction: GlobalStates.main.dialogs.showBluetoothDialog = reveal
+    collapsedHeight: parent.height * 0.65
+    finishAction: GlobalStates.main.dialogs.showBluetoothDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent

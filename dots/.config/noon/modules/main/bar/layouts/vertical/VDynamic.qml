@@ -20,7 +20,7 @@ StyledPanel {
     readonly property int hideMargin: autoHide && !hovered ? -(barWidth - peekSize) : 0
 
     name: "bar"
-    shell: "main"
+    shell: "noon"
 
     implicitWidth: barWidth + 100
     exclusiveZone: autoHide ? (hovered && !useBg ? barWidth : peekSize) : barWidth

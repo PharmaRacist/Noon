@@ -15,6 +15,8 @@ Button {
     property string buttonText
     property bool pointingHandCursor: true
     property real buttonRadius: Rounding.small ?? 4
+    property real topRadius:buttonRadius
+    property real bottomRadius:buttonRadius
     property real buttonRadiusPressed: buttonRadius
     property real buttonEffectiveRadius: root.down ? root.buttonRadiusPressed : root.buttonRadius
     property int rippleDuration: 1200
@@ -152,10 +154,11 @@ Button {
         easing.bezierCurve: Animations.curves.standardDecel
     }
 
-    background: Rectangle {
+    background: StyledRect {
         id: buttonBackground
-
-        radius: root.buttonEffectiveRadius
+        topRadius:root.buttonEffectiveRadius
+        bottomRadius:root.buttonEffectiveRadius
+        // radius: root.buttonEffectiveRadius
         implicitHeight: 30
         color: root.buttonColor
         layer.enabled: true

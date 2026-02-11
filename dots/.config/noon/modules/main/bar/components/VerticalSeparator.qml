@@ -10,4 +10,5 @@ Rectangle {
     opacity: 0.6
     Layout.fillHeight: true
     color: Colors.colOutlineVariant
+    visible:Mem.options.bar.appearance.enableSeparators
 }

@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import qs.common
 import qs.common.widgets
 import qs.common.functions
-import Noon
+import Noon.Utils
 
 Item {
     id: root

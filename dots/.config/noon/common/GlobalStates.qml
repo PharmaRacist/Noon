@@ -1,6 +1,6 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
-import Noon
+import Noon.Services
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
@@ -47,7 +47,6 @@ Singleton {
         }
         console.log("Initialized " + mode);
     }
-
     applications: QtObject {
         property QtObject mediaplayer: QtObject {
             property bool show: false
@@ -69,17 +68,23 @@ Singleton {
         id: main
         property var sidebar
         property var lock
-
         property bool locked: false
         property bool oskOpen: false
         property bool exposeView: false
         property bool showOsdValues: false
         property bool showBeam: false
         property bool showScreenshot: false
-
+        // property QtObject systemDialog: QtObject {
+        //     property bool show: false
+        //     property string currentContentName: ""
+        // }
         property QtObject dmenu: QtObject {
             property var items
             property var action
+        }
+        property QtObject sysDialogs: QtObject {
+            property string mode
+            property var pendingData
         }
 
         property QtObject dialogs: QtObject {

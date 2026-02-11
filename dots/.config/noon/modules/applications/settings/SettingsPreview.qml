@@ -169,9 +169,9 @@ Item {
                                             name: modelData.name || "Unknown"
                                             key: modelData.key || ""
                                             icon: modelData.icon || "settings"
-                                            type: modelData.type || "button"
+                                            type: modelData.type || "switch"
                                             comboBoxValues: modelData.comboBoxValues || []
-
+                                            radius:Rounding.normal
                                             onToggledStateChanged: if (key) {
                                                 root.itemStates[key] = toggledState;
                                             }

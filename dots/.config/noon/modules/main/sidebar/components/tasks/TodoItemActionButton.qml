@@ -4,35 +4,17 @@ import QtQuick.Layouts
 import qs.common
 import qs.common.widgets
 
-RippleButton {
+RippleButtonWithIcon {
     id: button
 
-    property string buttonText: ""
-    property string tooltipText: ""
+    property string hintText: ""
 
+    materialIconFill: true
     implicitHeight: 30
     implicitWidth: implicitHeight
     buttonRadius: Rounding.large
-
     StyledToolTip {
-        content: tooltipText
-        extraVisibleCondition: tooltipText.length > 0
+        content: hintText
+        extraVisibleCondition: hintText.length > 0 && button.hovered
     }
-
-    Behavior on implicitWidth {
-        SmoothedAnimation {
-            velocity: Appearance.animation.elementMove.velocity
-        }
-
-    }
-
-    contentItem: Symbol {
-        text: buttonText
-        fill: 1
-        anchors.centerIn: parent
-        horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: Fonts.sizes.verylarge
-        color: Colors.colOnLayer1
-    }
-
 }

@@ -2,6 +2,7 @@ import QtQuick
 import qs.services
 import qs.common
 import qs.common.utils
+
 import "bar"
 import "beam"
 import "desktop/bg"
@@ -13,6 +14,7 @@ import "sidebar"
 import "view"
 import "screenshot"
 import "toolbar"
+import "desktop/dialogs"
 
 Scope {
     WidgetLoader {
@@ -38,6 +40,10 @@ Scope {
     WidgetLoader {
         enabled: true
         NotificationPopup {}
+    }
+
+    WidgetLoader {
+        DialogPanel {}
     }
 
     WidgetLoader {

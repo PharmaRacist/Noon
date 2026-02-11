@@ -68,7 +68,6 @@ Singleton {
         const cleanDir = FileUtils.trimFileProtocol(directory);
         // Aligned with thumbnail script: -d (dir), -s (size), -w (workers), -i (only images flag)
         const cmd = ["python3", Directories.wallpapers.thumbScript, "-d", cleanDir, "-s", thumbnailSize, "-i"];
-        console.log(cmd);
         thumbnailGenerator.command = cmd;
         thumbnailGenerator.running = true;
         return true;
@@ -95,7 +94,6 @@ Singleton {
         const thumbnailPath = `${FileUtils.trimFileProtocol(Directories.standard.home)}/.cache/thumbnails/${sizeDir}/${hash}.png`;
 
         _thumbnailCache[cacheKey] = `file://${thumbnailPath}`;
-        console.log(_thumbnailCache[cacheKey]);
         return _thumbnailCache[cacheKey];
     }
 

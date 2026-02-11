@@ -49,7 +49,7 @@ Item {
             id: date
             Layout.leftMargin: 3
             text: DateTimeService.date
-            color: hovered ? Colors.colSecondary : Colors.colOnBackground
+            color: hovered ? Colors.colSecondaryContainer : Colors.colOnBackground
             font.family: Fonts.family.clock
             font.pixelSize: 40 * clockScale
             opacity: 0.75

@@ -1,5 +1,5 @@
 pragma Singleton
-import Noon
+import Noon.Services
 import QtQuick
 import Quickshell
 

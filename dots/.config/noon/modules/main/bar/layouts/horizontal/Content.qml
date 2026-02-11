@@ -1,17 +1,12 @@
 import QtQuick
-import QtQuick.Layouts
-import Quickshell
 import qs.common
 import qs.common.widgets
 import qs.modules.main.bar.components
-import qs.services
-import qs.store
 
-RowLayout {
+Item {
     id: root
     required property var barRoot
-
-    spacing: Mem.options.bar.spacing ?? 5
+    readonly property var opts: Mem.options.bar.hMap
 
     anchors {
         fill: parent
@@ -19,33 +14,38 @@ RowLayout {
         leftMargin: Padding.huge
     }
 
-    Repeater {
-        model: Mem.options.bar.hMap ?? []
+    RLayout {
+        anchors {
+            top: parent.top
+            left: parent.left
+            bottom: parent.bottom
+        }
+        spacing: opts.spacing
+        BarModulesFactory {
+            model: opts.leftArea
+        }
+    }
 
-        delegate: Loader {
-            id: moduleLoader
-            required property var modelData
-
-            asynchronous: true
-            Layout.alignment: Qt.AlignVCenter
-
-            source: {
-                const component = BarData.horizontalSubstitutions[modelData] ?? BarData.contentTable[modelData];
-                return component ? "../../components/" + component + ".qml" : "";
-            }
-
-            onLoaded: if (item) {
-                BarData.layoutProps.forEach(prop => {
-                    Layout[prop] = Qt.binding(() => item?.Layout?.[prop]);
-                });
-
-                if ("bar" in item)
-                    item.bar = barRoot;
-                if ("verticalMode" in item)
-                    item.verticalMode = false;
-                if ("vertical" in item)
-                    item.vertical = false;
-            }
+    RLayout {
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+        spacing: opts.spacing
+        BarModulesFactory {
+            model: opts.centerArea
+        }
+    }
+    RLayout {
+        anchors {
+            top: parent.top
+            right: parent.right
+            bottom: parent.bottom
+        }
+        spacing: opts.spacing
+        BarModulesFactory {
+            model: opts.rightArea
         }
     }
 }

@@ -12,7 +12,7 @@ Scope {
             id: panel
             property var modelData
             name: "toolbar"
-            shell: "main"
+            shell: "noon"
 
             anchors.top: true
             implicitWidth: 999
