@@ -6,7 +6,7 @@
 
 ### PharmaRacist Prespictive of a Hyprland desktop  
 
-- built on end4-ii dots
+- qt6
 - quickshell
 - hyprland ofc
 
