@@ -2,7 +2,6 @@ import qs.services
 import qs.common
 import qs.common.widgets
 import qs.modules.main.dock.components
-import qs.modules.main.dock.components.osk
 import qs.modules.main.dock
 import QtQuick
 import QtQuick.Layouts
@@ -13,7 +12,6 @@ import Quickshell.Wayland
 Scope {
     id: root
     property bool pinned: Mem.states.dock.pinned ?? false
-    property bool showOsk: GlobalStates.main.oskOpen
 
     Variants {
         model: [Quickshell.screens[0]]

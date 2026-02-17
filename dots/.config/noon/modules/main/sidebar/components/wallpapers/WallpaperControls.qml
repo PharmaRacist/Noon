@@ -10,7 +10,6 @@ import qs.store
 BottomDialog {
     id: root
 
-    property bool expanded: false
     property int comboWidth: 240
 
     function findIndex(array, value, valueRole) {
@@ -21,17 +20,10 @@ BottomDialog {
         return 0;
     }
     z: 9999
-    enableStagedReveal: false
     bottomAreaReveal: true
     hoverHeight: 180
-    collapsedHeight: 120
-    expand: true
+    collapsedHeight: 165
     clip: true
-
-    bgAnchors {
-        leftMargin: expanded ? 500 : undefined
-        rightMargin: expanded ? 500 : undefined
-    }
 
     anchors {
         rightMargin: Padding.normal
@@ -42,8 +34,28 @@ BottomDialog {
         anchors.fill: parent
         anchors.margins: Padding.verylarge
         spacing: Padding.large
-
-        RowLayout {
+        RLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredHeight: 32
+            Repeater {
+                model: ["Primary", "Secondary", "Tertiary", "PrimaryContainer", "SecondaryContainer", "TertiaryContainer", "Error", "ErrorContainer"]
+                delegate: StyledRect {
+                    radius: 999
+                    color: Colors["col" + modelData]
+                    implicitSize: 28
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        StyledToolTip {
+                            extraVisibleCondition: parent.containsMouse
+                            content: modelData.replace("Container", " Container")
+                        }
+                    }
+                }
+            }
+        }
+        RLayout {
             Layout.fillWidth: true
             spacing: Padding.large
 
