@@ -346,7 +346,7 @@ Singleton {
                             "name": "OSD Mode",
                             "key": "desktop.osd.mode",
                             "type": "combobox",
-                            "comboBoxValues": ["bottom_pill", "nobuntu", "center_island", "side_bay"]
+                            "comboBoxValues": ["Pixel","BottomPill", "Nobuntu", "CenterIsland", "SideBay"]
                         }
                     ]
                 },

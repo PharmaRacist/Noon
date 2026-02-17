@@ -16,6 +16,7 @@ Item {
     property bool secondaryActive: Persistence.dashboard.expandSettings
     property bool middleActive: false
     property bool showMiddle: true
+    property alias searchInput: searchField
     // UI constants
     readonly property int buttonHeight: 45
     readonly property int buttonRadius: 99
@@ -25,10 +26,10 @@ Item {
     readonly property int transitionDuration: 200
 
     // Signals
-    signal primaryClicked()
-    signal secondaryClicked()
-    signal secondaryRightClicked()
-    signal middleClicked()
+    signal primaryClicked
+    signal secondaryClicked
+    signal secondaryRightClicked
+    signal middleClicked
     signal searchChanged(string text)
 
     implicitWidth: content.width
@@ -100,9 +101,8 @@ Item {
                     onVisibleChanged: {
                         if (visible)
                             forceActiveFocus();
-
                     }
-                    Keys.onPressed: (event) => {
+                    Keys.onPressed: event => {
                         if (event.key === Qt.Key_Escape) {
                             root.searchText = "";
                             root.searchToggled = false;
@@ -116,7 +116,6 @@ Item {
                         pixelSize: Fonts.sizes.small ?? 15
                         hintingPreference: Font.PreferFullHinting
                     }
-
                 }
 
                 StyledText {
@@ -126,7 +125,6 @@ Item {
                     color: Colors.colOnPrimary
                     font.pixelSize: Fonts.sizes.normal
                 }
-
             }
 
             MouseArea {
@@ -149,18 +147,14 @@ Item {
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on color {
                 ColorAnimation {
                     duration: transitionDuration
                 }
-
             }
-
         }
 
         // Secondary button (expand/collapse) - now in middle position
@@ -207,11 +201,8 @@ Item {
                 }
 
                 Behavior on rotation {
-                    Anim {
-                    }
-
+                    Anim {}
                 }
-
             }
 
             MouseArea {
@@ -222,7 +213,7 @@ Item {
                 hoverEnabled: true
                 acceptedButtons: Qt.MiddleButton | Qt.RightButton | Qt.LeftButton
                 cursorShape: Qt.PointingHandCursor
-                onPressed: (event) => {
+                onPressed: event => {
                     if (event.button === Qt.RightButton) {
                         root.secondaryRightClicked();
                         root.primaryClicked();
@@ -233,30 +224,22 @@ Item {
             }
 
             Behavior on topLeftRadius {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on bottomLeftRadius {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on color {
                 ColorAnimation {
                     duration: transitionDuration
                 }
-
             }
-
         }
 
         // Middle button - now in rightmost position
@@ -302,11 +285,8 @@ Item {
                 }
 
                 Behavior on rotation {
-                    Anim {
-                    }
-
+                    Anim {}
                 }
-
             }
 
             MouseArea {
@@ -321,32 +301,22 @@ Item {
             }
 
             Behavior on topLeftRadius {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on bottomLeftRadius {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on Layout.preferredWidth {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on color {
                 ColorAnimation {
                     duration: transitionDuration
                 }
-
             }
-
         }
-
     }
-
 }

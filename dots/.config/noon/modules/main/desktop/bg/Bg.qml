@@ -111,28 +111,16 @@ Scope {
                         asynchronous: true
                     }
                     StyledLoader {
-                        id: _loader
-                        active: Mem.options.desktop.widgets.enabled
-                        asynchronous: true
-
-                        readonly property string pos: Mem.options.bar.behavior.position
-                        readonly property bool rightMode: pos === "left"
-
-                        Behavior on anchors.rightMargin {
-                            Anim {}
-                        }
-                        Behavior on anchors.leftMargin {
-                            Anim {}
-                        }
-
+                        shown: Mem.options.desktop.widgets.enabled
+                        readonly property bool rightMode: Mem.options.bar.behavior.position === "left"
                         anchors {
+                            right: rightMode ? parent.right : undefined
+                            left: !rightMode ? parent.left : undefined
+
                             top: parent.top
                             bottom: parent.bottom
-                            left: !rightMode ? parent.left : undefined
-                            right: rightMode ? parent.right : undefined
-                            margins: Sizes.hyprland.gapsOut + Padding.large
+                            margins: Sizes.elevationMargin
                         }
-
                         sourceComponent: DesktopWidgets {}
                     }
                     DesktopClock {

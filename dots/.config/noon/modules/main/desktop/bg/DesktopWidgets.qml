@@ -8,10 +8,10 @@ import qs.modules.main.bar.components
 import qs.services
 import qs.store
 
-StyledRect {
+Flow {
     id: root
-    color: "transparent"
-
+    spacing: Padding.huge
+    width: 380
     readonly property string widgetsPath: "../widgets/"
     readonly property var mem: Mem.states.sidebar.widgets
     readonly property var desktop: mem.desktop
@@ -25,39 +25,22 @@ StyledRect {
         };
     })
 
-    implicitWidth: 450
-    z: 999
-
-    RowLayout {
-        anchors.fill: parent
-        anchors.margins: Padding.massive
-
-        Spacer {}
-
-        Flow {
-            Layout.preferredWidth: 375
-            Layout.fillHeight: true
-            layoutDirection: rightMode ? Flow.TopToBottom : Flow.BottomToTop
-            spacing: Padding.huge
-
-            Repeater {
-                model: widgetObjects
-                delegate: Loader {
-                    required property var modelData
-                    asynchronous: true
-                    source: root.widgetsPath + modelData.component + ".qml"
-                    width: modelData.expanded ? parent.width : 180
-                    onLoaded: if (item && modelData) {
-                        if ("expanded" in item) {
-                            item.expanded = Qt.binding(() => modelData?.expanded ?? false);
-                        }
-                        if ("pill" in item) {
-                            item.pill = Qt.binding(() => modelData?.pilled ?? false);
-                        }
-                        if (!item.pill)
-                            item.radius = 1.25 * Rounding.massive;
-                    }
+    Repeater {
+        model: widgetObjects
+        delegate: Loader {
+            required property var modelData
+            asynchronous: true
+            source: root.widgetsPath + modelData.component + ".qml"
+            width: modelData.expanded ? parent.width : 180
+            onLoaded: if (item && modelData) {
+                if ("expanded" in item) {
+                    item.expanded = Qt.binding(() => modelData?.expanded ?? false);
                 }
+                if ("pill" in item) {
+                    item.pill = Qt.binding(() => modelData?.pilled ?? false);
+                }
+                if (!item.pill)
+                    item.radius = 1.25 * Rounding.massive;
             }
         }
     }

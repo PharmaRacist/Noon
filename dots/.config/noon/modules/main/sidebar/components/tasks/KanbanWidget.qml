@@ -39,7 +39,7 @@ Item {
             "model": finalTouchesTasksModel
         },
         {
-            "show": true,
+            "show": root.expanded,
             "status": TodoService.status_done,
             "shape": MaterialShape.Cookie7Sided,
             "icon": "check_circle",
@@ -47,41 +47,24 @@ Item {
             "model": doneTasksModel
         }
     ]
-    // Backward compatibility aliases
     readonly property var todoColumn: getColumnByStatus(TodoService.status_todo)
     readonly property var inProgressColumn: getColumnByStatus(TodoService.status_in_progress)
     readonly property var finalTouchesColumn: getColumnByStatus(TodoService.status_final_touches)
     readonly property var doneColumn: getColumnByStatus(TodoService.status_done)
+    readonly property Component dragTaskComponent: DragItem {}
 
     signal requestReveal
 
     function updateTaskModels() {
-        todoTasksModel.clear();
-        inProgressTasksModel.clear();
-        finalTouchesTasksModel.clear();
-        doneTasksModel.clear();
         for (var i = 0; i < TodoService.list.length; i++) {
             var item = TodoService.list[i];
-            var modelItem = {
+            columnConfigs[i].model.clear();
+            columnConfigs.find(column => column.status === item.status).model.append({
                 "originalIndex": i,
                 "content": item.content,
                 "status": item.status,
                 "todoistId": item.todoistId || ""
-            };
-            switch (item.status) {
-            case TodoService.status_todo:
-                todoTasksModel.append(modelItem);
-                break;
-            case TodoService.status_in_progress:
-                inProgressTasksModel.append(modelItem);
-                break;
-            case TodoService.status_final_touches:
-                finalTouchesTasksModel.append(modelItem);
-                break;
-            case TodoService.status_done:
-                doneTasksModel.append(modelItem);
-                break;
-            }
+            });
         }
     }
 
@@ -97,33 +80,16 @@ Item {
                 });
             }
         };
-        appendModel(todoTasksModel);
-        appendModel(inProgressTasksModel);
-        appendModel(finalTouchesTasksModel);
-        appendModel(doneTasksModel);
+        for (let i = 0; i < columnConfigs.length; i++) {
+            appendModel(columnConfigs[i].model);
+        }
         TodoService.list = newList;
         updateTaskModels();
     }
 
-    function getStatusNum(status) {
-        if (status === TodoService.status_todo)
-            return 0;
-
-        if (status === TodoService.status_in_progress)
-            return 1;
-
-        if (status === TodoService.status_final_touches)
-            return 2;
-
-        if (status === TodoService.status_done)
-            return 3;
-
-        return -1;
-    }
-
     function changeStatus(index, currentStatus, targetStatus) {
-        var currentNum = getStatusNum(currentStatus);
-        var targetNum = getStatusNum(targetStatus);
+        var currentNum = currentStatus;
+        var targetNum = targetStatus;
         var diff = targetNum - currentNum;
         var func = diff > 0 ? TodoService.nextStatus : TodoService.previousStatus;
         diff = Math.abs(diff);
@@ -137,22 +103,6 @@ Item {
         return p.x >= 0 && p.x < item.width && p.y >= 0 && p.y < item.height;
     }
 
-    function getColorForStatus(status) {
-        switch (status) {
-        case TodoService.status_todo:
-            return Colors.colLayer2;
-        case TodoService.status_in_progress:
-            return Colors.colPrimaryContainer;
-        case TodoService.status_final_touches:
-            return Colors.colSecondaryContainer;
-        case TodoService.status_done:
-            return Colors.colSurfaceContainerHigh;
-        default:
-            return Colors.colLayer2;
-        }
-    }
-
-    // Helper functions to access columns by status
     function getColumnByStatus(status) {
         for (var i = 0; i < columnRepeater.count; i++) {
             var item = columnRepeater.itemAt(i);
@@ -193,153 +143,55 @@ Item {
     QuickSettingsSplitButton {
         id: commandBar
 
-        property bool timerMode: false
         property bool editMode: false
 
         implicitHeight: 45
         showThird: false
-        placeholderText: {
-            if (editMode)
-                return "Edit task name";
-
-            return timerMode ? "how long ?" : "Add..?";
-        }
-        firstIcon: {
-            if (editMode)
-                return "check";
-
-            return timerMode ? "timer" : "add";
-        }
-        secondIcon: editMode ? "close" : "timer"
-        thirdIcon: {
-            switch (TodoService.syncState) {
-            case TodoService.SyncState.Offline:
-                return "cloud_off";
-            case TodoService.SyncState.Idle:
-                return "sync";
-            case TodoService.SyncState.Syncing:
-                return "sync";
-            case TodoService.SyncState.Error:
-                return "error";
-            default:
-                return "sync";
-            }
-        }
-        buttonExpanded: {
-            if (editMode)
-                return 200;
-
-            return timerMode ? 130 : 200;
-        }
-        thirdAction: () => {
-            if (editMode)
-                return;
-
-            thirdBgColor = Colors.m3.m3success;
-            successTimer.running = true;
-            return TodoService.syncWithTodoist();
-        }
+        placeholderText: editMode ? "Edit task name" : "Add New"
+        firstIcon: editMode ? "stylus" : "add"
+        secondIcon: editMode ? "close" : "add"
+        buttonExpanded: 200
         secondAction: () => {
             if (editMode) {
                 editMode = false;
                 root.editIndex = -1;
                 commandBar.searchToggled = false;
-                timerMode = false;
                 return;
             }
-            timerMode = !timerMode;
             commandBar.searchToggled = !commandBar.searchToggled;
         }
-        secondPressHoldAction: () => {
-            if (editMode)
-                return;
-
-            root.requestReveal();
-        }
-        firstAction: () => {
-            // This triggers when clicking the check icon in edit mode
-            // The searchAction will handle the actual save
-
-            if (editMode)
-                return;
-        }
+        secondPressHoldAction: () => !editMode ? root.requestReveal() : null
         searchAction: text => {
             if (editMode) {
-                // Save edit
                 if (text.length > 0 && root.editIndex >= 0) {
                     TodoService.editItem(root.editIndex, text);
                     updateTaskModels();
                 }
                 editMode = false;
                 root.editIndex = -1;
-                timerMode = false;
                 text = "";
                 return;
-            }
-            if (!timerMode) {
+            } else {
                 TodoService.addTask(text);
                 updateTaskModels();
                 text = "";
                 return;
-            }
-            const duration = TimerService.parseTimeString(text);
-            if (duration > 0) {
-                const id = TimerService.addTimer("Focus Time", duration);
-                TimerService.startTimer(id);
-                text = "";
-            } else {
-                text = "";
             }
         }
 
         Connections {
             function onEditIndexChanged() {
                 if (root.editIndex >= 0 && root.editIndex < TodoService.list.length) {
-                    // Enter edit mode
-                    commandBar.timerMode = false;
                     commandBar.editMode = true;
-                    // Get the current task content
                     var taskContent = TodoService.list[root.editIndex].content;
-                    // Open the search field first
                     commandBar.searchToggled = true;
-                    // Try multiple approaches to set the text value
-                    Qt.callLater(function () {
-                        // Try different property names
-                        if (commandBar.hasOwnProperty('searchText'))
-                            commandBar.searchText = taskContent;
-                        else if (commandBar.hasOwnProperty('text'))
-                            commandBar.text = taskContent;
-                        else if (commandBar.hasOwnProperty('inputText'))
-                            commandBar.inputText = taskContent;
-                        else if (commandBar.hasOwnProperty('value'))
-                            commandBar.value = taskContent;
-                        // Try to find and set the text field directly
-                        var textField = commandBar.findChild("textField");
-                        if (!textField)
-                            textField = commandBar.findChild("searchField");
-
-                        if (!textField)
-                            textField = commandBar.findChild("input");
-
-                        if (textField && textField.hasOwnProperty('text')) {
-                            textField.text = taskContent;
-                            textField.forceActiveFocus();
-                            textField.selectAll();
-                        }
-                    });
+                    commandBar.searchInput.text = taskContent;
                 } else if (root.editIndex === -1) {
                     commandBar.editMode = false;
                 }
             }
 
             target: root
-        }
-
-        Timer {
-            id: successTimer
-
-            interval: 500
-            onTriggered: commandBar.thirdBgColor = commandBar.defaultColors
         }
 
         anchors {
@@ -350,169 +202,30 @@ Item {
     }
 
     GridLayout {
-        // columns: width > Screen.width / 2.5 ? 4 : 1
-        // rows: columns === 4 ? 1 : 4
-
-        id: taskGrid
-
         anchors.fill: parent
-        columnSpacing: 10
-        rowSpacing: 10
+        columnSpacing: Padding.huge
+        rowSpacing: Padding.huge
         columns: expanded ? 2 : 1
-        rows: expanded ? 2 : 2
 
         Repeater {
             id: columnRepeater
 
-            model: root.columnConfigs
+            model: root.columnConfigs.filter(c => c.show)
 
             TaskList {
                 required property var modelData
                 required property int index
 
                 visible: modelData.show ?? true
-                // Assign IDs based on status for backward compatibility
-                objectName: {
-                    switch (modelData.status) {
-                    case TodoService.status_todo:
-                        return "todoColumn";
-                    case TodoService.status_in_progress:
-                        return "inProgressColumn";
-                    case TodoService.status_final_touches:
-                        return "finalTouchesColumn";
-                    case TodoService.status_done:
-                        return "doneColumn";
-                    default:
-                        return "";
-                    }
-                }
                 shape: modelData.shape
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                listBottomPadding: 32 + Padding.massive
                 emptyPlaceholderIcon: modelData.icon
                 emptyPlaceholderText: modelData.title
                 targetStatus: modelData.status
                 taskListModel: modelData.model
                 onEditRequested: function (idx, currentContent) {
                     root.editIndex = idx;
-                }
-            }
-        }
-    }
-
-    StyledRectangularShadow {
-        target: timers
-        visible: target.visible
-        radius: Rounding.normal
-    }
-
-    TimerItem {
-        id: timers
-
-        extraVisibleCondition: expanded
-        anchors.bottom: parent.bottom
-        anchors.margins: Padding.massive
-        anchors.left: parent.left
-    }
-
-    Component {
-        id: dragTaskComponent
-
-        Rectangle {
-            id: dragRect
-
-            property var taskData
-
-            width: 100
-            height: 60
-            radius: Rounding.large
-            opacity: 0.9
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 16
-                spacing: 15
-
-                Symbol {
-                    text: {
-                        switch (taskData.status) {
-                        case TodoService.status_todo:
-                            return "radio_button_unchecked";
-                        case TodoService.status_in_progress:
-                            return "work_history";
-                        case TodoService.status_final_touches:
-                            return "auto_fix_high";
-                        case TodoService.status_done:
-                            return "check_circle";
-                        default:
-                            return "radio_button_unchecked";
-                        }
-                    }
-                    color: {
-                        switch (taskData.status) {
-                        case TodoService.status_todo:
-                            return Colors.colOnLayer1;
-                        case TodoService.status_in_progress:
-                            return Colors.colPrimary;
-                        case TodoService.status_final_touches:
-                            return Colors.colSecondary;
-                        case TodoService.status_done:
-                            return Colors.m3.m3success;
-                        default:
-                            return Colors.colOnLayer1;
-                        }
-                    }
-                    font.pixelSize: Fonts.sizes.normal
-                }
-
-                Column {
-                    Layout.fillWidth: true
-
-                    RowLayout {
-                        spacing: 6
-
-                        StyledText {
-                            width: 180
-                            text: taskData.content
-                            wrapMode: Text.Wrap
-                            opacity: taskData.status === TodoService.status_done ? 0.7 : 1
-                            font.strikeout: taskData.status === TodoService.status_done
-                            maximumLineCount: 2
-                        }
-
-                        Symbol {
-                            visible: taskData.todoistId !== "" && taskData.todoistId !== null
-                            text: "cloud_done"
-                            font.pixelSize: 14
-                            color: Colors.colPrimary
-                            opacity: 0.5
-                        }
-                    }
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: {
-                            switch (taskData.status) {
-                            case TodoService.status_todo:
-                                return "Not Started";
-                            case TodoService.status_in_progress:
-                                return "In Progress";
-                            case TodoService.status_final_touches:
-                                return "Final Touches";
-                            case TodoService.status_done:
-                                return "Finished";
-                            default:
-                                return "Not Started";
-                            }
-                        }
-                        opacity: taskData.status === TodoService.status_done ? 0.3 : 0.45
-                        font.pixelSize: 11
-                    }
-                }
-
-                Item {
-                    Layout.fillWidth: true
                 }
             }
         }

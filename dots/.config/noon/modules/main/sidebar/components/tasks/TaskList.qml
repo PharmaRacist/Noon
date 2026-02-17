@@ -13,12 +13,34 @@ Rectangle {
     required property int targetStatus
     property string emptyPlaceholderIcon
     property string emptyPlaceholderText
-    property int todoListItemSpacing: 8
-    property int listBottomPadding: 80
-    property int containerMargin: 0
-    property int containerPadding: 10
     property alias listView: listView
     property alias shape: placeHolder.shape
+    readonly property var itemApp: ({
+            [TodoService.status_todo]: {
+                icon: "radio_button_unchecked",
+                bg: Colors.colLayer2,
+                col: Colors.colOnLayer1,
+                column: todoColumn
+            },
+            [TodoService.status_in_progress]: {
+                icon: "work_history",
+                bg: Colors.colPrimaryContainer,
+                col: Colors.colPrimary,
+                column: inProgressColumn
+            },
+            [TodoService.status_final_touches]: {
+                icon: "auto_fix_high",
+                bg: Colors.colSecondaryContainer,
+                col: Colors.colSecondary,
+                column: finalTouchesColumn
+            },
+            [TodoService.status_done]: {
+                icon: "check_circle",
+                bg: Colors.colSurfaceContainerHigh,
+                col: Colors.m3.m3success,
+                column: doneColumn
+            }
+        })
 
     signal editRequested(int index, string currentContent)
 
@@ -31,11 +53,11 @@ Rectangle {
         animateMovement: true
         popin: false
         anchors.fill: parent
-        anchors.margins: containerPadding
+        anchors.margins: Padding.normal
         clip: true
         hint: false
         model: taskListModel
-        spacing: root.todoListItemSpacing
+        spacing: Padding.small
 
         delegate: Item {
             id: delegateItem
@@ -43,14 +65,15 @@ Rectangle {
             property bool isDragged: false
 
             width: listView.width
-            height: 60
+            height: 65
 
-            Rectangle {
+            StyledRect {
                 id: todoItemRectangle
 
+                enableBorders: true
                 anchors.fill: parent
                 radius: Rounding.large
-                color: getColorForStatus(model.status)
+                color: itemApp[model.status].bg
                 opacity: delegateItem.isDragged ? 0 : 1
 
                 MouseArea {
@@ -64,15 +87,9 @@ Rectangle {
 
                     anchors.fill: parent
                     hoverEnabled: true
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                     preventStealing: true
-                    onPressed: function (mouse) {
-                        if (mouse.button !== Qt.LeftButton)
-                            return;
-
-                        startPos = Qt.point(mouse.x, mouse.y);
-                    }
-                    onPositionChanged: function (mouse) {
+                    onPressed: mouse => startPos = Qt.point(mouse.x, mouse.y)
+                    onPositionChanged: mouse => {
                         if (dragging) {
                             var globalPos = mapToItem(overlay, mouse.x, mouse.y);
                             draggedItem.x = globalPos.x - draggedItem.width / 2;
@@ -98,33 +115,34 @@ Rectangle {
                                 "y": globalPos.y - 60 / 2,
                                 "width": listView.width,
                                 "height": 60,
-                                "color": getColorForStatus(taskData.status),
-                                "taskData": taskData
+                                "color": itemApp[taskData.status].bg,
+                                "taskData": taskData,
+                                "symbol": itemApp[taskData.status].icon,
+                                "colSymbol": itemApp[taskData.status].col
                             });
                         }
                     }
-                    onReleased: function (mouse) {
-                        if (dragging) {
+                    onReleased: mouse => {
+                        if (dragging && draggedItem) {
                             dragging = false;
-                            if (draggedItem === null)
-                                return;
 
                             var centerX = draggedItem.x + draggedItem.width / 2;
                             var centerY = draggedItem.y + draggedItem.height / 2;
                             var targetList = null;
-                            if (isOver(todoColumn, centerX, centerY))
-                                targetList = todoColumn;
-                            else if (isOver(inProgressColumn, centerX, centerY))
-                                targetList = inProgressColumn;
-                            else if (isOver(finalTouchesColumn, centerX, centerY))
-                                targetList = finalTouchesColumn;
-                            else if (isOver(doneColumn, centerX, centerY))
-                                targetList = doneColumn;
+
+                            for (let i = 0; i <= Object.keys(itemApp).length; i++) {
+                                var column = itemApp[i].column;
+                                if (isOver(column, centerX, centerY)) {
+                                    targetList = column;
+                                    break;
+                                }
+                            }
                             oldIndex = index;
                             originalModel = taskListModel;
+
                             var taskData = draggedItem.taskData;
+
                             if (targetList === null) {
-                                // snap back
                                 delegateItem.isDragged = false;
                             } else if (targetList === root) {
                                 // same list, reorder
@@ -147,7 +165,6 @@ Rectangle {
                                 }
                                 delegateItem.isDragged = false;
                             } else {
-                                // different list
                                 taskListModel.remove(index);
                                 taskData.status = targetList.targetStatus;
                                 var localX = targetList.listView.mapFromItem(overlay, centerX, centerY).x;
@@ -164,19 +181,6 @@ Rectangle {
                                 syncModelsToTodo();
                             }
                             draggedItem.destroy();
-                        } else {
-                            var statusChanged = false;
-                            if (mouse.button === Qt.LeftButton && model.status !== TodoService.status_todo) {
-                                TodoService.previousStatus(model.originalIndex);
-                                statusChanged = true;
-                            } else if (mouse.button === Qt.RightButton && model.status !== TodoService.status_done) {
-                                TodoService.nextStatus(model.originalIndex);
-                                statusChanged = true;
-                            } else if (mouse.button === Qt.MiddleButton) {
-                                root.editRequested(model.originalIndex, model.content);
-                            }
-                            if (statusChanged)
-                                updateTaskModels();
                         }
                     }
                 }
@@ -187,72 +191,41 @@ Rectangle {
                     spacing: 15
 
                     Symbol {
-                        text: {
-                            switch (model.status) {
-                            case TodoService.status_todo:
-                                return "radio_button_unchecked";
-                            case TodoService.status_in_progress:
-                                return "work_history";
-                            case TodoService.status_final_touches:
-                                return "auto_fix_high";
-                            case TodoService.status_done:
-                                return "check_circle";
-                            default:
-                                return "radio_button_unchecked";
-                            }
-                        }
-                        color: {
-                            switch (model.status) {
-                            case TodoService.status_todo:
-                                return Colors.colOnLayer1;
-                            case TodoService.status_in_progress:
-                                return Colors.colPrimary;
-                            case TodoService.status_final_touches:
-                                return Colors.colSecondary;
-                            case TodoService.status_done:
-                                return Colors.m3.m3success;
-                            default:
-                                return Colors.colOnLayer1;
-                            }
-                        }
+                        text: itemApp[model.status].icon
+                        color: itemApp[model.status].col
                         font.pixelSize: Fonts.sizes.normal
                     }
 
-                    Column {
+                    ColumnLayout {
                         Layout.fillWidth: true
 
                         RowLayout {
                             spacing: 6
+                            Layout.fillWidth: true
 
                             StyledText {
                                 width: 180
                                 text: model.content
-                                wrapMode: Text.Wrap
+                                Layout.fillWidth: true
+                                truncate: true
                                 opacity: model.status === TodoService.status_done ? 0.7 : 1
                                 font.strikeout: model.status === TodoService.status_done
-                                maximumLineCount: 2
                             }
 
                             Symbol {
-                                visible: {
-                                    // Show if has todoistId OR if currently syncing with _tempId
-                                    if (model.todoistId !== "" && model.todoistId !== null)
-                                        return true;
-
-                                    // Could also check for _tempId if you want to show "syncing" state
-                                    return false;
-                                }
-                                text: model.todoistId ? "cloud_done" : "cloud_sync"
+                                visible: model.todoistId?.length > 0
+                                text: "cloud_done"
+                                fill: 1
                                 font.pixelSize: 14
                                 color: model.todoistId ? Colors.colPrimary : Colors.colOnLayer1
                                 opacity: model.todoistId ? 0.5 : 0.3
-                                ToolTip.visible: todoistIndicatorMouse.containsMouse
-                                ToolTip.text: model.todoistId ? "Synced with Todoist" : "Syncing..."
-                                ToolTip.delay: 500
 
+                                StyledToolTip {
+                                    extraVisibleCondition: todoistIndicatorMouse.containsMouse
+                                    content: model.todoistId ? "Synced with Todoist" : "Syncing..."
+                                }
                                 MouseArea {
                                     id: todoistIndicatorMouse
-
                                     anchors.fill: parent
                                     hoverEnabled: true
                                 }
@@ -261,40 +234,24 @@ Rectangle {
 
                         StyledText {
                             Layout.fillWidth: true
-                            text: {
-                                switch (model.status) {
-                                case TodoService.status_todo:
-                                    return "Not Started";
-                                case TodoService.status_in_progress:
-                                    return "In Progress";
-                                case TodoService.status_final_touches:
-                                    return "Final Touches";
-                                case TodoService.status_done:
-                                    return "Finished";
-                                default:
-                                    return "Not Started";
-                                }
-                            }
+                            truncate: true
+                            text: TodoService.statusNames[model.status]
                             opacity: model.status === TodoService.status_done ? 0.3 : 0.45
                             font.pixelSize: 11
                         }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
                     }
 
                     RowLayout {
                         Layout.rightMargin: 15
                         Layout.fillWidth: true
 
-                        TodoItemActionButton {
+                        TaskButton {
                             releaseAction: () => root.editRequested(model.originalIndex, model.content)
-                            hintText: "Edit (or middle-click)"
+                            hintText: "Edit"
                             materialIcon: "edit"
                         }
 
-                        TodoItemActionButton {
+                        TaskButton {
                             releaseAction: () => {
                                 TodoService.deleteItem(model.originalIndex);
                                 updateTaskModels();
@@ -303,14 +260,6 @@ Rectangle {
                             materialIcon: "delete_forever"
                         }
                     }
-                }
-
-                Behavior on opacity {
-                    Anim {}
-                }
-
-                Behavior on color {
-                    CAnim {}
                 }
             }
         }

@@ -23,16 +23,13 @@ StyledRect {
         return false;
     }
 
-    readonly property Component imageComp: StyledImage {
-        mipmap: true
-        sourceSize: Qt.size(width, height)
-        cache: false
-    }
+    readonly property Component imageComp: StyledImage {}
     readonly property Component vidComp: VideoPreview {
         Symbol {
-            text: "play_circle"
-            color: Colors.m3.m3onSurface
-            font.pixelSize: 24
+            text: "play_arrow"
+            color: Colors.colOnBackground
+            font.pixelSize: 20
+            fill: 1
             anchors {
                 top: parent.top
                 right: parent.right

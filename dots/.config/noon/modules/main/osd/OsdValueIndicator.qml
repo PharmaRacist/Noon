@@ -1,21 +1,13 @@
 import QtQuick
-import QtQuick.Controls
 import Quickshell
 import qs.common
+import qs.common.widgets
 import qs.services
 
-Loader {
+StyledLoader {
     id: root
     asynchronous: true
-    readonly property var variants: ({
-            "center_island": "CenterIsland.qml",
-            "bottom_pill": "BottomPill.qml",
-            "side_bay": "SideBay.qml",
-            "windows_10": "Windows_10.qml",
-            "nobuntu": "Nobuntu.qml"
-        })
-    source: "variants/" + variants[currentVariant] || "variants/CenterIsland.qml"
-
+    source: sanitizeSource("variants/", currentVariant)
     required property real value
     required property string icon
     readonly property string currentVariant: Mem.options.desktop.osd.mode
@@ -35,7 +27,7 @@ Loader {
         item.valueModified.connect(root.valueModified);
         item.interactionStarted.connect(root.interactionStarted);
         item.interactionEnded.connect(root.interactionEnded);
-        if (currentVariant === "side_bay")
+        if ("volumeMode" in item)
             item.volumeMode = Qt.binding(() => root.volumeMode);
     }
 }
