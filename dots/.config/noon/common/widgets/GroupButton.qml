@@ -23,13 +23,13 @@ Button {
     property var holdAction // When pressed and hold
     property var middleClickAction // When middle clicking
     property bool bounce: true
+    property int buttonTextPadding
     property real baseWidth: contentItem.implicitWidth + horizontalPadding * 2
     property real baseHeight: contentItem.implicitHeight + verticalPadding * 2
     property real clickedWidth: baseWidth + 20
     property real clickedHeight: baseHeight
     property var parentGroup: root.parent
     property int clickIndex: parentGroup?.clickIndex ?? -1
-
     Layout.fillWidth: (clickIndex - 1 <= parentGroup.children.indexOf(root) && parentGroup.children.indexOf(root) <= clickIndex + 1)
     Layout.fillHeight: (clickIndex - 1 <= parentGroup.children.indexOf(root) && parentGroup.children.indexOf(root) <= clickIndex + 1)
     implicitWidth: (root.down && bounce) ? clickedWidth : baseWidth
@@ -48,10 +48,8 @@ Button {
     property color color: root.enabled ? (root.toggled ? (root.down ? colBackgroundToggledActive : root.hovered ? colBackgroundToggledHover : colBackgroundToggled) : (root.down ? colBackgroundActive : root.hovered ? colBackgroundHover : colBackground)) : colBackground
 
     onDownChanged: {
-        if (root.down) {
-            if (root.parent.clickIndex !== undefined) {
-                root.parent.clickIndex = parent.children.indexOf(root);
-            }
+        if (root.down && root.parent.clickIndex !== undefined) {
+            root.parent.clickIndex = parent.children.indexOf(root);
         }
     }
 
@@ -118,6 +116,8 @@ Button {
     }
 
     contentItem: StyledText {
+        leftPadding: root.buttonTextPadding
         text: root.buttonText
+        color: root.toggled ? Colors.colOnPrimary : Colors.colOnLayer1
     }
 }

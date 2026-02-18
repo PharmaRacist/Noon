@@ -68,7 +68,7 @@ Singleton {
 
     // --- Helper: build base command ---
     function _buildCommand(args) {
-        const venvPath = FileUtils.trimFileProtocol(Directories.venv);
+        const venvPath = Directories.venv;
         const scriptPath = FileUtils.trimFileProtocol(Directories.scriptsDir + "/create_depth_image_rembg.py");
 
         return ["uv", "--directory", venvPath, "run", scriptPath].concat(args);

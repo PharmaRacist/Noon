@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.common.utils
+
 /**
  * KDialog file picker component
  * Process is only created when open() is called
@@ -9,26 +10,26 @@ Item {
     id: root
 
     // Predefined file filter arrays
-    readonly property var filterPresets: ({
+    readonly property var filterPresets: {
         "ALL": {
             "name": "All files",
             "patterns": NameFilters.all
         },
         "IMAGES": {
             "name": "Image files",
-            "patterns":NameFilters.picture
+            "patterns": NameFilters.picture
         },
         "VIDEOS": {
             "name": "Video files",
-            "patterns":NameFilters.video
+            "patterns": NameFilters.video
         },
         "AUDIO": {
             "name": "Audio files",
-            "patterns":NameFilters.audio
+            "patterns": NameFilters.audio
         },
         "ARCHIVES": {
             "name": "Archive files",
-            "patterns":NameFilters.archive
+            "patterns": NameFilters.archive
         },
         "CODE": {
             "name": "Code files",
@@ -38,26 +39,27 @@ Item {
             "name": "Text files",
             "patterns": NameFilters.document
         }
-    })
+    }
     // Configurable properties
     property string title: "Select File"
     property bool multipleSelection: false
     property bool directoryMode: false
     property bool saveMode: false
     property string currentFolder: "~"
-    property var fileFilters: []
+    property string filter: ""
+    property var fileFilters: filterPresets[filter]
     property string separator: "\n"
 
     // Signals
     signal fileSelected(var files)
-    signal cancelled()
+    signal cancelled
     signal error(string message)
 
     // Public API
     function open() {
         if (pickerLoader.item && pickerLoader.item.running) {
             console.warn("[FilePicker] Picker already running");
-            return ;
+            return;
         }
         if (!pickerLoader.active)
             pickerLoader.active = true;
@@ -65,7 +67,6 @@ Item {
         Qt.callLater(() => {
             if (pickerLoader.item)
                 pickerLoader.item.running = true;
-
         });
     }
 
@@ -75,13 +76,13 @@ Item {
             return "";
 
         // KDialog format: "Name1 (*.ext1 *.ext2)|Name2 (*.ext3)"
-        const filterStrings = fileFilters.map((filter) => {
+        const filterStrings = fileFilters.map(filter => {
             if (filter.name && filter.patterns) {
                 const patterns = Array.isArray(filter.patterns) ? filter.patterns.join(" ") : filter.patterns;
                 return `${filter.name} (${patterns})`;
             }
             return "";
-        }).filter((f) => {
+        }).filter(f => {
             return f !== "";
         });
         return filterStrings.join("|");
@@ -119,7 +120,6 @@ Item {
                         const filter = root.buildKDialogFilter();
                         if (filter)
                             args.push(filter);
-
                     } else {
                         // Open file(s)
                         args.push("--getopenfilename");
@@ -142,7 +142,7 @@ Item {
                         const trimmed = output.trim();
                         if (trimmed) {
                             if (root.multipleSelection) {
-                                const files = trimmed.split("\n").filter((f) => {
+                                const files = trimmed.split("\n").filter(f => {
                                     return f.trim() !== "";
                                 });
                                 root.fileSelected(files);
@@ -165,22 +165,18 @@ Item {
                 }
 
                 stdout: SplitParser {
-                    onRead: (line) => {
+                    onRead: line => {
                         picker.output += line + "\n";
                     }
                 }
 
                 stderr: SplitParser {
-                    onRead: (line) => {
+                    onRead: line => {
                         picker.errorOutput += line + "\n";
                         console.error(`[FilePicker] ${line}`);
                     }
                 }
-
             }
-
         }
-
     }
-
 }

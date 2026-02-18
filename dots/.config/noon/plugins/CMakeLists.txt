@@ -1,4 +1,5 @@
 add_subdirectory(lib/microtex)
+add_subdirectory(lib/qtqr)
 add_subdirectory(utils)
 add_subdirectory(services)
 

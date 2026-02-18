@@ -31,8 +31,7 @@ TabButton {
     implicitHeight: baseSize
     background: null
 
-    PointingHandInteraction {
-    }
+    PointingHandInteraction {}
 
     // Real stuff
     contentItem: Item {
@@ -75,7 +74,6 @@ TabButton {
                     target: itemBackground
                     implicitWidth: root.visualWidth
                 }
-
             }
 
             transitions: Transition {
@@ -92,15 +90,11 @@ TabButton {
                     easing.type: Appearance.animation.elementMove.type
                     easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
                 }
-
             }
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
 
         Item {
@@ -127,13 +121,9 @@ TabButton {
                 color: toggled ? root.itemColorActive : root.itemColor
 
                 Behavior on color {
-                    CAnim {
-                    }
-
+                    CAnim {}
                 }
-
             }
-
         }
 
         StyledText {
@@ -164,9 +154,7 @@ TabButton {
                         right: root.rightMode ? itemIconBackground.left : undefined
                         verticalCenter: itemIconBackground.verticalCenter
                     }
-
                 }
-
             }
 
             transitions: Transition {
@@ -175,11 +163,7 @@ TabButton {
                     easing.type: Easing.BezierSpline
                     easing.bezierCurve: Animations.curves.expressiveEffects
                 }
-
             }
-
         }
-
     }
-
 }

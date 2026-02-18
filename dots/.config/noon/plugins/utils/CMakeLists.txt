@@ -1,4 +1,3 @@
-# Noon.Utils submodule
 qt_add_qml_module(noon_utils
     URI Noon.Utils
     VERSION 1.0
@@ -27,5 +26,5 @@ install(TARGETS noon_utils noon_utilsplugin DESTINATION "${QML_INSTALL_DIR}/Noon
 qt_query_qml_module(noon_utils QMLDIR qmldir_utils TYPEINFO typeinfo_utils)
 install(FILES ${qmldir_utils} ${typeinfo_utils} DESTINATION "${QML_INSTALL_DIR}/Noon/Utils")
 
-# Add latex subdirectory
 add_subdirectory(latex)
+add_subdirectory(qr)

@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
+import qs.common.widgets
 
 Singleton {
     id: root
@@ -13,8 +14,12 @@ Singleton {
     readonly property var all: monitors
     readonly property var main: monitors[0]
     readonly property var secondary: monitors.length > 1 ? monitors.slice(1) : []
+    property alias dummyPanel: dummy
 
-    function monitorFor(panel){
-        return Hyprland.monitorFor(panel)
+    function monitorFor(panel) {
+        return Hyprland.monitorFor(panel);
+    }
+    DummyPanel {
+        id: dummy
     }
 }

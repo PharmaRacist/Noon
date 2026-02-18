@@ -100,14 +100,32 @@ Singleton {
 
         return avList.some(domain => url.toLowerCase().includes(domain));
     }
+    function isOnline(url) {
+        return url.startsWith("http") || url.startsWith("https" || url.contains("www"));
+    }
     function runDownloader(url) {
-        if (url.startsWith("http")) {
+        if (isOnline(url)) {
             if (checkIfDlp(url)) {
                 GlobalStates.main.sysDialogs.pendingData = url;
                 GlobalStates.main.sysDialogs.mode = "dlp";
             }
         }
     }
+    // property Component filePicker: FilePicker {}
+    // function pickFiles(wTitle = "Noon Picker", multiple = true, namefilters = "ALL") {
+    //     let picker = filePicker.createObject(GlobalStates.main.sidebar, {
+    //         "title": wTitle,
+    //         "multipleSelection": multiple,
+    //         "filter": namefilters,
+    //         "visible": true,
+    //         "anchors.fill": root
+    //     });
+
+    //     picker.fileSelected.connect(files => {
+    //         let fileList = Array.isArray(files) ? files : [files];
+    //     // picker.destroy();
+    //     });
+    // }
 
     function edit(filePath) {
         if (!filePath)

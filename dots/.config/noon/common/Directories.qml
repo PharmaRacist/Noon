@@ -9,7 +9,7 @@ Singleton {
     id: root
 
     // misc directories
-    readonly property string venv: standard.state + "/.venv"
+    readonly property string venv: FileUtils.trimFileProtocol(standard.state + "/.venv")
     readonly property string sounds: FileUtils.trimFileProtocol(assets + "/sounds/")
     readonly property string assets: FileUtils.trimFileProtocol(standard.config + "/noon/assets")
     readonly property string gallery: FileUtils.trimFileProtocol(standard.pictures + "/Gallary/")

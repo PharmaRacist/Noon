@@ -7,8 +7,9 @@ Item {
     id: root
 
     property bool shown: true
+    property alias iconFill: shapeWidget.fill
     property alias icon: shapeWidget.text
-    property alias shapePadding:shapeWidget.padding
+    property alias shapePadding: shapeWidget.padding
     property alias title: widgetNameText.text
     property alias description: widgetDescriptionText.text
     property alias shape: shapeWidget.shape
@@ -52,7 +53,6 @@ Item {
                 pixelSize: Fonts.sizes.verylarge
                 variableAxes: Fonts.variableAxes.title
             }
-
         }
 
         StyledText {
@@ -65,13 +65,9 @@ Item {
             horizontalAlignment: Text.AlignLeft
             wrapMode: Text.Wrap
         }
-
     }
 
     Behavior on opacity {
-        Anim {
-        }
-
+        Anim {}
     }
-
 }

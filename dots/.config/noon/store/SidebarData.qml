@@ -14,167 +14,188 @@ Singleton {
     property int sidebarWidth
     readonly property QtObject sizePresets: Sizes.sidebar
     readonly property var enabledCategories: Object.keys(registry).filter(key => (registry[key].enabled ?? true) && !registry[key].stealth && (registry[key].shell === undefined || registry[key].shell === Mem.options.desktop.shell.mode))
-    readonly property var registry: ({
-            "Apps": {
-                icon: "apps",
-                shell: "main",
-                componentPath: "apps/Apps",
-                searchable: true,
-                customSize: sizePresets.quarter,
-                shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.apps,
-                async: true
-            },
-            "API": {
-                icon: "neurology",
-                componentPath: "apis/ApisContent",
-                expandable: true,
-                customSize: sizePresets.half,
-                enabled: Mem.options.sidebar.content.apis
-            },
-            "Web": {
-                icon: "globe",
-                componentPath: "web/WebBrowser",
-                expandable: true,
-                preExpand: true,
-                async: true,
-                on_accepted_only: true,
-                searchable: true,
-                shape: MaterialShape.Shape.Ghostish,
-                customSize: sizePresets.half,
-                enabled: Mem.options.sidebar.content.web
-            },
-            "Notifs": {
-                icon: "notifications_active",
-                shell: "main",
-                componentPath: "notifs/Notifs",
-                customSize: sizePresets.quarter,
-                enabled: Mem.options.sidebar.content.notifs
-            },
-            "Walls": {
-                icon: "image",
-                componentPath: "wallpapers/WallpaperSelector",
-                async: true,
-                searchable: true,
-                shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.wallpapers
-            },
-            "Tasks": {
-                icon: "task_alt",
-                componentPath: "tasks/KanbanWidget",
-                expandable: true,
-                customSize: sizePresets.half,
-                enabled: Mem.options.sidebar.content.tasks
-            },
-            "Notes": {
-                icon: "stylus",
-                componentPath: "notes/Notes",
-                expandable: true,
-                customSize: sizePresets.half,
-                enabled: Mem.options.sidebar.content.notes
-            },
-            "View": {
-                icon: "ad",
-                componentPath: "view/OverviewWidget",
-                expandable: true,
-                preExpand: true,
-                customSize: sizePresets.overview,
-                enabled: Mem.options.sidebar.content.overview
-            },
-            "Beats": {
-                icon: "music_note",
-                shell: "main",
-                componentPath: "beats/Beats",
-                enabled: Mem.options.sidebar.content.beats,
-                colors: BeatsService.colors
-            },
-            "History": {
-                icon: "content_paste",
-                shell: "main",
-                componentPath: "history/History",
-                searchable: true,
-                shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.history
-            },
-            "Games": {
-                icon: "stadia_controller",
-                componentPath: "games/GameLauncher",
-                expandable: true,
-                searchable: true,
-                shape: MaterialShape.Shape.Ghostish,
-                customSize: sizePresets.half - 80,
-                colors: GameLauncherService.colors,
-                enabled: Mem.options.sidebar.content.games
-            },
-            "Tweaks": {
-                icon: "tune",
-                shell: "main",
-                componentPath: "settings/QuickSettings",
-                expandable: true,
-                searchable: true,
-                customSize: sizePresets.threeQuarter,
-                shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.tweaks
-            },
-            "Bookmarks": {
-                icon: "bookmark",
-                componentPath: "bookmarks/Bookmarks",
-                searchable: true,
-                shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.bookmarks
-            },
-            "Emojis": {
-                icon: "sentiment_calm",
-                componentPath: "emojis/Emojis",
-                searchable: true,
-                shape: MaterialShape.Shape.Ghostish,
-                enabled: Mem.options.sidebar.content.emojis
-            },
-            "Session": {
-                icon: "power_settings_new",
-                componentPath: "session/PowerMenu",
-                customSize: sizePresets.session,
-                enabled: Mem.options.sidebar.content.session
-            },
-            "Shelf": {
-                icon: "shelves",
-                componentPath: "shelf/ShelfPanel",
-                enabled: Mem.options.sidebar.content.shelf
-            },
-            "Widgets": {
-                icon: "widgets",
-                componentPath: "widgets/WidgetsPanel",
-                enabled: Mem.options.sidebar.content.widgets
-            },
-            "Misc": {
-                icon: "keyboard_option_key",
-                componentPath: "misc/MiscWidget",
-                enabled: Mem.options.sidebar.content.misc
-            },
-            "DMenu": {
-                icon: "dashboard",
-                componentPath: "dmenu/DMenu",
-                searchable: true,
-                stealth: true
-            },
-            "Bars": {
-                componentPath: "barSwitcher/BarSwitcher",
-                shape: MaterialShape.Shape.Ghostish,
-                searchable: true,
-                shell: "main",
-                stealth: true
-            },
-            "Lock": {
-                enabled: false,
-                icon: "lock",
-                componentPath: "lock/Lock"
-                // stealth: true
-            },
-            "Auth": {
-                componentPath: "polkit/Polkit",
-                stealth: true
-            }
-        })
+    readonly property var registry: {
+        "Apps": {
+            icon: "rocket",
+            iconA: "rocket_launch",
+            shell: "main",
+            componentPath: "apps/Apps",
+            searchable: true,
+            customSize: sizePresets.quarter,
+            shape: MaterialShape.Shape.Ghostish,
+            enabled: Mem.options.sidebar.content.apps,
+            async: true
+        },
+        "API": {
+            icon: "cognition",
+            iconA: "cognition_2",
+            componentPath: "apis/ApisContent",
+            expandable: true,
+            customSize: sizePresets.half,
+            enabled: Mem.options.sidebar.content.apis
+        },
+        "Web": {
+            icon: "globe",
+            componentPath: "web/WebBrowser",
+            expandable: true,
+            preExpand: true,
+            async: true,
+            on_accepted_only: true,
+            searchable: true,
+            shape: MaterialShape.Shape.Ghostish,
+            customSize: sizePresets.half,
+            enabled: Mem.options.sidebar.content.web
+        },
+        "Notifs": {
+            icon: "notifications",
+            iconA: "notifications_active",
+            shell: "main",
+            componentPath: "notifs/Notifs",
+            customSize: sizePresets.quarter,
+            enabled: Mem.options.sidebar.content.notifs
+        },
+        "Walls": {
+            icon: "gallery_thumbnail",
+            iconA: "image",
+            componentPath: "wallpapers/WallpaperSelector",
+            async: true,
+            searchable: true,
+            shape: MaterialShape.Shape.Ghostish,
+            enabled: Mem.options.sidebar.content.wallpapers
+        },
+        "Tasks": {
+            icon: "task_alt",
+            iconA: "add_task",
+            componentPath: "tasks/KanbanWidget",
+            expandable: true,
+            customSize: sizePresets.half,
+            enabled: Mem.options.sidebar.content.tasks
+        },
+        "Notes": {
+            icon: "stylus",
+            iconA: "stylus_note",
+            componentPath: "notes/Notes",
+            expandable: true,
+            customSize: sizePresets.half,
+            enabled: Mem.options.sidebar.content.notes
+        },
+        "View": {
+            icon: "ad",
+            iconA: "view_cozy",
+            componentPath: "view/OverviewWidget",
+            expandable: true,
+            preExpand: true,
+            customSize: sizePresets.overview,
+            enabled: Mem.options.sidebar.content.overview
+        },
+        "Beats": {
+            icon: "music_note",
+            iconA: "music_note_add",
+            shell: "main",
+            componentPath: "beats/Beats",
+            enabled: Mem.options.sidebar.content.beats,
+            colors: BeatsService.colors
+        },
+        "History": {
+            icon: "content_paste",
+            iconA: "inventory",
+            shell: "main",
+            componentPath: "history/History",
+            searchable: true,
+            shape: MaterialShape.Shape.Ghostish,
+            enabled: Mem.options.sidebar.content.history
+        },
+        "Games": {
+            icon: "stadia_controller",
+            iconA: "joystick",
+            componentPath: "games/GameLauncher",
+            expandable: true,
+            searchable: true,
+            shape: MaterialShape.Shape.Ghostish,
+            customSize: sizePresets.half - 80,
+            colors: GameLauncherService.colors,
+            enabled: Mem.options.sidebar.content.games
+        },
+        "Tweaks": {
+            icon: "settings",
+            iconA: "settings_heart",
+            shell: "main",
+            componentPath: "settings/QuickSettings",
+            expandable: true,
+            searchable: true,
+            customSize: sizePresets.threeQuarter,
+            shape: MaterialShape.Shape.Ghostish,
+            enabled: Mem.options.sidebar.content.tweaks
+        },
+        "Bookmarks": {
+            icon: "bookmark",
+            iconA: "bookmark_heart",
+            componentPath: "bookmarks/Bookmarks",
+            searchable: true,
+            shape: MaterialShape.Shape.Ghostish,
+            enabled: Mem.options.sidebar.content.bookmarks
+        },
+        "Emojis": {
+            icon: "sentiment_calm",
+            iconA: "mood_heart",
+            componentPath: "emojis/Emojis",
+            searchable: true,
+            shape: MaterialShape.Shape.Ghostish,
+            enabled: Mem.options.sidebar.content.emojis
+        },
+        "Shelf": {
+            icon: "shelves",
+            iconA: "book_ribbon",
+            componentPath: "shelf/ShelfPanel",
+            enabled: Mem.options.sidebar.content.shelf
+        },
+        "Widgets": {
+            icon: "widgets",
+            iconA: "ripples",
+            componentPath: "widgets/WidgetsPanel",
+            enabled: Mem.options.sidebar.content.widgets
+        },
+        "Misc": {
+            icon: "more_horiz",
+            iconA: "all_inclusive",
+            componentPath: "misc/MiscWidget",
+            enabled: Mem.options.sidebar.content.misc
+        },
+        "Share": {
+            icon: "share",
+            componentPath: "misc/Share",
+            enabled: Mem.options.sidebar.content.share
+        },
+        "Session": {
+            icon: "power_settings_new",
+            componentPath: "session/PowerMenu",
+            customSize: sizePresets.session,
+            enabled: Mem.options.sidebar.content.session
+        },
+        "DMenu": {
+            icon: "dashboard",
+            componentPath: "dmenu/DMenu",
+            searchable: true,
+            stealth: true
+        },
+        "Bars": {
+            componentPath: "barSwitcher/BarSwitcher",
+            shape: MaterialShape.Shape.Ghostish,
+            searchable: true,
+            shell: "main",
+            stealth: true
+        },
+        "Lock": {
+            enabled: false,
+            icon: "lock",
+            componentPath: "lock/Lock"
+            // stealth: true
+        },
+        "Auth": {
+            componentPath: "polkit/Polkit",
+            stealth: true
+        }
+    }
 
     function _get(id) {
         return registry[id];
@@ -190,6 +211,9 @@ Singleton {
     }
     function getIcon(id) {
         return _get(id)?.icon || "";
+    }
+    function getActiveIcon(id) {
+        return _get(id)?.iconA ?? _get(id).icon;
     }
     function getComponentPath(id) {
         const c = _get(id);

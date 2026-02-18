@@ -1,10 +1,10 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.utils
 import qs.common.widgets
-pragma Singleton
-pragma ComponentBehavior: Bound
 
 Singleton {
     id: root
@@ -19,9 +19,7 @@ Singleton {
     IdleInhibitor {
         enabled: Mem.options.services.idle.inhibit
 
-        window: DummyPanel {
-        }
-
+        window: DummyPanel {}
     }
 
     IdleMonitor {
@@ -29,8 +27,6 @@ Singleton {
         onIsIdleChanged: {
             if (isIdle)
                 NoonUtils.callIpc("global lock");
-
         }
     }
-
 }
