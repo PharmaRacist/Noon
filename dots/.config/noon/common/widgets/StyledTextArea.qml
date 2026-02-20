@@ -16,5 +16,4 @@ TextArea {
         pixelSize: Fonts.sizes.small ?? 15
         hintingPreference: Font.PreferFullHinting
     }
-
 }

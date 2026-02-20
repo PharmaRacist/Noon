@@ -126,22 +126,19 @@ StyledPanel {
         StyledRect {
             id: visualContainer
 
-            width: root.sidebarWidth
+            width: root.sidebarWidth + Sizes.elevationMargin
             color: sidebarContent.colors.colLayer0
-            topRightRadius: !root.rightMode && root.appearanceMode === 1 ? root.rounding : 0
-            bottomRightRadius: !root.rightMode && root.appearanceMode === 1 ? root.rounding : 0
-            topLeftRadius: root.rightMode && root.appearanceMode === 1 ? root.rounding : 0
-            bottomLeftRadius: root.rightMode && root.appearanceMode === 1 ? root.rounding : 0
+
+            readonly property int hideMargin: state === "float" ? Sizes.elevationMargin : -1
 
             anchors {
                 top: parent.top
                 bottom: parent.bottom
+
                 left: !rightMode ? parent.left : undefined
                 right: rightMode ? parent.right : undefined
-                leftMargin: !rightMode ? ((!hoverMode || reveal) ? -1 : -(width - 1)) : 0
-                rightMargin: rightMode ? ((!hoverMode || reveal) ? -1 : -(width - 1)) : 0
-                topMargin: root.appearanceMode === 1 && root.barPosition !== "top" ? Sizes.frameThickness : 0
-                bottomMargin: root.appearanceMode === 1 && root.barPosition !== "bottom" ? Sizes.frameThickness : 0
+                leftMargin: !rightMode ? ((!hoverMode || reveal) ? hideMargin : -width - 1) : 0
+                rightMargin: rightMode ? ((!hoverMode || reveal) ? hideMargin : -width - 1) : 0
             }
 
             Content {
@@ -149,7 +146,73 @@ StyledPanel {
 
                 panelWindow: root
             }
+            states: [
+                State {
+                    name: "sharp"
+                    when: root.appearanceMode === 0
 
+                    PropertyChanges {
+                        target: visualContainer
+
+                        topRightRadius: 0
+                        bottomRightRadius: 0
+                        topLeftRadius: 0
+                        bottomLeftRadius: 0
+                        anchors.topMargin: 0
+                        anchors.bottomMargin: 0
+                    }
+                },
+                State {
+                    name: "convex"
+                    when: root.appearanceMode === 1
+
+                    PropertyChanges {
+                        target: visualContainer
+
+                        topRightRadius: !root.rightMode ? root.rounding : 0
+                        bottomRightRadius: !root.rightMode ? root.rounding : 0
+                        topLeftRadius: root.rightMode ? root.rounding : 0
+                        bottomLeftRadius: root.rightMode ? root.rounding : 0
+
+                        anchors.topMargin: root.barPosition !== "top" ? Sizes.frameThickness : 0
+                        anchors.bottomMargin: root.barPosition !== "bottom" ? Sizes.frameThickness : 0
+                    }
+                },
+                State {
+                    name: "concave"
+                    when: root.appearanceMode === 2
+                    PropertyChanges {
+                        target: visualContainer
+
+                        topRightRadius: 0
+                        bottomRightRadius: 0
+                        topLeftRadius: 0
+                        bottomLeftRadius: 0
+                        anchors.topMargin: 0
+                        anchors.bottomMargin: 0
+                    }
+                },
+                State {
+                    name: "float"
+                    when: root.appearanceMode === 3
+                    PropertyChanges {
+                        target: visualContainer
+
+                        topRightRadius: root.rounding
+                        bottomRightRadius: root.rounding
+                        topLeftRadius: root.rounding
+                        bottomLeftRadius: root.rounding
+
+                        anchors.topMargin: Sizes.elevationMargin
+                        anchors.bottomMargin: Sizes.elevationMargin
+                    }
+                }
+            ]
+            transitions: Transition {
+                Anim {
+                    properties: "topRightRadius,bottomRightRadius,topLeftRadius,bottomLeftRadius,anchors.topMargin,anchors.bottomMargin,radius"
+                }
+            }
             Behavior on anchors.leftMargin {
                 Anim {
                     duration: Animations.durations.small
@@ -166,7 +229,7 @@ StyledPanel {
 
             Behavior on width {
                 Anim {
-                    duration: Animations.durations.normal
+                    duration: Animations.durations.large
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }
@@ -174,13 +237,6 @@ StyledPanel {
             Behavior on color {
                 CAnim {
                     duration: Animations.durations.verylarge
-                    easing.bezierCurve: Animations.curves.emphasized
-                }
-            }
-
-            Behavior on radius {
-                Anim {
-                    duration: Animations.durations.normal
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }

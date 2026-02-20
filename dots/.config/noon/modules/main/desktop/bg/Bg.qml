@@ -119,7 +119,7 @@ Scope {
 
                             top: parent.top
                             bottom: parent.bottom
-                            margins: Sizes.elevationMargin
+                            margins: Math.max(Sizes.hyprland.gapsOut, Sizes.elevationMargin)
                         }
                         sourceComponent: DesktopWidgets {}
                     }

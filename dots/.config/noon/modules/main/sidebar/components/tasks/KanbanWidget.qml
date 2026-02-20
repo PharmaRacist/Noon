@@ -15,36 +15,39 @@ Item {
     // Column configuration model
     readonly property var columnConfigs: [
         {
-            "show": true,
             "status": TodoService.status_todo,
             "shape": MaterialShape.Cookie4Sided,
             "icon": "timer",
-            "title": qsTr("Todo tasks"),
+            "title": "Todo tasks",
             "model": todoTasksModel
         },
         {
-            "show": root.expanded,
             "status": TodoService.status_in_progress,
             "shape": MaterialShape.Ghostish,
             "icon": "hourglass_empty",
-            "title": qsTr("In progress tasks"),
+            "title": "In progress tasks",
             "model": inProgressTasksModel
         },
         {
-            "show": root.expanded,
             "status": TodoService.status_final_touches,
             "shape": MaterialShape.Slanted,
             "icon": "build",
-            "title": qsTr("Final touches"),
+            "title": "Final touches",
             "model": finalTouchesTasksModel
         },
         {
-            "show": root.expanded,
             "status": TodoService.status_done,
             "shape": MaterialShape.Cookie7Sided,
             "icon": "check_circle",
-            "title": qsTr("Completed tasks"),
+            "title": "Completed tasks",
             "model": doneTasksModel
+        },
+        {
+            "status": TodoService.status_all,
+            "shape": MaterialShape.Cookie12Sided,
+            "icon": "check_circle",
+            "title": "All",
+            "model": allTasksModel
         }
     ]
     readonly property var todoColumn: getColumnByStatus(TodoService.status_todo)
@@ -56,15 +59,25 @@ Item {
     signal requestReveal
 
     function updateTaskModels() {
+        for (var i = 0; i < columnConfigs.length; i++) {
+            columnConfigs[i].model.clear();
+        }
         for (var i = 0; i < TodoService.list.length; i++) {
             var item = TodoService.list[i];
-            columnConfigs[i].model.clear();
-            columnConfigs.find(column => column.status === item.status).model.append({
+            var entry = {
                 "originalIndex": i,
                 "content": item.content,
                 "status": item.status,
                 "todoistId": item.todoistId || ""
-            });
+            };
+            // Populate the matching status column
+            var statusCol = columnConfigs.find(column => column.status === item.status);
+            if (statusCol)
+                statusCol.model.append(entry);
+            // Populate "all" only if not done
+            if (item.status !== TodoService.status_done) {
+                columnConfigs.find(column => column.status === TodoService.status_all).model.append(entry);
+            }
         }
     }
 
@@ -116,7 +129,9 @@ Item {
         commandBar.forceActiveFocus();
         updateTaskModels();
     }
-
+    ListModel {
+        id: allTasksModel
+    }
     ListModel {
         id: todoTasksModel
     }
@@ -210,7 +225,7 @@ Item {
         Repeater {
             id: columnRepeater
 
-            model: root.columnConfigs.filter(c => c.show)
+            model: root.columnConfigs.filter(c => root.expanded ? c.status !== TodoService.status_all : c.status === TodoService.status_all)
 
             TaskList {
                 required property var modelData

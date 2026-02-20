@@ -31,7 +31,6 @@ Singleton {
             iconA: "cognition_2",
             componentPath: "apis/ApisContent",
             expandable: true,
-            customSize: sizePresets.half,
             enabled: Mem.options.sidebar.content.apis
         },
         "Web": {
@@ -43,7 +42,6 @@ Singleton {
             on_accepted_only: true,
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
-            customSize: sizePresets.half,
             enabled: Mem.options.sidebar.content.web
         },
         "Notifs": {
@@ -68,7 +66,6 @@ Singleton {
             iconA: "add_task",
             componentPath: "tasks/KanbanWidget",
             expandable: true,
-            customSize: sizePresets.half,
             enabled: Mem.options.sidebar.content.tasks
         },
         "Notes": {
@@ -76,7 +73,6 @@ Singleton {
             iconA: "stylus_note",
             componentPath: "notes/Notes",
             expandable: true,
-            customSize: sizePresets.half,
             enabled: Mem.options.sidebar.content.notes
         },
         "View": {
@@ -166,6 +162,12 @@ Singleton {
             componentPath: "misc/Share",
             enabled: Mem.options.sidebar.content.share
         },
+        "Islam": {
+            icon: "mosque",
+            expandable: true,
+            componentPath: "islam/IslamMainWidget",
+            enabled: Mem.options.sidebar.content.islam
+        },
         "Session": {
             icon: "power_settings_new",
             componentPath: "session/PowerMenu",
@@ -185,12 +187,11 @@ Singleton {
             shell: "main",
             stealth: true
         },
-        "Lock": {
-            enabled: false,
-            icon: "lock",
-            componentPath: "lock/Lock"
-            // stealth: true
-        },
+        // "Lock": {
+        //     enabled: false,
+        //     icon: "lock",
+        //     componentPath: "lock/Lock"
+        // },
         "Auth": {
             componentPath: "polkit/Polkit",
             stealth: true
@@ -209,11 +210,8 @@ Singleton {
     function getShape(id) {
         return _get(id)?.shape || "";
     }
-    function getIcon(id) {
-        return _get(id)?.icon || "";
-    }
-    function getActiveIcon(id) {
-        return _get(id)?.iconA ?? _get(id).icon;
+    function getIcon(id, active = false) {
+        return active ? _get(id)?.iconA : _get(id)?.icon;
     }
     function getComponentPath(id) {
         const c = _get(id);
@@ -241,7 +239,7 @@ Singleton {
         const c = registry[id];
         if (!c)
             return sizePresets.bar;
-        return (expanded && c.expandable) ? c.customSize : (id === "Session" ? sizePresets.session : sizePresets.quarter);
+        return (expanded && c.expandable) ? c?.customSize ?? sizePresets.half : (id === "Session" ? sizePresets.session : sizePresets.quarter);
     }
 
     function _navigate(id, step) {

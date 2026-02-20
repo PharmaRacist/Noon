@@ -52,6 +52,7 @@ JsonAdapter {
 
     property JsonObject services: JsonObject {
         property JsonObject kdeconnect
+        property JsonObject islam
         property JsonObject bookmarks
         property JsonObject ai
         property JsonObject radio
@@ -61,6 +62,11 @@ JsonAdapter {
         property JsonObject ambientSounds
         property JsonObject mediaPlayer
         property JsonObject power
+
+        islam: JsonObject {
+            property list<var> donePrayers: []
+            property string currentSurah: ""
+        }
 
         ai: JsonObject {
             property JsonObject tokenCount: JsonObject {

@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import qs.common
+import qs.common.functions
 
 Singleton {
     id: root
@@ -81,7 +82,7 @@ Singleton {
         _cmd({
             cmd: "sendFile",
             deviceIndex: deviceIndex,
-            path: path
+            path: FileUtils.trimFileProtocol(path)
         });
     }
 
@@ -144,6 +145,7 @@ Singleton {
             break;
         case "stopped":
             _s.receiving = false;
+            _s.receiveProgress = -1;
             _pendingTransfer.pin = "";
             _clearReceiveInfo();
             break;

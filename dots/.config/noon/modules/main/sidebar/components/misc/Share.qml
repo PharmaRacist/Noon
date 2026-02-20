@@ -183,14 +183,27 @@ Item {
             }
         }
 
-        // ── Footer ───────────────────────────────────────────────────────────
         StyledRect {
+            id: footer
             color: Colors.colPrimary
             radius: Rounding.large
             implicitHeight: selectedFilesList.visible ? 125 : 72
             Layout.fillWidth: true
             Layout.margins: Padding.small
 
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
+                propagateComposedEvents: true
+
+                DropArea {
+                    anchors.fill: parent
+                    keys: ["text/uri-list"]
+                    onDropped: drop => {
+                        root.selectedFiles = drop.urls.map(url => url.toString());
+                    }
+                }
+            }
             ColumnLayout {
                 anchors.fill: parent
                 anchors.leftMargin: Padding.massive
@@ -205,15 +218,25 @@ Item {
                     Layout.fillWidth: true
                     Layout.minimumHeight: 55
                     Layout.fillHeight: selectedFilesList.visible
-
-                    StyledText {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        text: selectedFilesList.visible ? root.selectedFiles.length + " file(s) selected" : "Add Files"
-                        font {
-                            pixelSize: Fonts.sizes.large
-                            weight: 500
+                        spacing: 0
+                        StyledText {
+                            Layout.fillWidth: true
+                            text: selectedFilesList.visible ? root.selectedFiles.length + " file(s) selected" : "Add Files"
+                            font {
+                                pixelSize: Fonts.sizes.large
+                                weight: 500
+                            }
+                            color: Colors.colOnPrimary
                         }
-                        color: Colors.colOnPrimary
+                        StyledText {
+                            Layout.fillWidth: true
+                            visible: root.selectedFiles.length === 0
+                            text: "You can drop files here"
+                            font.pixelSize: Fonts.sizes.small
+                            color: Colors.colPrimaryContainer
+                        }
                     }
 
                     RippleButtonWithIcon {
@@ -320,7 +343,6 @@ Item {
             setStatus("Advertising: " + info.endpointName + " @ " + info.ip + ":" + info.port);
         }
 
-        // Signal is now: transferRequest(pin)
         function onTransferRequest(pin) {
             setStatus("Incoming transfer — verify PIN: " + pin);
         }

@@ -22,6 +22,7 @@ Singleton {
         readonly property string emoji: "Noto Color Emoji"
         readonly property string iconMaterial: "Material Symbols Rounded"
         readonly property string iconNerd: "Nerd Font"
+        readonly property string quran: "Amiri Quran"
         readonly property bool syncFamily: Mem.options.appearance.fonts.syncFamily
     }
 
@@ -33,8 +34,8 @@ Singleton {
         readonly property int large: 18 * scale
         readonly property int verylarge: 20 * scale
         readonly property int huge: 24 * scale
-        readonly property int title: 46 * scale
         readonly property int subTitle: 32 * scale
+        readonly property int title: 46 * scale
     }
 
     variableAxes: QtObject {

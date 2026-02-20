@@ -7,17 +7,11 @@ StyledRect {
     id: root
     property bool expanded
     property string searchQuery: ""
-    property int selectedIndex: 0
     property QtObject colors: GameLauncherService.colors
     signal gameStarted
     clip: true
     radius: Rounding.verylarge
     color: "transparent"
-    Binding {
-        target: GameLauncherService
-        property: "selectedIndex"
-        value: root.selectedIndex
-    }
     PagePlaceholder {
         shown: GameLauncherService.gamesList.length === 0
         title: "No Games Avilable"
@@ -41,24 +35,22 @@ StyledRect {
             blur: true
         }
     }
-    StyledGridView {
+    StyledListView {
+        id: listView
+
         anchors {
             fill: parent
             margins: Padding.massive
         }
-        cellWidth: Sizes.gameLauncherItemSize.width
-        cellHeight: !root.expanded ? 130 : Sizes.gameLauncherItemSize.height
-        cacheBuffer: Math.min(500, cellHeight * 3)
-        displayMarginBeginning: cellHeight
-        displayMarginEnd: cellHeight
-        reuseItems: true
+
+        onCurrentIndexChanged: GameLauncherService.selectedIndex = currentIndex
         model: searchQuery.length > 0 ? GameLauncherService.searchGames(searchQuery) : GameLauncherService.gamesList
         delegate: GameLauncherItem {
             colors: GameLauncherService.colors
             itemSize: Sizes.gameLauncherItemSize
             property var gameData: modelData
             onGameStarted: root.gameStarted()
-            collapsed: !root.expanded
+            collapsed: true
         }
     }
     GameLauncherAddDialog {

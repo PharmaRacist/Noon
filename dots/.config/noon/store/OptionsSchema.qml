@@ -228,6 +228,7 @@ JsonAdapter {
         content: JsonObject {
             property bool apps: true
             property bool apis: true
+            property bool share: false
             property bool web: false
             property bool shelf: true
             property bool tasks: true

@@ -7,6 +7,7 @@ Loader {
 
     property bool shown: true
     property alias fade: opacityBehavior.enabled
+    property var _item: ready ? item : null
     readonly property bool ready: item && item !== null
     opacity: shown ? 1 : 0
     visible: opacity > 0

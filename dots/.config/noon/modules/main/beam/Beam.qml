@@ -164,6 +164,7 @@ Scope {
 
                         radius: root.mainRounding
                         enableBorders: true
+                        color: Colors.colLayer0
 
                         implicitHeight: Sizes.beamSize.height
                         implicitWidth: {
@@ -176,7 +177,6 @@ Scope {
                             Anim {}
                         }
 
-                        color: Colors.colLayer0
                         Symbol {
                             z: 999
                             font.pixelSize: 18

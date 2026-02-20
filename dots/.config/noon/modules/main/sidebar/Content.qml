@@ -1,6 +1,3 @@
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
 import "components/apis"
 import "components/beats"
 import "components/games"
@@ -17,6 +14,10 @@ import "components/wallpapers"
 import "components/web"
 import "components/lock"
 import "components/widgets"
+import "components/islam"
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
 import qs.common
 import qs.common.widgets
 import qs.services
@@ -77,7 +78,6 @@ Item {
     }
 
     anchors.fill: parent
-    anchors.margins: Padding.large
     clip: true
     focus: true
     onAuxCategoryChanged: toggleAux()
@@ -132,13 +132,23 @@ Item {
     }
 
     RowLayout {
+
         anchors.fill: parent
+        anchors.topMargin: Padding.large
+        anchors.bottomMargin: Padding.large
+        anchors.rightMargin: panelWindow.rightMode ? 0 : Padding.large
+        anchors.leftMargin: !panelWindow.rightMode ? 0 : Padding.large
+
         layoutDirection: !panelWindow.rightMode ? Qt.LeftToRight : Qt.RightToLeft
         spacing: Padding.large
 
         SidebarNavigationRail {
+            content: root
             selectedCategory: root.selectedCategory
             colors: root.colors
+            radius: panelWindow.appearanceMode > 0 ? panelWindow.rounding - Padding.small : 0
+            Layout.topMargin: -Padding.large
+            Layout.bottomMargin: -Padding.large
         }
 
         ContentChild {

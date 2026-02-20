@@ -5,43 +5,52 @@ import qs.common.widgets
 import qs.services
 import qs.store
 
-StyledListView {
-    id: navRail
+StyledRect {
+    id: root
+    required property var content
     required property string selectedCategory
     required property QtObject colors
     readonly property bool sleek: !Mem.options.sidebar.appearance.showNavTitles
-    // Layout.fillHeight: true
-    height: model.length * 50
-    Layout.alignment: Qt.AlignVCenter
-    Layout.fillWidth: GlobalStates.main.sidebar.hoverMode
-    Layout.maximumWidth: implicitWidth
-    implicitWidth: Sizes.sidebar.bar
-    hint: false
-    clip: true
-    popin: false
-    radius: Rounding.large
-    spacing: sleek ? Padding.large : Padding.verylarge
-    model: SidebarData.enabledCategories
+    Layout.fillHeight: true
+    implicitWidth: Sizes.sidebar.bar + content.panelWindow.rounding + 2
+    color: colors.colLayer1
 
-    delegate: NavigationRailButton {
-        required property int index
-        required property string modelData
-        showText: !navRail.sleek
-        fontSize: 12
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignHCenter
-        baseSize: navRail.implicitWidth * 0.75
-        implicitWidth: navRail.implicitWidth
-        toggled: (navRail.selectedCategory === modelData)
-        buttonIcon: toggled ? SidebarData.getActiveIcon(modelData) : SidebarData.getIcon(modelData)
-        buttonText: SidebarData.getCategory(modelData).name || modelData
-        highlightColor: navRail.colors.colSecondaryContainer
-        highlightColorHover: navRail.colors.colSecondaryContainerHover
-        highlightColorActive: navRail.colors.colSecondaryContainerActive
-        itemColorActive: navRail.colors.colOnLayer2
-        onClicked: {
-            NoonUtils.playSound("pressed");
-            root.changeContent(modelData);
+    StyledListView {
+        id: navRailList
+        anchors.centerIn: parent
+        implicitWidth: Sizes.sidebar.bar
+        implicitHeight: contentHeight
+        hint: true
+        clip: true
+        popin: false
+        radius: Rounding.large
+        spacing: sleek ? Padding.large : Padding.verylarge
+        model: SidebarData.enabledCategories
+
+        delegate: NavigationRailButton {
+            required property int index
+            required property string modelData
+
+            fontSize: 12
+            showText: !root.sleek
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: 1
+
+            implicitWidth: baseSize
+
+            baseSize: navRailList.width / 1.2
+            toggled: root.selectedCategory === modelData
+
+            buttonIcon: SidebarData.getIcon(modelData, toggled)
+            buttonText: modelData || ""
+
+            highlightColor: root.colors.colSecondaryContainer
+            highlightColorHover: root.colors.colSecondaryContainerHover
+            highlightColorActive: root.colors.colSecondaryContainerActive
+            itemColorActive: root.colors.colOnLayer2
+
+            onClicked: content.changeContent(modelData)
         }
     }
 }

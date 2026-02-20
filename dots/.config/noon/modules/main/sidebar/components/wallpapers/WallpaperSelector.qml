@@ -31,10 +31,7 @@ StyledRect {
         onTriggered: root._debouncedQuery = root.searchQuery.trim()
     }
 
-    onContentFocusRequested: if (listView.count > 0) {
-        listView.currentIndex = 0;
-        listView.forceActiveFocus();
-    }
+    onContentFocusRequested: listView.forceActiveFocus()
 
     function loadWallpapers() {
         const model = WallpaperService.wallpaperModel;
@@ -42,19 +39,36 @@ StyledRect {
             return;
 
         let wallpapers = new Array(model.count);
+        let targetIndex = -1;
+        const currentPath = WallpaperService.currentWallpaper.toString();
 
         for (let i = 0; i < model.count; i++) {
             const fileUrl = model.getFile(i);
             if (fileUrl) {
+                const pathString = fileUrl.toString();
                 wallpapers[i] = {
                     index: i,
                     fileUrl: fileUrl,
                     fileName: FileUtils.getEscapedFileName(fileUrl)
                 };
+
+                // Check if this is the active wallpaper
+                if (pathString === currentPath) {
+                    targetIndex = i;
+                }
             }
         }
 
         WallpaperService.wallpaperSelectorCachedModel = wallpapers;
+
+        // Scroll the list after the model updates
+        if (targetIndex !== -1) {
+            // Use Qt.callLater to ensure the view has processed the model change
+            Qt.callLater(() => {
+                listView.currentIndex = targetIndex;
+                listView.positionViewAtIndex(targetIndex, ListView.Center);
+            });
+        }
     }
 
     ScriptModel {
@@ -112,10 +126,14 @@ StyledRect {
         spacing: Padding.small
         hint: false
         model: filteredModel
-        currentIndex: -1
+        currentIndex: filteredModel.values.indexOf(WallpaperService.currentWallpaper)
         highlightFollowsCurrentItem: true
-        highlightMoveDuration: 200
-
+        highlightMoveDuration: 250
+        // onCurrentIndexChanged: {
+        //     if (currentIndex >= 0) {
+        //         WallpaperService.applyWallpaper(filteredModel.values[currentIndex].fileUrl.toString());
+        //     }
+        // }
         delegate: Item {
             id: loader
             z: 9999

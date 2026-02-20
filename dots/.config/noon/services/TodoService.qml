@@ -40,6 +40,7 @@ Singleton {
     readonly property int status_in_progress: 1
     readonly property int status_final_touches: 2
     readonly property int status_done: 3
+    readonly property int status_all: 4
     readonly property var statusNames: ["Not Started", "In Progress", "Final Touches", "Finished"]
     readonly property var statusLabels: ["todo", "in_progress", "final_touches", "done"]
 
@@ -169,7 +170,6 @@ Singleton {
     function refresh() {
         loadFromConfig();
     }
-
 
     // Todoist API Operations
     function syncWithTodoist() {

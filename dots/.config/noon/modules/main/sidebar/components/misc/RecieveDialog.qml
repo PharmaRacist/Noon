@@ -7,13 +7,15 @@ import qs.services
 
 BottomDialog {
     id: root
-    collapsedHeight: 165
+    collapsedHeight: 170
     revealOnWheel: false
     enableStagedReveal: false
     bottomAreaReveal: false
+    color: Colors.colLayer2
+
     contentItem: CLayout {
         anchors.fill: parent
-        anchors.margins: Padding.normal
+        anchors.margins: Padding.huge
 
         BottomDialogHeader {
             title: "Receive Request"

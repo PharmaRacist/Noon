@@ -2,30 +2,59 @@
 """Quick Share backend service for Quickshell QML frontend."""
 
 import asyncio
+import importlib
 import json
 import os
+import signal
 import socket
 import sys
 import threading
+import time
 from pathlib import Path
 
 from pyquickshare import discover_services, receive, send_to
 
+# Stub out firewalld only — stubbing pyquickshare.mdns.receive breaks discovery.
+try:
 
-# Stub out firewalld — not required
-async def _noop(*a, **kw):
+    async def _noop(*a, **kw):
+        pass
+
+    importlib.import_module("pyquickshare.firewalld").temporarily_open_port = _noop
+except Exception:
     pass
 
 
-import importlib
+# ── PID file helpers ─────────────────────────────────────────────────────────
 
-for _mod in ("pyquickshare.firewalld", "pyquickshare.mdns.receive"):
+_PID_FILE = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp")) / "quickshare-backend.pid"
+
+
+def _kill_previous():
     try:
-        importlib.import_module(_mod).temporarily_open_port = _noop
+        pid = int(_PID_FILE.read_text())
+        if pid != os.getpid():
+            os.kill(pid, signal.SIGTERM)
+            for _ in range(20):
+                try:
+                    os.kill(pid, 0)
+                except ProcessLookupError:
+                    break
+                time.sleep(0.1)
+    except (FileNotFoundError, ValueError, ProcessLookupError):
+        pass
+    _PID_FILE.write_text(str(os.getpid()))
+
+
+def _remove_pid():
+    try:
+        if int(_PID_FILE.read_text()) == os.getpid():
+            _PID_FILE.unlink()
     except Exception:
         pass
 
-# ── Port detection ───────────────────────────────────────────────
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
 
 
 def _listening_ports() -> set[int]:
@@ -39,9 +68,6 @@ def _listening_ports() -> set[int]:
         except FileNotFoundError:
             pass
     return ports
-
-
-# ── Helpers ──────────────────────────────────────────────────────
 
 
 def emit(event: str, **kwargs):
@@ -59,7 +85,7 @@ def local_ip() -> str:
         return socket.gethostbyname(socket.gethostname()) or "127.0.0.1"
 
 
-# ── Bridge ───────────────────────────────────────────────────────
+# ── Bridge ────────────────────────────────────────────────────────────────────
 
 
 class Bridge:
@@ -67,23 +93,21 @@ class Bridge:
         self._recv_task = None
         self._discovered = {}
         self._output_dir = str(Path.home() / "Downloads" / "QuickShare")
-        self._pending_request = None  # ShareRequest awaiting user decision
+        self._pending_request = None
+        self._discovering = False
 
     async def start_receiving(self, output_dir: str = ""):
         if self._recv_task and not self._recv_task.done():
-            emit("error", message="Receiver already active")
-            return
+            return emit("error", message="Receiver already active")
 
         if output_dir.strip():
             self._output_dir = output_dir
 
         try:
-            # pyquickshare hardcodes "downloads/" relative to cwd
             os.makedirs(os.path.join(self._output_dir, "downloads"), exist_ok=True)
             os.chdir(self._output_dir)
         except Exception as e:
-            emit("error", message=f"Directory setup failed: {e}")
-            return
+            return emit("error", message=f"Directory setup failed: {e}")
 
         ports_before = _listening_ports()
         self._recv_task = asyncio.create_task(self._recv_loop())
@@ -97,11 +121,9 @@ class Bridge:
                 break
 
         if not recv_port:
-            emit("error", message="Could not determine listening port")
-            return
+            return emit("error", message="Could not determine listening port")
 
-        ip = local_ip()
-        hostname = socket.gethostname()
+        ip, hostname = local_ip(), socket.gethostname()
         emit(
             "receiving",
             endpointName=hostname,
@@ -116,28 +138,22 @@ class Bridge:
             eid = socket.gethostname()[:4].upper().ljust(4, "X").encode()
             async for req in receive(endpoint_id=eid):
                 self._pending_request = req
-
-                # Emit request with pin — UI must call acceptTransfer or rejectTransfer
                 emit(
                     "transferRequest",
                     sender=getattr(req.header, "file_name", "Unknown"),
                     pin=req.pin,
-                    # files/size info isn't on the header at this stage
                 )
 
-                # Wait for user decision (set by accept_transfer / reject_transfer)
-                accepted = await req.respond
-
-                if accepted:
+                if await req.respond:
                     try:
                         results = await req.done
                         downloads_dir = os.path.join(self._output_dir, "downloads")
-                        files = []
-                        for r in results:
-                            if hasattr(r, "path"):
-                                files.append(str(Path(self._output_dir) / r.path))
-                            elif hasattr(r, "name"):
-                                files.append(r.name)
+                        files = [
+                            str(Path(self._output_dir) / r.path)
+                            if hasattr(r, "path")
+                            else r.name
+                            for r in results
+                        ]
                         emit("receiveProgress", progress=1.0)
                         emit("transferComplete", files=files, outputDir=downloads_dir)
                     except Exception as e:
@@ -153,20 +169,21 @@ class Bridge:
         except Exception as e:
             emit("error", message=str(e))
 
-    async def accept_transfer(self):
+    def _check_pending(self, action: str):
         req = self._pending_request
         if req is None or req.respond.done():
-            emit("error", message="No pending transfer to accept")
-            return
-        req.respond.set_result(True)
-        emit("receiveProgress", progress=0.0)
+            emit("error", message=f"No pending transfer to {action}")
+            return None
+        return req
+
+    async def accept_transfer(self):
+        if req := self._check_pending("accept"):
+            req.respond.set_result(True)
+            emit("receiveProgress", progress=0.0)
 
     async def reject_transfer(self):
-        req = self._pending_request
-        if req is None or req.respond.done():
-            emit("error", message="No pending transfer to reject")
-            return
-        req.respond.set_result(False)
+        if req := self._check_pending("reject"):
+            req.respond.set_result(False)
 
     async def stop_receiving(self):
         if self._pending_request and not self._pending_request.respond.done():
@@ -182,78 +199,39 @@ class Bridge:
         emit("stopped")
 
     async def discover(self):
-        if getattr(self, "_discovering", False):
-            emit("error", message="Discovery already in progress")
-            return
+        if self._discovering:
+            return emit("error", message="Discovery already in progress")
         self._discovering = True
         self._discovered = {}
         count = 0
-        local_ip_addr = local_ip()
-        local_hostname = socket.gethostname().lower()
-
-        def parse_device(info):
-            props = info.properties or {}
-            # b"n" is the human-readable device name in Quick Share mDNS TXT records
-            raw_name = props.get(b"n", b"") or props.get(b"name", b"")
-            name = raw_name.decode(errors="ignore").strip()
-            if not name:
-                name = info.name.split(".")[0].strip()
-            name = name.replace("-", " ").strip().title() or f"Device {count + 1}"
-
-            ty = (props.get(b"ty", b"") or b"").decode(errors="ignore").lower()
-            combined = ty + name.lower()
-            if any(k in combined for k in ["phone", "pixel", "galaxy", "iphone"]):
-                category = "phone"
-            elif any(k in combined for k in ["pad", "tab", "ipad"]):
-                category = "tablet"
-            elif any(
-                k in combined
-                for k in ["book", "laptop", "pc", "surface", "chrome", "windows"]
-            ):
-                category = "laptop"
-            else:
-                category = "unknown"
-            return name, category
-
-        def is_self(info) -> bool:
-            try:
-                addrs = (
-                    info.parsed_addresses()
-                    if callable(getattr(info, "parsed_addresses", None))
-                    else []
-                )
-                if local_ip_addr in addrs:
-                    return True
-                server = (getattr(info, "server", None) or "").lower()
-                if server and local_hostname in server:
-                    return True
-            except Exception:
-                pass
-            return False
 
         try:
             queue = await discover_services()
         except Exception as e:
             emit("error", message=f"Discovery init failed: {e}")
             self._discovering = False
-            emit("discoverDone", total=0)
-            return
+            return emit("discoverDone", total=0)
 
+        seen: set[str] = set()
         try:
             while count < 30:
                 try:
                     info = await asyncio.wait_for(queue.get(), timeout=12.0)
                 except asyncio.TimeoutError:
                     break
-
-                if is_self(info):
+                if info.name in seen:
                     continue
-
-                name, category = parse_device(info)
+                seen.add(info.name)
+                props = info.properties or {}
+                raw_name = props.get(b"n", b"") or props.get(b"name", b"")
+                name = (
+                    raw_name.decode(errors="ignore").strip()
+                    or info.name.split(".")[0].replace("-", " ").strip().title()
+                    or f"Device {count + 1}"
+                )
                 self._discovered[count] = info
-                emit("deviceFound", index=count, name=name, category=category)
+                emit("deviceFound", index=count, name=name)
                 count += 1
-
         except Exception as e:
             emit("error", message=f"Discovery error: {e}")
         finally:
@@ -261,50 +239,44 @@ class Bridge:
             emit("discoverDone", total=count)
 
     async def send_file(self, index: int, path: str):
-        device = self._discovered.get(index)
-        if not device:
-            emit("error", message=f"Device {index} not found")
-            return
-
+        if not (device := self._discovered.get(index)):
+            return emit("error", message=f"Device {index} not found")
         p = Path(path).absolute()
         if not p.is_file():
-            emit("error", message=f"File not found: {path}")
-            return
-
+            return emit("error", message=f"File not found: {path}")
         emit("sendProgress", progress=0.0)
         last_err = None
-        for _attempt in range(4):
+        for attempt in range(4):
             try:
                 await send_to(device, file=str(p))
-                emit("sendComplete", fileName=p.name)
-                return
+                return emit("sendComplete", fileName=p.name)
             except Exception as e:
                 last_err = e
-                await asyncio.sleep(min(1 * 2**_attempt, 16))
+                await asyncio.sleep(min(1 * 2**attempt, 16))
         emit("error", message=f"Send failed after retries: {last_err}")
 
 
-# ── Main loop ────────────────────────────────────────────────────
+# ── Dispatch & main ───────────────────────────────────────────────────────────
 
 _bridge = Bridge()
 
 
 async def dispatch(data: dict):
-    cmd = data.get("cmd")
-    if cmd == "startReceiving":
-        await _bridge.start_receiving(data.get("outputDir", ""))
-    elif cmd == "stopReceiving":
-        await _bridge.stop_receiving()
-    elif cmd == "acceptTransfer":
-        await _bridge.accept_transfer()
-    elif cmd == "rejectTransfer":
-        await _bridge.reject_transfer()
-    elif cmd == "discoverDevices":
-        await _bridge.discover()
-    elif cmd == "sendFile":
-        await _bridge.send_file(data.get("deviceIndex"), data.get("path", ""))
-    elif cmd == "ping":
-        emit("pong")
+    match data.get("cmd"):
+        case "startReceiving":
+            await _bridge.start_receiving(data.get("outputDir", ""))
+        case "stopReceiving":
+            await _bridge.stop_receiving()
+        case "acceptTransfer":
+            await _bridge.accept_transfer()
+        case "rejectTransfer":
+            await _bridge.reject_transfer()
+        case "discoverDevices":
+            await _bridge.discover()
+        case "sendFile":
+            await _bridge.send_file(data.get("deviceIndex"), data.get("path", ""))
+        case "ping":
+            emit("pong")
 
 
 async def main():
@@ -313,20 +285,24 @@ async def main():
 
     def stdin_reader():
         for line in sys.stdin:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                asyncio.run_coroutine_threadsafe(dispatch(json.loads(line)), loop)
-            except Exception:
-                pass
+            if line := line.strip():
+                try:
+                    asyncio.run_coroutine_threadsafe(dispatch(json.loads(line)), loop)
+                except Exception:
+                    pass
 
     threading.Thread(target=stdin_reader, daemon=True).start()
     await asyncio.Event().wait()
 
 
 if __name__ == "__main__":
+    _kill_previous()
+    import atexit
+
+    atexit.register(_remove_pid)
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         pass
+    finally:
+        _remove_pid()

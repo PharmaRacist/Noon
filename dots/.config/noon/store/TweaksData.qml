@@ -135,7 +135,7 @@ Singleton {
                     "name": "OSD Mode",
                     "key": "desktop.osd.mode",
                     "type": "combobox",
-                    "comboBoxValues": ["Pixel","BottomPill", "Nobuntu", "CenterIsland", "SideBay"]
+                    "comboBoxValues": ["Pixel", "BottomPill", "Nobuntu", "CenterIsland", "SideBay"]
                 }
             ]
         },
@@ -365,6 +365,11 @@ Singleton {
                     "icon": "api",
                     "name": "APIs",
                     "key": "sidebar.content.apis"
+                },
+                {
+                    "icon": "share",
+                    "name": "QuickShare",
+                    "key": "sidebar.content.share"
                 },
                 {
                     "icon": "public",

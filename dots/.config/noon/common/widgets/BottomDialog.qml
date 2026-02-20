@@ -28,7 +28,7 @@ Item {
     readonly property int targetHeight: show ? (expand && enableStagedReveal ? expandedHeight : collapsedHeight) : 0
     property var finishAction
     property QtObject colors: Colors
-
+    property alias color: bg.color
     onRevealChanged: {
         if (!reveal && finishAction)
             return finishAction();
