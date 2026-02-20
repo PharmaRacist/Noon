@@ -23,7 +23,7 @@ StyledPanel {
     readonly property int appearanceMode: Mem.options.sidebar.appearance.mode
     readonly property string barPosition: Mem.options.bar.behavior.position
     property alias selectedCategory: sidebarContent.selectedCategory
-    readonly property int sidebarWidth: auxWidth + SidebarData.currentSize(hoverMode, root.expanded, selectedCategory)
+    readonly property int sidebarWidth: SidebarData.currentSize(hoverMode, root.expanded, selectedCategory) + auxWidth
     readonly property int auxWidth: sidebarContent.auxVisible && !hoverMode ? SidebarData.currentSize(false, false, sidebarContent.auxCategory) : 0
 
     function hide() {
@@ -126,10 +126,10 @@ StyledPanel {
         StyledRect {
             id: visualContainer
 
-            width: root.sidebarWidth + Sizes.elevationMargin
+            width: root.sidebarWidth
             color: sidebarContent.colors.colLayer0
-
-            readonly property int hideMargin: state === "float" ? Sizes.elevationMargin : -1
+            clip: true
+            readonly property int hideMargin: state === "float" ? Sizes.elevationMargin : 0
 
             anchors {
                 top: parent.top
@@ -137,15 +137,15 @@ StyledPanel {
 
                 left: !rightMode ? parent.left : undefined
                 right: rightMode ? parent.right : undefined
-                leftMargin: !rightMode ? ((!hoverMode || reveal) ? hideMargin : -width - 1) : 0
-                rightMargin: rightMode ? ((!hoverMode || reveal) ? hideMargin : -width - 1) : 0
+                leftMargin: !rightMode ? ((!hoverMode || reveal) ? hideMargin : -root.sidebarWidth) : 0
+                rightMargin: rightMode ? ((!hoverMode || reveal) ? hideMargin : -root.sidebarWidth) : 0
             }
 
             Content {
                 id: sidebarContent
-
                 panelWindow: root
             }
+
             states: [
                 State {
                     name: "sharp"

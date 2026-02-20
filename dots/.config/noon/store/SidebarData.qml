@@ -17,18 +17,18 @@ Singleton {
     readonly property var registry: {
         "Apps": {
             icon: "rocket",
-            iconA: "rocket_launch",
+            activeIcon: "rocket_launch",
             shell: "main",
             componentPath: "apps/Apps",
             searchable: true,
-            customSize: sizePresets.quarter,
+            expandSize: sizePresets.quarter,
             shape: MaterialShape.Shape.Ghostish,
             enabled: Mem.options.sidebar.content.apps,
             async: true
         },
         "API": {
             icon: "cognition",
-            iconA: "cognition_2",
+            activeIcon: "cognition_2",
             componentPath: "apis/ApisContent",
             expandable: true,
             enabled: Mem.options.sidebar.content.apis
@@ -46,15 +46,15 @@ Singleton {
         },
         "Notifs": {
             icon: "notifications",
-            iconA: "notifications_active",
+            activeIcon: "notifications_active",
             shell: "main",
             componentPath: "notifs/Notifs",
-            customSize: sizePresets.quarter,
+            expandSize: sizePresets.quarter,
             enabled: Mem.options.sidebar.content.notifs
         },
         "Walls": {
             icon: "gallery_thumbnail",
-            iconA: "image",
+            activeIcon: "image",
             componentPath: "wallpapers/WallpaperSelector",
             async: true,
             searchable: true,
@@ -63,30 +63,30 @@ Singleton {
         },
         "Tasks": {
             icon: "task_alt",
-            iconA: "add_task",
+            activeIcon: "add_task",
             componentPath: "tasks/KanbanWidget",
             expandable: true,
             enabled: Mem.options.sidebar.content.tasks
         },
         "Notes": {
             icon: "stylus",
-            iconA: "stylus_note",
+            activeIcon: "stylus_note",
             componentPath: "notes/Notes",
             expandable: true,
             enabled: Mem.options.sidebar.content.notes
         },
         "View": {
             icon: "ad",
-            iconA: "view_cozy",
+            activeIcon: "view_cozy",
             componentPath: "view/OverviewWidget",
             expandable: true,
             preExpand: true,
-            customSize: sizePresets.overview,
+            expandSize: sizePresets.overview,
             enabled: Mem.options.sidebar.content.overview
         },
         "Beats": {
             icon: "music_note",
-            iconA: "music_note_add",
+            activeIcon: "music_note_add",
             shell: "main",
             componentPath: "beats/Beats",
             enabled: Mem.options.sidebar.content.beats,
@@ -94,7 +94,7 @@ Singleton {
         },
         "History": {
             icon: "content_paste",
-            iconA: "inventory",
+            activeIcon: "inventory",
             shell: "main",
             componentPath: "history/History",
             searchable: true,
@@ -103,29 +103,29 @@ Singleton {
         },
         "Games": {
             icon: "stadia_controller",
-            iconA: "joystick",
+            activeIcon: "joystick",
             componentPath: "games/GameLauncher",
             expandable: true,
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
-            customSize: sizePresets.half - 80,
+            expandSize: sizePresets.half - 80,
             colors: GameLauncherService.colors,
             enabled: Mem.options.sidebar.content.games
         },
         "Tweaks": {
             icon: "settings",
-            iconA: "settings_heart",
+            activeIcon: "settings_heart",
             shell: "main",
             componentPath: "settings/QuickSettings",
             expandable: true,
             searchable: true,
-            customSize: sizePresets.threeQuarter,
+            expandSize: sizePresets.threeQuarter,
             shape: MaterialShape.Shape.Ghostish,
             enabled: Mem.options.sidebar.content.tweaks
         },
         "Bookmarks": {
             icon: "bookmark",
-            iconA: "bookmark_heart",
+            activeIcon: "bookmark_heart",
             componentPath: "bookmarks/Bookmarks",
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
@@ -133,7 +133,7 @@ Singleton {
         },
         "Emojis": {
             icon: "sentiment_calm",
-            iconA: "mood_heart",
+            activeIcon: "mood_heart",
             componentPath: "emojis/Emojis",
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
@@ -141,19 +141,19 @@ Singleton {
         },
         "Shelf": {
             icon: "shelves",
-            iconA: "book_ribbon",
+            activeIcon: "book_ribbon",
             componentPath: "shelf/ShelfPanel",
             enabled: Mem.options.sidebar.content.shelf
         },
         "Widgets": {
             icon: "widgets",
-            iconA: "ripples",
+            activeIcon: "ripples",
             componentPath: "widgets/WidgetsPanel",
             enabled: Mem.options.sidebar.content.widgets
         },
         "Misc": {
             icon: "more_horiz",
-            iconA: "all_inclusive",
+            activeIcon: "all_inclusive",
             componentPath: "misc/MiscWidget",
             enabled: Mem.options.sidebar.content.misc
         },
@@ -171,7 +171,6 @@ Singleton {
         "Session": {
             icon: "power_settings_new",
             componentPath: "session/PowerMenu",
-            customSize: sizePresets.session,
             enabled: Mem.options.sidebar.content.session
         },
         "DMenu": {
@@ -187,11 +186,6 @@ Singleton {
             shell: "main",
             stealth: true
         },
-        // "Lock": {
-        //     enabled: false,
-        //     icon: "lock",
-        //     componentPath: "lock/Lock"
-        // },
         "Auth": {
             componentPath: "polkit/Polkit",
             stealth: true
@@ -211,7 +205,7 @@ Singleton {
         return _get(id)?.shape || "";
     }
     function getIcon(id, active = false) {
-        return active ? _get(id)?.iconA : _get(id)?.icon;
+        return active ? _get(id)?.activeIcon : _get(id)?.icon;
     }
     function getComponentPath(id) {
         const c = _get(id);
@@ -234,22 +228,19 @@ Singleton {
     }
 
     function currentSize(barMode, expanded, id) {
-        if (barMode)
-            return sizePresets.bar + Padding.large;
-        const c = registry[id];
-        if (!c)
+        const content = registry[id];
+        if (barMode || !content)
             return sizePresets.bar;
-        return (expanded && c.expandable) ? c?.customSize ?? sizePresets.half : (id === "Session" ? sizePresets.session : sizePresets.quarter);
+        if (id === "Session")
+            return sizePresets.session;
+
+        return (expanded && content.expandable) ? content.expandSize : sizePresets.quarter;
     }
 
     function _navigate(id, step) {
         const v = enabledCategories;
-        if (v.length === 0)
-            return "";
         const i = v.indexOf(id);
-        if (i !== -1)
-            return v[(i + step + v.length) % v.length];
-        return v[0];
+        return i > 0 ? v[(i + step + v.length) % v.length] : v[0];
     }
 
     function getNextEnabledCategory(id) {

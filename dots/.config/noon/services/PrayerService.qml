@@ -271,6 +271,13 @@ Singleton {
             list.push(name);
         Mem.states.services.islam.donePrayers = list;
     }
+    function getFastingProgress() {
+        const now = currentDate.getHours() * 60 + currentDate.getMinutes();
+        const start = toMinutes(prayerTimes.fajr), end = toMinutes(prayerTimes.maghrib);
+        if (prayerTimes.fajr === "..." || now <= start)
+            return 0;
+        return now >= end ? 1 : (now - start) / (end - start);
+    }
 
     function loadPrayerTimes() {
         // Check if we already have data for today with same location and method

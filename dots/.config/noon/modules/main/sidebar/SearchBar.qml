@@ -36,7 +36,7 @@ StyledRect {
         padding: 6
         color: Colors.colPrimaryContainer
         shape: SidebarData.getShape(root.category)
-        text: SidebarData.getIcon(root.category)
+        text: SidebarData.getIcon(root.category) || ""
         fill: 1
     }
 
@@ -57,7 +57,7 @@ StyledRect {
             Layout.fillHeight: true
             visible: root.effectiveSearchable
             enabled: root.effectiveSearchable
-            text: searchText
+            text: searchText || ""
             placeholderText: "Search..."
             placeholderTextColor: Colors.colOutline
             background: null

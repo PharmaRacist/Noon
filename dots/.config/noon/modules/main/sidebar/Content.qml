@@ -146,7 +146,7 @@ Item {
             content: root
             selectedCategory: root.selectedCategory
             colors: root.colors
-            radius: panelWindow.appearanceMode > 0 ? panelWindow.rounding - Padding.small : 0
+            radius: panelWindow.appearanceMode > 0 ? panelWindow.rounding : 0
             Layout.topMargin: -Padding.large
             Layout.bottomMargin: -Padding.large
         }
@@ -154,9 +154,9 @@ Item {
         ContentChild {
             id: main_child
 
-            Layout.maximumWidth: root.auxVisible ? SidebarData.currentSize(false, false, category) : Sizes.infinity
             _aux: false
             category: root.selectedCategory
+            Layout.maximumWidth: root.auxVisible ? SidebarData.currentSize(false, false, category) : Sizes.infinity
         }
 
         VerticalSeparator {
@@ -166,7 +166,7 @@ Item {
         Loader {
             id: aux_loader
             asynchronous: true
-            visible: active
+            visible: root.auxVisible
             active: root.auxVisible
             Layout.fillHeight: true
             Layout.fillWidth: true

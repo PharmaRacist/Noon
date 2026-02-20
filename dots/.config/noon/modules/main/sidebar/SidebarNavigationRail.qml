@@ -5,52 +5,61 @@ import qs.common.widgets
 import qs.services
 import qs.store
 
-StyledRect {
+Item {
     id: root
     required property var content
     required property string selectedCategory
     required property QtObject colors
     readonly property bool sleek: !Mem.options.sidebar.appearance.showNavTitles
+    property alias radius: bg.radius
+    implicitWidth: Sizes.sidebar.bar
     Layout.fillHeight: true
-    implicitWidth: Sizes.sidebar.bar + content.panelWindow.rounding + 2
-    color: colors.colLayer1
 
-    StyledListView {
-        id: navRailList
-        anchors.centerIn: parent
-        implicitWidth: Sizes.sidebar.bar
-        implicitHeight: contentHeight
-        hint: true
-        clip: true
-        popin: false
-        radius: Rounding.large
-        spacing: sleek ? Padding.large : Padding.verylarge
-        model: SidebarData.enabledCategories
+    StyledRectangularShadow {
+        target: bg
+        intensity: 0.5
+    }
+    StyledRect {
+        id: bg
+        anchors.fill: parent
+        color: Colors.colLayer2
 
-        delegate: NavigationRailButton {
-            required property int index
-            required property string modelData
+        StyledListView {
+            id: navRailList
+            anchors.centerIn: parent
+            implicitWidth: Sizes.sidebar.bar * 2 / 3
+            implicitHeight: contentHeight
+            hint: true
+            clip: true
+            popin: false
+            radius: Rounding.large
+            spacing: sleek ? Padding.normal : Padding.verylarge
+            model: SidebarData.enabledCategories
 
-            fontSize: 12
-            showText: !root.sleek
+            delegate: NavigationRailButton {
+                required property int index
+                required property string modelData
 
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: 1
+                fontSize: 12
+                showText: !root.sleek
 
-            implicitWidth: baseSize
+                anchors.horizontalCenter: parent.horizontalCenter
 
-            baseSize: navRailList.width / 1.2
-            toggled: root.selectedCategory === modelData
+                implicitWidth: baseSize
 
-            buttonIcon: SidebarData.getIcon(modelData, toggled)
-            buttonText: modelData || ""
+                baseSize: navRailList.width - Padding.verysmall
+                toggled: root.selectedCategory === modelData
 
-            highlightColor: root.colors.colSecondaryContainer
-            highlightColorHover: root.colors.colSecondaryContainerHover
-            highlightColorActive: root.colors.colSecondaryContainerActive
-            itemColorActive: root.colors.colOnLayer2
+                buttonIcon: SidebarData.getIcon(modelData, toggled)
+                buttonText: modelData || ""
 
-            onClicked: content.changeContent(modelData)
+                highlightColor: root.colors.colSecondaryContainer
+                highlightColorHover: root.colors.colSecondaryContainerHover
+                highlightColorActive: root.colors.colSecondaryContainerActive
+                itemColorActive: root.colors.colOnLayer2
+
+                onClicked: content.changeContent(modelData)
+            }
         }
     }
 }

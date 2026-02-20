@@ -225,6 +225,7 @@ JsonAdapter {
         shelf: JsonObject {
             property int previewDelay: 250
         }
+
         content: JsonObject {
             property bool apps: true
             property bool apis: true

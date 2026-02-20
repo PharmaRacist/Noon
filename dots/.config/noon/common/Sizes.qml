@@ -13,7 +13,7 @@ Singleton {
     readonly property real notificationPopupWidth: 420
     readonly property real elevationValue: Padding.verylarge
     readonly property real frameThickness: Mem.options.desktop.bg.borderMultiplier * (hyprland.gapsOut - Padding.normal)
-    readonly property real elevationMargin: Math.round(frameThickness + elevationValue)
+    readonly property real elevationMargin: frameThickness + elevationValue
     readonly property size beamSize: Qt.size(540, 65)
     readonly property size beamSizeExpanded: Qt.size(1000, 100)
     readonly property size gameLauncherItemSize: Qt.size(225, 360)
@@ -45,7 +45,7 @@ Singleton {
     }
 
     sidebar: QtObject {
-        readonly property real bar: 50
+        readonly property real bar: 65
         readonly property real contentQuarter: Math.round(Screen.width * 0.235) - bar
         readonly property real half: Math.round(Screen.width * 0.457)
         readonly property real quarter: Math.round(Screen.width * 0.246)
