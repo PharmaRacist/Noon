@@ -4,6 +4,7 @@ import qs.common
 import qs.common.utils
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 
 /**

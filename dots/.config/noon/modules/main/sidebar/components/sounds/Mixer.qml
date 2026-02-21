@@ -41,7 +41,7 @@ Item {
                 }
                 spacing: 6
 
-                delegate: VolumeMixerEntry {
+                delegate: MixerItem {
                     // Layout.fillWidth: true
                     anchors {
                         left: parent.left
@@ -89,8 +89,8 @@ Item {
         id: bottomDialog
         show: root.showDeviceSelector
         collapsedHeight: 180 + dialogFlickable.contentHeight
-        enableStagedReveal:false
-        bottomAreaReveal:true
+        enableStagedReveal: false
+        bottomAreaReveal: true
         hoverHeight: 300
         contentItem: Item { // The dialog
             id: dialog

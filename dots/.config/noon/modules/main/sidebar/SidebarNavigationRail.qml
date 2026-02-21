@@ -18,11 +18,13 @@ Item {
     StyledRectangularShadow {
         target: bg
         intensity: 0.5
+        color: colors.colShadow
     }
+
     StyledRect {
         id: bg
         anchors.fill: parent
-        color: Colors.colLayer2
+        color: colors.colLayer2
 
         StyledListView {
             id: navRailList
@@ -47,7 +49,7 @@ Item {
 
                 implicitWidth: baseSize
 
-                baseSize: navRailList.width - Padding.verysmall
+                baseSize: Math.round(navRailList.width * 0.88)
                 toggled: root.selectedCategory === modelData
 
                 buttonIcon: SidebarData.getIcon(modelData, toggled)

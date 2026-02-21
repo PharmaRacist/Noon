@@ -13,8 +13,8 @@ Image {
     property color tintColor: Colors.m3.m3surfaceTint
     property bool tint: false
     property real tintLevel: 0.5
-    property int blurSize:1
-    property int blurMax:70
+    property int blurSize: 1
+    property int blurMax: 70
 
     retainWhileLoading: true
     visible: opacity > 0
@@ -30,9 +30,7 @@ Image {
     }
 
     Behavior on opacity {
-        Anim {
-        }
-
+        Anim {}
     }
 
     layer.effect: MultiEffect {
@@ -42,5 +40,4 @@ Image {
         blurMax: root.blurMax
         blur: root.blurSize
     }
-
 }

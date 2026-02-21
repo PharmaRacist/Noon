@@ -244,7 +244,9 @@ JsonAdapter {
             property bool session: true
             property bool widgets: true
             property bool overview: false
-            property bool misc: true
+            property bool sounds: true
+            property bool deen: true
+            property bool timers: true
             property bool games: false
         }
 

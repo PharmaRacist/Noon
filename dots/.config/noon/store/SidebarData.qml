@@ -19,7 +19,7 @@ Singleton {
             icon: "rocket",
             activeIcon: "rocket_launch",
             shell: "main",
-            componentPath: "apps/Apps",
+            componentPath: "etc/Apps",
             searchable: true,
             expandSize: sizePresets.quarter,
             shape: MaterialShape.Shape.Ghostish,
@@ -29,7 +29,7 @@ Singleton {
         "API": {
             icon: "cognition",
             activeIcon: "cognition_2",
-            componentPath: "apis/ApisContent",
+            componentPath: "apis/Apis",
             expandable: true,
             enabled: Mem.options.sidebar.content.apis
         },
@@ -64,21 +64,21 @@ Singleton {
         "Tasks": {
             icon: "task_alt",
             activeIcon: "add_task",
-            componentPath: "tasks/KanbanWidget",
+            componentPath: "tasks/Kanban",
             expandable: true,
             enabled: Mem.options.sidebar.content.tasks
         },
         "Notes": {
             icon: "stylus",
             activeIcon: "stylus_note",
-            componentPath: "notes/Notes",
+            componentPath: "etc/Notes",
             expandable: true,
             enabled: Mem.options.sidebar.content.notes
         },
         "View": {
             icon: "ad",
             activeIcon: "view_cozy",
-            componentPath: "view/OverviewWidget",
+            componentPath: "view/Overview",
             expandable: true,
             preExpand: true,
             expandSize: sizePresets.overview,
@@ -96,7 +96,7 @@ Singleton {
             icon: "content_paste",
             activeIcon: "inventory",
             shell: "main",
-            componentPath: "history/History",
+            componentPath: "etc/History",
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
             enabled: Mem.options.sidebar.content.history
@@ -104,7 +104,7 @@ Singleton {
         "Games": {
             icon: "stadia_controller",
             activeIcon: "joystick",
-            componentPath: "games/GameLauncher",
+            componentPath: "games/Games",
             expandable: true,
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
@@ -126,15 +126,15 @@ Singleton {
         "Bookmarks": {
             icon: "bookmark",
             activeIcon: "bookmark_heart",
-            componentPath: "bookmarks/Bookmarks",
+            componentPath: "etc/Bookmarks",
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
             enabled: Mem.options.sidebar.content.bookmarks
         },
         "Emojis": {
             icon: "sentiment_calm",
-            activeIcon: "mood_heart",
-            componentPath: "emojis/Emojis",
+            activeIcon: "favorite",
+            componentPath: "etc/Emojis",
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
             enabled: Mem.options.sidebar.content.emojis
@@ -142,52 +142,57 @@ Singleton {
         "Shelf": {
             icon: "shelves",
             activeIcon: "book_ribbon",
-            componentPath: "shelf/ShelfPanel",
+            componentPath: "shelf/Shelf",
             enabled: Mem.options.sidebar.content.shelf
         },
         "Widgets": {
             icon: "widgets",
             activeIcon: "ripples",
-            componentPath: "widgets/WidgetsPanel",
+            componentPath: "widgets/Widgets",
             enabled: Mem.options.sidebar.content.widgets
         },
-        "Misc": {
+        "Sounds": {
             icon: "more_horiz",
             activeIcon: "all_inclusive",
-            componentPath: "misc/MiscWidget",
-            enabled: Mem.options.sidebar.content.misc
+            componentPath: "sounds/Sounds",
+            enabled: Mem.options.sidebar.content.sounds
+        },
+        "Timers": {
+            icon: "timer",
+            componentPath: "timers/Timers",
+            enabled: Mem.options.sidebar.content.timers
         },
         "Share": {
             icon: "share",
-            componentPath: "misc/Share",
+            componentPath: "share/Share",
             enabled: Mem.options.sidebar.content.share
         },
-        "Islam": {
+        "Deen": {
             icon: "mosque",
             expandable: true,
-            componentPath: "islam/IslamMainWidget",
+            componentPath: "deen/Deen",
             enabled: Mem.options.sidebar.content.islam
         },
         "Session": {
             icon: "power_settings_new",
-            componentPath: "session/PowerMenu",
+            componentPath: "etc/Session",
             enabled: Mem.options.sidebar.content.session
         },
         "DMenu": {
             icon: "dashboard",
-            componentPath: "dmenu/DMenu",
+            componentPath: "etc/DMenu",
             searchable: true,
             stealth: true
         },
         "Bars": {
-            componentPath: "barSwitcher/BarSwitcher",
+            componentPath: "etc/BarSwitcher",
             shape: MaterialShape.Shape.Ghostish,
             searchable: true,
             shell: "main",
             stealth: true
         },
         "Auth": {
-            componentPath: "polkit/Polkit",
+            componentPath: "etc/Polkit",
             stealth: true
         }
     }
@@ -234,7 +239,7 @@ Singleton {
         if (id === "Session")
             return sizePresets.session;
 
-        return (expanded && content.expandable) ? content.expandSize : sizePresets.quarter;
+        return (expanded && content.expandable) ? content.expandSize ?? sizePresets.half : sizePresets.quarter;
     }
 
     function _navigate(id, step) {

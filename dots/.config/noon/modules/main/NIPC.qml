@@ -13,12 +13,9 @@ import qs.store
 Scope {
     IpcHandler {
         target: "noon"
-        function expose(show: bool) {
-            if (show) {
-                GlobalStates.main.exposeView = true;
-            } else if (!show) {
-                GlobalStates.main.exposeView = false;
-            }
+
+        function toggle_expose() {
+            GlobalStates.main.exposeView = !GlobalStates.main.exposeView;
         }
         function toggle_beam() {
             GlobalStates.main.showBeam = !GlobalStates.main.showBeam;

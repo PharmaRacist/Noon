@@ -11,16 +11,13 @@ import qs.common
 import qs.common.widgets
 
 StyledPanel {
-    // --- USER INTERFACE ---
-
     id: root
 
-    // --- SETTINGS ---
     property string layoutAlgorithm: "bands"
     property string lastLayoutAlgorithm: ""
     property bool liveCapture: true
     property bool moveCursorToActiveWindow: true
-    // --- INTERNAL STATE ---
+
     property bool isActive: false
     property bool specialActive: false
     property bool animateWindows: false

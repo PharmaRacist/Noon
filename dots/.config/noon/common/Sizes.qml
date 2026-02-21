@@ -45,7 +45,7 @@ Singleton {
     }
 
     sidebar: QtObject {
-        readonly property real bar: 65
+        readonly property real bar: 70
         readonly property real contentQuarter: Math.round(Screen.width * 0.235) - bar
         readonly property real half: Math.round(Screen.width * 0.457)
         readonly property real quarter: Math.round(Screen.width * 0.246)
@@ -65,11 +65,11 @@ Singleton {
     }
 
     hyprland: QtObject {
-        property real borders: HyprlandParserService.variables.borders
-        property real gapsOut: HyprlandParserService.variables.gaps_out
-        property real gapsIn: HyprlandParserService.variables.gaps_in
-        property real blurSize: HyprlandParserService.variables.blur_size
-        property real blurPasses: HyprlandParserService.variables.blur_passes
-        property real shadowsRange: HyprlandParserService.variables.shadows_range
+        property real borders: HyprlandParserService?.variables?.borders || 0
+        property real gapsOut: HyprlandParserService?.variables?.gaps_out || 0
+        property real gapsIn: HyprlandParserService?.variables?.gaps_in || 0
+        property real blurSize: HyprlandParserService?.variables?.blur_size || 0
+        property real blurPasses: HyprlandParserService?.variables?.blur_passes || 0
+        property real shadowsRange: HyprlandParserService?.variables?.shadows_range || 0
     }
 }

@@ -18,13 +18,14 @@ StyledPanel {
     property bool reveal: revealCondition
     property bool rightMode: barPosition === "left" || barPosition === "bottom"
     readonly property bool show: !hoverMode
-    readonly property bool revealCondition: (hoverArea.containsMouse && hoverMode) || PolkitService.flow !== null
+    readonly property bool revealCondition: (mouseArea.containsMouse && hoverMode) || PolkitService.flow !== null
     readonly property int rounding: Rounding.verylarge
     readonly property int appearanceMode: Mem.options.sidebar.appearance.mode
     readonly property string barPosition: Mem.options.bar.behavior.position
     property alias selectedCategory: sidebarContent.selectedCategory
     readonly property int sidebarWidth: SidebarData.currentSize(hoverMode, root.expanded, selectedCategory) + auxWidth
     readonly property int auxWidth: sidebarContent.auxVisible && !hoverMode ? SidebarData.currentSize(false, false, sidebarContent.auxCategory) : 0
+    readonly property int hoverArea: 2
 
     function hide() {
         if (pinned)
@@ -54,17 +55,16 @@ StyledPanel {
 
     name: "sidebar"
     visible: true
-    implicitWidth: visualContainer.width + rounding + bubble.width + Sizes.hyprland.gapsOut
+    implicitWidth: visualContainer.width + bubble.width + Sizes.hyprland.gapsOut + rounding
     exclusiveZone: !hoverMode && pinned ? implicitWidth - rounding : -1
     aboveWindows: true
-    kbFocus: show
-    WlrLayershell.layer: WlrLayer.Overlay
+    // WlrLayershell.layer: WlrLayer.Overlay
 
     anchors {
-        left: !root.rightMode || !pinned
         top: true
-        right: root.rightMode || !pinned
         bottom: true
+        left: !root.rightMode || !pinned
+        right: root.rightMode || !pinned
     }
 
     margins {
@@ -81,12 +81,12 @@ StyledPanel {
     Item {
         id: wrapperItem
 
-        opacity: width > Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn ? 1 : 0
+        opacity: width > root.hoverArea ? 1 : 0
         width: {
             if (!hoverMode)
-                return visualContainer.width + (bubble.visible ? bubble.width + Padding.verylarge * 2 : 0);
-
-            return reveal ? Math.max(visualContainer.width, hoverArea.width) : Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn;
+                return visualContainer.width + bubble.width + Padding.massive;
+            else
+                return reveal ? visualContainer.width : root.hoverArea;
         }
 
         anchors {
@@ -97,20 +97,13 @@ StyledPanel {
         }
 
         MouseArea {
-            id: hoverArea
+            id: mouseArea
 
             enabled: root.hoverMode
             z: 1000
             hoverEnabled: true
             acceptedButtons: Qt.NoButton
-            width: root.reveal ? visualContainer.width : Sizes.hyprland.gapsOut + Sizes.hyprland.gapsIn
-
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                left: !root.rightMode ? parent.left : undefined
-                right: root.rightMode ? parent.right : undefined
-            }
+            anchors.fill: parent
 
             DropArea {
                 id: dropArea
@@ -296,10 +289,7 @@ StyledPanel {
     FocusHandler {
         windows: [root]
         active: show
-        onCleared: {
-            if (!pinned)
-                hide();
-        }
+        onCleared: !pinned ? hide() : null
     }
 
     Binding {

@@ -26,9 +26,9 @@ BottomDialog {
     collapsedHeight: 165
     clip: true
     enableStagedReveal: false
-    anchors {
-        rightMargin: Padding.normal
-        leftMargin: Padding.normal
+    bgAnchors {
+        rightMargin: Padding.large
+        leftMargin: Padding.large
     }
 
     contentItem: ColumnLayout {

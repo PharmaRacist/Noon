@@ -13,20 +13,21 @@ IslandComponent {
         source: BeatsService.artUrl
         asynchronous: true
         blur: true
+        tint: true
     }
 
     RowLayout {
         z: 2
         anchors.fill: parent
-        anchors.margins: Padding.large
-        anchors.leftMargin: Padding.massive
+        anchors.margins: Padding.small
+        anchors.leftMargin: Padding.veryhuge
         anchors.rightMargin: Padding.large
         spacing: Padding.massive
 
         // Cover Art
         MusicCoverArt {
             visible: BeatsService.artUrl.length > 1
-            radius: Rounding.verylarge - Padding.normal
+            radius: bg.radius - Padding.large
             Layout.preferredWidth: parent.height * 0.86
             Layout.preferredHeight: parent.height * 0.86
         }

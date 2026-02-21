@@ -46,11 +46,11 @@ StyledRect {
         onCurrentIndexChanged: GameLauncherService.selectedIndex = currentIndex
         model: searchQuery.length > 0 ? GameLauncherService.searchGames(searchQuery) : GameLauncherService.gamesList
         delegate: GameLauncherItem {
+            property var gameData: modelData
             colors: GameLauncherService.colors
             itemSize: Sizes.gameLauncherItemSize
-            property var gameData: modelData
+            collapsed: !root.expanded
             onGameStarted: root.gameStarted()
-            collapsed: true
         }
     }
     GameLauncherAddDialog {
