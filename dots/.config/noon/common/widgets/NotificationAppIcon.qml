@@ -8,7 +8,7 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Notifications
 
-Rectangle { // App icon
+Rectangle {
     id: root
     property var appIcon: ""
     property var summary: ""
@@ -27,65 +27,67 @@ Rectangle { // App icon
     implicitHeight: size
     radius: Rounding.full
     color: Colors.colSecondaryContainer
+
     Loader {
-        id: materialSymbolLoader
-        active: root.appIcon == ""
         anchors.fill: parent
-        sourceComponent: Symbol {
-            text: {
-                const defaultIcon = NotificationUtils.findSuitableMaterialSymbol("");
-                const guessedIcon = NotificationUtils.findSuitableMaterialSymbol(root.summary);
-                return (root.urgency == NotificationUrgency.Critical && guessedIcon === defaultIcon) ? "release_alert" : guessedIcon;
-            }
-            anchors.fill: parent
-            color: (root.urgency == NotificationUrgency.Critical) ? ColorUtils.mix(Colors.m3.m3onSecondary, Colors.m3.m3onSecondaryContainer, 0.1) : Colors.m3.m3onSecondaryContainer
-            iconSize: root.materialIconSize
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+        sourceComponent: {
+            if (root.image !== "")
+                return notifImageComponent;
+            if (root.appIcon !== "")
+                return appIconComponent;
+            return materialSymbolComponent;
         }
-    }
-    Loader {
-        id: appIconLoader
-        active: root.image == "" && root.appIcon != ""
-        anchors.centerIn: parent
-        sourceComponent: IconImage {
-            id: appIconImage
-            implicitSize: root.appIconSize
-            asynchronous: true
-            source: NoonUtils.iconPath(root.appIcon)
-        }
-    }
-    Loader {
-        id: notifImageLoader
-        active: root.image != ""
-        anchors.fill: parent
-        sourceComponent: Item {
-            anchors.fill: parent
-            CroppedImage {
-                id: notifImage
+
+        Component {
+            id: materialSymbolComponent
+            Symbol {
                 anchors.fill: parent
-                readonly property int size: parent.width
-
-                source: root.image || ""
-                fillMode: Image.PreserveAspectCrop
-                cache: false
-                antialiasing: true
-                radius: Rounding.full
-                asynchronous: true
-
-                width: size
-                height: size
-                sourceSize: Qt.size(size, size)
+                text: {
+                    const def = NotificationUtils.findSuitableMaterialSymbol("");
+                    const guessed = NotificationUtils.findSuitableMaterialSymbol(root.summary);
+                    return (root.urgency === NotificationUrgency.Critical && guessed === def) ? "release_alert" : guessed;
+                }
+                color: root.urgency === NotificationUrgency.Critical ? ColorUtils.mix(Colors.m3.m3onSecondary, Colors.m3.m3onSecondaryContainer, 0.1) : Colors.m3.m3onSecondaryContainer
+                iconSize: root.materialIconSize
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
-            Loader {
-                id: notifImageAppIconLoader
-                active: root.appIcon != ""
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                sourceComponent: IconImage {
+        }
+
+        Component {
+            id: appIconComponent
+            IconImage {
+                anchors.centerIn: parent
+                implicitSize: root.appIconSize
+                asynchronous: true
+                source: AppSearch.guessIcon(root.appIcon)
+            }
+        }
+
+        Component {
+            id: notifImageComponent
+            Item {
+                anchors.fill: parent
+                CroppedImage {
+                    anchors.fill: parent
+                    readonly property int size: parent.width
+                    source: root.image
+                    fillMode: Image.PreserveAspectCrop
+                    cache: false
+                    antialiasing: true
+                    radius: Rounding.full
+                    asynchronous: true
+                    width: size
+                    height: size
+                    sourceSize: Qt.size(size, size)
+                }
+                IconImage {
+                    visible: root.appIcon !== ""
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
                     implicitSize: root.smallAppIconSize
                     asynchronous: true
-                    source: NoonUtils.iconPath(root.appIcon)
+                    source: root.appIcon !== "" ? NoonUtils.iconPath(root.appIcon) : ""
                 }
             }
         }
