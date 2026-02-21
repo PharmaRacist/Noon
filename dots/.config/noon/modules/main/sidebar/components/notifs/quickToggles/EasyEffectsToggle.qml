@@ -9,7 +9,7 @@ QuickToggleButton {
     id: root
 
     toggled: Mem.options.services.easyEffects
-    buttonName: ""
+    buttonName: "EasyEffects"
     buttonIcon: "graphic_eq"
     onClicked: {
         if (toggled) {

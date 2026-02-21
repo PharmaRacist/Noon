@@ -88,14 +88,7 @@ Singleton {
         }
 
         property QtObject dialogs: QtObject {
-            property bool showAppearanceDialog: false
-            property bool showCaffaineDialog: false
-            property bool showBluetoothDialog: false
-            property bool showWifiDialog: false
-            property bool showRecordingDialog: false
-            property bool showTransparencyDialog: false
-            property bool showTempDialog: false
-            property bool showKdeConnectDialog: false
+            property string current: ""
         }
     }
     xp: QtObject {

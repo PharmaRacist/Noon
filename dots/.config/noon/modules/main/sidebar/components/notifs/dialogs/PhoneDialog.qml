@@ -9,7 +9,6 @@ BottomDialog {
     id: root
 
     collapsedHeight: parent.height * 0.64
-    finishAction: GlobalStates.main.dialogs.showKdeConnectDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent

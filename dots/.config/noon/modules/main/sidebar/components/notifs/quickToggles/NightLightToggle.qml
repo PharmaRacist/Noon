@@ -5,13 +5,9 @@ import qs.services
 
 QuickToggleButton {
     id: nightLightButton
-
+    dialogName: "Temp"
     buttonName: "Night Light"
     buttonIcon: "nightlight"
     toggled: Mem.states.services.nightLight.enabled
-    onClicked: {
-        Mem.states.services.nightLight.enabled = !Mem.states.services.nightLight.enabled;
-    }
-    onRequestDialog: GlobalStates.main.dialogs.showTempDialog = true
-    hasDialog: true
+    onClicked: Mem.states.services.nightLight.enabled = !Mem.states.services.nightLight.enabled
 }

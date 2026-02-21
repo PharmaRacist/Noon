@@ -7,9 +7,9 @@ QuickToggleButton {
 
     signal requestTransparencyDialog
 
-    hasDialog: true
-    onRequestDialog: GlobalStates.main.dialogs.showTransparencyDialog = true
-    buttonName: toggled ? "Clear" : "opaque"
+    dialogName: "Transparency"
+    buttonName: "Transparency"
+    buttonSubtext: toggled ? "Clear" : "opaque"
     toggled: Mem.options.appearance.transparency.enabled
     buttonIcon: toggled ? "blur_on" : "blur_off"
     onClicked: Mem.options.appearance.transparency.enabled = !Mem.options.appearance.transparency.enabled

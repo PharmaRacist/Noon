@@ -6,15 +6,13 @@ import qs.common.widgets
 import qs.services
 
 QuickToggleButton {
-    property bool enabled: false
-
+    buttonName: toggled ? "Row" : "Accel"
     buttonIcon: "mouse"
-    toggled: enabled
     onClicked: {
-        enabled = !enabled;
-        if (enabled)
-            NoonUtils.execDetached(`hyprctl keyword input:force_no_accel ${enabled ? 1 : 0}`);
+        toggled = !toggled;
+        if (toggled)
+            NoonUtils.execDetached(`hyprctl keyword input:force_no_accel ${toggled ? 1 : 0}`);
         else
-            NoonUtils.execDetached(`hyprctl keyword input:force_no_accel ${enabled ? 1 : 0}`);
+            NoonUtils.execDetached(`hyprctl keyword input:force_no_accel ${toggled ? 1 : 0}`);
     }
 }

@@ -14,7 +14,6 @@ BottomDialog {
     id: root
 
     collapsedHeight: parent.height * 0.65
-    finishAction: GlobalStates.main.dialogs.showBluetoothDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent

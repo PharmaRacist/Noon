@@ -1,3 +1,4 @@
+// TODO REWORK
 import QtQuick
 import Quickshell
 import qs.common
@@ -33,7 +34,6 @@ QuickToggleButton {
         }
     }
 
-    showButtonName: false
     toggled: currentLevel > 0
     buttonIcon: {
         switch (currentLevel) {
@@ -50,12 +50,11 @@ QuickToggleButton {
     onDeviceFoundChanged: {
         if (parent)
             parent.visible = deviceFound;
-
     }
     Component.onCompleted: initializeDevice()
     onClicked: {
         if (!deviceFound)
-            return ;
+            return;
 
         const nextLevel = (currentLevel + 1) % 3;
         setProc.command = ["brightnessctl", "-d", deviceName, "set", nextLevel.toString()];
@@ -87,11 +86,10 @@ QuickToggleButton {
         }
 
         stdout: SplitParser {
-            onRead: (data) => {
+            onRead: data => {
                 return listProc.accumulatedOutput += data.toString();
             }
         }
-
     }
 
     Process {
@@ -100,11 +98,10 @@ QuickToggleButton {
         command: deviceName ? ["brightnessctl", "-d", deviceName, "get"] : []
 
         stdout: SplitParser {
-            onRead: (data) => {
+            onRead: data => {
                 return currentLevel = parseBrightness(data.toString().trim());
             }
         }
-
     }
 
     Process {
@@ -121,11 +118,9 @@ QuickToggleButton {
         }
 
         stdout: SplitParser {
-            onRead: (data) => {
+            onRead: data => {
                 return setProc.accumulatedOutput += data.toString();
             }
         }
-
     }
-
 }

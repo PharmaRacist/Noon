@@ -56,39 +56,23 @@ Rectangle {
 
         Component {
             id: appIconComponent
-            IconImage {
+            StyledIconImage {
                 anchors.centerIn: parent
                 implicitSize: root.appIconSize
                 asynchronous: true
-                source: AppSearch.guessIcon(root.appIcon)
+                colorize: true
+                _source: root.appIcon
             }
         }
 
         Component {
             id: notifImageComponent
-            Item {
+
+            CroppedImage {
                 anchors.fill: parent
-                CroppedImage {
-                    anchors.fill: parent
-                    readonly property int size: parent.width
-                    source: root.image
-                    fillMode: Image.PreserveAspectCrop
-                    cache: false
-                    antialiasing: true
-                    radius: Rounding.full
-                    asynchronous: true
-                    width: size
-                    height: size
-                    sourceSize: Qt.size(size, size)
-                }
-                IconImage {
-                    visible: root.appIcon !== ""
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
-                    implicitSize: root.smallAppIconSize
-                    asynchronous: true
-                    source: root.appIcon !== "" ? NoonUtils.iconPath(root.appIcon) : ""
-                }
+                source: root.image
+                radius: Rounding.full
+                asynchronous: true
             }
         }
     }

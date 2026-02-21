@@ -6,7 +6,7 @@ import qs.common.functions
 import qs.common.widgets
 import qs.services
 
-Image {
+StyledImage {
     id: root
 
     property color tintColor: Colors.m3.m3surfaceTint
@@ -28,9 +28,7 @@ Image {
     }
 
     Behavior on opacity {
-        Anim {
-        }
-
+        Anim {}
     }
 
     layer.effect: OpacityMask {
@@ -40,7 +38,5 @@ Image {
             height: root.height
             radius: root.radius
         }
-
     }
-
 }

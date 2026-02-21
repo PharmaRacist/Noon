@@ -25,6 +25,7 @@ StyledRect {
 
         Toolbar {
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Padding.large
             ToolbarTabBar {
                 id: tabBar
                 Layout.alignment: Qt.AlignHCenter
@@ -37,7 +38,7 @@ StyledRect {
         SwipeView {
             id: swipeView
 
-            Layout.topMargin: Padding.large
+            Layout.topMargin: Padding.huge
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: Padding.normal

@@ -1,5 +1,4 @@
 import Quickshell
-import Quickshell.Hyprland
 import qs.common
 import qs.common.functions
 import qs.common.widgets
@@ -7,7 +6,7 @@ import qs.services
 
 QuickToggleButton {
     property bool enabled: false
-
+    buttonName: "GameMode"
     buttonIcon: "stadia_controller"
     toggled: enabled
     onClicked: {

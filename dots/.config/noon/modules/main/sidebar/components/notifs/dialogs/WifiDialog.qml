@@ -9,8 +9,6 @@ BottomDialog {
     id: root
 
     collapsedHeight: parent.height * 0.65
-    finishAction: GlobalStates.main.dialogs.showWifiDialog = false
-
     property bool isScanning: false
 
     onShowChanged: {

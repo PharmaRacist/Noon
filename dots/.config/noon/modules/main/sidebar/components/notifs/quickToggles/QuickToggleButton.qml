@@ -9,13 +9,11 @@ GroupButton {
     id: root
 
     property string buttonIcon
+    property string dialogName
     property string buttonName
     property string buttonSubtext
+    property bool showButtonName: false
 
-    property bool showButtonName: buttonName.length > 0
-    property bool hasDialog: false
-
-    signal requestDialog
     Layout.fillWidth: showButtonName
     Layout.fillHeight: false
     baseWidth: !showButtonName ? baseHeight : (SidebarData.sizePresets.quarter / 2.5) - Padding.huge
@@ -27,7 +25,9 @@ GroupButton {
     buttonRadiusPressed: toggled ? Rounding.huge : Rounding.full
     color: Colors.colLayer2
 
-    altAction: () => requestDialog()
+    altAction: () => {
+        GlobalStates.main.dialogs.current = dialogName;
+    }
 
     StyledRect {
         id: sideRect

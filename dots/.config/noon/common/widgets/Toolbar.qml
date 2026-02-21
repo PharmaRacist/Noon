@@ -19,9 +19,10 @@ Item {
     implicitWidth: background.implicitWidth
     implicitHeight: background.implicitHeight
 
-    StyledRectangularShadow {
-        target: background
-    }
+    // StyledRectangularShadow {
+    //     target: background
+    //     intensity: 0.25
+    // }
 
     Rectangle {
         id: background
@@ -41,9 +42,6 @@ Item {
                 fill: parent
                 margins: root.padding
             }
-
         }
-
     }
-
 }

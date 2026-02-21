@@ -52,7 +52,7 @@ Item {
         enableStagedReveal: true
         bottomAreaReveal: true
         hoverHeight: 200
-
+        color: Colors.colLayer2
         show: root.revealAddDialog
         expand: false
         function addPomo() {

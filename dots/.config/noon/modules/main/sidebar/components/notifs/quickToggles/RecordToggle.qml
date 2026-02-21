@@ -8,10 +8,7 @@ import qs.services
 
 QuickToggleButton {
     id: root
-
-    showButtonName: false
-    hasDialog: true
-    onRequestDialog: GlobalStates.main.dialogs.showRecordingDialog = true
+    dialogName: "Record"
     buttonName: RecordingService.isRecording ? `${qsTr("Recording")} ${RecordingService.getFormattedDuration()}` : qsTr("Record")
     toggled: RecordingService.isRecording
     buttonIcon: RecordingService.isRecording ? "radio_button_checked" : "radio_button_unchecked"

@@ -9,7 +9,6 @@ BottomDialog {
     id: root
 
     collapsedHeight: 420
-    finishAction: GlobalStates.main.dialogs.showTempDialog = false
 
     contentItem: ColumnLayout {
         anchors.fill: parent

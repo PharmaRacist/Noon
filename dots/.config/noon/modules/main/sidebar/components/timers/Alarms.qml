@@ -74,6 +74,7 @@ FocusScope {
         hoverHeight: 200
         onShowChanged: root.revealAddDialog = bottomDialog.show
         expand: true
+        color: Colors.colLayer2
 
         contentItem: Item {
             function addTimer() {

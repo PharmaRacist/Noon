@@ -9,8 +9,6 @@ BottomDialog {
     id: root
 
     collapsedHeight: parent.height * 0.65
-    finishAction: GlobalStates.main.dialogs.showAppearanceDialog = false
-
     contentItem: ColumnLayout {
         anchors.fill: parent
         anchors.margins: Padding.massive

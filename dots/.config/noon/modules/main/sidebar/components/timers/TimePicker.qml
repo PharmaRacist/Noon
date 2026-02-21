@@ -19,12 +19,7 @@ Item {
     Layout.preferredHeight: 140
 
     RowLayout {
-        anchors {
-            // rightMargin: Padding.large
-            // leftMargin: Padding.large
-
-            fill: parent
-        }
+        anchors.fill: parent
 
         TimeField {
             id: hourField
@@ -43,15 +38,10 @@ Item {
         }
 
         TimeField {
-            // onAccepted: root.minute = text;
-
             id: minuteField
 
             fieldPlaceholder: root.minute
             fieldText: root.minute.toString().padStart(2, '0')
-            // fieldValidator: RegularExpressionValidator {
-            //     regularExpression: /^[0-5][0-9]$/
-            // }
             onTextChanged: root.minute = text
         }
 
@@ -72,7 +62,6 @@ Item {
             fieldReadOnly: true
             visible: clockPicker
         }
-
     }
 
     component TimeField: TextField {
@@ -108,13 +97,8 @@ Item {
             color: Colors.colLayer3
 
             Behavior on border.color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
-
     }
-
 }

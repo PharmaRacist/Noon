@@ -55,31 +55,36 @@ Item {
                 rowSpacing: Padding.normal
                 columnSpacing: Padding.normal
 
-                NetworkToggle {}
-
-                BluetoothToggle {}
-
-                NightLightToggle {}
-
-                AppearanceToggle {}
-
-                KdeConnectToggle {}
-
-                TransparencyToggle {}
+                Repeater {
+                    model: ["NetworkToggle", "BluetoothToggle", "NightLightToggle", "AppearanceToggle", "PhoneToggle", "TransparencyToggle"]
+                    StyledLoader {
+                        required property var modelData
+                        source: sanitizeSource("quickToggles/", modelData)
+                        onLoaded: if (ready) {
+                            item.showButtonName = true;
+                        }
+                    }
+                }
             }
         }
+
         Group {
             implicitHeight: row.implicitHeight + Padding.large
+
             RowLayout {
                 id: row
                 anchors.centerIn: parent
                 spacing: Padding.small
-                CaffieneToggle {}
-                EasyEffectsToggle {}
-                RecordToggle {}
-                GameModeToggle {}
-                InputToggle {}
-                BacklightToggle {}
+                Repeater {
+                    model: ["CaffieneToggle", "EasyEffectsToggle", "RecordToggle", "GameModeToggle", "InputToggle", "BacklightToggle"]
+                    StyledLoader {
+                        required property var modelData
+                        source: sanitizeSource("quickToggles/", modelData)
+                        onLoaded: if (ready) {
+                            item.showButtonName = false;
+                        }
+                    }
+                }
             }
         }
     }
