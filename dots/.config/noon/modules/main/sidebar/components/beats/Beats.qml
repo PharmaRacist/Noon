@@ -80,11 +80,14 @@ StyledRect {
             tintColor: root.colors.colSecondaryContainer
         }
     }
-    Loader {
+    StyledLoader {
         anchors.centerIn: parent
         width: 300
         height: 300
-        active: LyricsService.state === LyricsService.State.Loading && root.displayingLyrics
+        fade: true
+        asynchronous: true
+        active: !root.displayingLyrics
+        visible: !root.displayingLyrics
         sourceComponent: MusicCoverArt {
             anchors.fill: parent
             clip: true
@@ -110,11 +113,15 @@ StyledRect {
 
         Spacer {}
         PlayerSelector {}
-        MediaPlayerControls {}
+        MediaPlayerControls {
+            showCover: root.displayingLyrics
+        }
     }
 
     SpotifyLyrics {}
+
     BottomTracksDialog {}
+
     gradient: Gradient {
         GradientStop {
             color: "transparent"

@@ -11,17 +11,18 @@ StyledRect {
     id: root
     color: "transparent"
     radius: Rounding.small
-    clip: true
     signal expandRequested
 
     property int selectedTabIndex: -1
+    property bool lazy: true
+
     required property var tabButtonList
     required property string path
+
     ColumnLayout {
         anchors.fill: parent
         spacing: Padding.normal
 
-        // Tab strip
         Toolbar {
             Layout.alignment: Qt.AlignHCenter
             ToolbarTabBar {
@@ -55,6 +56,8 @@ StyledRect {
                 model: tabButtonList.map(item => item.component)
                 Loader {
                     required property var modelData
+                    required property int index
+                    active: root.lazy && root.selectedTabIndex === index
                     source: root.path + modelData + ".qml"
                     asynchronous: true
                 }

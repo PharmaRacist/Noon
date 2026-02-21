@@ -6,6 +6,7 @@ import qs.common
 import qs.common.widgets
 
 BottomDialog {
+    id: root
     collapsedHeight: 450
     hoverHeight: 120
     enableStagedReveal: false
@@ -71,7 +72,10 @@ BottomDialog {
                 title: modelData.englishName
                 subtext: modelData.englishNameTranslation
                 materialIcon: modelData.number
-                releaseAction: () => QuranService.getSurahByName(modelData.englishName)
+                releaseAction: () =>  {
+                    QuranService.getSurahByName(modelData.englishName)
+                    root.show = false
+                }
             }
         }
     }

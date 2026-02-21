@@ -9,9 +9,9 @@ import Quickshell.Services.Mpris
 ColumnLayout {
     id: root
 
+    required property bool showCover
     readonly property MprisPlayer player: BeatsService.player
     readonly property bool isPlaying: player.playbackState === MprisPlaybackState.Playing
-    readonly property bool hasLyrics: LyricsService.state !== LyricsService.NoLyricsFound
     readonly property var trackColors: BeatsService.colors
 
     spacing: Padding.veryhuge
@@ -23,7 +23,7 @@ ColumnLayout {
         spacing: Padding.massive
 
         Revealer {
-            reveal: root.hasLyrics
+            reveal: root.showCover
             Layout.maximumWidth: 75
             Layout.maximumHeight: 75
 

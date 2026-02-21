@@ -51,7 +51,7 @@ StyledRect {
         clip: true
         currentIndex: -1
         model: filteredModel
-
+        hint: false
         Connections {
             target: root
             function onContentFocusRequested() {
@@ -114,11 +114,6 @@ StyledRect {
             } else
                 return;
             event.accepted = true;
-        }
-
-        ScrollEdgeFade {
-            target: gridView
-            anchors.fill: parent
         }
     }
 

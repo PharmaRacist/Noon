@@ -132,7 +132,6 @@ JsonAdapter {
         property bool pinned: false
     }
     property JsonObject sidebar: JsonObject {
-        property JsonObject misc
         property JsonObject apis
         property JsonObject web
         property JsonObject widgets
@@ -150,9 +149,6 @@ JsonAdapter {
             property list<string> pilled: []
             property list<string> pinned: []
             property list<string> expanded: []
-        }
-        misc: JsonObject {
-            property int selectedTabIndex: 0
         }
         apis: JsonObject {
             property int selectedTab: 0

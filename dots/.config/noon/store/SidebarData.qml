@@ -133,7 +133,6 @@ Singleton {
         },
         "Emojis": {
             icon: "sentiment_calm",
-            activeIcon: "favorite",
             componentPath: "etc/Emojis",
             searchable: true,
             shape: MaterialShape.Shape.Ghostish,
@@ -146,14 +145,12 @@ Singleton {
             enabled: Mem.options.sidebar.content.shelf
         },
         "Widgets": {
-            icon: "widgets",
-            activeIcon: "ripples",
+            icon: "ripples",
             componentPath: "widgets/Widgets",
             enabled: Mem.options.sidebar.content.widgets
         },
         "Sounds": {
-            icon: "more_horiz",
-            activeIcon: "all_inclusive",
+            icon: "graphic_eq",
             componentPath: "sounds/Sounds",
             enabled: Mem.options.sidebar.content.sounds
         },

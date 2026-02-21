@@ -33,7 +33,7 @@ GridView {
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
         propagateComposedEvents: true
-        onWheel: function(wheelEvent) {
+        onWheel: function (wheelEvent) {
             const delta = wheelEvent.angleDelta.y / root.mouseScrollDeltaThreshold;
             // The angleDelta.y of a touchpad is usually small and continuous,
             // while that of a mouse wheel is typically in multiples of ±120.
@@ -66,7 +66,6 @@ GridView {
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
-
     }
 
     addDisplaced: Transition {
@@ -76,7 +75,6 @@ GridView {
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
-
     }
 
     remove: Transition {
@@ -95,7 +93,6 @@ GridView {
             duration: 150
             easing.type: Easing.InCubic
         }
-
     }
 
     removeDisplaced: Transition {
@@ -105,7 +102,6 @@ GridView {
             easing.type: Easing.BezierSpline
             easing.bezierCurve: Animations.curves.expressiveFastSpatial
         }
-
     }
 
     layer.effect: OpacityMask {
@@ -115,7 +111,5 @@ GridView {
             height: root.height
             radius: root.radius
         }
-
     }
-
 }
