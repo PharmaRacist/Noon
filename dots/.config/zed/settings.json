@@ -7,14 +7,25 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "project_panel": {
+    "default_width": 243.0,
+    "dock": "left"
+  },
+  "ui_font_family": ".SystemUIFont",
+  "icon_theme": {
+    "mode": "system",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
+  "buffer_line_height": "standard",
   "agent_buffer_font_size": 17.0,
   "ui_font_weight": 500.0,
-  "buffer_font_weight": 500.0,
-  "buffer_font_family": "Iosevka Fixed",
-  "ui_font_size": 19.0,
-  "buffer_font_size": 21.0,
+  "buffer_font_weight": 400.0,
+  "buffer_font_family": "Iosevka",
+  "ui_font_size": 20.0,
+  "buffer_font_size": 26.0,
   "theme": {
-    "mode": "system",
+    "mode": "dark",
     "light": "One Light",
     "dark": "Material You"
   }

@@ -25,6 +25,9 @@ Scope {
             readonly property int expandedThreshold: 25
             readonly property int mainRounding: 50
             readonly property int elevationValue: (Mem.options.bar.behavior.position === "bottom" ? Mem.options.bar.appearance.height : 0) + Sizes.elevationMargin
+
+            onRevealChanged: !reveal ? BeamData.query = "" : null
+
             visible: reveal || scrollReveal
             implicitWidth: Sizes.beamSizeExpanded.width + 999
             implicitHeight: Sizes.beamSize.height + elevationValue + 999
@@ -141,8 +144,8 @@ Scope {
                     z: 999
                     anchors.fill: parent
                     property alias input: inputField
-                    property string hintText: BeamData.getHint()
-                    readonly property var appData: DesktopEntries.byId(container.hintText)
+                    property string hintText: BeamData.getHint() || ""
+                    readonly property var appData: DesktopEntries.byId(container.hintText) || {}
 
                     BeamPopup {
                         id: popup
@@ -168,7 +171,7 @@ Scope {
 
                         implicitHeight: Sizes.beamSize.height
                         implicitWidth: {
-                            const hintLength = BeamData.getHint().length;
+                            const hintLength = BeamData.getHint()?.length ?? 0;
                             const queryLength = BeamData.query.length;
                             return (hintLength > root.expandedThreshold || queryLength > root.expandedThreshold) ? Sizes.beamSizeExpanded.width : Sizes.beamSize.width;
                         }

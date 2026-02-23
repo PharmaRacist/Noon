@@ -14,9 +14,11 @@ Item {
     property alias radius: bg.radius
     implicitWidth: Sizes.sidebar.bar
     Layout.fillHeight: true
+    property alias color: bg.color
 
     StyledRectangularShadow {
         target: bg
+        visible: bg.color !== "transparent"
         intensity: 0.5
         color: colors.colShadow
     }

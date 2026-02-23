@@ -89,6 +89,9 @@ Singleton {
 
         property QtObject dialogs: QtObject {
             property string current: ""
+            onCurrentChanged: {
+                console.log(current);
+            }
         }
     }
     xp: QtObject {

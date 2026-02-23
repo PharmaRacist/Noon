@@ -51,7 +51,7 @@ StyledRect {
         clip: true
         currentIndex: -1
         model: filteredModel
-        hint: false
+
         Connections {
             target: root
             function onContentFocusRequested() {

@@ -12,6 +12,7 @@ if status is-interactive
 
 end
 
+zoxide init fish | source
 starship init fish | source
 # pokemon-colorscripts -r --no-title
 if test -f ~/.local/state/noon/user/generated/terminal/sequences.txt
@@ -20,6 +21,7 @@ end
 
 alias sw="python3 ~/.config/noon/scripts/appearance_service.py"
 alias pamcan pacman
+alias pw="sh ~/.config/noon/scripts/power_service.sh"
 alias ls 'eza --icons'
 alias clear "printf '\033[2J\033[3J\033[1;1H'"
 alias noon 'qs -c ~/.config/noon'

@@ -15,7 +15,6 @@ Singleton {
     property string activeState: "ai"
     property string activeSubState: ""
     property var suggestedApp: null
-
     readonly property string cleanQuery: {
         if (query.length === 0)
             return "";
@@ -30,173 +29,174 @@ Singleton {
             return null;
         return config.subStates[activeSubState] || null;
     }
+    property string activeHint
 
-    readonly property var registry: ({
-            "ai": {
-                prefix: "",
-                icon: "thread_unread",
-                shape: MaterialShape.Shape.Ghostish,
-                placeholder: "Ask " + Ai.getModel(Mem.options.ai?.model).name + " Any Thing ..",
-                showHint: false,
-                showOsrButton: true
-            },
-            "commands": {
-                prefix: ";",
-                icon: "keyboard_return",
-                shape: MaterialShape.Shape.Oval,
-                placeholder: "Command Master ..",
-                showHint: true,
-                showOsrButton: false
-            },
-            "calc": {
-                prefix: "=",
-                icon: "calculate",
-                shape: MaterialShape.Shape.Hexagon,
-                placeholder: "Calculate ..",
-                showHint: true,
-                showOsrButton: false
-            },
-            "install": {
-                prefix: "$",
-                icon: "deployed_code_update",
-                shape: MaterialShape.Shape.SoftBurst,
-                placeholder: "Install ..",
-                showHint: false,
-                showOsrButton: false
-            },
-            "note": {
-                prefix: ",",
-                icon: "stylus",
-                shape: MaterialShape.Shape.Slanted,
-                placeholder: "Note ..",
-                showHint: false,
-                showOsrButton: false
-            },
-            "alarm": {
-                prefix: "`",
-                icon: "timer",
-                shape: MaterialShape.Shape.Diamond,
-                placeholder: "I Can Wake You ..",
-                showHint: false,
-                showOsrButton: false
-            },
-            "launch": {
-                prefix: ".",
-                icon: "rocket_launch",
-                shape: MaterialShape.Shape.Pentagon,
-                placeholder: "Launch App ..",
-                showHint: true,
-                showOsrButton: false
-            },
-            "timer": {
-                prefix: "~",
-                icon: "hourglass",
-                shape: MaterialShape.Shape.Clover8Leaf,
-                placeholder: "How Long ..",
-                showHint: false,
-                showOsrButton: false
-            },
-            "todo": {
-                prefix: "/",
-                icon: "task_alt",
-                shape: MaterialShape.Shape.Cookie4Sided,
-                placeholder: "Any plans ..?",
-                showHint: false,
-                showOsrButton: false
-            },
-            "ipc": {
-                prefix: "!",
-                icon: "moon_stars",
-                shape: MaterialShape.Shape.Pentagon,
-                placeholder: "Just Order ..?",
-                showHint: true,
-                showOsrButton: false
-            },
-            "search": {
-                prefix: "?",
-                icon: "search",
-                shape: MaterialShape.Shape.PixelCircle,
-                placeholder: "Wanna Search Google ..?",
-                showHint: true,
-                showOsrButton: false,
-                subStates: {
-                    "search": {
-                        prefix: "",
-                        icon: "search",
-                        searchQuery: Mem.options.networking.searchPrefix,
-                        shape: MaterialShape.Shape.PixelCircle
-                    },
-                    "yt_music": {
-                        prefix: "m",
-                        icon: "music_note",
-                        searchQuery: "https://music.youtube.com/search?q=",
-                        shape: MaterialShape.Shape.Bun
-                    },
-                    "spotify": {
-                        prefix: "s",
-                        icon: "music_cast",
-                        searchQuery: "https://open.spotify.com/search/",
-                        shape: MaterialShape.Shape.Cookie7Sided
-                    },
-                    "m3": {
-                        prefix: "i",
-                        icon: "glyphs",
-                        searchQuery: "https://fonts.google.com/icons?icon.query=",
-                        shape: MaterialShape.Shape.Cookie12Sided
-                    },
-                    "github": {
-                        prefix: "g",
-                        icon: "commit",
-                        searchQuery: "https://github.com/search?q=",
-                        shape: MaterialShape.Shape.Oval
-                    }
+    readonly property var registry: {
+        "ai": {
+            prefix: "",
+            icon: "thread_unread",
+            shape: MaterialShape.Shape.Ghostish,
+            placeholder: "Ask " + Ai.getModel(Mem.options.ai?.model).name + " Any Thing ..",
+            showHint: false,
+            showOsrButton: true
+        },
+        "commands": {
+            prefix: ";",
+            icon: "keyboard_return",
+            shape: MaterialShape.Shape.Oval,
+            placeholder: "Command Master ..",
+            showHint: true,
+            showOsrButton: false
+        },
+        "calc": {
+            prefix: "=",
+            icon: "calculate",
+            shape: MaterialShape.Shape.Hexagon,
+            placeholder: "Calculate ..",
+            showHint: true,
+            showOsrButton: false
+        },
+        "install": {
+            prefix: "$",
+            icon: "deployed_code_update",
+            shape: MaterialShape.Shape.SoftBurst,
+            placeholder: "Install ..",
+            showHint: false,
+            showOsrButton: false
+        },
+        "note": {
+            prefix: ",",
+            icon: "stylus",
+            shape: MaterialShape.Shape.Slanted,
+            placeholder: "Note ..",
+            showHint: false,
+            showOsrButton: false
+        },
+        "alarm": {
+            prefix: "`",
+            icon: "timer",
+            shape: MaterialShape.Shape.Diamond,
+            placeholder: "I Can Wake You ..",
+            showHint: false,
+            showOsrButton: false
+        },
+        "launch": {
+            prefix: ".",
+            icon: "rocket_launch",
+            shape: MaterialShape.Shape.Pentagon,
+            placeholder: "Launch App ..",
+            showHint: true,
+            showOsrButton: false
+        },
+        "timer": {
+            prefix: "~",
+            icon: "hourglass",
+            shape: MaterialShape.Shape.Clover8Leaf,
+            placeholder: "How Long ..",
+            showHint: false,
+            showOsrButton: false
+        },
+        "todo": {
+            prefix: "/",
+            icon: "task_alt",
+            shape: MaterialShape.Shape.Cookie4Sided,
+            placeholder: "Any plans ..?",
+            showHint: false,
+            showOsrButton: false
+        },
+        "ipc": {
+            prefix: "!",
+            icon: "moon_stars",
+            shape: MaterialShape.Shape.Pentagon,
+            placeholder: "Just Order ..?",
+            showHint: true,
+            showOsrButton: false
+        },
+        "search": {
+            prefix: "?",
+            icon: "search",
+            shape: MaterialShape.Shape.PixelCircle,
+            placeholder: "Wanna Search Google ..?",
+            showHint: true,
+            showOsrButton: false,
+            subStates: {
+                "search": {
+                    prefix: "",
+                    icon: "search",
+                    searchQuery: Mem.options.networking.searchPrefix,
+                    shape: MaterialShape.Shape.PixelCircle
+                },
+                "yt_music": {
+                    prefix: "m",
+                    icon: "music_note",
+                    searchQuery: "https://music.youtube.com/search?q=",
+                    shape: MaterialShape.Shape.Bun
+                },
+                "spotify": {
+                    prefix: "s",
+                    icon: "music_cast",
+                    searchQuery: "https://open.spotify.com/search/",
+                    shape: MaterialShape.Shape.Cookie7Sided
+                },
+                "m3": {
+                    prefix: "i",
+                    icon: "glyphs",
+                    searchQuery: "https://fonts.google.com/icons?icon.query=",
+                    shape: MaterialShape.Shape.Cookie12Sided
+                },
+                "github": {
+                    prefix: "g",
+                    icon: "commit",
+                    searchQuery: "https://github.com/search?q=",
+                    shape: MaterialShape.Shape.Oval
                 }
-            },
-            "translate": {
-                prefix: ">",
-                icon: "translate",
-                shape: MaterialShape.Shape.Arrow,
-                placeholder: "Translate ..?",
-                showHint: true,
-                showOsrButton: false
-            },
-            "download": {
-                prefix: "-",
-                icon: "download",
-                shape: MaterialShape.Shape.Arrow,
-                placeholder: "Download ..?",
-                showHint: false,
-                showOsrButton: false,
-                subStates: {
-                    "video": {
-                        prefix: "v",
-                        icon: "play_arrow",
-                        parameters: "bestvideo[height<=720]+bestaudio/best[height<=720]",
-                        shape: MaterialShape.Shape.PixelCircle
-                    },
-                    "audio": {
-                        prefix: "m",
-                        icon: "music_note",
-                        parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" `,
-                        shape: MaterialShape.Shape.PixelCircle
-                    },
-                    "audio": {
-                        prefix: "?m",
-                        icon: "music_note",
-                        parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:%q'`,
-                        shape: MaterialShape.Shape.PixelCircle
-                    }
-                }
-            },
-            "terminology": {
-                prefix: "<",
-                icon: "healing",
-                shape: MaterialShape.Shape.Pill,
-                placeholder: "Medical Term ..?",
-                showHint: true,
-                showOsrButton: false
             }
-        })
+        },
+        "translate": {
+            prefix: ">",
+            icon: "translate",
+            shape: MaterialShape.Shape.Arrow,
+            placeholder: "Translate ..?",
+            showHint: true,
+            showOsrButton: false
+        },
+        "download": {
+            prefix: "-",
+            icon: "download",
+            shape: MaterialShape.Shape.Arrow,
+            placeholder: "Download ..?",
+            showHint: false,
+            showOsrButton: false,
+            subStates: {
+                "video": {
+                    prefix: "v",
+                    icon: "play_arrow",
+                    parameters: "bestvideo[height<=720]+bestaudio/best[height<=720]",
+                    shape: MaterialShape.Shape.PixelCircle
+                },
+                "audio": {
+                    prefix: "m",
+                    icon: "music_note",
+                    parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" `,
+                    shape: MaterialShape.Shape.PixelCircle
+                },
+                "audio": {
+                    prefix: "?m",
+                    icon: "music_note",
+                    parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:%q'`,
+                    shape: MaterialShape.Shape.PixelCircle
+                }
+            }
+        },
+        "terminology": {
+            prefix: "<",
+            icon: "healing",
+            shape: MaterialShape.Shape.Pill,
+            placeholder: "Medical Term ..?",
+            showHint: true,
+            showOsrButton: false
+        }
+    }
 
     function updateStateFromQuery(fullQuery) {
         query = fullQuery;
@@ -266,11 +266,21 @@ Singleton {
             return subConfig.shape;
         return config?.shape || MaterialShape.Shape.Oval;
     }
-
     function getHint() {
-        if (!config.showHint)
+        if (!config.showHint) {
+            activeHint = "";
             return "";
+        }
+        debounceTimer.restart();
+        return activeHint;
+    }
+    Timer {
+        id: debounceTimer
+        interval: 120
+        onTriggered: activeHint = getImmediateHint()
+    }
 
+    function getImmediateHint() {
         const handlers = {
             "commands": getCommandHint,
             "calc": getCalcHint,
@@ -284,7 +294,6 @@ Singleton {
         const handler = handlers[activeState];
         return handler ? handler() : "";
     }
-
     function getCommandHint() {
         return findMatchingCommand(NoonUtils.avilableSystemCommands, cleanQuery, () => NoonUtils.fetchCommands());
     }
@@ -384,8 +393,7 @@ Singleton {
 
     function getTranslateHint() {
         if (cleanQuery.length > 0) {
-            TranslatorService.translate(cleanQuery);
-            return TranslatorService.translatedText;
+            return DictService.lookup(cleanQuery);
         }
         return "";
     }

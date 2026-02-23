@@ -7,10 +7,15 @@ import qs.common
 Singleton {
     property QtObject durations: QtObject {
         property real scale: Mem.options.appearance.animations.scale
+        property int verysmall: 100 * scale
         property int small: 200 * scale
-        property int normal: 400 * scale
-        property int large: 600 * scale
-        property int verylarge: 1000 * scale
+        property int normal: 300 * scale
+        property int large: 400 * scale
+        property int verylarge: 500 * scale
+        property int huge: 600 * scale
+        property int veryhuge: 700 * scale
+        property int gigantic: 1000 * scale
+        property int massive: 1500 * scale
         property int expressiveFastSpatial: 350 * scale
         property int expressiveDefaultSpatial: 500 * scale
         property int expressiveEffects: 200 * scale

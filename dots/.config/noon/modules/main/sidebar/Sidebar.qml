@@ -208,14 +208,14 @@ StyledPanel {
             }
             Behavior on anchors.leftMargin {
                 Anim {
-                    duration: Animations.durations.small
+                    duration: Animations.durations.normal
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }
 
             Behavior on anchors.rightMargin {
                 Anim {
-                    duration: Animations.durations.small
+                    duration: Animations.durations.normal
                     easing.bezierCurve: Animations.curves.emphasized
                 }
             }
@@ -223,14 +223,13 @@ StyledPanel {
             Behavior on width {
                 Anim {
                     duration: Animations.durations.large
-                    easing.bezierCurve: Animations.curves.emphasized
+                    easing.type: Easing.OutExpo
                 }
             }
 
             Behavior on color {
                 CAnim {
                     duration: Animations.durations.verylarge
-                    easing.bezierCurve: Animations.curves.emphasized
                 }
             }
         }

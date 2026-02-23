@@ -24,10 +24,9 @@ Item {
         root.showLanguageSelector = true;
     }
 
-    onFocusChanged: (focus) => {
+    onFocusChanged: focus => {
         if (focus)
             root.inputField.forceActiveFocus();
-
     }
     // Initialize service with saved preferences
     Component.onCompleted: {
@@ -96,7 +95,6 @@ Item {
                             text: "content_copy"
                             color: copyButton.enabled ? Colors.colOnLayer1 : Colors.colSubtext
                         }
-
                     }
 
                     GroupButton {
@@ -120,13 +118,9 @@ Item {
                             text: "travel_explore"
                             color: searchButton.enabled ? Colors.colOnLayer1 : Colors.colSubtext
                         }
-
                     }
-
                 }
-
             }
-
         }
 
         // Source language button
@@ -165,7 +159,6 @@ Item {
                     text: "content_paste"
                     color: Colors.colOnLayer1
                 }
-
             }
 
             GroupButton {
@@ -185,11 +178,8 @@ Item {
                     text: "close"
                     color: deleteButton.enabled ? Colors.colOnLayer1 : Colors.colSubtext
                 }
-
             }
-
         }
-
     }
 
     // Language selector dialog
@@ -208,10 +198,10 @@ Item {
             onCanceled: () => {
                 root.showLanguageSelector = false;
             }
-            onSelected: (result) => {
+            onSelected: result => {
                 root.showLanguageSelector = false;
                 if (!result || result.length === 0)
-                    return ;
+                    return;
 
                 // No selection made
                 if (root.languageSelectorTarget) {
@@ -223,7 +213,5 @@ Item {
                 }
             }
         }
-
     }
-
 }

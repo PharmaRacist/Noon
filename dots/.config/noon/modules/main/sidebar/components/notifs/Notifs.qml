@@ -23,7 +23,10 @@ Item {
     StyledLoader {
         anchors.fill: parent
         active: GlobalStates.main.dialogs.current.length > 0
-        source: sanitizeSource("dialogs/", GlobalStates.main.dialogs.current + "Dialog")
+        source: sanitizeSource("dialogs/", GlobalStates.main.dialogs.current.trim() + "Dialog")
+        onSourceChanged: {
+            console.log(source);
+        }
         asynchronous: true
     }
 }
