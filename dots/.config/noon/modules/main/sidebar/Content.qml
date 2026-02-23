@@ -158,6 +158,7 @@ Item {
                 category: root.selectedCategory
             }
             property Component placeholder: PagePlaceholder {
+                colors: root.colors
                 shape: SidebarData.getShape(root.selectedCategory)
                 icon: SidebarData.getIcon(root.selectedCategory)
                 iconSize: 80

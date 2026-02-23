@@ -40,12 +40,11 @@ StyledPanel {
     }
 
     function detach() {
-        let states = GlobalStates.main;
-        if (!SidebarData.isDetachable(root.selectedCategory) || isDetached())
-            return;
-        detachedWindow.createObject(this, {
-            category: root.selectedCategory
-        });
+        if (SidebarData.isDetachable(root.selectedCategory) || !isDetached()) {
+            detachedWindow.createObject(this, {
+                category: selectedCategory
+            });
+        }
         hide();
     }
     function isDetached() {

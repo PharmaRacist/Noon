@@ -163,5 +163,6 @@ JsonAdapter {
     }
     property JsonObject mediaPlayer: JsonObject {
         property string currentTrackPath: ""
+        property list<string> folders: []
     }
 }

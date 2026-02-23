@@ -16,22 +16,16 @@ Rectangle {
     property int bottomRadius
     property int implicitSize
     property int animationDuration: Animations.durations.normal
-    property QtObject borders: QtObject {
-        property int size
-        property color color
-        property var topBorder
-        property var rightBorder
-        property var bottomBorder
-        property var leftBorder
-    }
+    property QtObject colors: Colors
+
     implicitHeight: implicitSize
     implicitWidth: implicitSize
     topRightRadius: Math.max(rightRadius, topRadius, radius)
     bottomRightRadius: Math.max(rightRadius, bottomRadius, radius)
     topLeftRadius: Math.max(leftRadius, topRadius, radius)
     bottomLeftRadius: Math.max(leftRadius, bottomRadius, radius)
-    color: Colors.colPrimaryContainer
-    border.color: enableBorders ? Colors.colOutline : "transparent"
+    color: colors.colPrimaryContainer
+    border.color: enableBorders ? colors.colOutline : "transparent"
     border.width: 1
     layer.enabled: clip
     layer.effect: OpacityMask {

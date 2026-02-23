@@ -7,7 +7,7 @@ import qs.common.widgets
 import qs.services
 import Quickshell
 
-Item {
+StyledRect {
     id: root
 
     anchors.fill: parent
@@ -16,6 +16,8 @@ Item {
     property string mode: "filled"
     property color visualizerColor: ColorUtils.transparentize(Colors.colPrimary, 0.35)
     property real maxVisualizerValue: 5000
+    clip: radius > 0
+    color: "transparent"
 
     CavaWatcher {
         id: cavaWatcher

@@ -7,7 +7,7 @@ StyledRect {
     id: root
     property bool expanded
     property string searchQuery: ""
-    property QtObject colors: GameLauncherService.colors
+    readonly property QtObject colors: GameLauncherService.colors
     signal gameStarted
     clip: true
     radius: Rounding.verylarge
@@ -36,13 +36,11 @@ StyledRect {
         }
     }
     StyledListView {
-        id: listView
-
         anchors {
             fill: parent
             margins: Padding.massive
         }
-
+        hint: false
         onCurrentIndexChanged: GameLauncherService.selectedIndex = currentIndex
         model: searchQuery.length > 0 ? GameLauncherService.searchGames(searchQuery) : GameLauncherService.gamesList
         delegate: GameLauncherItem {

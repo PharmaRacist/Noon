@@ -7,20 +7,20 @@ AppWindow {
     id: root
     property string category
     property bool expanded: width > Sizes.sidebar.quarter * 0.9
-
+    color: SidebarData.getColors(category).colLayer0
     ContentChild {
         anchors.fill: parent
-        anchors.margins: Padding.massive
+        anchors.margins: ["Beats", "Notes"].includes(category) ? 0 : Padding.massive
         category: root.category
         parentRoot: root
     }
 
-    Component.onCompleted: SidebarData.detachedContent.push(root.category)
+    Component.onCompleted: SidebarData.detachedContent.push(category)
     onVisibleChanged: !visible ? kill() : null
 
     function kill() {
         let states = SidebarData.detachedContent;
-        let item = states.filter(item => item === root.category);
+        let item = states.filter(item => item === category);
         states.pop(states.indexOf(item));
     }
 }

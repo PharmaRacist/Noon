@@ -4,15 +4,16 @@ import Quickshell
 import Quickshell.Widgets
 import qs.common
 import qs.common.widgets
+import qs.common.functions
 import qs.services
+import Qt.labs.folderlistmodel
 
-BottomDialog {
+StyledRect {
     id: root
 
     property var filteredTracks: []
     property string searchText: ""
     readonly property var model: BeatsService.tracksModel
-
     function updateFilteredTracks() {
         let tracks = [];
         if (!model) {
@@ -31,25 +32,27 @@ BottomDialog {
         }
         filteredTracks = tracks;
     }
-
+    Connections {
+        target: BeatsService.tracksModel
+        function onFolderChanged() {
+            updateFilteredTracks();
+        }
+    }
     z: 99
-    expandedHeight: root.height * 0.95
-    collapsedHeight: root.height * 0.65
-    bottomAreaReveal: true
-    hoverHeight: 200
-    revealOnWheel: true
-    enableStagedReveal: true
+    radius: Rounding.massive
+    color: colors.colLayer2
     colors: parent.colors
     Component.onCompleted: updateFilteredTracks()
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Padding.verylarge
+        anchors.margins: Padding.huge
         spacing: Padding.large
 
         BottomDialogHeader {
             title: "Beats"
             subTitle: `There are ${root.filteredTracks.length} Tracks in your playlist !`
+            showCloseButton: false
         }
 
         SearchBar {
@@ -78,7 +81,7 @@ BottomDialog {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.margins: Padding.normal
-            spacing: 8
+            spacing: 6
             clip: true
             model: root.filteredTracks
 
@@ -93,7 +96,10 @@ BottomDialog {
                 implicitHeight: 70
                 title: trackInfo.name || "Unknown Track"
                 subtext: fileExtension ? `${fileExtension} Audio` : ""
-                colBackground: currentlyPlaying ? colors.colSecondaryContainerActive : colors.colLayer1
+                toggled: currentlyPlaying
+                buttonRadius: Rounding.huge
+                colBackground: colors.colLayer3
+                colBackgroundHover: colors.colLayer3Hover
                 shape: MaterialShape.Bun
                 shapePadding: Padding.small
                 colors: root.colors
@@ -109,6 +115,53 @@ BottomDialog {
 
                     trackPath: parent.trackPath
                     trackName: parent.title
+                }
+            }
+        }
+    }
+    StyledRect {
+        anchors {
+            bottom: parent.bottom
+            right: parent.right
+            left: parent.left
+            margins: Padding.normal
+        }
+        radius: Rounding.massive
+        color: root.colors.colLayer3
+        height: 75
+        StyledListView {
+            id: foldersList
+            anchors.fill: parent
+            anchors.leftMargin: Padding.huge
+            anchors.margins: Padding.normal
+            orientation: Qt.Horizontal
+            model: Mem.states.mediaPlayer.folders
+            delegate: StyledRect {
+                required property var modelData
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    margins: Padding.small
+                }
+                width: height
+                radius: Rounding.large
+                color: root.colors.colLayer4
+                Symbol {
+                    anchors.centerIn: parent
+                    text: "folder"
+                    fill: 1
+                    color: root.colors.colOnLayer4
+                    font.pixelSize: 20
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: BeatsService.tracksModel.folder = Qt.resolvedUrl(modelData)
+
+                    StyledToolTip {
+                        extraVisibleCondition: parent.containsMouse
+                        content: FileUtils.getEscapedFileName(modelData)
+                    }
                 }
             }
         }

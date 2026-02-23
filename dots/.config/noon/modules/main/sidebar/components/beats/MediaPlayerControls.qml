@@ -13,6 +13,7 @@ ColumnLayout {
     readonly property MprisPlayer player: BeatsService.player
     readonly property bool isPlaying: player.playbackState === MprisPlaybackState.Playing
     readonly property var trackColors: BeatsService.colors
+    property int spermFrequency: 6
 
     spacing: Padding.veryhuge
     Layout.fillWidth: true
@@ -76,7 +77,7 @@ ColumnLayout {
         trackColor: root.trackColors.colSecondaryContainer
         Layout.fillWidth: true
         Layout.preferredHeight: 18
-
+        spermFrequency: root.spermFrequency
         MouseArea {
             anchors.fill: parent
             enabled: root.player?.canSeek && root.player?.length > 0

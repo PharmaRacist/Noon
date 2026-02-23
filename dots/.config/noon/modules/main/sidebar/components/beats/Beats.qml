@@ -11,10 +11,13 @@ StyledRect {
     clip: true
     radius: Rounding.verylarge
     color: "transparent"
-
+    property bool expanded: false
     readonly property bool playing: BeatsService.player?.playbackState === MprisPlaybackState.Playing
     readonly property bool displayingLyrics: LyricsService.lyrics.length > 0
     property QtObject colors: BeatsService.colors
+    Behavior on width {
+        enabled: false
+    }
     Keys.onPressed: event => {
         const ctrl = event.modifiers & Qt.ControlModifier;
         const shift = event.modifiers & Qt.ShiftModifier;
@@ -80,47 +83,82 @@ StyledRect {
             tintColor: root.colors.colSecondaryContainer
         }
     }
-    StyledLoader {
-        anchors.centerIn: parent
-        width: 300
-        height: 300
-        fade: true
-        asynchronous: true
-        active: !root.displayingLyrics
-        visible: !root.displayingLyrics
-        sourceComponent: MusicCoverArt {
-            anchors.fill: parent
-            clip: true
-            radius: Rounding.massive
-            enableBorders: false
-        }
-    }
 
-    Visualizer {
-        active: Mem.options.mediaPlayer.showVisualizer && root.playing
-        mode: Mem.options.mediaPlayer.visualizerMode
-        visualizerColor: root.colors.colPrimary
-    }
-
-    ColumnLayout {
-        id: content
-        spacing: Padding.massive
+    RLayout {
+        spacing: Padding.huge
 
         anchors {
             fill: parent
-            margins: Padding.massive
+            margins: Padding.large
+            rightMargin: 0
         }
 
-        Spacer {}
-        PlayerSelector {}
-        MediaPlayerControls {
-            showCover: root.displayingLyrics
+        Item {
+            id: content
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            SpotifyLyrics {}
+
+            StyledLoader {
+                anchors.centerIn: parent
+                width: 300
+                height: 300
+                fade: true
+                asynchronous: true
+                active: !root.displayingLyrics
+                visible: !root.displayingLyrics
+                sourceComponent: MusicCoverArt {
+                    anchors.fill: parent
+                    clip: true
+                    radius: Rounding.massive
+                    enableBorders: false
+                }
+            }
+
+            Visualizer {
+                active: Mem.options.mediaPlayer.showVisualizer && root.playing
+                mode: Mem.options.mediaPlayer.visualizerMode
+                visualizerColor: root.colors.colPrimary
+                radius: Rounding.massive
+            }
+
+            ColumnLayout {
+                spacing: Padding.massive
+                anchors.fill: parent
+                anchors.margins: Padding.huge
+                Spacer {}
+                PlayerSelector {}
+                MediaPlayerControls {
+                    spermFrequency: root.expanded ? Math.round(root.width * 0.014) : 7
+                    showCover: root.displayingLyrics
+                }
+            }
+        }
+
+        ExpandedTracksList {
+            id: expandedTrackList
+            colors: root.colors
+            Layout.maximumWidth: 360
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: root.expanded
+        }
+        StyledRectangularShadow {
+            visible: root.expanded
+            target: expandedTrackList
+            intensity: 0.4
         }
     }
 
-    SpotifyLyrics {}
-
-    BottomTracksDialog {}
+    StyledLoader {
+        active: !root.expanded
+        visible: !root.expanded
+        asynchronous: true
+        anchors.fill: parent
+        sourceComponent: BottomTracksDialog {}
+        onLoaded: _item.colors = root.colors
+    }
 
     gradient: Gradient {
         GradientStop {

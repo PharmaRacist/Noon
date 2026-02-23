@@ -18,6 +18,8 @@ Item {
     property alias colBackground: shapeWidget.color
     property alias colOnBackground: shapeWidget.colSymbol
     property int spacing: Padding.large
+    property QtObject colors: Colors
+
     opacity: shown ? 1 : 0
     visible: opacity > 0
 
@@ -33,7 +35,7 @@ Item {
 
         MaterialShapeWrappedMaterialSymbol {
             id: shapeWidget
-
+            colors: root.colors
             Layout.alignment: Qt.AlignHCenter
             padding: 12
             iconSize: 90
@@ -45,7 +47,7 @@ Item {
 
             visible: text !== ""
             Layout.alignment: Qt.AlignHCenter
-            color: Colors.m3.m3outline
+            color: root.colors.colOnLayer0
             horizontalAlignment: Text.AlignHCenter
 
             font {

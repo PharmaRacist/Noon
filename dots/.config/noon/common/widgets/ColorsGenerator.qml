@@ -10,13 +10,11 @@ Item {
     property QtObject colors: active ? template : Colors
 
     property QtObject template: QtObject {
-        id: i
-
         readonly property color darkerKey: Qt.darker(root.keyColor, 2)
         readonly property color slightlyDarkerKey: Qt.darker(root.keyColor, 1.2)
 
         property color colScrim: ColorUtils.transparentize(Colors.colScrim, darkerKey, 0.25)
-        property color colSubtext: ColorUtils.colorWithLightness(i.colOnLayer1, 0.45)
+        property color colSubtext: ColorUtils.colorWithLightness(colOnLayer1, 0.45)
         property color colTint: ColorUtils.transparentize(Colors.colSecondaryContainerActive, darkerKey, 0.25)
 
         property color colLayer0: ColorUtils.mix(Colors.colLayer0, darkerKey, 0.1)
