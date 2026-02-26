@@ -62,7 +62,11 @@ JsonAdapter {
         property JsonObject ambientSounds
         property JsonObject mediaPlayer
         property JsonObject power
+        property JsonObject games
 
+        games: JsonObject {
+            property string gameModeCommand
+        }
         islam: JsonObject {
             property list<var> donePrayers: []
             property string currentSurah: ""

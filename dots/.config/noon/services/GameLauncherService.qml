@@ -26,7 +26,9 @@ Singleton {
         NoonUtils.execDetached(`touch ${gameFileView.path}`);
         reload();
     }
-
+    function setGameMode(toggled) {
+        !toggled ? NoonUtils.execDetached("hyprctl reload") : NoonUtils.execDetached(Mem.states.services.games.gameModeCommand);
+    }
     function addGame(name, executablePath, coverImage = "", optimization, description = "") {
         const game = {
             "id": Date.now() + Math.random(),
