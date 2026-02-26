@@ -6,21 +6,21 @@ import qs.common
 import qs.common.utils
 
 Singleton {
-    property var stats: ({
-            "wifi_enabled": false,
-            "ethernet": false,
-            "wifi": false,
-            "wifi_status": "disconnected",
-            "network_name": "",
-            "signal_strength": 0,
-            "signal_strength_text": "0%",
-            "material_icon": "signal_wifi_bad",
-            "wifi_networks": [],
-            "download_speed": 0,
-            "upload_speed": 0,
-            "download_speed_text": "0 B/s",
-            "upload_speed_text": "0 B/s"
-        })
+    property var stats: {
+        "wifi_enabled": false,
+        "ethernet": false,
+        "wifi": false,
+        "wifi_status": "disconnected",
+        "network_name": "",
+        "signal_strength": 0,
+        "signal_strength_text": "0%",
+        "material_icon": "signal_wifi_bad",
+        "wifi_networks": [],
+        "download_speed": 0,
+        "upload_speed": 0,
+        "download_speed_text": "0 B/s",
+        "upload_speed_text": "0 B/s"
+    }
     // Convenience properties for direct access
     property bool wifiEnabled: stats.wifi_enabled
     property bool ethernet: stats.ethernet

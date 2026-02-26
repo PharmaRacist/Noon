@@ -14,9 +14,31 @@ BarGroup {
     id: root
 
     property bool verticalMode: false
-    readonly property real iconSpacing: Padding.normal
-    readonly property real commonIconSize: Fonts.sizes.large
-    readonly property color commonIconColor: Colors.colSecondary
+    readonly property var content: [
+        {
+            icon: "radio_button_checked",
+            visible: RecordingService.isRecording,
+            dialog: "Record",
+            hoverItem: recPopup
+        },
+        {
+            icon: NetworkService.materialSymbol,
+            dialog: "Wifi",
+            hoverItem: networkPopup
+        },
+        {
+            icon: BluetoothService.currentDeviceIcon,
+            dialog: "Bluetooth",
+            hoverItem: btPopup
+        }
+    ]
+    readonly property Component btPopup: BluetoothPopup {}
+    readonly property Component networkPopup: NetworkPopup {}
+    readonly property Component recPopup: StyledToolTip {
+        property var hoverTarget
+        extraVisibleCondition: hoverTarget.containsMouse
+        content: "Recording " + RecordingService.getFormattedDuration()
+    }
 
     Layout.fillHeight: !verticalMode
     Layout.fillWidth: verticalMode
@@ -24,128 +46,40 @@ BarGroup {
     Layout.preferredHeight: verticalMode ? grid.implicitHeight + Padding.huge : 0
     Layout.margins: Padding.tiny
 
-    states: [
-        State {
-            name: "verticalMode"
-            when: root.verticalMode
-
-            PropertyChanges {
-                target: grid
-                rows: 4
-                columns: 1
-                rowSpacing: iconSpacing
-                columnSpacing: 0
-            }
-        },
-        State {
-            name: "horizontal"
-            when: !root.verticalMode
-
-            PropertyChanges {
-                target: grid
-                rows: 1
-                columns: 4
-                rowSpacing: 0
-                columnSpacing: iconSpacing
-            }
-        }
-    ]
-
-    Timer {
-        id: delayReveal
-
-        property string mode: ""
-
-        interval: 200
-        onTriggered: {
-            if (mode === "wifi") {
-                GlobalStates.main.dialogs.showWifiDialog = true;
-                GlobalStates.main.dialogs.showBluetoothDialog = false;
-            } else if (mode === "bluetooth") {
-                GlobalStates.main.dialogs.showWifiDialog = false;
-                GlobalStates.main.dialogs.showBluetoothDialog = true;
-            }
-        }
-    }
-
     GridLayout {
         id: grid
 
         anchors.centerIn: parent
         rows: verticalMode ? 4 : 1
         columns: verticalMode ? 1 : 4
-        rowSpacing: verticalMode ? iconSpacing : 0
-        columnSpacing: verticalMode ? 0 : iconSpacing
+        rowSpacing: verticalMode ? Padding.normal : 0
+        columnSpacing: verticalMode ? 0 : Padding.normal
 
-        Symbol {
-            id: networkIcon
+        Repeater {
+            model: root.content.filter(item => item.visible ?? true)
 
-            fill: 1
-            font.pixelSize: root.commonIconSize
-            color: commonIconColor
-            text: {
-                if (NetworkService.ethernet)
-                    return "lan";
-                else if (NetworkService.networkName.length > 0 && NetworkService.networkName !== "lo")
-                    return NetworkService.networkStrength > 80 ? "signal_wifi_4_bar" : NetworkService.networkStrength > 60 ? "network_wifi_3_bar" : NetworkService.networkStrength > 40 ? "network_wifi_2_bar" : NetworkService.networkStrength > 20 ? "network_wifi_1_bar" : "signal_wifi_0_bar";
-                else
-                    return "signal_wifi_off";
-            }
-
-            MouseArea {
-                id: networkMouse
-
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: {
-                    GlobalStates.main.dialogs.showWifiDialog = true;
-                    NoonUtils.callIpc("sidebar reveal Notifs");
-                }
-            }
-
-            NetworkPopup {
-                hoverTarget: networkMouse
-            }
-        }
-
-        Symbol {
-            visible: RecordingService.isRecording ?? false
-            text: "radio_button_checked"
-            font.pixelSize: root.commonIconSize
-            color: commonIconColor
-            fill: 1
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                StyledToolTip {
-                    extraVisibleCondition: parent.containsMouse
-                    content: "Recording " + RecordingService.getFormattedDuration()
-                }
-            }
-        }
-
-        Symbol {
-            text: BluetoothService.currentDeviceIcon
-            font.pixelSize: root.commonIconSize
-            color: commonIconColor
-            fill: 1
-
-            BluetoothPopup {
-                hoverTarget: btMouse
-            }
-
-            MouseArea {
-                id: btMouse
-
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onClicked: {
-                    delayReveal.mode = "";
-                    NoonUtils.callIpc("sidebar reveal Notifs");
-                    delayReveal.mode = "bluetooth";
-                    delayReveal.restart();
+            delegate: Symbol {
+                text: modelData.icon || ""
+                color: Colors.colSecondary
+                font.pixelSize: Fonts.sizes.verylarge
+                fill: 0
+                MouseArea {
+                    id: hoverArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        GlobalStates.main.dialogs.current = modelData.dialog;
+                        NoonUtils.callIpc("sidebar reveal Notifs");
+                    }
+                    StyledLoader {
+                        anchors.fill: parent
+                        sourceComponent: modelData?.hoverItem ?? null
+                        onLoaded: if (ready) {
+                            if ("hoverTarget" in item)
+                                item.hoverTarget = Qt.binding(() => hoverArea);
+                        }
+                    }
                 }
             }
         }
