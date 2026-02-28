@@ -63,6 +63,21 @@ Singleton {
 
         Quickshell.execDetached(["bash", "-c", notifyCmd]);
     }
+    function toast(content, materialIcon = "check", state = "", header = "Noon") {
+        GlobalStates.toasts.data.append({
+            title: header,
+            message: content,
+            icon: materialIcon,
+            status: state
+        });
+    // const sounds = {
+    //     "error": "event_invalid",
+    //     "warn": "power_low",
+    //     "success": "device_added",
+    //     "": "device_added"
+    // };
+    // playSound(sounds[state]);
+    }
 
     function notify(content: string, title: string) {
         let icon = Directories.assets + "/icons/noon-symbolic.svg";
@@ -76,7 +91,9 @@ Singleton {
         const cmd = `qs -c ~/.config/noon ipc call ${request}`;
         Quickshell.execDetached(["bash", "-c", cmd]);
     }
-    function execDetached(command: string) {
+    function execDetached(command: string, log = false) {
+        if (log)
+            console.log(command);
         Quickshell.execDetached(["bash", "-c", command]);
     }
     // Atomic Changes

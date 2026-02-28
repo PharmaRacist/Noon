@@ -20,10 +20,10 @@ Menu {
         model: content.filter(i => i.visible ?? true)
 
         StyledMenuItem {
-            colors: root.colors
+            colors: root?.colors ?? Colors
             materialIcon: modelData.materialIcon ?? ""
             text: modelData.text ?? ""
-            onTriggered: modelData.action()
+            onTriggered: modelData.action() ?? null
         }
     }
 

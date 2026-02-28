@@ -41,7 +41,7 @@ Item {
 
         z: -1
         opacity: root.reveal ? 1 : 0
-        color: ColorUtils.transparentize(root.colors.colScrim, 0.24)
+        color: ColorUtils.transparentize(colors.colScrim, 0.24)
         anchors.fill: parent
         radius: Rounding.verylarge
 

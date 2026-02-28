@@ -14,6 +14,9 @@ Scope {
     IpcHandler {
         target: "global"
 
+        function toast(content: string, state: string) {
+            NoonUtils.toast(content, "check", state);
+        }
         function inc_brightness() {
             BrightnessService.increaseBrightness();
         }
@@ -34,14 +37,14 @@ Scope {
         }
         function pick_accent() {
             WallpaperService.pickAccentColor();
-            NoonUtils.notify("Color Changed");
+            NoonUtils.toast("Color Changed", "palette");
         }
         function pick_random_wall() {
             WallpaperService.applyRandomWallpaper();
         }
         function set_wall(path: string) {
             WallpaperService.applyWallpaper(path);
-            NoonUtils.notify("Wallpaper Changed");
+            NoonUtils.toast("Wallpaper Changed", "image");
         }
         function todoist_key(key: string) {
             const trimmed = key.trim();

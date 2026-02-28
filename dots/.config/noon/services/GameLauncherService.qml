@@ -122,7 +122,7 @@ Singleton {
             const path = root.currentGame.executablePath;
             return path.substring(0, path.lastIndexOf('/'));
         }
-        onStarted: NoonUtils.notify("Game Launched")
+        onStarted: NoonUtils.toast("Game Launched","stadia_controller")
         onExited: NoonUtils.execDetached("hyprctl reload")
     }
 

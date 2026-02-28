@@ -8,44 +8,39 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 
-Scope {
-    id: notificationPopup
+StyledPanel {
+    id: root
+    visible: (Notifications.popupList.length > 0)
+    name: "notificationPopup"
+    WlrLayershell.layer: WlrLayer.Overlay
+    exclusiveZone: 0
+    aboveWindows: true
 
-    StyledPanel {
-        id: root
-        visible: (Notifications.popupList.length > 0)
-        screen: MonitorsInfo.focused ?? null
-        name: "notificationPopup"
-        WlrLayershell.layer: WlrLayer.Overlay
-        exclusiveZone: 0
-        aboveWindows: true
+    anchors {
+        top: true
+        bottom: true
+        right: true
+    }
 
+    mask: Region {
+        item: listview.contentItem
+    }
+
+    color: "transparent"
+    implicitWidth: Sizes.notificationPopupWidth + 100
+
+    NotificationListView {
+        id: listview
         anchors {
-            top: true
-            bottom: true
-            right: true
+            top: parent.top
+            bottom: parent.bottom
+            right: parent.right
+            margins: Padding.massive
         }
-
-        mask: Region {
-            item: listview.contentItem
-        }
-
-        color: "transparent"
-        implicitWidth: Sizes.notificationPopupWidth + 100
-
-        NotificationListView {
-            id: listview
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                right: parent.right
-                margins: Padding.massive
-            }
-            implicitWidth: Sizes.notificationPopupWidth - anchors.rightMargin * 2
-            popup: true
-            clip: false
-            animateMovement: true
-            animateAppearance: true
-        }
+        implicitWidth: Sizes.notificationPopupWidth - anchors.rightMargin * 2
+        popup: true
+        clip: false
+        animateMovement: true
+        animateAppearance: true
     }
 }

@@ -45,7 +45,6 @@ MaterialShapeWrappedMaterialSymbol {
         hoverEnabled: true
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onPressed: event => event.button === Qt.RightButton ? PowerService.cycleMode(true) : PowerService.cycleMode(false)
+        onClicked: PowerService.cycleMode()
     }
 }

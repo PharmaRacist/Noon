@@ -9,27 +9,11 @@ import qs.services
 BottomDialog {
     id: root
 
-    property var filteredTracks: []
     property string searchText: ""
-    readonly property var model: BeatsService.tracksModel
 
-    function updateFilteredTracks() {
-        let tracks = [];
-        if (!model) {
-            filteredTracks = tracks;
-            return;
-        }
-        const count = model.count;
+    readonly property var filteredTracks: {
         const search = searchText.toLowerCase();
-        for (let i = 0; i < count; i++) {
-            const trackInfo = BeatsService.getTrackInfo(i);
-            if (trackInfo && (search === "" || trackInfo.name.toLowerCase().includes(search)))
-                tracks.push({
-                    "index": i,
-                    "info": trackInfo
-                });
-        }
-        filteredTracks = tracks;
+        return BeatsService.tracksList.filter(entry => search === "" || (entry.title ?? entry.filename ?? "").toLowerCase().includes(search));
     }
 
     z: 99
@@ -40,8 +24,7 @@ BottomDialog {
     revealOnWheel: true
     enableStagedReveal: true
     colors: parent.colors
-    Component.onCompleted: updateFilteredTracks()
-
+    color: colors.colLayer2
     contentItem: ColumnLayout {
         anchors.fill: parent
         anchors.margins: Padding.verylarge
@@ -54,7 +37,6 @@ BottomDialog {
 
         SearchBar {
             id: search
-
             Layout.fillWidth: true
             implicitHeight: 40
             Layout.leftMargin: Padding.large
@@ -65,12 +47,8 @@ BottomDialog {
 
             Timer {
                 id: searchTimer
-
                 interval: 200
-                onTriggered: {
-                    root.searchText = search.searchText;
-                    root.updateFilteredTracks();
-                }
+                onTriggered: root.searchText = search.searchText
             }
         }
 
@@ -85,29 +63,26 @@ BottomDialog {
             delegate: StyledDelegateItem {
                 required property int index
                 required property var modelData
-                readonly property var trackInfo: modelData.info
-                readonly property string trackPath: trackInfo.path || ""
-                readonly property bool currentlyPlaying: trackPath === BeatsService.currentTrackPath
-                readonly property string fileExtension: trackInfo.fileName.includes('.') ? trackInfo.fileName.split('.').pop().toUpperCase() : ""
 
+                readonly property string hash: modelData.hash ?? ""
+                readonly property string fileName: modelData.filename ?? ""
+                readonly property string absPath: modelData.filepath
+                readonly property bool currentlyPlaying: absPath === BeatsService.currentTrackPath
+                iconSource: Qt.resolvedUrl(modelData?.cover_art) ?? ""
+                subtext: FileUtils.getEscapedFileExtension(absPath)
                 implicitHeight: 70
-                title: trackInfo.name || "Unknown Track"
-                subtext: fileExtension ? `${fileExtension} Audio` : ""
-                colBackground: currentlyPlaying ? colors.colSecondaryContainerActive : colors.colLayer1
-                shape: MaterialShape.Bun
-                shapePadding: Padding.small
+                title: modelData.title || modelData.filename || "Unknown Track"
+                toggled: currentlyPlaying
+                buttonRadius: Rounding.huge
+                colBackground: colors.colLayer3
+                colBackgroundHover: colors.colLayer3Hover
                 colors: root.colors
-                releaseAction: () => {
-                    return BeatsService.playTrackByPath(trackPath);
-                }
-                altAction: () => {
-                    return trackContextMenu.popup();
-                }
+                releaseAction: () => BeatsService.playTrack(absPath)
+                altAction: () => trackContextMenu.popup()
 
                 TrackContextMenu {
                     id: trackContextMenu
-
-                    trackPath: parent.trackPath
+                    trackPath: parent.absPath
                     trackName: parent.title
                 }
             }

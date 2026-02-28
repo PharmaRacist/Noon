@@ -86,7 +86,7 @@ Singleton {
                     icon: timer.icon
                 });
                 NoonUtils.playSound("record_stopped");
-                NoonUtils.notify(`'⏰ Timer Complete , ${timer.name} finished!'`);
+                NoonUtils.toast(`'Timer Complete , ${timer.name} finished!'`,"timer","success");
                 timerFinished(timer.id, timer.name);
                 changed = true;
             } else {

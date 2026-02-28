@@ -8,6 +8,7 @@ import qs.store
 BarProgressIndicator {
     id: root
 
+    property var focusedScreen: MonitorsInfo.focused
     property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
     value: brightnessMonitor.brightness
     icon: BrightnessService.iconMaterial

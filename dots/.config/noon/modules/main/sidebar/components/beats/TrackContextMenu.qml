@@ -40,8 +40,9 @@ StyledMenu {
             "text": "Delete",
             "materialIcon": "delete",
             "action": () => {
-                if (trackPath)
+                if (trackPath) {
                     FileUtils.deleteItem(trackPath);
+                }
             }
         }
     ]

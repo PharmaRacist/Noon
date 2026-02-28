@@ -8,6 +8,7 @@ StyledLoader {
     id: root
     asynchronous: true
     source: sanitizeSource("variants/", currentVariant)
+    property bool volumeMode: false
     required property real value
     required property string icon
     readonly property string currentVariant: Mem.options.desktop.osd.mode
@@ -16,18 +17,15 @@ StyledLoader {
     signal valueModified(real newValue)
     signal interactionStarted
     signal interactionEnded
-    property real loaderValue: root.value
-    property string loaderIcon: root.icon
-    property var loaderTargetScreen: root.targetScreen
-    property bool volumeMode: false
+
     onLoaded: {
-        item.value = Qt.binding(() => root.loaderValue);
-        item.icon = Qt.binding(() => root.loaderIcon);
-        item.targetScreen = Qt.binding(() => root.loaderTargetScreen);
-        item.valueModified.connect(root.valueModified);
-        item.interactionStarted.connect(root.interactionStarted);
-        item.interactionEnded.connect(root.interactionEnded);
+        _item.value = Qt.binding(() => root.value);
+        _item.icon = Qt.binding(() => root.icon);
+        _item.targetScreen = Qt.binding(() => root.targetScreen);
+        _item.valueModified.connect(root.valueModified);
+        _item.interactionStarted.connect(root.interactionStarted);
+        _item.interactionEnded.connect(root.interactionEnded);
         if ("volumeMode" in item)
-            item.volumeMode = Qt.binding(() => root.volumeMode);
+            _item.volumeMode = Qt.binding(() => root.volumeMode);
     }
 }

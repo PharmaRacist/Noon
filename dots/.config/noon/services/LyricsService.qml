@@ -5,6 +5,7 @@ import Quickshell
 import qs.common
 import qs.common.utils
 import qs.common.functions
+import qs.services
 
 Singleton {
     id: root
@@ -25,8 +26,9 @@ Singleton {
     readonly property string cacheDir: Directories.beats.lyrics
     readonly property string userAgent: Mem.options.networking.userAgent
 
-    property string _currentArtist: ""
+    property string _currentHash: ""
     property string _currentTitle: ""
+    property string _currentArtist: ""
 
     function normalizeTitle(str) {
         return str ? str.replace(/\s*[\(\[].*?[\)\]]\s*/g, ' ').replace(/\s*-\s*(Official|Lyric|Audio|Video|Music Video|Visualizer|Remaster(?:ed)?)\s*$/gi, '').replace(/\s+/g, ' ').trim().toLowerCase() : "";
@@ -36,19 +38,12 @@ Singleton {
         return str ? str.replace(/\s+(?:feat\.|featuring|ft\.|with|x|&)\s+.*/gi, '').replace(/\s*[\(\[].*?[\)\]]\s*/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase() : "";
     }
 
-    function sanitizeFilename(str) {
-        return str.replace(/[\/\\:*?"<>|]/g, '_').replace(/\s+/g, '_').toLowerCase();
-    }
-
-    function getCacheFilePath(artist, title) {
-        const sanitizedArtist = sanitizeFilename(normalizeArtist(artist));
-        const sanitizedTitle = sanitizeFilename(normalizeTitle(title));
-        return `${cacheDir}/${sanitizedTitle}_${sanitizedArtist}.json`;
+    function getCacheFilePath(hash) {
+        return `${cacheDir}/${hash}.json`;
     }
 
     function loadLyrics(data) {
         onlineLyricsData = data;
-
         if (data.syncedLyrics) {
             state = LyricsService.HasSyncedLyrics;
             lyrics = "Synced lyrics ready";
@@ -61,67 +56,76 @@ Singleton {
         }
     }
 
-    function saveToCache(artist, title, data) {
-        const filePath = getCacheFilePath(artist, title);
-        const jsonString = JSON.stringify(data);
-
-        shellExec.execute(`mkdir -p ${JSON.stringify(cacheDir)} && printf '%s' ${JSON.stringify(jsonString)} > ${JSON.stringify(filePath)}`);
+    function saveToCache(hash, data) {
+        const filePath = getCacheFilePath(hash);
+        shellExec.execute(`mkdir -p ${JSON.stringify(cacheDir)} && printf '%s' ${JSON.stringify(JSON.stringify(data))} > ${JSON.stringify(filePath)}`);
     }
 
-    function fetchLyrics(artist, title) {
-        if (!artist || !title) {
+    function fetchLyrics(title, artist) {
+        if (!title || title === "No Title") {
             state = LyricsService.Idle;
             lyrics = "";
             return;
         }
 
-        _currentArtist = artist;
         _currentTitle = title;
+        _currentArtist = artist || "";
+        _currentHash = Qt.md5(title + "|" + artist);
+
         state = LyricsService.Loading;
         lyrics = "Loading";
 
-        const exactPath = getCacheFilePath(artist, title);
-        shellExec.execute(`cat ${JSON.stringify(exactPath)} 2>/dev/null`, output => {
+        shellExec.execute(`cat ${JSON.stringify(getCacheFilePath(_currentHash))} 2>/dev/null`, output => {
             if (output?.trim()) {
                 try {
                     loadLyrics(JSON.parse(output));
                     return;
                 } catch (e) {}
             }
-            fetchFromAPI();
+            fetchFromAPI(0);
         });
     }
 
-    function fetchFromAPI() {
-        const normalizedArtist = normalizeArtist(_currentArtist);
-        const normalizedTitle = normalizeTitle(_currentTitle);
-        const url = `https://lrclib.net/api/search?artist_name=${encodeURI(normalizedArtist)}&track_name=${encodeURI(normalizedTitle)}`;
+    function buildUrl(strategy) {
+        const t = normalizeTitle(_currentTitle);
+        const a = normalizeArtist(_currentArtist);
+        const base = "https://lrclib.net/api/search";
 
-        shellExec.execute(`curl -s -A ${JSON.stringify(userAgent)} -S ${JSON.stringify(url)}`, output => {
+        if (strategy === 0 && a)
+            return `${base}?track_name=${encodeURIComponent(t)}&artist_name=${encodeURIComponent(a)}`;
+        if (strategy === 1)
+            return `${base}?q=${encodeURIComponent(t + " " + a)}`;
+        if (strategy === 2)
+            return `${base}?q=${encodeURIComponent(t)}`;
+        return null;
+    }
+
+    function fetchFromAPI(strategy) {
+        const url = buildUrl(strategy);
+        if (!url) {
+            state = LyricsService.NoLyricsFound;
+            lyrics = "No lyrics found for this song";
+            onlineLyricsData = null;
+            return;
+        }
+
+        shellExec.execute(`curl -s -A ${JSON.stringify(userAgent)} ${JSON.stringify(url)}`, output => {
             try {
                 const data = JSON.parse(output);
+                if (data.statusCode >= 400) {
+                    fetchFromAPI(strategy + 1);
+                    return;
+                }
 
-                if (data.statusCode) {
-                    state = LyricsService.NetworkError;
-                    lyrics = "Failed to connect to lyrics service";
-                    onlineLyricsData = null;
-                } else if (Array.isArray(data)) {
-                    if (data.length > 0) {
-                        saveToCache(_currentArtist, _currentTitle, data[0]);
-                        loadLyrics(data[0]);
-                    } else {
-                        state = LyricsService.NoLyricsFound;
-                        lyrics = "No lyrics found for this song";
-                        onlineLyricsData = null;
-                    }
+                const result = Array.isArray(data) ? data[0] : data;
+                if (result && (result.syncedLyrics || result.plainLyrics)) {
+                    saveToCache(_currentHash, result);
+                    loadLyrics(result);
                 } else {
-                    saveToCache(_currentArtist, _currentTitle, data);
-                    loadLyrics(data);
+                    fetchFromAPI(strategy + 1);
                 }
             } catch (e) {
-                state = LyricsService.NetworkError;
-                lyrics = "Failed to retrieve lyrics";
-                onlineLyricsData = null;
+                fetchFromAPI(strategy + 1);
             }
         }, () => {
             state = LyricsService.NetworkError;
@@ -131,25 +135,21 @@ Singleton {
     }
 
     function getSyncedLyrics(position) {
-        if (state !== LyricsService.HasSyncedLyrics || !onlineLyricsData?.syncedLyrics) {
+        if (state !== LyricsService.HasSyncedLyrics || !onlineLyricsData?.syncedLyrics)
             return "";
-        }
 
         const lines = onlineLyricsData.syncedLyrics.split('\n');
         let currentLine = "";
-
         for (const line of lines) {
             const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
             if (match) {
                 const timestamp = parseInt(match[1]) * 60 + parseFloat(match[2]);
-                if (timestamp <= position) {
+                if (timestamp <= position)
                     currentLine = match[3].trim();
-                } else {
+                else
                     break;
-                }
             }
         }
-
         return currentLine;
     }
 
@@ -171,10 +171,8 @@ Singleton {
         function processQueue() {
             if (busy || queue.length === 0)
                 return;
-
             busy = true;
             const task = queue.shift();
-
             proc.command = ["sh", "-c", task.command];
             proc.userData = task;
             proc.running = true;
@@ -189,9 +187,8 @@ Singleton {
         stdout: StdioCollector {
             waitForEnd: true
             onStreamFinished: {
-                if (proc.userData?.onSuccess) {
+                if (proc.userData?.onSuccess)
                     proc.userData.onSuccess(text);
-                }
                 shellExec.busy = false;
                 Qt.callLater(shellExec.processQueue);
             }
@@ -199,9 +196,8 @@ Singleton {
 
         stderr: StdioCollector {
             onStreamFinished: {
-                if (text?.trim() && proc.userData?.onError) {
+                if (text?.trim() && proc.userData?.onError)
                     proc.userData.onError(text);
-                }
                 shellExec.busy = false;
                 Qt.callLater(shellExec.processQueue);
             }
@@ -211,22 +207,18 @@ Singleton {
     Timer {
         id: fetchDelayTimer
         interval: 50
-        onTriggered: fetchLyrics(BeatsService.artist || "", BeatsService.title || "")
+        onTriggered: fetchLyrics(BeatsService.title, BeatsService.artist)
     }
 
     Connections {
         target: BeatsService
-
         function onTitleChanged() {
-            if (BeatsService?.title) {
-                fetchDelayTimer.restart();
-            }
+            fetchDelayTimer.restart();
         }
     }
 
     Component.onCompleted: {
-        if (BeatsService?.title) {
-            fetchLyrics(BeatsService.artist || "", BeatsService.title || "");
-        }
+        if (BeatsService.title)
+            fetchLyrics(BeatsService.title, BeatsService.artist);
     }
 }

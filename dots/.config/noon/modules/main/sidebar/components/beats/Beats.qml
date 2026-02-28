@@ -11,6 +11,7 @@ StyledRect {
     clip: true
     radius: Rounding.verylarge
     color: "transparent"
+    property bool detached: false
     property bool expanded: false
     readonly property bool playing: BeatsService.player?.playbackState === MprisPlaybackState.Playing
     readonly property bool displayingLyrics: LyricsService.lyrics.length > 0
@@ -18,6 +19,7 @@ StyledRect {
     Behavior on width {
         enabled: false
     }
+
     Keys.onPressed: event => {
         const ctrl = event.modifiers & Qt.ControlModifier;
         const shift = event.modifiers & Qt.ShiftModifier;
@@ -89,7 +91,7 @@ StyledRect {
 
         anchors {
             fill: parent
-            margins: Padding.large
+            margins: detached ? Padding.massive : Padding.large
             rightMargin: 0
         }
 
@@ -127,27 +129,53 @@ StyledRect {
                 spacing: Padding.massive
                 anchors.fill: parent
                 anchors.margins: Padding.huge
+
                 Spacer {}
                 PlayerSelector {}
                 MediaPlayerControls {
                     spermFrequency: root.expanded ? Math.round(root.width * 0.014) : 7
                     showCover: root.displayingLyrics
                 }
+
+                // StyledLoader {
+                //     id: controlsLoader
+                //     fade: true
+                //     height: _item.implicitHeight
+                //     Layout.fillWidth: true
+                //     sourceComponent: root.detached ? detachedControls : controls
+                //     Component {
+                //         id: detachedControls
+                //         DetachedMediaPlayerControls {}
+                //     }
+                //     Component {
+                //         id: controls
+                //         MediaPlayerControls {
+                //             spermFrequency: root.expanded ? Math.round(root.width * 0.014) : 7
+                //             showCover: root.displayingLyrics
+                //         }
+                //     }
+                // }
             }
         }
 
-        ExpandedTracksList {
-            id: expandedTrackList
-            colors: root.colors
+        Item {
+            visible: root.expanded
             Layout.maximumWidth: 360
+            Layout.rightMargin: root.detached ? Padding.massive : 0
             Layout.fillWidth: true
             Layout.fillHeight: true
-            visible: root.expanded
-        }
-        StyledRectangularShadow {
-            visible: root.expanded
-            target: expandedTrackList
-            intensity: 0.4
+
+            ExpandedTracksList {
+                id: expandedTrackList
+                anchors.fill: parent
+                colors: root.colors
+            }
+
+            StyledRectangularShadow {
+                visible: root.expanded
+                target: expandedTrackList
+                intensity: 0.4
+            }
         }
     }
 

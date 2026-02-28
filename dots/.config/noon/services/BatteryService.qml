@@ -12,7 +12,6 @@ Singleton {
     property bool isPluggedIn: isCharging || chargeState == UPowerDeviceState.PendingCharge
     property real percentage: UPower.displayDevice?.percentage ?? 1
     readonly property bool allowAutomaticSuspend: Mem.options.battery.automaticSuspend
-
     property bool isLow: available && (percentage <= Mem.options.battery.low / 100)
     property bool isCritical: available && (percentage <= Mem.options.battery.critical / 100)
     property bool isSuspending: available && (percentage <= Mem.options.battery.suspend / 100)
@@ -24,26 +23,40 @@ Singleton {
     property real energyRate: UPower.displayDevice.changeRate
     property real timeToEmpty: UPower.displayDevice.timeToEmpty
     property real timeToFull: UPower.displayDevice.timeToFull
+
+    Connections {
+        target: PowerProfiles
+        function onDegradationReasonChanged() {
+            const reason = PowerProfiles.degradationReason;
+            if (reason === PerformanceDegradationReason.HighTemperature)
+                NoonUtils.toast("High Temperature", "emergency_heat", "warn");
+            if (reason === PerformanceDegradationReason.LapDetected)
+                NoonUtils.toast("Move the laptop away from your body", "heat", "warn");
+        }
+    }
+
     onIsLowAndNotCharging: if (isLowAndNotCharging)
         NoonUtils.playSound("power_low")
     onIsChargingChanged: if (isCharging) {
         NoonUtils.playSound("power_plugged");
+        NoonUtils.toast("Charging", "battery_charging_full", "success");
     } else {
         NoonUtils.playSound("power_unplugged");
+        NoonUtils.toast("Discharging", "battery_error");
     }
     onIsLowAndNotChargingChanged: {
         if (available && isLowAndNotCharging)
-            Quickshell.execDetached(["notify-send", qsTr("Low battery"), qsTr("Consider plugging in your device"), "-u", "critical", "-a", "Shell"]);
+            NoonUtils.toast("Low Battery Plug in your device", "battery_error", "warn");
     }
 
     onIsCriticalAndNotChargingChanged: {
         if (available && isCriticalAndNotCharging)
-            Quickshell.execDetached(["notify-send", qsTr("Critically low battery"), qsTr("Please charge!\nAutomatic suspend triggers at %1").arg(Mem.options.battery.suspend), "-u", "critical", "-a", "Shell"]);
+            NoonUtils.toast("Critical Battery Percentage", "battery_error", "error");
     }
 
     onIsSuspendingAndNotChargingChanged: {
         if (available && isSuspendingAndNotCharging) {
-            NoonUtils.execDetached(`systemctl suspend || loginctl suspend`);
+            NoonUtils.execDetached(`systemctl suspend`);
         }
     }
 }

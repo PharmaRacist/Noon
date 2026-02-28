@@ -31,13 +31,6 @@ StyledPanel {
     implicitWidth: pill.implicitWidth
     implicitHeight: pill.implicitHeight + Sizes.elevationMargin * 2
 
-    Connections {
-        target: root
-        function onTargetScreenChanged() {
-            root.screen = root.targetScreen;
-        }
-    }
-
     StyledRect {
         id: pill
         anchors.centerIn: parent

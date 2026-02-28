@@ -44,14 +44,13 @@ RippleButton {
 
         Component {
             id: iconComponent
-            Item {
-                implicitWidth: 50
-                implicitHeight: 50
-                StyledIconImage {
-                    anchors.centerIn: parent
-                    implicitSize: 37
-                    source: root.iconSource
-                }
+            CroppedImage {
+                clip: true
+                asynchronous: true
+                radius: Rounding.large
+                anchors.centerIn: parent
+                implicitSize: 50
+                source: root.iconSource
             }
         }
         Component {

@@ -15,8 +15,8 @@ Item {
 
     required property string category
     readonly property bool effectiveSearchable: SidebarData.isSearchable(category)
-
     property string previousCategory: ""
+    property bool _detached: false
     property bool _aux: false
     property alias contentOpacity: contentLoader.opacity
     property alias searchInput: searchBar.searchInput
@@ -101,7 +101,8 @@ Item {
             onLoaded: if (item) {
                 if ("searchQuery" in item)
                     item.searchQuery = Qt.binding(() => searchBar.searchText);
-
+                if ("detached" in item)
+                    item.detached = Qt.binding(() => _detached);
                 if ("expanded" in item && !_aux)
                     item.expanded = Qt.binding(() => parentRoot.expanded);
 

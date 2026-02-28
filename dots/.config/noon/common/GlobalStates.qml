@@ -15,6 +15,7 @@ Singleton {
     property QtObject xp
     property QtObject nobuntu
     property QtObject applications
+    property QtObject toasts
     property var web_session
 
     property bool superPressed: false
@@ -63,6 +64,9 @@ Singleton {
             property string currentPath: Qt.resolvedUrl(Directories.shellConfigs)
             property string currentFile: ""
         }
+    }
+    toasts: QtObject {
+        property ListModel data: ListModel {}
     }
     main: QtObject {
         id: main

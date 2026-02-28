@@ -50,10 +50,10 @@ Singleton {
     Process {
         id: thumbnailGenerator
         running: false
-        onStarted: NoonUtils.notify("Generating Thumbnails")
+        onStarted: NoonUtils.toast("Generating Thumbnails", "image")
         onExited: exitcode => {
             if (exitcode === 0)
-                NoonUtils.notify("Thumbnails Done");
+                NoonUtils.toast("Thumbnails Done","check", "success");
             thumbnailsDone();
         }
         stdout: StdioCollector {

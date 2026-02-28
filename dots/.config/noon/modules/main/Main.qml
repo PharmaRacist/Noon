@@ -15,6 +15,7 @@ import "view"
 import "screenshot"
 import "toolbar"
 import "desktop/dialogs"
+import "desktop/toasts"
 
 Scope {
     WidgetLoader {
@@ -83,6 +84,9 @@ Scope {
 
     WidgetLoader {
         Beam {}
+    }
+    WidgetLoader {
+        Toasts {}
     }
 
     NIPC {}
