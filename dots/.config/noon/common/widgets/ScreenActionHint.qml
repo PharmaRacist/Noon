@@ -13,7 +13,8 @@ StyledRect {
     property string text: "You Can Drop it Now!"
     property string icon: "keyboard_double_arrow_down"
     required property var target
-    readonly property bool isActive: target.containsDrag
+    property bool extraVisiblilityCondition: true
+    readonly property bool isActive: extraVisiblilityCondition && (target?.containsDrag ?? false)
     property real scale: 1
     CLayout {
         z: 9999

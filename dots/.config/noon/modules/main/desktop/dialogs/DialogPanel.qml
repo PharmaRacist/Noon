@@ -35,9 +35,11 @@ Scope {
                 windows: [panel]
                 active: panel.visible
             }
+
             mask: Region {
                 item: bg
             }
+
             Item {
                 anchors.fill: parent
 
@@ -57,8 +59,22 @@ Scope {
                     topRadius: 40
                     enableBorders: true
                     color: Colors.colLayer0
-                    implicitWidth: 600 // 800
-                    implicitHeight: 220 // 420
+                    implicitWidth: currentSize.width
+                    implicitHeight: currentSize.height
+
+                    readonly property size currentSize: contentMap[root.currentMode]?.size ?? Qt.size(500, 120)
+                    readonly property var contentMap: {
+                        "dlp": {
+                            comp: "DlpContent",
+                            preload: "url",
+                            size: Qt.size(800, 420)
+                        },
+                        "thawb": {
+                            comp: "ThawbContent",
+                            preload: "url",
+                            size: Qt.size(600, 220)
+                        }
+                    }
 
                     StyledRect {
                         id: topHandle
@@ -99,17 +115,7 @@ Scope {
                                 item[currentItem.preload] = GlobalStates.main.sysDialogs.pendingData;
                             item.dismiss.connect(() => panel.dismiss());
                         }
-                        readonly property var currentItem: contentMap[root.currentMode]
-                        readonly property var contentMap: {
-                            "dlp": {
-                                comp: "DlpContent",
-                                preload: "url"
-                            },
-                            "thawb": {
-                                comp: "ThawbContent",
-                                preload: "url"
-                            }
-                        }
+                        readonly property var currentItem: bg.contentMap[root.currentMode]
                     }
                 }
 
