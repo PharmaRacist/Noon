@@ -18,6 +18,9 @@ Item {
     property var suggestionQuery: ""
     property var suggestionList: []
     signal expandRequested
+    Component.onCompleted: if (messageListView.count === 0 && Ai.savedChats.length > 0) {
+        Ai.loadChat("lastSession");
+    }
     onFocusChanged: focus => {
         if (focus) {
             root.inputField.forceActiveFocus();
@@ -245,13 +248,14 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
 
         RowLayout {
             id: statusItemRowLayout
-            spacing: 0
+            spacing: 4
             Symbol {
                 text: statusItem.icon
                 iconSize: Fonts.sizes.huge
                 color: Colors.colSubtext
             }
             StyledText {
+                visible: text.length > 0
                 font.pixelSize: Fonts.sizes.small
                 text: statusItem.statusText
                 color: Colors.colSubtext
@@ -260,7 +264,7 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
         }
 
         StyledToolTip {
-            text: statusItem.description
+            content: statusItem.description
             extraVisibleCondition: false
             alternativeVisibleCondition: statusItem.containsMouse
         }

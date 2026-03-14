@@ -16,7 +16,7 @@ StyledPanel {
     property bool pinned: false
     property bool expanded: false
     property bool reveal: revealCondition
-    property bool rightMode: barPosition === "left" || barPosition === "bottom"
+    property bool rightMode: barPosition !== "right" // Default to right in horizontal Bars
     property alias selectedCategory: sidebarContent.selectedCategory
     readonly property bool show: !hoverMode
     readonly property bool revealCondition: (mouseArea.containsMouse && hoverMode) || PolkitService.flow !== null
@@ -108,23 +108,24 @@ StyledPanel {
             right: root.rightMode ? parent.right : undefined
         }
 
+        // Files Drop Area
+        DropArea {
+            id: dropArea
+            anchors.fill: parent
+            keys: ["text/uri-list"]
+            onEntered: NoonUtils.callIpc("sidebar reveal Shelf")
+        }
+
+        // Main hover Area
         MouseArea {
             id: mouseArea
-
             enabled: root.hoverMode
             z: 1000
             hoverEnabled: true
             acceptedButtons: Qt.NoButton
             anchors.fill: parent
-            // Fix
-            // DropArea {
-            //     id: dropArea
-            //     anchors.fill: parent
-            //     keys: ["text/uri-list"]
-            //      onEntered: NoonUtils.callIpc("sidebar reveal Shelf")
-            // onExited: NoonUtils.callIpc("sidebar reveal Shelf")
-            // }
         }
+
         StyledRectangularShadow {
             target: visualContainer
         }

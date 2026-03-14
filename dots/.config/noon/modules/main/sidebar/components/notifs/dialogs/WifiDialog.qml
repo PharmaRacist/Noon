@@ -16,6 +16,11 @@ BottomDialog {
         interval: 3000
         onTriggered: isScanning = false
     }
+    color: Colors.colLayer1
+    bgAnchors {
+        rightMargin: Padding.large
+        leftMargin: Padding.large
+    }
 
     contentItem: ColumnLayout {
         anchors.fill: parent

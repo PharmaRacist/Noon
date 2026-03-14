@@ -22,19 +22,6 @@ Singleton {
     readonly property list<BrightnessMonitor> monitors: Quickshell.screens.map(screen => monitorComp.createObject(root, {
             screen
         }))
-    readonly property string iconMaterial: {
-        const focused = monitors.find(m => m.screen.name === Hyprland.focusedMonitor?.name);
-        const value = Math.round(100 * (focused?.brightness ?? 1));
-
-        if (value < 25)
-            return "clear_night";
-        else if (value < 50)
-            return "partly_cloudy_day";
-        else if (value < 75)
-            return "mist";
-        else
-            return "sunny";
-    }
 
     function getMonitorForScreen(screen: ShellScreen): var {
         return monitors.find(m => m.screen === screen);

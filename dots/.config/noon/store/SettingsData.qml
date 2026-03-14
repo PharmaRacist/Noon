@@ -305,14 +305,6 @@ Singleton {
                             "type": "text"
                         },
                         {
-                            "icon": "format_line_spacing",
-                            "name": "Letter Spacing",
-                            "key": "desktop.clock.spacingMultiplier",
-                            "type": "slider",
-                            "sliderMinValue": 0,
-                            "sliderMaxValue": 1
-                        },
-                        {
                             "icon": "reorder",
                             "name": "Vertical Mode",
                             "key": "desktop.clock.verticalMode"

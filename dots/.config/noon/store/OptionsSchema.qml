@@ -352,12 +352,8 @@ JsonAdapter {
 
         clock: JsonObject {
             property bool enabled: false
-            property real x: 0
-            property real y: 0
             property real scale: 1
             property real spacingMultiplier: 0.3
-
-            property bool editMode: false
             property bool verticalMode: false
             property string font: "Badeen Display"
         }

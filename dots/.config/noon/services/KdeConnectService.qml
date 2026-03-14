@@ -1,5 +1,6 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
+
 import Quickshell
 import qs.common
 import qs.common.utils
@@ -8,107 +9,127 @@ import QtQuick
 Singleton {
     id: root
 
+    enum State {
+        Unreachable,
+        Reachable,
+        Paired
+    }
+
     property var devices: []
-    property var availableDevices: []
-    property string selectedDeviceId: ""
     property bool isRefreshing: false
     property bool daemonRunning: false
 
-    signal devicesUpdated
-    signal devicePaired(string deviceId, string deviceName)
-    signal deviceUnpaired(string deviceId)
+    readonly property string selectedDeviceId: Mem.states.services?.kdeconnect?.selectedDeviceId
+
     signal error(string message)
 
     FilePicker {
         id: filePicker
         title: "Select file to share via KDE Connect"
         multipleSelection: true
-        fileFilters: [filePicker.filterPresets.ALL, filePicker.filterPresets.IMAGES, 
-                     filePicker.filterPresets.DOCUMENTS, filePicker.filterPresets.VIDEOS, 
-                     filePicker.filterPresets.AUDIO]
+        fileFilters: [filePicker.filterPresets.ALL]
 
         onFileSelected: files => {
-            if (!selectedDeviceId) {
-                error("No device selected");
+            if (!root.selectedDeviceId) {
+                root.error("No device selected");
                 return;
             }
+            const arr = Array.isArray(files) ? files : [files];
+            arr.forEach(f => root._run(["--device", root.selectedDeviceId, "--share", f]));
+        }
+        onError: msg => root.error(msg)
+    }
 
-            const fileArray = Array.isArray(files) ? files : [files];
-            fileArray.forEach(file => executeCommand(["--device", selectedDeviceId, "--share", file]));
+    property var _queue: []
+    property var _current: null
+
+    function _run(args, onSuccess, onFailure) {
+        _queue.push({
+            args,
+            onSuccess: onSuccess ?? null,
+            onFailure: onFailure ?? null
+        });
+        if (!_proc.running)
+            _next();
+    }
+
+    function _next() {
+        if (_queue.length === 0)
+            return;
+        _current = _queue.shift();
+        _proc._out = "";
+        _proc._err = "";
+        _proc.command = ["kdeconnect-cli"].concat(_current.args);
+        _proc.running = true;
+    }
+
+    function _parseDevices(output) {
+        if (!output?.trim())
+            return [];
+        return output.split('\n').filter(l => l.startsWith('- ')).map(l => {
+            const m = l.match(/^-\s+(.+):\s+([a-f0-9]+)\s+\((.+)\)$/);
+            if (!m)
+                return null;
+            const s = m[3];
+            const state = s.includes("paired and reachable") ? KdeConnectService.State.Paired : s.includes("reachable") ? KdeConnectService.State.Reachable : KdeConnectService.State.Unreachable;
+            return {
+                id: m[2],
+                name: m[1],
+                state
+            };
+        }).filter(Boolean);
+    }
+
+    Process {
+        id: _proc
+
+        property string _out: ""
+        property string _err: ""
+
+        running: false
+
+        stdout: SplitParser {
+            onRead: line => _proc._out += line + "\n"
+        }
+        stderr: SplitParser {
+            onRead: line => _proc._err += line + "\n"
         }
 
-        onError: message => error(message)
-    }
-
-    function saveToConfig() {
-        if (!Mem.states.services) Mem.states.services = {};
-        if (!Mem.states.services.kdeconnect) Mem.states.services.kdeconnect = {};
-        Mem.states.services.kdeconnect.selectedDeviceId = selectedDeviceId;
-    }
-
-    function loadFromConfig() {
-        const saved = Mem.states.services?.kdeconnect?.selectedDeviceId;
-        if (saved) selectedDeviceId = saved;
-    }
-
-    function executeCommand(args, onSuccess, onError) {
-        const proc = processComponent.createObject(root, {
-            commandArgs: args,
-            successCallback: onSuccess,
-            errorCallback: onError
-        });
-        proc.running = true;
-    }
-
-    function parseDeviceList(output) {
-        if (!output?.trim()) return [];
-
-        return output.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
-                const spaceIndex = line.indexOf(' ');
-                return spaceIndex === -1 
-                    ? { id: line, name: line }
-                    : { id: line.substring(0, spaceIndex), name: line.substring(spaceIndex + 1).trim() };
-            });
-    }
-
-    function checkDaemon() {
-        executeCommand(["--list-devices"], 
-            () => daemonRunning = true,
-            () => daemonRunning = false
-        );
-    }
-
-    function listAllDevices() {
-        executeCommand(["--list-devices", "--id-name-only"], output => {
-            devices = parseDeviceList(output);
-            devicesUpdated();
-        });
-    }
-
-    function listAvailableDevices() {
-        if (isRefreshing) return;
-
-        isRefreshing = true;
-        executeCommand(["--list-available", "--id-name-only"], 
-            output => {
-                isRefreshing = false;
-                availableDevices = parseDeviceList(output);
-                devicesUpdated();
-            },
-            () => isRefreshing = false
-        );
+        onExited: (code, _status) => {
+            const cb = root._current;
+            root._current = null;
+            if (code === 0) {
+                cb?.onSuccess?.(_out.trim());
+            } else {
+                const msg = _err.trim();
+                cb?.onFailure?.(msg);
+                if (msg)
+                    root.error(msg);
+            }
+            root._next();
+        }
     }
 
     function refresh() {
-        if (isRefreshing) return;
-        
-        checkDaemon();
-        executeCommand(["--refresh"], () => {
-            listAllDevices();
-            listAvailableDevices();
+        if (isRefreshing)
+            return;
+        isRefreshing = true;
+        _run(["-l"], out => {
+            isRefreshing = false;
+            daemonRunning = true;
+            devices = _parseDevices(out);
+        }, () => {
+            isRefreshing = false;
+            daemonRunning = false;
         });
+    }
+
+    function getDevice(deviceId) {
+        return devices.find(d => d.id === deviceId) ?? null;
+    }
+
+    function selectDevice(deviceId) {
+        Mem.states.services.kdeconnect.selectedDeviceId = deviceId;
     }
 
     function pairDevice(deviceId) {
@@ -116,10 +137,7 @@ Singleton {
             error("Device ID is required");
             return;
         }
-        executeCommand(["--device", deviceId, "--pair"], () => {
-            devicePaired(deviceId, getDeviceName(deviceId));
-            refresh();
-        });
+        _run(["--device", deviceId, "--pair"], () => refresh());
     }
 
     function unpairDevice(deviceId) {
@@ -127,154 +145,38 @@ Singleton {
             error("Device ID is required");
             return;
         }
-        executeCommand(["--device", deviceId, "--unpair"], () => {
-            deviceUnpaired(deviceId);
-            refresh();
-        });
+        _run(["--device", deviceId, "--unpair"], () => refresh());
     }
 
-    function ringDevice(deviceId = selectedDeviceId) {
-        if (!deviceId) {
+    function ringDevice(deviceId) {
+        const id = deviceId ?? selectedDeviceId;
+        if (!id) {
             error("No device selected");
             return;
         }
-        executeCommand(["--device", deviceId, "--ring"]);
+        _run(["--device", id, "--ring"]);
     }
 
-    function pingDevice(message = "", deviceId = selectedDeviceId) {
-        if (!deviceId) {
+    function shareFile(path, deviceId) {
+        const id = deviceId ?? selectedDeviceId;
+        if (!id) {
             error("No device selected");
             return;
         }
-
-        const args = ["--device", deviceId, message ? "--ping-msg" : "--ping"];
-        if (message) args.push(message);
-        executeCommand(args);
-    }
-
-    function shareFile(path = "", deviceId = selectedDeviceId) {
-        if (!deviceId) {
-            error("No device selected");
-            return;
-        }
-
         if (!path) {
             filePicker.open();
         } else {
-            executeCommand(["--device", deviceId, "--share", path]);
-            NoonUtils.toast("Sharing..","share");
+            _run(["--device", id, "--share", path]);
+            NoonUtils.toast("Sharing..", "share");
         }
     }
 
-    function shareText(text, deviceId = selectedDeviceId) {
-        if (!deviceId || !text) {
-            error("Device ID and text required");
-            return;
-        }
-        executeCommand(["--device", deviceId, "--share-text", text]);
-    }
-
-    function sendClipboard(deviceId = selectedDeviceId) {
-        if (!deviceId) {
+    function sendClipboard(deviceId) {
+        const id = deviceId ?? selectedDeviceId;
+        if (!id) {
             error("No device selected");
             return;
         }
-        executeCommand(["--device", deviceId, "--send-clipboard"]);
-    }
-
-    function lockDevice(deviceId = selectedDeviceId) {
-        if (!deviceId) {
-            error("No device selected");
-            return;
-        }
-        executeCommand(["--device", deviceId, "--lock"]);
-    }
-
-    function sendSMS(phoneNumber, message, attachments = [], deviceId = selectedDeviceId) {
-        if (!deviceId || !phoneNumber || !message) {
-            error("Device ID, phone number, and message required");
-            return;
-        }
-
-        const args = ["--device", deviceId, "--send-sms", message, "--destination", phoneNumber];
-        attachments.forEach(attachment => {
-            args.push("--attachment", attachment);
-        });
-
-        executeCommand(args);
-    }
-
-    function getEncryptionInfo(deviceId = selectedDeviceId) {
-        if (!deviceId) {
-            error("No device selected");
-            return;
-        }
-        executeCommand(["--device", deviceId, "--encryption-info"]);
-    }
-
-    function getDeviceName(deviceId) {
-        const device = availableDevices.find(d => d.id === deviceId) 
-                    || devices.find(d => d.id === deviceId);
-        return device?.name || deviceId;
-    }
-
-    function getFirstAvailableDevice() {
-        return availableDevices[0] || null;
-    }
-
-    function isDeviceAvailable(deviceId) {
-        return availableDevices.some(d => d.id === deviceId);
-    }
-
-    function selectDevice(deviceId) {
-        selectedDeviceId = deviceId;
-        saveToConfig();
-    }
-
-    function togglePower(deviceId = selectedDeviceId) {
-        if (!deviceId) {
-            error("No device selected");
-            return;
-        }
-        executeCommand(["--device", deviceId, "--toggle-connectivity"]);
-    }
-
-    Component.onCompleted: {
-        loadFromConfig();
-        checkDaemon();
-        refresh();
-    }
-
-    Component {
-        id: processComponent
-
-        Process {
-            property var commandArgs: []
-            property var successCallback: null
-            property var errorCallback: null
-            property string outputBuffer: ""
-            property string errorBuffer: ""
-
-            command: ["kdeconnect-cli"].concat(commandArgs)
-            running: false
-
-            stdout: SplitParser {
-                onRead: line => outputBuffer += line + "\n"
-            }
-
-            stderr: SplitParser {
-                onRead: line => errorBuffer += line + "\n"
-            }
-
-            onExited: (exitCode, exitStatus) => {
-                if (exitCode === 0 && successCallback) {
-                    successCallback(outputBuffer.trim());
-                } else if (exitCode !== 0) {
-                    const err = errorBuffer.trim();
-                    if (errorCallback) errorCallback(err);
-                    if (err) error(err);
-                }
-            }
-        }
+        _run(["--device", id, "--send-clipboard"]);
     }
 }

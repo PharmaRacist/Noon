@@ -36,6 +36,11 @@ StyledPanel {
         item: bg
     }
 
+    // Screen Download Hint
+    ScreenActionHint {
+        target: dropArea
+    }
+
     // Auto-hide timer
     Timer {
         id: idleTimer
@@ -94,7 +99,7 @@ StyledPanel {
         propagateComposedEvents: true
         scrollGestureEnabled: true
         acceptedButtons: Qt.NoButton
-        onWheel: function (wheel) {
+        onWheel: wheel => {
             if (!root.scrollReveal)
                 return;
 
@@ -112,6 +117,7 @@ StyledPanel {
 
             wheel.accepted = true;
         }
+
         DropArea {
             id: dropArea
             anchors.fill: parent
@@ -123,16 +129,20 @@ StyledPanel {
             }
         }
 
-        ScreenActionHint {
-            target: dropArea
-        }
+        opacity: anchors.bottomMargin > _hidden_offset ? 1 : 0
+        anchors.bottomMargin: root.reveal && !GlobalStates.main.showOsdValues ? 0 : _hidden_offset
 
-        anchors {
-            bottomMargin: root.reveal && !GlobalStates.main.showOsdValues ? 0 : _hidden_offset
-            Behavior on bottomMargin {
-                Anim {}
+        Behavior on opacity {
+            Anim {
+                duration: Animations.durations.normal
+                easing.bezierCurve: Animations.curves.standardAccel
             }
         }
+
+        Behavior on anchors.bottomMargin {
+            Anim {}
+        }
+
         Item {
             id: container
             z: 999
@@ -160,7 +170,6 @@ StyledPanel {
                 }
 
                 radius: root.mainRounding
-                enableBorders: true
                 color: Colors.colLayer0
 
                 implicitHeight: Sizes.beamSize.height

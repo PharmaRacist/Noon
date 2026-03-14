@@ -9,6 +9,12 @@ BottomDialog {
     id: root
     collapsedHeight: 450
     enableStagedReveal: false
+    color: Colors.colLayer1
+    bgAnchors {
+        rightMargin: Padding.large
+        leftMargin: Padding.large
+    }
+
     property var cmd: []
     property var properties: [
         {

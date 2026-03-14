@@ -1,13 +1,10 @@
-import Qt5Compat.GraphicalEffects
-import QtQuick.Effects
-import QtQuick.Controls
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
-import Quickshell.Widgets
 import qs.common
+import qs.common.utils
 import qs.common.widgets
 import qs.common.functions
 import qs.services
@@ -17,15 +14,14 @@ Scope {
     id: background
 
     Variants {
-        model: Quickshell.screens
+        model: MonitorsInfo.all
 
         StyledPanel {
             id: backgroundPanel
-            property ShellScreen modelData
+            required property var modelData
             screen: modelData
             name: "bg"
             WlrLayershell.layer: WlrLayer.Background
-            WlrLayershell.exclusionMode: ExclusionMode.Ignore
             color: Colors.colLayer0
 
             // Properties

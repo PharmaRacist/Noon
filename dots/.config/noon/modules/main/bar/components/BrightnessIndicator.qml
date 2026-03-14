@@ -11,7 +11,7 @@ BarProgressIndicator {
     property var focusedScreen: MonitorsInfo.focused
     property var brightnessMonitor: BrightnessService.getMonitorForScreen(focusedScreen)
     value: brightnessMonitor.brightness
-    icon: BrightnessService.iconMaterial
+    icon: "sunny"
 
     Connections {
         target: BrightnessService

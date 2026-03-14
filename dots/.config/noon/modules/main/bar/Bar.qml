@@ -1,8 +1,4 @@
 import QtQuick
-import Quickshell
-import Quickshell.Wayland
-import Quickshell.Widgets
-import qs.store
 import qs.common
 import qs.common.widgets
 import qs.common.utils

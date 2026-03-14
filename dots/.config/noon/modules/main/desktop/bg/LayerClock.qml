@@ -5,78 +5,96 @@ import qs.common
 import qs.common.widgets
 import qs.services
 
-Item {
-    id: clockContainer
+Rectangle {
+    id: root
 
-    property string font: Mem.options.desktop.clock.font
-    property var weatherData: WeatherService.weatherData
-    property bool arabicDayMode: true
-
-    z: 1
-    x: screen.width * Mem.options.desktop.clock.x
-    y: screen.height * Mem.options.desktop.clock.y
-
-    PersistentProperties {
-        id: states
-
-        property bool editMode: false
-
-        reloadableId: "depthClock"
+    property bool editMode: false
+    readonly property string font: opts.font
+    readonly property var weatherData: WeatherService.weatherData
+    readonly property bool arabicDayMode: states.arabicMode
+    readonly property var states: Mem.states.desktop.clock
+    readonly property var opts: Mem.options.desktop.clock
+    readonly property real fontVOffset: activeFontInfo.offset ?? 1
+    readonly property var activeFontInfo: fontPropsMap[font]
+    readonly property var fontPropsMap: {
+        "Badeen Display": {
+            offset: 0.58
+        },
+        "Ndot 55": {
+            offset: 0.8
+        },
+        "Six Caps": {
+            offset: 0.8
+        },
+        "Alfa Slab One": {
+            offset: 0.8
+        },
+        "Notable": {
+            offset: 0.6
+        },
+        "Monoton": {
+            offset: 0.8,
+            weight: 100
+        },
+        "Titan One": {
+            offset: 0.8
+        },
+        "Bebas Neue": {
+            offset: 0.8
+        },
+        "Rubik": {
+            offset: 0.8,
+            weight: 900
+        },
+        "UnifrakturCook": {
+            offset: 0.8
+        }
     }
+    z: 1
+    x: Screen.width * states.x
+    y: Screen.height * states.y
+    color: "transparent"
+    implicitHeight: clockItem.implicitHeight * 1.25
+    implicitWidth: clockItem.implicitWidth * 1.25
+    border.color: clockText.color
+    border.width: editMode ? 2 : 0
+    radius: Rounding.silly
 
     MouseArea {
         anchors.fill: clockItem
-        enabled: true
-        drag.target: states.editMode ? clockContainer : null
+        drag.target: root
         drag.axis: Drag.XAndYAxis
         drag.minimumX: 0
-        drag.maximumX: screen.width - clockItem.width
+        drag.maximumX: Screen.width - root.width
         drag.minimumY: 0
-        drag.maximumY: screen.height - clockItem.height
+        drag.maximumY: Screen.height - root.height
         onPositionChanged: {
-            if (drag.active) {
-                Mem.options.desktop.clock.x = clockContainer.x / screen.width;
-                Mem.options.desktop.clock.y = clockContainer.y / screen.height;
-            }
+            Mem.states.desktop.clock.x = root.x / Screen.width;
+            Mem.states.desktop.clock.y = root.y / Screen.height;
         }
-        onDoubleClicked: Mem.options.desktop.clock.states.editMode = !states.editMode
-        cursorShape: states.editMode ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onDoubleClicked: root.editMode = !root.editMode
+        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         hoverEnabled: true
-    }
-
-    Rectangle {
-        anchors.fill: clockItem
-        anchors.margins: -5
-        border.color: clockText.color
-        border.width: 2
-        color: "transparent"
-        radius: 120 * Mem.options.desktop.clock.scale
-        visible: states.editMode
     }
 
     ColumnLayout {
         id: clockItem
-
-        width: screen.width * Mem.options.desktop.clock.scale
-        height: implicitHeight
-        spacing: Mem.options.desktop.clock.spacingMultiplier * 100
+        anchors.centerIn: parent
+        spacing: 0
 
         RowLayout {
-            Layout.maximumHeight: clockText.font.pixelSize / 7.5
+            Layout.maximumHeight: dateText.contentHeight * fontVOffset
             Layout.fillWidth: true
-            Layout.alignment: arabicDayMode ? Qt.AlignLeft : Qt.AlignHCenter
-            opacity: 0.6
-            spacing: clockText.font.pixelSize * 0.01
-
+            Layout.alignment: Qt.AlignHCenter
+            spacing: Padding.massive * opts.scale
+            opacity: 0.8
             StyledText {
                 id: dateText
-
-                Layout.leftMargin: 125 * Mem.options.desktop.clock.scale
                 text: arabicDayMode ? `${DateTimeService.hour}:${DateTimeService.minute}` : DateTimeService.date
-                font.weight: 600
-                font.pixelSize: clockText.font.pixelSize / 4
-                font.family: clockContainer.font
-                color: clockText.color
+                font.weight: root.activeFontInfo.weight ?? 700
+                font.pixelSize: 100 * opts.scale
+                font.family: root.font
+                color: Colors.colSubtext
             }
 
             RowLayout {
@@ -91,39 +109,26 @@ Item {
                     text: weatherData.currentTemp
                     font.pixelSize: dateText.font.pixelSize
                     font.family: dateText.font.family
-                    font.weight: 600
+                    font.weight: root.activeFontInfo.weight ?? 700
                     color: dateText.color
                 }
-
             }
-
         }
 
         StyledText {
             id: clockText
 
-            Layout.maximumHeight: font.pixelSize / 1.75
+            Layout.maximumHeight: contentHeight * fontVOffset
             Layout.alignment: Qt.AlignHCenter
-            font.family: clockContainer.font
-            font.weight: 700
-            font.pixelSize: clockItem.width / 4
+            font.family: root.font
+            font.weight: root.activeFontInfo.weight ?? 700
+            font.pixelSize: 400 * opts.scale
             color: Colors.colOnBackground
             text: arabicDayMode ? DateTimeService.arabicDayName : `${DateTimeService.hour}:${DateTimeService.minute}`
 
             Behavior on color {
-                CAnim {
-                }
-
+                CAnim {}
             }
-
         }
-
-        Behavior on spacing {
-            Anim {
-            }
-
-        }
-
     }
-
 }

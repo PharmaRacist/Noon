@@ -9,9 +9,16 @@ BottomDialog {
     id: root
     collapsedHeight: 400
     enableStagedReveal: false
-    contentItem:CLayout {
+    color: Colors.colLayer1
+
+    bgAnchors {
+        rightMargin: Padding.large
+        leftMargin: Padding.large
+    }
+
+    contentItem: CLayout {
         anchors.fill: parent
-        anchors.margins: Padding.massive
+        anchors.margins: Padding.large
 
         BottomDialogHeader {
             title: "Kb Backlight"
@@ -24,15 +31,16 @@ BottomDialog {
         StyledListView {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.margins: Padding.large
             model: Mem.store.services.backlight.devices
             Component.onCompleted: Mem.store.services.backlight.devices.length === 0 ? BacklightService.refreshDevices() : null
             delegate: StyledDelegateItem {
-                title:modelData.name
+                title: modelData.name
                 subtext: "Current: " + modelData.current + " / Max: " + modelData.max
                 materialIcon: "backlight_high"
-                releaseAction: ()=> {
-                    Mem.options.services.backlightDevice = modelData.name
-                    root.show = false
+                releaseAction: () => {
+                    Mem.options.services.backlightDevice = modelData.name;
+                    root.show = false;
                 }
             }
         }

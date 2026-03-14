@@ -21,10 +21,9 @@ BottomDialog {
     }
     z: 9999
     bottomAreaReveal: true
-    hoverHeight: 180
+    hoverHeight: 320
     color: Colors.colLayer1
     collapsedHeight: 165
-    clip: true
     enableStagedReveal: false
     bgAnchors {
         rightMargin: Padding.large

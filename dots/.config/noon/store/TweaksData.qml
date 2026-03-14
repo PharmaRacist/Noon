@@ -157,6 +157,11 @@ Singleton {
                     "key": "desktop.clock.enabled"
                 },
                 {
+                    "icon": "brand_family",
+                    "name": "Arabic Mode",
+                    "key": "desktop.clock.arabicMode"
+                },
+                {
                     "icon": "timer",
                     "name": "Center Clock",
                     "state": true,
@@ -189,14 +194,6 @@ Singleton {
                     "sliderMinValue": 0,
                     "sliderValue": 10,
                     "sliderMaxValue": 800
-                },
-                {
-                    "icon": "schedule",
-                    "name": "Clock Spacing",
-                    "key": "desktop.clock.spacingMultiplier",
-                    "type": "slider",
-                    "sliderMinValue": -1,
-                    "sliderMaxValue": 1
                 },
                 {
                     "icon": "height",

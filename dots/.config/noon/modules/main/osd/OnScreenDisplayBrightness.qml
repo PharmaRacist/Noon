@@ -70,7 +70,7 @@ Scope {
         active: showOsdValues && GlobalStates.main.canNotify
 
         value: root.brightnessMonitor?.brightness ?? 50
-        icon: BrightnessService.iconMaterial
+        icon: "sunny"
         targetScreen: root.focusedScreen
 
         onInteractionStarted: {

@@ -12,7 +12,7 @@ Singleton {
     id: root
     property Component aiModelComponent: Ai.aiModelComponent
     property Component aiMessageComponent: Ai.aiMessageComponent
-    readonly property string keys_prompt : "
+    readonly property string keys_prompt: "
         ## ignore and don't answer when irrelevant or empty or have no idea
         U have both read and set access to users
         distro {DISTRO}

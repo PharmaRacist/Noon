@@ -45,7 +45,11 @@ JsonAdapter {
             }
         }
         clock: JsonObject {
-            property bool center
+            property real x: 0
+            property real y: 0
+            property bool arabicMode: false
+            property bool editMode: false
+            property bool center: false
             property real scale: 1
         }
     }
@@ -91,10 +95,7 @@ JsonAdapter {
             property list<var> modes
         }
         kdeconnect: JsonObject {
-            property list<var> devices: []
-            property list<var> availableDevices: []
             property string selectedDeviceId: ""
-            property string myDeviceId: ""
         }
         nightLight: JsonObject {
             property bool enabled: false

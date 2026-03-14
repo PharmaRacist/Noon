@@ -53,18 +53,6 @@ StyledRect {
                 interval: 200
                 onTriggered: root.searchText = search.searchText
             }
-            RippleButtonWithIcon {
-                anchors {
-                    right: parent.right
-                    rightMargin: Padding.large
-                    verticalCenter: parent.verticalCenter
-                }
-                enabled: !BeatsService._building
-                materialIcon: "restart_alt"
-                implicitSize: 30
-                colBackground: "transparent"
-                releaseAction: () => BeatsService.rebuildMetadata()
-            }
         }
 
         StyledListView {

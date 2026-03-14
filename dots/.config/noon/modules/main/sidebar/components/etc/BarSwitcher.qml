@@ -52,16 +52,20 @@ StyledRect {
         model: barModel
 
         delegate: StyledDelegateItem {
+            id: delegated
             width: listView.width
             required property var modelData
             required property int index
-
             title: modelData.name
             subtext: modelData.type
             materialIcon: modelData.icon
             toggled: listView.currentIndex === index
             highlighted: modelData.isActive
 
+            Preview {
+                extraVisibleCondition: parent.hovered
+                itemData: modelData
+            }
             releaseAction: () => {
                 root.dismiss();
                 // Set layout and adjust position if needed
@@ -99,6 +103,28 @@ StyledRect {
                 return;
             }
             event.accepted = true;
+        }
+    }
+    component Preview: StyledToolTip {
+        required property var itemData
+
+        contentItem: Item {
+            implicitWidth: image.implicitWidth
+            implicitHeight: image.implicitHeight
+
+            CroppedImage {
+                id: image
+                anchors.fill: parent
+
+                source: Qt.resolvedUrl(Directories.shellDir + "/modules/main/bar/previews/" + itemData.layoutName)
+                sourceSize: itemData.isVertical ? Qt.size(0, 700) : Qt.size(700, 0)
+                fillMode: Image.PreserveAspectFit
+                clip: true
+                antialiasing: true
+                mipmap: true
+                radius: Rounding.verylarge
+                asynchronous: true
+            }
         }
     }
 }

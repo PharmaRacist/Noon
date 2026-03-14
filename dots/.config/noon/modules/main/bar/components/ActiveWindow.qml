@@ -24,15 +24,18 @@ MouseArea {
             truncate: true
             text: MonitorsInfo.topLevel.appId ?? qsTr("Desktop")
             animateChange: true
+            horizontalAlignment: Text.AlignLeft
         }
 
         StyledText {
-            Layout.preferredWidth: root.width
+            Layout.maximumWidth: 350
+            Layout.fillWidth: true
             font.pixelSize: Math.round(appId.font.pixelSize * 1.3)
             color: Colors.colOnLayer0
             truncate: true
             text: MonitorsInfo.topLevel.title ?? `${qsTr("Workspace")} ${monitor.activeWorkspace?.id}`
             animateChange: true
+            horizontalAlignment: Text.AlignLeft
         }
     }
     WorkspacePopup {

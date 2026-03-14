@@ -9,6 +9,11 @@ BottomDialog {
     id: root
 
     collapsedHeight: 420
+    color: Colors.colLayer1
+    bgAnchors {
+        rightMargin: Padding.large
+        leftMargin: Padding.large
+    }
 
     contentItem: ColumnLayout {
         anchors.fill: parent

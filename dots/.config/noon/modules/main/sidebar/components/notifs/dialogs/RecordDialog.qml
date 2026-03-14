@@ -10,10 +10,14 @@ BottomDialog {
     readonly property bool isRecording: RecordingService.isRecording
     collapsedHeight: isRecording ? 150 : 450
     color: Colors.colLayer1
+    bgAnchors {
+        rightMargin: Padding.large
+        leftMargin: Padding.large
+    }
 
     contentItem: CLayout {
         anchors.fill: parent
-        anchors.margins: Padding.massive
+        anchors.margins: Padding.large
 
         BottomDialogHeader {
             title: root.isRecording ? "Recording Now" : "Screen Recording"
@@ -37,6 +41,8 @@ BottomDialog {
             visible: !root.isRecording
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.margins: Padding.huge
+
             OptionsSection {
                 title: "Region"
                 content: ["Screen", "Region", "Window"]
