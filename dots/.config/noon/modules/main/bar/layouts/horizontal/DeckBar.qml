@@ -156,6 +156,26 @@ StyledPanel {
                             anchors.top: pos === "bottom" ? undefined : bg.bottom
                             anchors.bottom: pos === "bottom" ? bg.top : undefined
                         }
+                    },
+                    State {
+                        name: "dockedConvex"
+                        when: mode === 3
+                        PropertyChanges {
+                            target: bg
+                            anchors.margins: 0
+                            radius: 0
+                            enableBorders: false
+                            bottomRadius: pos === "bottom" ? 0 : Rounding.verylarge
+                            topRadius: pos === "bottom" ? Rounding.verylarge : 0
+                        }
+                        PropertyChanges {
+                            target: c1
+                            visible: false
+                        }
+                        PropertyChanges {
+                            target: c2
+                            visible: false
+                        }
                     }
                 ]
 

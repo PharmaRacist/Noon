@@ -1,23 +1,15 @@
 import qs.services
 import qs.common
-import qs.common.functions
 import qs.common.widgets
 
-import Qt5Compat.GraphicalEffects
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Hyprland
 import Quickshell.Wayland
 
 Item {
     id: root
-
-    property Item lastHoveredButton
-    property bool buttonHovered: false
     Layout.fillHeight: true
     implicitWidth: listView.implicitWidth
     StyledListView {
@@ -80,128 +72,111 @@ Item {
             }
         }
 
-        delegate: RippleButton {
-            id: root
-            implicitWidth: implicitHeight - topInset - bottomInset
-            buttonRadius: Rounding.normal
-            topInset: Sizes.hyprland.gapsOut - 15
-            bottomInset: Sizes.hyprland.gapsOut - 15
-            property var appToplevel
-            property var appListRoot
-            property int lastFocused: -1
-            property real iconSize: 30
-            property real countDotWidth: 10
-            property real countDotHeight: 1
-            property bool appIsActive: appToplevel.toplevels.find(t => (t.activated == true)) !== undefined
-
-            property bool isSeparator: appToplevel.appId === "SEPARATOR"
-            property bool isVerticalMode: appToplevel.appId === "VERTICALSEPARATOR"
-            property var desktopEntry: DesktopEntries.byId(appToplevel.appId)
-            enabled: !isSeparator
-            width: isSeparator ? 1 : 40 // - topInset - bottomInset
-            height: 40
-
-            Loader {
-                active: isSeparator
-                sourceComponent: isVerticalMode ? horizontalSeparator : separator
-                Component {
-                    id: horizontalSeparator
-                    Separator {
-                        anchors {
-                            fill: parent
-                            right: parent.right
-                            left: parent.left
-                        }
-                    }
-                }
-                Component {
-                    id: separator
-                    VerticalSeparator {
-                        anchors {
-                            top: parent.top
-                            bottom: parent.bottom
-                            topMargin: 8
-                            bottomMargin: 8
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                }
-            }
-
-            Loader {
-                active: appToplevel.toplevels.length > 0
-                sourceComponent: MouseArea {
-                    id: mouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    acceptedButtons: Qt.NoButton
-                    onEntered: {
-                        appListRoot.lastHoveredButton = root;
-                        appListRoot.buttonHovered = true;
-                        lastFocused = appToplevel.toplevels.length - 1;
-                    }
-                    onExited: {
-                        if (appListRoot.lastHoveredButton === root) {
-                            appListRoot.buttonHovered = false;
-                        }
-                    }
-                }
-            }
-
-            onClicked: {
-                if (appToplevel.toplevels.length === 0) {
-                    root.desktopEntry?.execute();
-                    return;
-                }
-                lastFocused = (lastFocused + 1) % appToplevel.toplevels.length;
-                appToplevel.toplevels[lastFocused].activate();
-            }
-
-            middleClickAction: () => {
-                root.desktopEntry?.execute();
-            }
-
-            contentItem: Loader {
-                active: !isSeparator
-                sourceComponent: Item {
-
-                    Loader {
-                        id: iconImageLoader
-                        anchors {
-                            centerIn: parent
-                        }
-                        active: !root.isSeparator
-                        sourceComponent: IconImage {
-                            source: NoonUtils.iconPath(AppSearch.guessIcon(appToplevel.appId))
-                            implicitSize: root.iconSize
-                        }
-                    }
-
-                    RowLayout {
-                        spacing: 3
-                        anchors {
-                            top: iconImageLoader.bottom
-                            topMargin: 2
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                        Repeater {
-                            model: Math.min(appToplevel.toplevels.length, 3)
-                            delegate: Rectangle {
-                                required property int index
-                                radius: Rounding.full
-                                implicitWidth: (appToplevel.toplevels.length <= 3) ? root.countDotWidth : root.countDotHeight // Circles when too many
-                                implicitHeight: root.countDotHeight
-                                color: appIsActive ? Colors.colPrimary : ColorUtils.transparentize(Colors.colOnLayer0, 0.4)
-                            }
-                        }
-                    }
-                }
-            }
-
-            anchors.verticalCenter: parent.verticalCenter
+        delegate: StyledLoader {
             required property var modelData
-            appToplevel: modelData
-            appListRoot: root
+            required property var index
+            sourceComponent: {
+                switch (modelData) {
+                case "SEPARATOR":
+                    return separatorComp;
+                    break;
+                case "VERTICALSEPARATOR":
+                    return verticalSeparatorComp;
+                    break;
+                default:
+                    return appComp;
+                }
+            }
+            onLoaded: {
+                if ("appToplevel" in _item) {
+                    _item.appToplevel = Qt.binding(() => modelData);
+                }
+            }
+        }
+    }
+    readonly property Component verticalSeparatorComp: VerticalSeparator {
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            margins: 8
+            horizontalCenter: parent.horizontalCenter
+        }
+    }
+
+    readonly property Component separatorComp: Separator {
+        anchors {
+            margins: 8
+            verticalCenter: parent.verticalCenter
+            right: parent.right
+            left: parent.left
+        }
+    }
+
+    readonly property Component appComp: RippleButton {
+        id: root
+
+        property var appToplevel
+        colBackground: appIsActive ? colBackgroundHover : "transparent"
+        anchors.verticalCenter: parent.verticalCenter
+        implicitWidth: height
+        implicitHeight: 46
+        buttonRadius: Rounding.normal
+
+        property int lastFocused: -1
+        readonly property real iconSize: 30
+        readonly property bool appIsActive: appToplevel.toplevels.find(t => (t.activated == true)) !== undefined
+
+        readonly property var desktopEntry: DesktopEntries.byId(appToplevel.appId)
+
+        MouseArea {
+            id: mouseArea
+            enabled: appToplevel.toplevels.length > 0
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.NoButton
+            onEntered: lastFocused = appToplevel.toplevels.length - 1
+        }
+
+        onClicked: {
+            if (appToplevel.toplevels.length === 0) {
+                root.desktopEntry?.execute();
+                return;
+            }
+            lastFocused = (lastFocused + 1) % appToplevel.toplevels.length;
+            appToplevel.toplevels[lastFocused].activate();
+        }
+
+        middleClickAction: () => {
+            root.desktopEntry?.execute();
+        }
+
+        contentItem: Item {
+
+            IconImage {
+                id: icon
+                anchors.centerIn: parent
+                source: NoonUtils.iconPath(AppSearch.guessIcon(appToplevel.appId))
+                implicitSize: root.iconSize
+            }
+
+            RowLayout {
+                spacing: 2
+                anchors {
+                    top: icon.bottom
+                    topMargin: 4
+                    horizontalCenter: parent.horizontalCenter
+                }
+                Repeater {
+                    model: Math.min(appToplevel.toplevels.length, 3)
+                    delegate: StyledRect {
+                        required property int index
+                        radius: Rounding.full
+                        implicitWidth: (appToplevel.toplevels.length <= 3) ? (icon.width - Padding.small) / appToplevel.toplevels.length : height // Circles when too many
+                        implicitHeight: 3
+                        color: appIsActive ? Colors.colPrimary : ColorUtils.transparentize(Colors.colOnLayer0, 0.4)
+                    }
+                }
+            }
         }
     }
 }

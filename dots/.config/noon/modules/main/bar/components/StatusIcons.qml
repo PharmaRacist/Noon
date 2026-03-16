@@ -31,6 +31,11 @@ BarGroup {
             icon: BluetoothService.currentDeviceIcon,
             dialog: "Bluetooth",
             hoverItem: btPopup
+        },
+        {
+            icon: "notifications_off",
+            visible: Notifications.silent,
+            fill: 1
         }
     ]
     readonly property Component btPopup: BluetoothPopup {}
@@ -41,11 +46,8 @@ BarGroup {
         content: "Recording " + RecordingService.getFormattedDuration()
     }
 
-    Layout.fillHeight: !verticalMode
-    Layout.fillWidth: verticalMode
-    Layout.preferredWidth: !verticalMode ? grid.implicitWidth + Padding.huge : 0
-    Layout.preferredHeight: verticalMode ? grid.implicitHeight + Padding.huge : 0
-    Layout.margins: Padding.tiny
+    implicitWidth: grid.implicitWidth + Padding.huge
+    implicitHeight: grid.implicitHeight + Padding.huge
 
     GridLayout {
         id: grid
@@ -55,7 +57,6 @@ BarGroup {
         columns: verticalMode ? 1 : 4
         rowSpacing: verticalMode ? Padding.normal : 0
         columnSpacing: verticalMode ? 0 : Padding.normal
-
         Repeater {
             model: root.content.filter(item => item.visible ?? true)
 
@@ -63,17 +64,18 @@ BarGroup {
                 text: modelData.icon || ""
                 color: Colors.colSecondary
                 font.pixelSize: root.iconSize
-                fill: 0
+                fill: modelData?.fill ?? 0
                 MouseArea {
                     id: hoverArea
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
+                    onClicked: if (modelData.dialog !== null) {
                         GlobalStates.main.dialogs.current = modelData.dialog;
                         NoonUtils.callIpc("sidebar reveal Notifs");
                     }
                     StyledLoader {
+                        shown: modelData.hoverItem !== null
                         anchors.fill: parent
                         sourceComponent: modelData?.hoverItem ?? null
                         onLoaded: if (ready) {
