@@ -70,8 +70,8 @@ MouseArea {
         colorize: Mem?.options.appearance.icons.tint
         source: root.item.icon
         anchors.centerIn: parent
-        width: BarData.currentBarExclusiveSize * 0.5
-        height: BarData.currentBarExclusiveSize * 0.5
+        width: BarData.currentBarExclusiveSize / 2.5
+        height: BarData.currentBarExclusiveSize / 2.5
     }
 
     PopupToolTip {

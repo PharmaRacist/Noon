@@ -75,7 +75,16 @@ Scope {
                             size: Qt.size(600, 220)
                         }
                     }
-
+                    StyledText {
+                        visible: root.currentMode === ""
+                        anchors.top: parent.top
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.margins: Padding.massive * 2
+                        text: "Bye ..."
+                        color: Colors.colSubtext
+                        font.pixelSize: Fonts.sizes.subTitle
+                        font.variableAxes: Fonts.variableAxes.title
+                    }
                     StyledRect {
                         id: topHandle
                         z: 1
