@@ -1,9 +1,9 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import qs.common
 import qs.common.utils
-pragma Singleton
-pragma ComponentBehavior: Bound
 
 // Wrapper for the icon_theme_manager.py
 Singleton {
@@ -11,10 +11,10 @@ Singleton {
 
     // Properties
     property var availableIconThemes: Mem.store.services.icons.availableIconThemes ?? []
-    property var availableIconThemeNames: availableIconThemes.map((theme) => {
+    property var availableIconThemeNames: availableIconThemes.map(theme => {
         return theme.name;
     })
-    property var availableIconThemeIds: availableIconThemes.map((theme) => {
+    property var availableIconThemeIds: availableIconThemes.map(theme => {
         return theme.id;
     })
     property string currentQtIconTheme: Mem.states.desktop.icons.currentIconTheme
@@ -30,7 +30,7 @@ Singleton {
 
     function setIconTheme(themeId) {
         if (!themeId)
-            return ;
+            return;
 
         setThemeProcess.command = ["python3", `${Directories.scriptsDir}/icons_service.py`, "set", themeId];
         setThemeProcess.running = true;
@@ -55,12 +55,11 @@ Singleton {
     Connections {
         function onCurrentIconThemeChanged() {
             if (!root.isInitialized)
-                return ;
+                return;
 
             const newTheme = Mem.states.desktop.icons.currentIconTheme;
             if (newTheme && newTheme !== root.currentQtIconTheme && newTheme !== root.currentGtkIconTheme)
                 root.setIconTheme(newTheme);
-
         }
 
         target: Mem.states.desktop.icons
@@ -90,10 +89,8 @@ Singleton {
             onStreamFinished: {
                 if (this.text.trim())
                     console.error("IconThemeService: List error:", this.text);
-
             }
         }
-
     }
 
     // Process: Get current theme
@@ -124,10 +121,8 @@ Singleton {
             onStreamFinished: {
                 if (this.text.trim())
                     console.error("IconThemeService: Get error:", this.text);
-
             }
         }
-
     }
 
     // Process: Set icon theme
@@ -159,10 +154,7 @@ Singleton {
             onStreamFinished: {
                 if (this.text.trim())
                     console.error("IconThemeService: Set error:", this.text);
-
             }
         }
-
     }
-
 }

@@ -358,7 +358,7 @@ class WallpaperSwitcher:
 
             with Image.open(path) as im:
                 im = im.convert("L").resize((64, 64))
-                pixels = list(im.getdata())
+                pixels = list(im.get_flattened_data())
                 mean = sum(pixels) / len(pixels)
                 is_bright = mean >= 127
                 return ("light" if is_bright else "dark"), is_bright
@@ -391,7 +391,7 @@ class WallpaperSwitcher:
 
             with Image.open(path) as im:
                 im_small = im.convert("RGB").resize((100, 100))
-                pixels = list(im_small.getdata())
+                pixels = list(im_small.get_flattened_data())
 
                 saturations, hues = [], []
                 for r, g, b in pixels:

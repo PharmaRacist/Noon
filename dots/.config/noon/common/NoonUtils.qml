@@ -260,6 +260,9 @@ Singleton {
         function onExternalMonitorProfileChanged() {
             NoonUtils.setHyprKey("external_monitor_mode", conf.externalMonitorProfile);
         }
+        function onCursorThemeChanged() {
+            NoonUtils.setHyprKey("cursor_theme", conf.cursorTheme);
+        }
         function onShadowsPowerChanged() {
             NoonUtils.setHyprKey("shadows_power", conf.shadowsPower);
         }

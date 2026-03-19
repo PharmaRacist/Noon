@@ -375,6 +375,7 @@ JsonAdapter {
             property int gapsOut: 1
             property int gapsIn: 1
             property int borders: 1
+            property string cursorTheme: "Breeze"
         }
 
         behavior: JsonObject {

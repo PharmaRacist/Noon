@@ -44,6 +44,13 @@ Singleton {
                     "reloadOnChange": true,
                     "state": true,
                     "comboBoxValues": IconThemesService.availableIconThemeIds
+                },
+                {
+                    "icon": "arrow_selector_tool",
+                    "name": "Cursor Theme",
+                    "key": "desktop.hyprland.cursorTheme",
+                    "type": "combobox",
+                    "comboBoxValues": CursorsService.cursors
                 }
             ]
         },

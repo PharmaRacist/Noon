@@ -104,14 +104,15 @@ StyledRect {
         current[keys[keys.length - 1]] = value;
         valueChanged(value);
 
-        if (reloadOnChange) {
-            NoonUtils.requestDialog("assure", {
-                title: "Restart",
-                description: "For changes to take Effect",
-                acceptText: "Accept",
-                onAccepted: () => NoonUtils.execDetached(Directories.scriptsDir + "/reload_shell.sh")
-            });
-        }
+        if (!reloadOnChange)
+            return;
+
+        NoonUtils.requestDialog("assure", {
+            title: "Restart",
+            description: "For changes to take Effect",
+            acceptText: "Accept",
+            onAccepted: () => NoonUtils.execDetached(Directories.scriptsDir + "/reload_shell.sh")
+        });
     }
     Component.onCompleted: {
         let val = getConfigValue();
