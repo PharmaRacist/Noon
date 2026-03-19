@@ -110,7 +110,7 @@ RippleButton {
                     if (root.active)
                         return root.colors.colOnPrimaryContainer;
                     else
-                        return root.colors.colOnLayer2;
+                        return root.colTitle;
                 }
             }
 

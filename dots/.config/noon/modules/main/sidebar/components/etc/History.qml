@@ -161,13 +161,16 @@ StyledRect {
             StyledDelegateItem {
                 property var itemData
                 property bool selected: false
+                readonly property bool isColor: ColorUtils.isValidColor(title)
 
                 toggled: selected
                 shape: MaterialShape.Shape.Clover4Leaf
                 title: itemData.text
                 subtext: qsTr("Text")
                 materialIcon: "content_paste"
-
+                colBackground: isColor ? itemData.text : colors.colLayer2
+                colTitle: !hovered && isColor ? ColorUtils.getReadableColOn(colBackground) : colors.colOnLayer2
+                colSubtext: !hovered && isColor ? ColorUtils.colorWithLightness(colTitle, 0.2) : colors.colSubtext
                 releaseAction: () => {
                     ClipboardService.copyByIndex(itemData.index);
                     NoonUtils.playSound("event_accepted");

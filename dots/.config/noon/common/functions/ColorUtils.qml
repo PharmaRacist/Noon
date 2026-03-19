@@ -121,6 +121,27 @@ Singleton {
         var c = Qt.color(color);
         return Qt.rgba(c.r, c.g, c.b, c.a * (1 - percentage));
     }
+    /**
+     * Returns an M3-style readable text color for the given background color.
+     * Uses tinted on-colors rather than pure black/white, matching M3 spec.
+     *
+     * @param {string} bgColor - The background color (any Qt.color-compatible string).
+     * @param {number} [threshold=0.5] - Lightness threshold to switch between light/dark text.
+     * @returns {Qt.rgba} The resulting text color.
+     */
+    function getReadableColOn(bgColor, threshold = 0.5) {
+        var c = Qt.color(bgColor);
+        if (!c.valid)
+            return Qt.color("#1C1B1F");
+
+        if (c.hslLightness > threshold) {
+            // Dark text: M3 on-light is a slightly tinted near-black, not pure #000
+            return mix("#1C1B1F", bgColor, 0.92);
+        } else {
+            // Light text: M3 on-dark is a slightly tinted near-white
+            return mix("#FFFFFF", bgColor, 0.92);
+        }
+    }
 
     /**
      * Sets the alpha channel of a color.
