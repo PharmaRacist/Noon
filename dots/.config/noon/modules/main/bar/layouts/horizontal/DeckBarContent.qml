@@ -43,10 +43,10 @@ Item {
             RSLayout {
                 id: rLay
                 SysTray {
-                    visible: model.length > 0
                     bar: root.panel
                 }
                 StatusIcons {}
+                VSeparator {}
                 Clock {}
                 VSeparator {}
                 MinimalBattery {}
@@ -59,6 +59,9 @@ Item {
         implicitSize: height
         Layout.fillHeight: true
         Layout.margins: Padding.tiny
+        releaseAction: () => {
+            NoonUtils.callIpc("noon toggle_beam");
+        }
     }
 
     component WsIndicator: Item {
@@ -66,13 +69,14 @@ Item {
         Layout.preferredWidth: height
         Layout.fillHeight: true
         StyledText {
+            anchors.verticalCenterOffset: 2
             anchors.centerIn: parent
-            animateChange: true
             horizontalAlignment: Text.AlignVCenter | Text.AlignHCenter
             text: MonitorsInfo.monitorFor(bar?.screen).activeWorkspace?.id
             color: Colors.colOnLayer1
             font.weight: 900
             font.pixelSize: Fonts.sizes.normal
+            font.family: Fonts.family.monospace
         }
     }
     component Clock: StyledText {
@@ -81,6 +85,13 @@ Item {
         color: Colors.colOnLayer1
         font.variableAxes: Fonts.variableAxes.title
         font.pixelSize: Fonts.sizes.normal
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onPressed: NoonUtils.callIpc("sidebar reveal Notifs")
+        }
     }
 
     component RSLayout: RLayout {
@@ -89,6 +100,7 @@ Item {
             bottom: parent.bottom
             horizontalCenter: parent.horizontalCenter
         }
+        spacing: Padding.large
     }
 
     component GP: StyledRect {

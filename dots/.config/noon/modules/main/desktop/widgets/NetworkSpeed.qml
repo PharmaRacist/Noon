@@ -4,7 +4,7 @@ import qs.services
 import qs.common
 import qs.common.widgets
 
-IslandComponent {
+SquareComponent {
     GridLayout {
         columns: expanded ? 4 : 2
         rows: expanded ? 1 : 2
@@ -21,7 +21,6 @@ IslandComponent {
             color: Colors.m3.m3onSurfaceVariant
             text: NetworkService.uploadSpeedText
             font.pixelSize: Fonts.sizes.large
-
         }
 
         Symbol {
@@ -36,7 +35,6 @@ IslandComponent {
             color: Colors.m3.m3onSurfaceVariant
             text: NetworkService.downloadSpeedText
             font.pixelSize: Fonts.sizes.large
-
         }
     }
 }

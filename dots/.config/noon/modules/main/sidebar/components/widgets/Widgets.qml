@@ -262,7 +262,7 @@ Item {
                                     }
                                 },
                                 {
-                                    text: loader.isPill ? "Island" : "Pill",
+                                    text: loader.isPill ? "Square" : "Pill",
                                     materialIcon: loader.isPill ? "capture" : "pill",
                                     action: () => {
                                         let list = Mem.states.sidebar.widgets.pilled;

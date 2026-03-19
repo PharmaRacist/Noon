@@ -1,6 +1,7 @@
 import qs.services
 import qs.common
 import qs.common.widgets
+import qs.common.functions
 
 import QtQuick
 import QtQuick.Layouts
@@ -126,7 +127,7 @@ Item {
         readonly property real iconSize: 30
         readonly property bool appIsActive: appToplevel.toplevels.find(t => (t.activated == true)) !== undefined
 
-        readonly property var desktopEntry: DesktopEntries.byId(appToplevel.appId)
+        readonly property var desktopEntry: DesktopEntries?.byId(appToplevel.appId)
 
         MouseArea {
             id: mouseArea
@@ -136,14 +137,18 @@ Item {
             acceptedButtons: Qt.NoButton
             onEntered: lastFocused = appToplevel.toplevels.length - 1
         }
-
+        StyledToolTip {
+            content: root?.desktopEntry?.name ?? ""
+            extraVisibleCondition: parent.hovered && content !== ""
+        }
         onClicked: {
-            if (appToplevel.toplevels.length === 0) {
-                root.desktopEntry?.execute();
+            if (appToplevel.toplevels.find(item => item.id === appToplevel.toplevels[lastFocused].id)) {
+                appToplevel.toplevels[lastFocused].activate();
                 return;
+            } else {
+                root.desktopEntry?.execute();
+                lastFocused = (lastFocused + 1) % appToplevel.toplevels.length;
             }
-            lastFocused = (lastFocused + 1) % appToplevel.toplevels.length;
-            appToplevel.toplevels[lastFocused].activate();
         }
 
         middleClickAction: () => {

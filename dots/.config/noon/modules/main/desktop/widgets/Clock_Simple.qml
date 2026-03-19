@@ -4,7 +4,7 @@ import qs.services
 import qs.common
 import qs.common.widgets
 
-IslandComponent {
+SquareComponent {
     expanded: true
     StyledText {
         anchors.centerIn: parent

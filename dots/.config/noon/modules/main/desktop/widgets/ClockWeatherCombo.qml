@@ -5,7 +5,7 @@ import qs.services
 import qs.common
 import qs.common.widgets
 
-IslandComponent {
+SquareComponent {
     id: root
     SwipeView {
         id: view

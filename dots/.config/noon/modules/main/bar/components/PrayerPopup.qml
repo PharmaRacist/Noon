@@ -10,7 +10,7 @@ StyledPopup {
     ColumnLayout {
         id: columnLayout
         anchors.centerIn: parent
-        width: parent?.width * 0.9 ?? 0
+        width: parent?.width * 0.9 ?? 300
         spacing: 12
 
         ColumnLayout {

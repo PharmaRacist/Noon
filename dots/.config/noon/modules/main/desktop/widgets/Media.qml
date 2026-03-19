@@ -4,7 +4,7 @@ import qs.services
 import qs.common
 import qs.common.widgets
 
-IslandComponent {
+SquareComponent {
     id: bg
     clip: true
     BlurImage {

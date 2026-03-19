@@ -5,9 +5,10 @@ import Quickshell.Wayland
 import Quickshell
 import qs.common
 import qs.common.widgets
-import qs.modules.main.bar.components
 import qs.services
 import qs.store
+import qs.modules.main.bar.components
+import qs.modules.main.desktop.widgets
 
 Variants {
     model: MonitorsInfo.all
@@ -45,7 +46,7 @@ Variants {
             left: Sizes.hyprland?.gapsOut ?? Padding.massive
         }
         mask: Region {
-            item: flow.contentItem
+            item: flow
         }
         Flow {
             id: flow
@@ -53,19 +54,40 @@ Variants {
             anchors.fill: parent
             Repeater {
                 model: root.widgetObjects
-                delegate: Loader {
+                delegate: Item {
+                    id: delegated
                     required property var modelData
-                    source: root.widgetsPath + modelData.component + ".qml"
                     width: modelData.expanded ? parent.width : 180
-                    onLoaded: if (item && modelData) {
-                        if ("expanded" in item) {
-                            item.expanded = Qt.binding(() => modelData?.expanded ?? false);
+                    height: 180
+                    WidgetsContextMenu {
+                        id: widgetMenu
+                        modelData: delegated.modelData
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        acceptedButtons: Qt.RightButton | Qt.LeftButton
+                        onPressed: event => {
+                            if (event.button === Qt.RightButton) {
+                                widgetMenu.popup();
+                            }
                         }
-                        if ("pill" in item) {
-                            item.pill = Qt.binding(() => modelData?.pilled ?? false);
+                    }
+                    StyledLoader {
+                        anchors.fill: parent
+                        source: root.widgetsPath + modelData.component + ".qml"
+                        onLoaded: if (ready) {
+                            if ("expanded" in item) {
+                                item.expanded = Qt.binding(() => modelData?.expanded ?? false);
+                            }
+                            if ("pill" in item) {
+                                item.pill = Qt.binding(() => modelData?.pilled ?? false);
+                            }
+                            if (!item.pill)
+                                item.radius = 1.25 * Rounding.massive;
                         }
-                        if (!item.pill)
-                            item.radius = 1.25 * Rounding.massive;
                     }
                 }
             }

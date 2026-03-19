@@ -47,7 +47,7 @@ Item {
 
         Repeater {
             model: root.model
-            Layout.row: root.verticalMode ? 1 : 0 // Shift items down in vertical mode
+            Layout.row: root.verticalMode ? 1 : -1
 
             SysTrayItem {
                 required property SystemTrayItem modelData

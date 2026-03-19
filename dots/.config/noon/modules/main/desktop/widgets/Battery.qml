@@ -4,11 +4,27 @@ import qs.services
 import qs.common
 import qs.common.widgets
 
-IslandComponent {
+SquareComponent {
+    id: root
+    clip: true
+
+    // Progress Bg
+    StyledRect {
+        visible: false
+        z: 2
+        anchors {
+            top: parent.top
+            left: parent.left
+            bottom: parent.bottom
+        }
+        opacity: 0.3
+        color: Colors.colPrimaryContainer
+        implicitWidth: BatteryService.percentage * parent.width
+    }
+
     ColumnLayout {
         id: columnLayout
-        anchors.leftMargin: Padding.massive
-        anchors.margins: Padding.veryhuge
+        anchors.margins: Padding.massive
         anchors.fill: parent
         spacing: -10
 
@@ -23,12 +39,14 @@ IslandComponent {
         Spacer {}
 
         StyledText {
+            Layout.topMargin: Padding.normal
+            Layout.preferredHeight: 50
             Layout.fillHeight: true
             Layout.fillWidth: true
-            text: Math.round(BatteryService.percentage * 100) + "%"
+            text: Math.round(BatteryService.percentage * 100) + " %"
 
             font {
-                pixelSize: 64
+                pixelSize: 78
                 family: Fonts.family.numbers
                 variableAxes: Fonts.variableAxes.longNumbers
             }
@@ -50,10 +68,6 @@ IslandComponent {
                     name: "charging"
                     when: BatteryService.isCharging
                     PropertyChanges {
-                        target: icon
-                        text: "bolt"
-                    }
-                    PropertyChanges {
                         target: description
                         text: "Maxing in "
                     }
@@ -66,10 +80,6 @@ IslandComponent {
                     name: "draining"
                     when: !BatteryService.isCharging
                     PropertyChanges {
-                        target: icon
-                        text: "timer"
-                    }
-                    PropertyChanges {
                         target: description
                         text: "Draining in "
                     }
@@ -79,13 +89,6 @@ IslandComponent {
                     }
                 }
             ]
-            Symbol {
-                id: icon
-                color: Colors.m3.m3onSurfaceVariant
-                fill: 1
-                font.pixelSize: Fonts.sizes.large
-            }
-
             StyledText {
                 id: description
                 color: Colors.m3.m3onSurfaceVariant

@@ -55,10 +55,16 @@ Singleton {
             materialIcon: "calendar_today"
         },
         {
-            id: "pill",
+            id: "weather",
             expandable: false,
             component: "Weather_Simple",
             materialIcon: "cloud"
+        },
+        {
+            id: "dino",
+            expandable: false,
+            component: "Dino",
+            materialIcon: "joystick"
         }
     ]
 }

@@ -20,7 +20,7 @@ BottomDialog {
         spacing: Padding.normal
 
         BottomDialogHeader {
-            title: "Islands"
+            title: "Squares"
             subTitle: Mem.states.sidebar.widgets.enabled.length + " of " + root.db.length + " enabled"
             target: root
         }
@@ -52,7 +52,7 @@ BottomDialog {
                             if (Mem.states.sidebar.widgets.pilled.indexOf(modelData.id) !== -1)
                                 props.push("Pill");
                             else
-                                props.push("Island");
+                                props.push("Square");
                             if (Mem.states.sidebar.widgets.pinned.indexOf(modelData.id) !== -1)
                                 props.push("Pinned");
                             if (Mem.states.sidebar.widgets.expanded.indexOf(modelData.id) !== -1)
