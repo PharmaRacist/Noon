@@ -21,6 +21,9 @@ Scope {
         function toggle_dormant_sphere() {
             GlobalStates.showDormantShere = !GlobalStates.showDormantShere;
         }
+        function toggle_dormant_state() {
+            Mem.states.desktop.shell.deload = !Mem.states.desktop.shell.deload;
+        }
         function load() {
             Mem.states.desktop.shell.deload = false;
         }

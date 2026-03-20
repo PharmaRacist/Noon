@@ -29,14 +29,14 @@ Variants {
 
         StyledRect {
             id: sphere
-            radius: 999
+            radius: Rounding.huge
             z: 999
             color: Colors.colPrimary
             width: 50
             height: 50
 
             x: root.width - width
-            y: (root.height - height) / 2
+            y: (root.height - height) / 3.25
 
             Behavior on x {
                 Anim {}
@@ -55,20 +55,21 @@ Variants {
                 font.pixelSize: Fonts.sizes.huge
             }
             StyledToolTip {
-                extraVisibleCondition: dragArea.containsMouse
+                extraVisibleCondition: eventArea.containsMouse
                 content: "Dormant State \nDouble Click To Restore Shell"
             }
             MouseArea {
-                id: dragArea
+                id: eventArea
                 anchors.fill: parent
+                cursorShape: drag.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                hoverEnabled: true
+
                 drag.target: sphere
                 drag.axis: Drag.XAndYAxis
                 drag.minimumX: 0
                 drag.maximumX: root.width - sphere.width
                 drag.minimumY: 0
                 drag.maximumY: root.height - sphere.height
-                cursorShape: drag.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
-                hoverEnabled: true
 
                 onDoubleClicked: {
                     Mem.states.desktop.shell.deload = false;
