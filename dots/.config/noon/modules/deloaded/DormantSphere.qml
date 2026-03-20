@@ -30,12 +30,11 @@ Variants {
         StyledRect {
             id: sphere
             radius: Rounding.huge
-            z: 999
             color: Colors.colPrimary
             width: 50
             height: 50
 
-            x: root.width - width
+            x: root.width - width - Padding.large
             y: (root.height - height) / 3.25
 
             Behavior on x {
@@ -55,7 +54,7 @@ Variants {
                 font.pixelSize: Fonts.sizes.huge
             }
             StyledToolTip {
-                extraVisibleCondition: eventArea.containsMouse
+                extraVisibleCondition: eventArea.containsMouse && !eventArea.drag.active
                 content: "Dormant State \nDouble Click To Restore Shell"
             }
             MouseArea {
@@ -63,7 +62,7 @@ Variants {
                 anchors.fill: parent
                 cursorShape: drag.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
                 hoverEnabled: true
-
+                z: 999
                 drag.target: sphere
                 drag.axis: Drag.XAndYAxis
                 drag.minimumX: 0
@@ -76,7 +75,8 @@ Variants {
                 }
                 onReleased: {
                     const snapLeft = sphere.x + sphere.width / 2 < root.width / 2;
-                    sphere.x = snapLeft ? 0 : root.width - sphere.width;
+                    const margins = Padding.large;
+                    sphere.x = snapLeft ? margins : root.width - sphere.width - margins;
                 }
             }
         }
