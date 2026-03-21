@@ -25,18 +25,20 @@ RedunduntMultiViewPanel {
         }
     ]
     property string searchQuery: ""
-    Component.onCompleted: {
-        item.searchFocusRequested.connect(() => {
+    Connections {
+        target: item
+        function onSearchFocusRequested() {
             walls.searchFocusRequested();
-        });
-        item.dismiss.connect(() => {
+        }
+        function onDismiss() {
             walls.dismiss();
-        });
+        }
     }
+
     onContentFocusRequested: {
-        // propagate the same signal inside item
         item.contentFocusRequested();
     }
+
     signal searchFocusRequested
     signal contentFocusRequested
     signal dismiss
