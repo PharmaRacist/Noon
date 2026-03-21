@@ -46,7 +46,7 @@ JsonAdapter {
         }
 
         icons: JsonObject {
-            property bool tint: false
+            property bool tint: true
         }
 
         fonts: JsonObject {

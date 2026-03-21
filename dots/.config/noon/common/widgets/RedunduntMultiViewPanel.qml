@@ -15,7 +15,7 @@ StyledRect {
 
     property int selectedTabIndex: -1
     property bool lazy: true
-
+    readonly property var item: swipeView.currentItem._item
     required property var tabButtonList
     required property string path
 
@@ -55,12 +55,17 @@ StyledRect {
             }
             Repeater {
                 model: tabButtonList.map(item => item.component)
-                Loader {
+                StyledLoader {
                     required property var modelData
                     required property int index
+                    readonly property var listData: root.tabButtonList.find(item => item.component === modelData)
                     active: root.lazy && root.selectedTabIndex === index
                     source: root.path + modelData + ".qml"
                     asynchronous: true
+                    onLoaded: {
+                        if (listData.preload !== null && listData.preloadData !== null)
+                            _item[listData.preload] = Qt.binding(() => listData.preloadData);
+                    }
                 }
             }
             Keys.onPressed: event => {

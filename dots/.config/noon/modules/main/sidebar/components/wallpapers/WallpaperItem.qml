@@ -14,6 +14,8 @@ StyledRect {
     required property string fileUrl
     property bool isKeyboardSelected: false
     property bool isCurrentWallpaper: false
+    property var applyAction: () => WallpaperService.applyWallpaper(fileUrl)
+
     readonly property bool isVideoFile: {
         const name = fileUrl.toString().toLowerCase();
         for (let i = 0; i < NameFilters.video.length; i++) {
@@ -70,7 +72,7 @@ StyledRect {
             if (event.button === Qt.RightButton)
                 wallpaperMenu.popup(event.x, event.y);
             else if (event.button === Qt.LeftButton)
-                WallpaperService.applyWallpaper(fileUrl);
+                applyAction();
         }
         onEntered: {
             if (isVideoFile && videoPlayer.playbackState !== MediaPlayer.PlayingState)

@@ -37,6 +37,9 @@ Item {
         if (mainLoader._item && mainLoader._item.searchInput && effectiveSearchable)
             mainLoader._item.searchInput.forceActiveFocus();
     }
+    function dismiss() {
+        panelWindow.hide();
+    }
 
     function changeContent(newCategoryKey) {
         if (!newCategoryKey || !SidebarData.enabledCategories.includes(newCategoryKey) && !SidebarData.isStealth(newCategoryKey))
