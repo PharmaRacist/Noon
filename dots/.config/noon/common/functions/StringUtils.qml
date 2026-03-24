@@ -294,12 +294,21 @@ Singleton {
      */
     function toTitleCase(str) {
         // Replace "-" and "_" with space, then capitalize each word
-        return str.replace(/[-_]/g, " ").replace(
-            /\w\S*/g,
-            function(txt) {
+        return str.replace(/[-_]/g, " ").replace(/\w\S*/g, function (txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
+        });
+    }
+
+    function cleanFileSizeFromBytes(bytes) {
+        const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+        let unitIndex = 0;
+
+        while (bytes >= 1024 && unitIndex < units.length - 1) {
+            bytes /= 1024;
+            unitIndex++;
+        }
+
+        return `${unitIndex === 0 ? bytes : bytes.toFixed(2)} ${units[unitIndex]}`;
     }
     /**
      * Converts a string's First Letter to uppercase
@@ -307,8 +316,8 @@ Singleton {
      * @returns { string }
      */
     function capitalizeFirstLetter(string) {
-      if (!string) return "";
-      return string.charAt(0).toUpperCase() + string.slice(1);
+        if (!string)
+            return "";
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
-
 }

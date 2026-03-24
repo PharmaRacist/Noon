@@ -14,6 +14,15 @@ Scope {
     IpcHandler {
         target: "global"
 
+        function download(url: string, destination: string, name: string, mime: string, size: string) {
+            NoonUtils.requestDialog("assure", {
+                title: "Download " + name,
+                description: "Do you want to download this file from \n" + url,
+                acceptText: "Download " + (size < 1 ? "" : StringUtils.cleanFileSizeFromBytes(size)),
+                onAccepted: () => DownloadService.model.add(Qt.resolvedUrl(url), Qt.resolvedUrl(destination), name.trim())
+            });
+        }
+
         function thawb(link: string) {
             if (link)
                 NoonUtils.requestDialog("thawb", link);

@@ -22,8 +22,8 @@ Scope {
             exclusiveZone: -1
             name: "systemDialog"
             shell: "noon"
-
             WlrLayershell.layer: WlrLayer.Overlay
+
             anchors {
                 top: true
                 bottom: true
@@ -37,10 +37,11 @@ Scope {
             }
 
             mask: Region {
-                item: bg
+                item: root.currentMode !== "" ? mainContainer : bg
             }
 
             Item {
+                id: mainContainer
                 anchors.fill: parent
 
                 StyledRect {
@@ -59,8 +60,8 @@ Scope {
                     topRadius: 40
                     enableBorders: true
                     color: Colors.colLayer0
-                    implicitWidth: currentSize.width
-                    implicitHeight: currentSize.height
+                    implicitWidth: Math.min(Screen.width, currentSize.width)
+                    implicitHeight: Math.min(Screen.height, currentSize.height)
 
                     readonly property size currentSize: contentMap[root.currentMode]?.size ?? Qt.size(500, 120)
                     readonly property var contentMap: {
@@ -142,11 +143,10 @@ Scope {
                     opacity: bg.anchors.bottomMargin > -2 ? 0.8 : 0
                     anchors.fill: parent
                     z: -2
-                }
-                MouseArea {
-                    z: -1
-                    anchors.fill: parent
-                    onClicked: panel.dismiss()
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: panel.dismiss()
+                    }
                 }
             }
 

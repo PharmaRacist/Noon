@@ -11,49 +11,53 @@ import qs.services
 Item {
     id: root
     anchors.fill: parent
+    anchors.margins: Padding.massive
     signal dismiss
 
     property var content
-    // {
-    //     title: "";
-    //     description: "";
-    //     onAccepted: () => {};
-    //     acceptText: "Accept";
-    // }
 
-    CLayout {
-        anchors.fill: parent
-        anchors.margins: Padding.massive * 1.5
-        spacing: Padding.large
+    BottomDialogHeader {
+        title: root.content.title
+        subTitle: root.content.description
+        showCloseButton: false
 
-        BottomDialogHeader {
-            title: root.content.title
-            subTitle: root.content.description
-            showCloseButton: false
+        anchors {
+            top: parent.top
+            right: parent.right
+            left: parent.left
+            margins: Padding.huge
+        }
+    }
+    RowLayout {
+        Layout.fillWidth: true
+        height: cancelButton.implicitHeight
+
+        anchors {
+            bottom: parent.bottom
+            right: parent.right
+            left: parent.left
         }
 
-        Spacer {}
-
-        WindowDialogButtonRow {
+        Item {
             Layout.fillWidth: true
+        }
 
-            Item {
-                Layout.fillWidth: true
+        DialogButton {
+            id: cancelButton
+            buttonText: "Cancel"
+            toggled: false
+            releaseAction: () => {
+                root.dismiss();
             }
+        }
 
-            DialogButton {
-                buttonText: "Cancel"
-                toggled: false
-                releaseAction: () => {
-                    root.dismiss();
-                }
-            }
-
-            DialogButton {
-                buttonText: root.content.acceptText
-                toggled: true
-                colText: Colors.colOnPrimary
-                releaseAction: () => root.content.onAccepted()
+        DialogButton {
+            buttonText: root.content.acceptText
+            toggled: true
+            colText: Colors.colOnPrimary
+            releaseAction: () => {
+                root.content.onAccepted();
+                Qt.callLater(() => root.dismiss());
             }
         }
     }

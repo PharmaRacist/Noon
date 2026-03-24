@@ -34,11 +34,7 @@ RippleButton {
         color: root.enabled ? root.colEnabled : root.colDisabled
 
         Behavior on color {
-            CAnim {
-            }
-
+            CAnim {}
         }
-
     }
-
 }

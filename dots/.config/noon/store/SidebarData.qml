@@ -92,6 +92,12 @@ Singleton {
             expandSize: sizePresets.overview,
             enabled: Mem.options.sidebar.content.overview
         },
+        "Downloads": {
+            icon: "download",
+            activeIcon: "view_cozy",
+            componentPath: "web/DownloadManager",
+            enabled: true
+        },
         "Beats": {
             icon: "music_note",
             activeIcon: "music_note_add",

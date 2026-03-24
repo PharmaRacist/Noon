@@ -20,7 +20,7 @@ FileView {
     path: filePath
     onFileChanged: reloadTimer.restart()
     onAdapterUpdated: root.writeAdapter()
-    onLoadFailed: function (error) {
+    onLoadFailed: error => {
         if (autoCreateOnError && error === FileViewError.FileNotFound)
             root.writeAdapter();
     }

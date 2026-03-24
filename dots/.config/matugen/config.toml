@@ -32,10 +32,10 @@ output_path = '~/.config/gtk-3.0/gtk.css'
 input_path = '~/.config/matugen/templates/gtk/colors.css'
 output_path = '~/.config/gtk-4.0/gtk.css'
 
-[templates.pywalfox]
-input_path = '~/.config/matugen/templates/applications/pywalfox.json'
-output_path = '~/.cache/wal/colors.json'
-post_hook = 'pywalfox update'
+[templates.firefox]
+input_path = '~/.config/matugen/templates/applications/firefox.json'
+output_path = '~/.cache/noon/user/generated/colors/firefox.json'
+post_hook = 'python /usr/lib/noon-mirsal/mirsald pull-palette'
 
 [templates.heroic]
 input_path = "~/.config/matugen/templates/applications/heroic.css"

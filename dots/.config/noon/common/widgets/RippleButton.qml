@@ -15,8 +15,8 @@ Button {
     property string buttonText
     property bool pointingHandCursor: true
     property real buttonRadius: Rounding.small ?? 4
-    property real topRadius:buttonRadius
-    property real bottomRadius:buttonRadius
+    property real topRadius: buttonRadius
+    property real bottomRadius: buttonRadius
     property real buttonRadiusPressed: buttonRadius
     property real buttonEffectiveRadius: root.down ? root.buttonRadiusPressed : root.buttonRadius
     property int rippleDuration: 1200
@@ -156,8 +156,8 @@ Button {
 
     background: StyledRect {
         id: buttonBackground
-        topRadius:root.buttonEffectiveRadius
-        bottomRadius:root.buttonEffectiveRadius
+        topRadius: root.buttonEffectiveRadius
+        bottomRadius: root.buttonEffectiveRadius
         // radius: root.buttonEffectiveRadius
         implicitHeight: 30
         color: root.buttonColor
