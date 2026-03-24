@@ -23,7 +23,8 @@ RowLayout {
 
         StyledText {
             id: titleArea
-            truncate:true
+            truncate: true
+            Layout.fillWidth: true
             font.pixelSize: Fonts.sizes.subTitle
             color: root.colors.colOnLayer2
         }
@@ -31,7 +32,7 @@ RowLayout {
         StyledText {
             id: subTitleArea
             truncate: true
-
+            Layout.fillWidth: true
             font.pixelSize: Fonts.sizes.normal
             color: root.colors.colSubtext
         }

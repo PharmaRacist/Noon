@@ -86,7 +86,7 @@ Scope {
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.margins: Padding.massive * 2
-                        text: "Bye ..."
+                        text: "..."
                         color: Colors.colSubtext
                         font.pixelSize: Fonts.sizes.subTitle
                         font.variableAxes: Fonts.variableAxes.title

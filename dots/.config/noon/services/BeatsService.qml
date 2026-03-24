@@ -142,19 +142,9 @@ Singleton {
         NoonUtils.execDetached("killall " + player?.desktopEntry?.toLowerCase());
     }
 
-    function downloadCurrentSong() {
-        downloadSong(root.title + " " + root.artist);
-    }
-
-    function downloadSong(query) {
-        dlpProc.query = query;
-        dlpProc.running = true;
-    }
-
-    function downloadByCommand(command) {
-        dlpProc._cmd = command;
-        dlpProc.running = true;
-    }
+    // function downloadCurrentSong() {
+    //     downloadSong(root.title + " " + root.artist);
+    // }
 
     Timer {
         id: positionTimer
@@ -162,18 +152,6 @@ Singleton {
         repeat: true
         running: root.player && root._playing
         onTriggered: root.player.positionChanged()
-    }
-
-    Process {
-        id: dlpProc
-        property string query
-        property string _cmd
-
-        command: _cmd ? ["bash", "-c", _cmd] : ["yt-dlp", "-f", "bestaudio", "--extract-audio", "--audio-format", "mp3", "--audio-quality", "0", "--embed-thumbnail", "--add-metadata", "-o", "%(artist,creator,uploader)s - %(title)s.%(ext)s", "-P", Directories.beats.downloads, `ytsearch1:${query}`]
-        onStarted: NoonUtils.toast(`Started Downloading ${query}`, "download")
-        onExited: exitCode => {
-            exitCode === 0 ? NoonUtils.toast(`Downloaded ${query}`, "check", "success") : NoonUtils.toast(`Download failed ${query}`, "close", "error");
-        }
     }
 
     Process {
@@ -195,6 +173,14 @@ Singleton {
             root.startConnection();
             root.refreshSocket();
         }
+    }
+    function downloadWithDLP(info) {
+        dlpHelperProc.command = ["bash", "-c", `${Directories.scriptsDir}/dlpHelper.sh '${info.parameters}' '${info.url}' '${info.destination}' '${info.name}'`];
+        dlpHelperProc.running = true;
+    }
+
+    Process {
+        id: dlpHelperProc
     }
 
     FileView {

@@ -1,9 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.common
+import qs.common.utils
 import qs.common.widgets
 import qs.common.functions
 import qs.services
@@ -13,7 +15,7 @@ Item {
     anchors.fill: parent
     property string url
 
-    property var segmentedButtonsContent: ["Audio", "Video", "Command"]
+    property var segmentedButtonsContent: ["Audio", "Video"]
     signal dismiss
 
     // Simplified quality options mapped to yt-dlp parameters
@@ -23,7 +25,8 @@ Item {
                 default: "720p",
                 toParams: quality => {
                     let height = quality.replace("p", "");
-                    return `bestvideo[height<=${height}]+bestaudio/best[height<=${height}] --no-playlist`;
+                    // Format: "yt-dlp-format|post-processing-args"
+                    return `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]|`;
                 }
             },
             "audio": {
@@ -36,7 +39,8 @@ Item {
                         "Low": "9"
                     };
                     let q = qualityMap[quality];
-                    return `bestaudio --extract-audio --audio-format mp3 --audio-quality ${q} --embed-thumbnail --add-metadata --no-playlist`;
+                    // Passes the audio format and the conversion/metadata flags
+                    return `bestaudio|--extract-audio --audio-format mp3 --audio-quality ${q} --embed-thumbnail --add-metadata`;
                 }
             }
         })
@@ -46,7 +50,7 @@ Item {
             text: "Download",
             action: () => {
                 execute();
-                root.dismiss();
+                Qt.callLater(() => root.dismiss());
             }
         },
         {
@@ -56,26 +60,22 @@ Item {
             }
         }
     ]
-
     function execute() {
         let url = root.url;
         if (!url)
             return;
-
         let mode = segmentedButtonsContent[segmentedButtons.selectedIndex].toLowerCase();
-        let dir = FileUtils.trimFileProtocol(Directories.standard.downloads);
-        let params = "";
+        let dir = mode === "audio" ? FileUtils.trimFileProtocol(Directories.standard.music) : FileUtils.trimFileProtocol(Directories.standard.videos);
+        let params = config.toParams(quality);
 
-        if (mode === "command") {
-            params = textArea.text.trim();
-        } else {
-            let config = qualityOptions[mode];
-            let quality = qualityRow.model[qualityRow.currentIndex] || config.default;
-            params = config.toParams(quality);
-        }
-
-        let cmd = `yt-dlp -f ${params} -P "${dir}" "${url}"`;
-        BeatsService.downloadByCommand(cmd);
+        let config = qualityOptions[mode];
+        let quality = qualityRow.model[qualityRow.currentIndex] || config.default;
+        BeatsService.downloadWithDLP({
+            parameters: params,
+            url: root.url,
+            destination: FileUtils.trimFileProtocol(Directories.standard.downloads)
+        });
+        root.dismiss();
     }
 
     ColumnLayout {
@@ -111,17 +111,9 @@ Item {
         OptionRow {
             id: qualityRow
             property string currentMode: segmentedButtonsContent[segmentedButtons.selectedIndex].toLowerCase()
-            visible: currentMode !== "command"
             text: "Download Quality"
             model: currentMode === "video" ? qualityOptions.video.options : qualityOptions.audio.options
-        }
-
-        MaterialTextArea {
-            id: textArea
-            visible: segmentedButtonsContent[segmentedButtons.selectedIndex].toLowerCase() === "command"
-            placeholderText: "Enter Your Custom Parameters after yt-dlp -f ..."
-            Layout.preferredHeight: 60
-            Layout.preferredWidth: 250
+            Layout.maximumWidth: root.width * 0.7
         }
     }
 

@@ -14,12 +14,15 @@ Scope {
     IpcHandler {
         target: "global"
 
-        function download(url: string, destination: string, name: string, mime: string, size: string) {
+        function download(url: string, destination: string, name: string, mime: string, size: int) {
             NoonUtils.requestDialog("assure", {
                 title: "Download " + name,
                 description: "Do you want to download this file from \n" + url,
                 acceptText: "Download " + (size < 1 ? "" : StringUtils.cleanFileSizeFromBytes(size)),
-                onAccepted: () => DownloadService.model.add(Qt.resolvedUrl(url), Qt.resolvedUrl(destination), name.trim())
+                onAccepted: () => {
+                    DownloadService.model.add(Qt.resolvedUrl(url), Qt.resolvedUrl(destination), name.trim());
+                    Qt.callLater(() => NoonUtils.callIpc("sidebar reveal Downloads"));
+                }
             });
         }
 

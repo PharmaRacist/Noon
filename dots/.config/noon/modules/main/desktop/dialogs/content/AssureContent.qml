@@ -28,6 +28,7 @@ Item {
             margins: Padding.huge
         }
     }
+
     RowLayout {
         Layout.fillWidth: true
         height: cancelButton.implicitHeight

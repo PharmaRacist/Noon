@@ -82,9 +82,9 @@ Scope {
     WidgetLoader {
         Beam {}
     }
-    // WidgetLoader {
-    //     Toasts {}
-    // }
+    WidgetLoader {
+        Toasts {}
+    }
     // WidgetLoader {
     //     enabled: GlobalStates.main.showScreenshot
     //     Screenshot {}

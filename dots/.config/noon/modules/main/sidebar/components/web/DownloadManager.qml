@@ -30,6 +30,9 @@ StyledRect {
         anchors.fill: parent
         anchors.margins: Padding.normal
         model: DownloadService.model
+        animateAppearance: true
+        animateMovement: true
+        popin: true
         delegate: DownloadDelegatedItem {
             anchors {
                 right: parent?.right

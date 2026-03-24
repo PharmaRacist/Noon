@@ -19,14 +19,15 @@ Item {
     property int animationDuration: 800
     property var easingType: Easing.OutCubic
     property bool accountForLightBleeding: true
-    property bool showText: false
+    property bool showText: false //text.length > 0
+    property string text: Math.round(root.value * 100)
     default property Item textMask: Item {
         width: implicitSize
         height: implicitSize
         StyledText {
             visible: showText
             anchors.centerIn: parent
-            text: Math.round(root.value * 100)
+            text: root.text
             font.pixelSize: 12
             font.weight: Font.Medium
         }
