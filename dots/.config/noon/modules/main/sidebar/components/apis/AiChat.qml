@@ -677,32 +677,23 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                     }
                 }
 
-                RippleButton { // Send button
+                RippleButtonWithIcon { // Send | Stop button
                     id: sendButton
                     Layout.alignment: Qt.AlignTop
-                    Layout.rightMargin: 5
-                    implicitWidth: 40
-                    implicitHeight: 40
-                    buttonRadius: Rounding.small
-                    enabled: messageInputField.text.length > 0
+                    Layout.rightMargin: Padding.normal
+                    implicitSize: 38
+                    buttonRadius: Rounding.large
+                    enabled: Ai.isResponding || messageInputField.text.length > 0
                     toggled: enabled
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: sendButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: {
-                            const inputText = messageInputField.text;
-                            root.handleInput(inputText);
+                    materialIcon: Ai.isResponding ? "stop" : "arrow_upward"
+                    materialIconFill: true
+                    releaseAction: () => {
+                        if (Ai.isResponding) {
+                            Ai.stop();
+                        } else {
+                            root.handleInput(messageInputField.text);
                             messageInputField.clear();
                         }
-                    }
-
-                    contentItem: Symbol {
-                        anchors.centerIn: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        iconSize: 22
-                        color: sendButton.enabled ? Colors.m3.m3onPrimary : Colors.colOnLayer2Disabled
-                        text: "arrow_upward"
                     }
                 }
             }

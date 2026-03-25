@@ -13,6 +13,7 @@ Singleton {
 
     property string query: ""
     property string activeState: "ai"
+    property string modelName: Ai?.getModel(Mem.options.ai?.model ?? "")?.name ?? "AI"
     property string activeSubState: ""
     property var suggestedApp: null
     readonly property string cleanQuery: {
@@ -22,7 +23,7 @@ Singleton {
         return prefix !== "" ? query.substring(prefix.length).trim() : query.trim();
     }
 
-    readonly property var config: registry[activeState] || {}
+    readonly property var config: registry[activeState]
 
     readonly property var subConfig: {
         if (!activeSubState || !config.subStates)
@@ -36,7 +37,7 @@ Singleton {
             prefix: "",
             icon: "thread_unread",
             shape: MaterialShape.Shape.Ghostish,
-            placeholder: "Ask " + Ai.getModel(Mem.options.ai?.model).name + " Any Thing ..",
+            placeholder: "Ask " + root.modelName + " Any Thing ..",
             showHint: false,
             showOsrButton: true
         },

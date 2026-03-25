@@ -58,7 +58,7 @@ Singleton {
         const key = apiKeys[model.key_id];
         return (key?.length > 0);
     }
-
+    readonly property bool isResponding: requester.running
     property ApiStrategy currentApiStrategy: apiStrategies[models[currentModelId]?.api_format || "openai"]
     property string requestScriptFilePath: "/tmp/noon/ai/request.sh"
     property string pendingFilePath: ""
@@ -818,6 +818,20 @@ Singleton {
 
     function safeModelName(modelName) {
         return modelName.replace(/:/g, "_").replace(/ /g, "-").replace(/\//g, "-");
+    }
+
+    function stop() {
+        if (requester.running) {
+            requester.running = false;
+            if (requester.message) {
+                requester.message.thinking = false;
+                requester.message.done = true;
+                requester.message.rawContent += "\n\n*[Stopped]*";
+                requester.message.content += "\n\n*[Stopped]*";
+            }
+            root.saveChat("lastSession");
+            root.responseFinished();
+        }
     }
 
     function saveChat(chatName) {
