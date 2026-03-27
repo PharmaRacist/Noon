@@ -5,8 +5,8 @@ import qs.common.widgets
 import qs.services
 
 MaterialShapeWrappedSymbol {
-    visible: BatteryService.available && PowerService.controller !== "none"
     fill: 1
+    readonly property bool enabled: BatteryService.available && PowerService.controller !== "none"
     readonly property var aMap: [
         {
             name: "Power Saver",
@@ -34,14 +34,46 @@ MaterialShapeWrappedSymbol {
     readonly property var currentModeData: aMap.filter(mode => mode.name === PowerService.modeName)[0]
 
     implicitSize: 32
-    text: currentModeData.icon
-    shape: currentModeData.shape
-    color: currentModeData.color
-    colSymbol: currentModeData.sColor
+    text: !enabled ? getCurrentDesktopIcon() : currentModeData.icon
+    shape: !enabled ? MaterialShape.Cookie9Sided : currentModeData.shape
+    color: !enabled ? Colors.colPrimary : currentModeData.color
+    colSymbol: !enabled ? Colors.colOnPrimary : currentModeData.sColor
+    function getCurrentDesktopIcon() {
+        const activeApp = MonitorsInfo.topLevel?.appId;
 
+        if (activeApp === null)
+            return "deployed_code";
+
+        const rules = [
+            {
+                pattern: /brave|firefox|zen|chromium|chrome|opera|vivaldi/i,
+                icon: "globe"
+            },
+            {
+                pattern: /dolphin|nautilus|files|thunar|nemo|pcmanfm|ranger/i,
+                icon: "folder"
+            },
+            {
+                pattern: /steam|heroic|lutris|gamescope|bottles/i,
+                icon: "joystick"
+            },
+            {
+                pattern: /kitty|ghostty|alacritty|foot|wezterm|konsole|xterm/i,
+                icon: "terminal_2"
+            },
+            {
+                pattern: /code|zeditor|zed|antigravity|cursor|windsurf/i,
+                icon: "data_object"
+            },
+        ];
+
+        return rules.find(({
+                pattern
+            }) => pattern.test(activeApp))?.icon ?? "deployed_code";
+    }
     MouseArea {
         id: mouse
-
+        enabled: root.enabled
         hoverEnabled: true
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
