@@ -133,7 +133,7 @@ ColumnLayout {
             id: playButton
             implicitHeight: playShape.implicitHeight
             implicitWidth: playShape.implicitWidth
-            MaterialShapeWrappedMaterialSymbol {
+            MaterialShapeWrappedSymbol {
                 id: playShape
                 color: root.isPlaying ? root.trackColors.colPrimary : root.trackColors.colSecondaryContainer
                 shape: root.isPlaying ? MaterialShape.Shape.Cookie9Sided : MaterialShape.Shape.Cookie6Sided

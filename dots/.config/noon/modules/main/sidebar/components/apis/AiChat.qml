@@ -14,7 +14,7 @@ Item {
     property real padding: 0
     property var inputField: messageInputField
     property string commandPrefix: "/"
-
+    property bool isRecording: false
     property var suggestionQuery: ""
     property var suggestionList: []
     signal expandRequested
@@ -359,12 +359,14 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                 property int lastResponseLength: 0
                 onContentHeightChanged: {
                     if (atYEnd)
-                        Qt.callLater(positionViewAtEnd);
+                        positionViewAtEnd();
+
+                    // Qt.callLater(positionViewAtEnd);
                 }
                 onCountChanged: {
                     // Auto-scroll when new messages are added
                     if (atYEnd)
-                        Qt.callLater(positionViewAtEnd);
+                        positionViewAtEnd();
                 }
 
                 model: ScriptModel {
@@ -677,22 +679,86 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                     }
                 }
 
-                RippleButtonWithIcon { // Send | Stop button
+                Item {
                     id: sendButton
-                    Layout.alignment: Qt.AlignTop
-                    Layout.rightMargin: Padding.normal
-                    implicitSize: 38
-                    buttonRadius: Rounding.large
-                    enabled: Ai.isResponding || messageInputField.text.length > 0
-                    toggled: enabled
-                    materialIcon: Ai.isResponding ? "stop" : "arrow_upward"
-                    materialIconFill: true
-                    releaseAction: () => {
-                        if (Ai.isResponding) {
-                            Ai.stop();
-                        } else {
-                            root.handleInput(messageInputField.text);
-                            messageInputField.clear();
+                    implicitHeight: 50
+                    implicitWidth: 50
+                    readonly property bool toggled: Ai.isResponding || messageInputField.text.length > 0
+
+                    SequentialAnimation {
+                        id: loadingAnimation
+                        loops: Animation.Infinite
+                        running: Ai.isResponding || root.isRecording
+
+                        PropertyAction {
+                            target: shape
+                            property: "rotation"
+                            value: 0
+                        }
+
+                        Anim {
+                            target: shape
+                            property: "rotation"
+                            from: 0
+                            to: 360
+                            duration: 4500
+                        }
+
+                        onStopped: shape.rotation = 0
+                    }
+
+                    MaterialShape {
+                        id: shape
+                        implicitSize: 38
+                        anchors.centerIn: parent
+                        shape: {
+                            let shape;
+                            if (messageInputField.text.length === 0 && !Ai.isResponding) {
+                                shape = "Cookie6Sided";
+                            } else if (Ai.isResponding) {
+                                shape = "Cookie12Sided";
+                            } else
+                                shape = "Clover8Leaf";
+                            return MaterialShape.Shape[shape];
+                        }
+                        color: Colors.colPrimary
+                        Behavior on rotation {
+                            enabled: !Ai.isResponding
+                            Anim {}
+                        }
+                    }
+
+                    Symbol {
+                        text: {
+                            if (messageInputField.text.length === 0 && !Ai.isResponding) {
+                                return "mic";
+                            } else if (Ai.isResponding) {
+                                return "stop";
+                            } else
+                                return "arrow_upward";
+                        }
+                        fill: 1
+                        font.pixelSize: 18
+                        anchors.centerIn: parent
+                        color: Colors.colOnPrimary
+                        // rotation: -shape.rotation
+                    }
+
+                    MouseArea {
+                        id: eventArea
+                        enabled: sendButton.toggled
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            if (messageInputField.text.length === 0 && !Ai.isResponding) {
+                                Ai.record();
+                            } else if (Ai.isResponding) {
+                                Ai.stop();
+                            } else {
+                                root.handleInput(messageInputField.text);
+                                messageInputField.clear();
+                            }
                         }
                     }
                 }

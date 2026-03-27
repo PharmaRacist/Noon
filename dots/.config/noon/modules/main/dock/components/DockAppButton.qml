@@ -29,7 +29,7 @@ RippleButton {
     implicitWidth: isSeparator ? 1 : implicitHeight
     Layout.fillHeight: true
     buttonRadius: Rounding.normal
-
+    colBackground: "transparent"
     Loader {
         active: isSeparator
         anchors {

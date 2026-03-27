@@ -150,7 +150,6 @@ JsonAdapter {
         }
         shelf: JsonObject {
             property list<string> filePaths: []
-            property bool listMode: false
         }
         widgets: JsonObject {
             property list<string> enabled: []

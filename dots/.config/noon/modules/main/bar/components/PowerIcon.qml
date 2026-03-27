@@ -4,8 +4,8 @@ import qs.common
 import qs.common.widgets
 import qs.services
 
-MaterialShapeWrappedMaterialSymbol {
-    // visible: BatteryService.available
+MaterialShapeWrappedSymbol {
+    visible: BatteryService.available && PowerService.controller !== "none"
     fill: 1
     readonly property var aMap: [
         {

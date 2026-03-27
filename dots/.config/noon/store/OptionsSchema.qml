@@ -406,9 +406,9 @@ JsonAdapter {
         }
         property JsonObject hMap: JsonObject {
             property int spacing: 6
-            property list<string> leftArea: ["power", "separator", "title"]
-            property list<string> centerArea: ["resources", "separator", "media", "separator", "progressWs", "separator", "clock", "separator", "utilButtons", "separator", "battery"]
-            property list<string> rightArea: ["sysTray", "weather", "materialStatusIcons"]
+            property list<string> leftArea: ["power", "separator", "progressWs", "separator", "title"]
+            property list<string> centerArea: ["media", "separator", "clock"]
+            property list<string> rightArea: ["sysTray", "battery", "materialStatusIcons"]
         }
         property list<string> bars: ["Dynamic", "HyDe", "NovelKnocks", "Sleek", "VDynamic"]
 

@@ -109,7 +109,7 @@ Item {
             anchors.rightMargin: Padding.massive
             spacing: Padding.normal
 
-            MaterialShapeWrappedMaterialSymbol {
+            MaterialShapeWrappedSymbol {
                 id: shape
                 text: modelData.icon
                 iconSize: 24

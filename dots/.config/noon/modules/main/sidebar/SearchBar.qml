@@ -23,7 +23,7 @@ StyledRect {
     Layout.fillWidth: true
     signal contentFocusRequested
 
-    MaterialShapeWrappedMaterialSymbol {
+    MaterialShapeWrappedSymbol {
         id: shape
         anchors {
             top: parent.top

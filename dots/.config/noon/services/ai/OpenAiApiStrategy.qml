@@ -2,7 +2,7 @@ import QtQuick
 
 ApiStrategy {
     property bool isReasoning: false
-    
+
     function buildEndpoint(model: AiModel): string {
         // console.log("[AI] Endpoint: " + model.endpoint);
         return model.endpoint;
@@ -12,17 +12,19 @@ ApiStrategy {
         let baseData = {
             "model": model.model,
             "messages": [
-                {role: "system", content: systemPrompt},
+                {
+                    role: "system",
+                    content: systemPrompt
+                },
                 ...messages.map(message => {
                     return {
                         "role": message.role,
-                        "content": message.rawContent,
-                    }
-                }),
-            ],
+                        "content": message.rawContent
+                    };
+                }),],
             "stream": true,
             "tools": tools,
-            "temperature": temperature,
+            "temperature": temperature
         };
         return model.extraParams ? Object.assign({}, baseData, model.extraParams) : baseData;
     }
@@ -39,18 +41,21 @@ ApiStrategy {
         }
 
         // console.log("[AI] OpenAI: Data:", cleanData);
-        
+
         // Handle special cases
-        if (!cleanData || cleanData.startsWith(":")) return {};
+        if (!cleanData || cleanData.startsWith(":"))
+            return {};
         if (cleanData === "[DONE]") {
-            return { finished: true };
+            return {
+                finished: true
+            };
         }
-        
+
         // Real stuff
         try {
             const dataJson = JSON.parse(cleanData);
             let newContent = "";
-            
+
             const responseContent = dataJson.choices[0]?.delta?.content || dataJson.message?.content;
             const responseReasoning = dataJson.choices[0]?.delta?.reasoning || dataJson.choices[0]?.delta?.reasoning_content;
 
@@ -87,25 +92,25 @@ ApiStrategy {
             }
 
             if (dataJson.done) {
-                return { finished: true };
+                return {
+                    finished: true
+                };
             }
-            
         } catch (e) {
             console.log("[AI] OpenAI: Could not parse line: ", e);
             message.rawContent += line;
             message.content += line;
         }
-        
+
         return {};
     }
-    
+
     function onRequestFinished(message) {
         // OpenAI format doesn't need special finish handling
         return {};
     }
-    
+
     function reset() {
         isReasoning = false;
     }
-
 }

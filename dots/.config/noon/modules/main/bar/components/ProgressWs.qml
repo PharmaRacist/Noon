@@ -13,6 +13,7 @@ BarGroup {
     clip: false
     implicitWidth: defaultSize
     implicitHeight: defaultSize
+
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
@@ -27,12 +28,12 @@ BarGroup {
     ClippedProgressBar {
         id: workspaceProgress
         anchors.fill: parent
-        anchors.margins: Padding.small
+        anchors.margins: Padding.verysmall
         vertical: parent.vertical
         value: (workspaceIndexInGroup + 1) / maxWorkspaces
         highlightColor: Colors.colPrimary
         trackColor: Colors.colLayer3
-
+        showEndPoint: root.vertical
         Behavior on value {
             Anim {
                 duration: Animations.durations.large

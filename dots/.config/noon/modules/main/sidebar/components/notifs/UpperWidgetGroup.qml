@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.common
-import qs.common.functions
 import qs.common.widgets
 import qs.services
 import "quickToggles"
@@ -27,7 +26,7 @@ Item {
             topMargin: Padding.normal
         }
 
-        UptimeRow {}
+        DateUptime {}
 
         Group {
             visible: Mem.options.sidebar.appearance.showSliders ?? false
@@ -89,14 +88,26 @@ Item {
         }
     }
 
-    component UptimeRow: StyledText {
-        font.pixelSize: Fonts.sizes.verylarge
-        color: Colors.colOnLayer0
-        text: StringUtils.format("Up for {0}", DateTimeService.uptime)
-        Layout.preferredHeight: 35
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignLeft
-        Layout.leftMargin: Padding.large
+    component DateUptime: ColumnLayout {
+        Layout.preferredHeight: 45
+        spacing: 0
+        Layout.alignment: Qt.AlignTop
+        StyledText {
+            font.pixelSize: Fonts.sizes.verylarge
+            color: Colors.colOnLayer0
+            text: DateTimeService.date
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: Padding.large
+        }
+        StyledText {
+            font.pixelSize: Fonts.sizes.normal
+            color: Colors.colSubtext
+            text: "Up for " + DateTimeService.uptime
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: Padding.large
+        }
     }
     component Group: StyledRect {
         Layout.fillWidth: true

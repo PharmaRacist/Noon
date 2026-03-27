@@ -23,4 +23,8 @@ BarGroup {
         anchors.fill: parent
         hoverEnabled: true
     }
+
+    PrayerPopup {
+        hoverTarget: event_area
+    }
 }

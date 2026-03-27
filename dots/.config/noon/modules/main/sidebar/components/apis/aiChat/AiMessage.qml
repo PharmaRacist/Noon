@@ -26,7 +26,7 @@ StyledRect {
     anchors.right: rightMode ? parent?.right : undefined
 
     implicitHeight: Math.max(loadingSize.height, columnLayout.implicitHeight)
-    implicitWidth: Math.max(loadingSize.width, Math.min(messageData.content.length * (Fonts.sizes.large - 2), parent.width - Padding.massive * 2))
+    implicitWidth: Math.max(loadingSize.width, Math.min(messageData.content.length * (Fonts.sizes.normal), parent.width - Padding.massive * 2))
     radius: Math.max(24, Rounding.verylarge)
     animationDuration: Animations.durations.small
 
@@ -70,8 +70,8 @@ StyledRect {
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -4
         text: "..."
-        font.family: "Rubik"
-        font.pixelSize: 30
+        font.family: Fonts.family.reading
+        font.pixelSize: Fonts.sizes.large
         color: Colors.colSubtext
     }
 
@@ -182,6 +182,13 @@ StyledRect {
     StyledMenu {
         id: contextMenu
         content: [
+            {
+                "text": "Pronounce",
+                "materialIcon": "text_to_speech",
+                "action": () => {
+                    TtsService.pronounce(root.messageData?.content);
+                }
+            },
             {
                 "text": "Copy",
                 "materialIcon": "content_copy",

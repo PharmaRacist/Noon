@@ -8,7 +8,9 @@ import qs.common.utils
 Singleton {
     id: root
 
-    property string filePath: Directories.standard.documents + "/Notes/noon_notes.md"
+    readonly property string folderPath: Directories.standard.documents + "/Notes/"
+    property string fileName: "noon_notes.md"
+    property string filePath: folderPath + fileName
     property string content: ""
     property bool isDirty: false
     property string lastSaved: ""
@@ -39,6 +41,23 @@ Singleton {
             root.isDirty = false;
             root.lastSaved = new Date().toISOString();
         }
+    }
+
+    function createNote(name: string) {
+        if (!name?.trim())
+            return;
+        root.fileName = name.trim();
+        root.content = "";
+        root.isLoaded = false;
+        root.isDirty = false;
+        noteFile.setText("");
+        noteFile.reload();
+    }
+
+    function openNote(name: string) {
+        if (!name)
+            return;
+        root.fileName = name.trim();
     }
 
     function save() {

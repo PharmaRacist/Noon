@@ -77,7 +77,7 @@ Singleton {
         "Notes": {
             icon: "stylus",
             activeIcon: "stylus_note",
-            componentPath: "etc/Notes",
+            componentPath: "notes/Notes",
             expandable: true,
             detachable: true,
             shape: "Slanted",

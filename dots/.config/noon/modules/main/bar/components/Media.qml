@@ -13,11 +13,11 @@ BarGroup {
     id: root
 
     readonly property MprisPlayer activePlayer: MprisController.activePlayer
-    readonly property string cleanedTitle: StringUtils.cleanMusicTitle(activePlayer?.trackTitle) || qsTr("No media")
+    readonly property string cleanedTitle: StringUtils.cleanMusicTitle(activePlayer?.trackTitle) || ""
     property bool bordered: Mem.options.bar.appearance.modulesBg
     property bool expand: false
     vertical: false
-    Layout.preferredWidth: Math.max(rowLayout.implicitWidth, 130)
+    Layout.preferredWidth: Math.min(rowLayout.implicitWidth, 280)
 
     Timer {
         running: activePlayer?.playbackState == MprisPlaybackState.Playing
@@ -71,6 +71,7 @@ BarGroup {
         }
 
         StyledText {
+            visible: text.length > 0
             Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: true
             Layout.rightMargin: rowLayout.spacing

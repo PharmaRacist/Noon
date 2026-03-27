@@ -1,3 +1,4 @@
+import "components/notes"
 import "components/timers"
 import "components/apis"
 import "components/beats"

@@ -33,7 +33,7 @@ Item {
         anchors.centerIn: parent
         spacing: root.spacing
 
-        MaterialShapeWrappedMaterialSymbol {
+        MaterialShapeWrappedSymbol {
             id: shapeWidget
             colors: root.colors
             Layout.alignment: Qt.AlignHCenter

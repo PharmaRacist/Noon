@@ -75,18 +75,8 @@ Singleton {
             const remaining = Math.max(0, timer.originalDuration - elapsed);
 
             if (remaining === 0) {
-                updated.push({
-                    id: timer.id,
-                    name: timer.name,
-                    originalDuration: timer.originalDuration,
-                    remainingTime: 0,
-                    isRunning: false,
-                    startTime: 0,
-                    preset: timer.preset,
-                    icon: timer.icon
-                });
                 NoonUtils.playSound("record_stopped");
-                NoonUtils.toast(`'Timer Complete , ${timer.name} finished!'`,"timer","success");
+                NoonUtils.toast(`'Timer Complete , ${timer.name} finished!'`, "timer", "success");
                 timerFinished(timer.id, timer.name);
                 changed = true;
             } else {

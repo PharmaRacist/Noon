@@ -199,7 +199,7 @@ Item {
                             radius: Rounding.large
                             clip: true
                         }
-                        property Component m3comp: MaterialShapeWrappedMaterialSymbol {
+                        property Component m3comp: MaterialShapeWrappedSymbol {
                             text: "radio"
                             colSymbol: Colors.colOnPrimary
                             color: Colors.colPrimary

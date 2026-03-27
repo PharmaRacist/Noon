@@ -154,4 +154,5 @@ StyledRect {
             }
         }
     }
+    NotesControls {}
 }

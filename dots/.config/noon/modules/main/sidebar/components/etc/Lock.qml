@@ -69,7 +69,7 @@ StyledRect {
         implicitHeight: 46
         spacing: Padding.huge
 
-        MaterialShapeWrappedMaterialSymbol {
+        MaterialShapeWrappedSymbol {
             shape: MaterialShape.Shape.Ghostish
             color: Colors.colPrimary
             implicitSize: 38

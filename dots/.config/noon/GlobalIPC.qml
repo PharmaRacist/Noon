@@ -14,6 +14,11 @@ Scope {
     IpcHandler {
         target: "global"
 
+        function pronounce(text:string): void {
+            if (!text)
+                return;
+            TtsService.pronounce(text)
+        }
         function download(url: string, destination: string, name: string, mime: string, size: int) {
             NoonUtils.requestDialog("assure", {
                 title: "Download " + name,

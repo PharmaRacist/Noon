@@ -253,6 +253,7 @@ Singleton {
             NoonUtils.setHyprKey("editor", conf.editor);
         }
     }
+
     Connections {
         target: Mem.options.desktop.hyprland
         readonly property QtObject conf: Mem.options.desktop.hyprland

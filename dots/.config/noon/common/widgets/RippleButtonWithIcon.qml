@@ -13,7 +13,7 @@ RippleButton {
     property alias iconColor: symbol.color
     property alias iconSize: symbol.font.pixelSize
     property QtObject colors: Colors
-
+    property bool animateIcon: false
     implicitWidth: implicitSize
     implicitHeight: implicitSize
     buttonRadius: Rounding.normal
@@ -21,7 +21,7 @@ RippleButton {
 
     Symbol {
         id: symbol
-
+        animateChange: root.animateIcon
         font.pixelSize: root.implicitSize / 2
         anchors.centerIn: parent
         text: materialIcon

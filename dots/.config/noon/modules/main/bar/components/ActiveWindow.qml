@@ -28,7 +28,7 @@ MouseArea {
         }
 
         StyledText {
-            Layout.maximumWidth: 350
+            Layout.maximumWidth: 240
             Layout.fillWidth: true
             font.pixelSize: Math.round(appId.font.pixelSize * 1.3)
             color: Colors.colOnLayer0

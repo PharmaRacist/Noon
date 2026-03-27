@@ -16,7 +16,6 @@ MouseArea {
     property real value
     property real implicitSize: 32
 
-
     property var focusedScreen: MonitorsInfo.focused
 
     hoverEnabled: true
@@ -61,7 +60,7 @@ MouseArea {
             }
         }
 
-        MaterialShapeWrappedMaterialSymbol {
+        MaterialShapeWrappedSymbol {
             id: symbol
             fill: 1
             Layout.alignment: Qt.AlignHCenter

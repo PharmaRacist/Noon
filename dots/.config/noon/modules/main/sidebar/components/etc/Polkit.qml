@@ -31,7 +31,7 @@ StyledRect {
 
         Spacer {}
 
-        MaterialShapeWrappedMaterialSymbol {
+        MaterialShapeWrappedSymbol {
             Layout.alignment: Qt.AlignHCenter
             iconSize: 180
             text: "security"

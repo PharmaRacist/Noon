@@ -83,6 +83,12 @@ Item {
                     "action": () => {
                         Ai.loadChat("lastSession");
                     }
+                },
+                {
+                    "icon": TtsService.status !== "daemon_stopped" ? "close" : "arrow_upload_progress",
+                    "action": () => {
+                        TtsService.status === "daemon_stopped" ? TtsService.load() : TtsService.unload();
+                    }
                 }
             ]
         },

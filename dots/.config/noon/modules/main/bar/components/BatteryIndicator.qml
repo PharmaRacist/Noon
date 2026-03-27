@@ -32,7 +32,7 @@ BarGroup {
         value: BatteryService.percentage
         trackColor: Colors.colLayer3
         highlightColor: (BatteryService.percentage <= Mem.options.battery.low / 100 && !BatteryService.isCharging) ? Colors.m3.m3error : Colors.colPrimary
-        showEndPoint: vertical
+        showEndPoint: root.verticalMode
         Item {
             anchors.centerIn: parent
             width: batteryProgress.valueBarWidth

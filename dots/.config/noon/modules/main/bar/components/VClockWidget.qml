@@ -28,7 +28,6 @@ BarGroup {
                 visible: modelData !== ""
                 text: modelData
                 font.weight: 900
-                font.family: Fonts.family.monospace
                 font.pixelSize: Fonts.sizes.normal
                 color: Colors.colSecondary
                 Layout.alignment: Qt.AlignHCenter

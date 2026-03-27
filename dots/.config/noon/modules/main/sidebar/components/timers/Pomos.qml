@@ -206,7 +206,7 @@ Item {
                     id: duration
                     font.variableAxes: Fonts.variableAxes.numbers
                     text: TimerService.formatTime(timer.remainingTime)
-                    font.pixelSize: Fonts.sizes.subTitle
+                    font.pixelSize: Fonts.sizes.huge
                     color: Colors.colOnLayer1
                 }
                 StyledText {

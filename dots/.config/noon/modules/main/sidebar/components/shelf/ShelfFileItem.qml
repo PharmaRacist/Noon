@@ -10,7 +10,6 @@ import qs.store
 
 StyledRect {
     id: root
-    required property bool listMode
     property bool showPreview: false
     property string path
     property bool isOnline: path.toString().startsWith("https:") || path.startsWith("http:")
@@ -43,7 +42,7 @@ StyledRect {
 
     GridLayout {
         anchors.centerIn: parent
-        columns: root.listMode ? 4 : 1
+        columns: 1
         Loader {
             Layout.alignment: Qt.AlignHCenter
             sourceComponent: root.isOnline ? favIconComponent : symbolComponent
@@ -82,9 +81,6 @@ StyledRect {
             Layout.fillWidth: true
             Layout.maximumWidth: root.width - Padding.verysmall
             horizontalAlignment: Text.AlignHCenter
-        }
-        Spacer {
-            visible: root.listMode
         }
     }
 

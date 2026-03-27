@@ -46,7 +46,7 @@ SquareComponent {
                 anchors.margins: Padding.massive
                 columns: root.expanded ? 3 : 1
                 rows: 2
-                MaterialShapeWrappedMaterialSymbol {
+                MaterialShapeWrappedSymbol {
                     Layout.topMargin: 5
                     Layout.leftMargin: root.expanded ? Padding.massive : 0
                     Layout.fillWidth: !root.expanded

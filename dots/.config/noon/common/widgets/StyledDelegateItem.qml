@@ -55,7 +55,7 @@ RippleButton {
         }
         Component {
             id: shapeComponent
-            MaterialShapeWrappedMaterialSymbol {
+            MaterialShapeWrappedSymbol {
                 id: m3shape
                 colors: root.colors
                 shape: MaterialShape.Cookie6Sided

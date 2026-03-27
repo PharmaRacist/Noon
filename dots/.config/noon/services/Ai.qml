@@ -834,6 +834,9 @@ Singleton {
         }
     }
 
+    function record() {
+    }
+
     function saveChat(chatName) {
         chatSaveFile.chatName = chatName.trim();
         const saveContent = JSON.stringify(root.chatToJson());

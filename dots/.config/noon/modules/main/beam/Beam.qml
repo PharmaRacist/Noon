@@ -13,6 +13,7 @@ import qs.store
 StyledPanel {
     id: root
     name: "slide_layer"
+    property bool isRecording: false // dummy
     readonly property int detectionArea: scrollReveal ? 20 : 4
     readonly property bool scrollReveal: Mem.options.beam.behavior.scrollToReveal
     readonly property bool reveal: GlobalStates.main.showBeam || (Mem.options.beam.behavior.revealOnEmpty && !MonitorsInfo.topLevel.activated)
@@ -315,8 +316,16 @@ StyledPanel {
                     releaseAction: () => root.sendMessage()
                     buttonRadius: root.mainRounding
                     colBackground: "transparent"
-                    materialIcon: "send"
                     implicitSize: bg.height * 0.75
+                    animateIcon: true
+                    materialIcon: {
+                        if (BeamData.query.length === 0 && BeamData.activeState === "ai") {
+                            return "mic";
+                        } else if (root.isResponding) {
+                            return "stop";
+                        } else
+                            return "send";
+                    }
                     Behavior on opacity {
                         Anim {}
                     }

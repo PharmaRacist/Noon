@@ -70,7 +70,7 @@ Item {
         Repeater {
             model: root.contentModel
 
-            delegate: MaterialShapeWrappedMaterialSymbol {
+            delegate: MaterialShapeWrappedSymbol {
                 required property var modelData
                 readonly property int buttonSize: root.width * 0.86
                 implicitSize: buttonSize

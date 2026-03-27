@@ -129,7 +129,7 @@ StyledRect {
                     visible: selected
                     color: ColorUtils.transparentize(Colors.colPrimaryContainerHover, 0.85)
 
-                    MaterialShapeWrappedMaterialSymbol {
+                    MaterialShapeWrappedSymbol {
                         anchors {
                             bottom: parent.bottom
                             right: parent.right
