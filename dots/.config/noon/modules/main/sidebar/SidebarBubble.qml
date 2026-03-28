@@ -18,6 +18,18 @@ Item {
 
     readonly property var bubbles: [
         {
+            "cat": "Downloads",
+            "bubbles": [
+                {
+                    "icon": "clear_all",
+                    "enabled": true,
+                    "action": () => {
+                        DownloadService.model.clearAll();
+                    }
+                },
+            ]
+        },
+        {
             "cat": "Walls",
             "bubbles": [
                 {

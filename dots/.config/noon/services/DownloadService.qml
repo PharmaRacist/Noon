@@ -23,5 +23,10 @@ Singleton {
             else
                 NoonUtils.toast(name + " Failed", "close");
         }
+        function clearAll() {
+            for (let i = downloadModel.count - 1; i >= 0; i--) {
+                downloadModel.remove(i);
+            }
+        }
     }
 }

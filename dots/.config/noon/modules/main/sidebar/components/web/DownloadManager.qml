@@ -28,7 +28,6 @@ StyledRect {
 
     StyledListView {
         anchors.fill: parent
-        anchors.margins: Padding.normal
         model: DownloadService.model
         animateAppearance: true
         animateMovement: true
@@ -37,6 +36,7 @@ StyledRect {
             anchors {
                 right: parent?.right
                 left: parent?.left
+                margins: Padding.normal
             }
         }
     }

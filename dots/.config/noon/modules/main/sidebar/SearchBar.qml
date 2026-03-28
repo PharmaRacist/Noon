@@ -92,9 +92,7 @@ Item {
         }
 
         RippleButtonWithIcon {
-            buttonRadius: 12
-            Layout.preferredWidth: 24
-            Layout.preferredHeight: 24
+            implicitSize: 30
             colBackground: "transparent"
             materialIcon: "close"
             visible: searchInput.text.length > 0

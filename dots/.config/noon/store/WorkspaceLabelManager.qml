@@ -1,39 +1,24 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import qs.common
 import qs.common.widgets
 import qs.services
-pragma Singleton
-pragma ComponentBehavior: Bound
 
 Singleton {
-    // ============================================
-    // Styling Functions
-    // ============================================
-    // ============================================
-    // Numeral Conversion Functions
-    // ============================================
-    // ============================================
-    // Public API
-    // ============================================
-
     id: root
 
-    // Available modes
-    readonly property var availableModes: Mem.options.bar.workspaces.availableModes ?? ["normal", "japanese", "roman", "custom"]
-    // Current mode (validate against available modes)
+    readonly property var availableModes: Mem.options.bar.workspaces.availableModes ?? ["normal", "japanese", "roman", "custom", "words"]
     property string currentMode: {
         const configured = Mem.options.bar.workspaces.displayMode ?? "normal";
         return availableModes.includes(configured) ? configured : "normal";
     }
-    // Custom mapping array - user configurable
-    // Index corresponds to workspace number (0 = fallback, 1 = workspace 1, etc.)
     property var customMapping: Mem.options.bar.workspaces.customMapping ?? ["○", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩"]
-    // Fallback symbol for numbers beyond the custom mapping
     property string customFallback: Mem.options.bar.workspaces.customFallback ?? "●"
-    // Japanese digit mapping
     readonly property var japaneseDigits: ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"]
+    readonly property var wordMapping: Mem.options.bar.workspaces.wordMapping ?? ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"]
 
     function getFontFamily(mode) {
         switch (mode) {
@@ -63,13 +48,13 @@ Singleton {
         case "japanese":
             return Fonts.sizes.small;
         case "roman":
+        case "words":
             return Fonts.sizes.small - ((text.length - 1) * 2);
         default:
             return Fonts.sizes.small - ((text.length - 1) * (text !== "10") * 2);
         }
     }
 
-    // Convenience: get all styling props at once
     function getTextStyle(mode, text) {
         return {
             "family": getFontFamily(mode),
@@ -110,16 +95,20 @@ Singleton {
         }
         let result = "";
         let temp = num;
-        const units = [{
-            "value": 1000,
-            "char": "千"
-        }, {
-            "value": 100,
-            "char": "百"
-        }, {
-            "value": 10,
-            "char": "十"
-        }];
+        const units = [
+            {
+                "value": 1000,
+                "char": "千"
+            },
+            {
+                "value": 100,
+                "char": "百"
+            },
+            {
+                "value": 10,
+                "char": "十"
+            }
+        ];
         for (const unit of units) {
             if (temp >= unit.value) {
                 const count = Math.floor(temp / unit.value);
@@ -140,6 +129,13 @@ Singleton {
         return customFallback;
     }
 
+    function toWordNumber(num) {
+        if (num >= 0 && num < wordMapping.length)
+            return wordMapping[num];
+
+        return num.toString();
+    }
+
     function getDisplayText(num) {
         switch (currentMode) {
         case "japanese":
@@ -148,6 +144,8 @@ Singleton {
             return toRomanNumeral(num);
         case "custom":
             return toCustomNumber(num);
+        case "words":
+            return toWordNumber(num);
         case "normal":
         default:
             return num.toString();
@@ -162,10 +160,11 @@ Singleton {
             return toRomanNumeral(num);
         case "custom":
             return toCustomNumber(num);
+        case "words":
+            return toWordNumber(num);
         case "normal":
         default:
             return num.toString();
         }
     }
-
 }

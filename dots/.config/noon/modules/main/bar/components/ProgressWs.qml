@@ -1,6 +1,7 @@
+import QtQuick
+import qs.store
 import qs.common
 import qs.common.widgets
-import QtQuick
 
 BarGroup {
     id: root
@@ -38,6 +39,18 @@ BarGroup {
             Anim {
                 duration: Animations.durations.large
             }
+        }
+        StyledText {
+            z: 0
+            anchors.centerIn: parent
+            property string value: WorkspaceLabelManager.getDisplayTextForMode(root.workspaceIndexInGroup + 1, "words").trim()
+            text: value.charAt(0).toUpperCase() + value.slice(1)
+            color: Colors.colOutlineVariant
+            font.weight: 900
+            font.pixelSize: Fonts.sizes.small
+            font.family: Fonts.family.monospace
+            rotation: parent.vertical ? 270 : 0
+            animateChange: true
         }
     }
 }
