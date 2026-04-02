@@ -79,6 +79,25 @@ Item {
                     text: hasTranslation ? TranslatorService.translatedText : ""
 
                     GroupButton {
+                        id: playButton
+
+                        baseWidth: height
+                        buttonRadius: Rounding.small
+                        enabled: outputCanvas.displayedText.trim().length > 0
+                        onClicked: {
+                            TranslatorService.play(outputCanvas.displayedText.trim());
+                        }
+
+                        contentItem: Symbol {
+                            anchors.centerIn: parent
+                            horizontalAlignment: Text.AlignHCenter
+                            font.pixelSize: Fonts.sizes.verylarge
+                            text: "record_voice_over"
+                            color: copyButton.enabled ? Colors.colOnLayer1 : Colors.colSubtext
+                        }
+                    }
+
+                    GroupButton {
                         id: copyButton
 
                         baseWidth: height

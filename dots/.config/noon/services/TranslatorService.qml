@@ -84,7 +84,9 @@ Singleton {
             translate(service._currentInputText, service._translationCallback);
         }
     }
-
+    function play(text: string) {
+        NoonUtils.execDetached(["trans", "-p", text]);
+    }
     // Translation process
     Process {
         id: translateProc
