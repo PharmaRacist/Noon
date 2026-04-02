@@ -225,8 +225,11 @@ Item {
         Repeater {
             id: columnRepeater
 
-            model: root.columnConfigs.filter(c => root.expanded ? c.status !== TodoService.status_all : c.status === TodoService.status_all)
-
+            model: ScriptModel {
+                values: {
+                    root.columnConfigs.filter(c => root.expanded ? c.status !== TodoService.status_all : c.status === TodoService.status_all);
+                }
+            }
             TaskList {
                 required property var modelData
                 required property int index
@@ -239,7 +242,7 @@ Item {
                 emptyPlaceholderText: modelData.title
                 targetStatus: modelData.status
                 taskListModel: modelData.model
-                onEditRequested: function (idx, currentContent) {
+                onEditRequested: (idx, currentContent) => {
                     root.editIndex = idx;
                 }
             }

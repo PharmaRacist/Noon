@@ -11,10 +11,11 @@ Item {
     id: root
     visible: false
     required property string source
-    readonly property var colors: palette.colors || Colors
+    readonly property var colors: palette.keyColor ? palette.colors : Colors
     property alias depth: quantizer.depth
     property alias rescaleSize: quantizer.rescaleSize
     property bool active: source.length > 0
+
     ColorQuantizer {
         id: quantizer
         source: root.source
@@ -24,6 +25,6 @@ Item {
     ColorsGenerator {
         id: palette
         active: root.active
-        keyColor: quantizer.colors[0] || "red"
+        keyColor: quantizer.colors[0]
     }
 }

@@ -10,7 +10,7 @@ Item {
     id: searchBar
     signal contentFocusRequested
 
-    property QtObject colors: Colors
+    required property QtObject colors
     required property var root
     property var action
     property alias searchText: searchInput.text
@@ -33,8 +33,8 @@ Item {
             iconSize: 20
             Layout.alignment: Qt.AlignVCenter
             Layout.fillHeight: true
-            color: searchInput.focus ? Colors.colPrimary : Colors.colPrimaryContainer
-            colSymbol: searchInput.focus ? Colors.colOnPrimary : Colors.colOnPrimaryContainer
+            color: searchInput.focus ? colors.colPrimary : colors.colPrimaryContainer
+            colSymbol: searchInput.focus ? colors.colOnPrimary : colors.colOnPrimaryContainer
             shape: searchInput.focus ? MaterialShape.Shape.Cookie12Sided : SidebarData.getShape(root.category)
             text: SidebarData.getIcon(root.category) || ""
             fill: 1
@@ -44,7 +44,7 @@ Item {
             Layout.fillWidth: true
             radius: Rounding.verylarge
             height: 46
-            color: searchInput.focus ? Colors.colSecondaryContainer : Colors.colLayer1
+            color: searchInput.focus ? colors.colSecondaryContainer : colors.colLayer1
 
             StyledTextField {
                 id: searchInput
@@ -55,10 +55,10 @@ Item {
                 enabled: root.effectiveSearchable
                 background: null
                 placeholderText: "Search..."
-                placeholderTextColor: focus ? Colors.colOnSecondaryContainer : Colors.colOutline
+                placeholderTextColor: focus ? colors.colOnSecondaryContainer : colors.colOutline
                 selectionColor: searchBar.colors.colSecondary
-                selectedTextColor: Colors.colOnSecondary
-                color: Colors.colOnLayer1
+                selectedTextColor: colors.colOnSecondary
+                color: colors.colOnLayer1
                 selectByMouse: true
                 font {
                     family: Fonts.family.main

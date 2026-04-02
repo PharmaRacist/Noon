@@ -68,12 +68,20 @@ Singleton {
         "Tasks": {
             icon: "task_alt",
             activeIcon: "add_task",
-            componentPath: "tasks/Kanban",
-            expandable: true,
-            detachable: true,
-            shape: "Clover4Leaf",
-            enabled: Mem.options.sidebar.content.tasks
+            componentPath: "tasks/Todo",
+            searchable: true,
+            shape: "Clover8Leaf",
+            enabled: true
         },
+        // "Tasks": {
+        //     icon: "task_alt",
+        //     activeIcon: "add_task",
+        //     componentPath: "tasks/Kanban",
+        //     expandable: true,
+        //     detachable: true,
+        //     shape: "Clover4Leaf",
+        //     enabled: Mem.options.sidebar.content.tasks
+        // },
         "Notes": {
             icon: "stylus",
             activeIcon: "stylus_note",
@@ -122,12 +130,10 @@ Singleton {
             icon: "stadia_controller",
             activeIcon: "joystick",
             componentPath: "games/Games",
-            expandable: false,
             searchable: true,
             shape: "Ghostish",
-            expandSize: sizePresets.half - 80,
-            colors: GameLauncherService.colors,
             detachable: true,
+            colors: GameLauncherService.colors,
             enabled: Mem.options.sidebar.content.games
         },
         "Tweaks": {

@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import qs.common
+import qs.common.functions
 import qs.services
 import qs.common.utils
 import qs.common.widgets
@@ -39,6 +40,7 @@ BottomDialog {
         BottomDialogSeparator {}
         EntryArea {
             id: nameInput
+            text: pathInput.text.length > 0 ? FileUtils.getEscapedFileNameWithoutExtension(pathInput.text) : ""
             name: "Name:"
             placeholder: "Enter Game's Name"
         }

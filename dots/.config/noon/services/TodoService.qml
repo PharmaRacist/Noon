@@ -12,7 +12,12 @@ import QtQuick
  * Each item has "content", "status", and optional "todoistId" properties.
  * Status workflow: todo -> in_progress -> final_touches -> done
  **/
+/*
 
+    RWork:
+    - [ ] purge todoist initially
+    - [ ]
+*/
 Singleton {
     id: root
 
@@ -92,10 +97,11 @@ Singleton {
     }
 
     // Local Operations
-    function addTask(desc) {
+    function addTask(desc, status = status_todo, date = -1) {
         const newTask = {
             content: desc,
-            status: status_todo
+            status: status,
+            due: date
         };
 
         list.push(newTask);

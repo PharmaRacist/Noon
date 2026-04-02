@@ -5,6 +5,16 @@ import qs.common.functions
 
 Item {
     id: root
+    enum State {
+        Working,
+        Error
+    }
+    readonly property var state: {
+        if (keyColor)
+            return ColorsGenerator.State.Working;
+        else
+            return ColorsGenerator.State.Error;
+    }
     property color keyColor: "white"
     property bool active: false
     property QtObject colors: active ? template : Colors

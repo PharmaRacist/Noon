@@ -13,35 +13,65 @@ import qs.services
 
 StyledRect {
     id: root
+    property bool isSelected: false
     property size itemSize
-    property bool collapsed
-    width: collapsed ? parent.width : itemSize.width - Padding.verylarge
-    height: collapsed ? 125 : itemSize.height - Padding.verylarge
+    clip: true
+    width: parent.width
+    height: 125
     radius: Rounding.verylarge
     color: colors.colLayer1
-    property size coverArtSize: collapsed ? Qt.size(75, 75) : Qt.size(175, 175)
+    enableBorders: true
     signal gameStarted
     property QtObject colors: Colors
-    GridLayout {
+
+    BlurImage {
+        id: coverImageBackdrop
+        z: 0
+        blur: true
+        tint: true
+        tintLevel: 0.85
+        tintColor: Colors.colPrimaryContainer
         anchors.fill: parent
-        anchors.margins: Padding.massive
-        columnSpacing: Padding.verylarge
-        rowSpacing: Padding.large
-        rows: collapsed ? 1 : 4
-        columns: collapsed ? 4 : 1
+        source: root.modelData.coverImage && root.modelData.coverImage !== "" ? (root.modelData.coverImage.startsWith("file://") ? root.modelData.coverImage : "file://" + root.modelData.coverImage) : ""
+        smooth: true
+        mipmap: true
+        antialiasing: true
+        sourceSize: Qt.size(width, height)
+        asynchronous: true
+    }
+
+    StyledRect {
+        id: selectedMark
+        z: 999
+        opacity: root.isSelected ? 1 : 0
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        width: 4
+        height: 40
+        color: colors.colPrimary
+        rightRadius: 6
+    }
+
+    RLayout {
+        anchors.fill: parent
+        anchors.margins: Padding.huge
+        anchors.rightMargin: Padding.massive
+
+        spacing: Padding.verylarge
 
         StyledRect {
-            Layout.preferredWidth: root.coverArtSize.width
-            Layout.preferredHeight: root.coverArtSize.height
-            radius: Rounding.verylarge
+            Layout.fillHeight: true
+            implicitWidth: height
+            radius: Rounding.normal
             color: root.colors.colLayer2
             clip: true
 
-            Image {
+            StyledImage {
                 id: coverImage
                 anchors.fill: parent
-                source: root.gameData.coverImage && root.gameData.coverImage !== "" ? (root.gameData.coverImage.startsWith("file://") ? root.gameData.coverImage : "file://" + root.gameData.coverImage) : ""
+                source: root.modelData.coverImage && root.modelData.coverImage !== "" ? (root.modelData.coverImage.startsWith("file://") ? root.modelData.coverImage : "file://" + root.modelData.coverImage) : ""
                 smooth: true
+                antialiasing: true
                 asynchronous: true
             }
 
@@ -51,7 +81,7 @@ StyledRect {
                 font.pixelSize: 54
                 fill: 1
                 color: root.colors.colOnLayer0
-                visible: !root.gameData.coverImage || root.gameData.coverImage === "" || coverImage.status === Image.Error
+                visible: !root.modelData.coverImage || root.modelData.coverImage === "" || coverImage.status === Image.Error
             }
         }
 
@@ -60,7 +90,7 @@ StyledRect {
             spacing: 5
 
             StyledText {
-                text: root.gameData.name
+                text: root.modelData.name
                 font.pixelSize: Fonts.sizes.verylarge
                 font.weight: Font.Medium
                 color: root.colors.colOnLayer2
@@ -71,8 +101,7 @@ StyledRect {
             }
 
             StyledText {
-                // visible: false
-                text: GameLauncherService.statusNames[root.gameData.status]
+                text: GameLauncherService.statusNames[root.modelData.status]
                 font.pixelSize: Fonts.sizes.small
                 color: root.colors.colSubtext
             }
@@ -82,31 +111,15 @@ StyledRect {
             Layout.preferredHeight: 40
             Layout.fillWidth: true
             spacing: Padding.large
-            RippleButton {
-                Layout.fillWidth: !root.collapsed
+            RippleButtonWithIcon {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
                 buttonRadius: Rounding.normal
-                colBackground: root.colors.colPrimary
-                onPressed: {
+                toggled: true
+                materialIcon: "play_arrow"
+                releaseAction: () => {
                     root.gameStarted();
-                    GameLauncherService.launchGame(root.gameData.id);
-                }
-                RowLayout {
-                    anchors.centerIn: parent
-                    Symbol {
-                        Layout.fillWidth: !root.collapsed
-                        text: "play_arrow"
-                        color: root.colors.colOnPrimary
-                        fill: 1
-                        font.pixelSize: 24
-                    }
-                    StyledText {
-                        visible: !root.collapsed
-                        text: "Play"
-                        color: root.colors.colOnPrimary
-                        horizontalAlignment: Text.AlignHCenter
-                    }
+                    GameLauncherService.launchGame(root.modelData.id);
                 }
             }
             RippleButtonWithIcon {
@@ -115,8 +128,7 @@ StyledRect {
                 colBackground: root.colors.colSecondaryContainer
                 materialIcon: "delete"
                 releaseAction: () => {
-                    deleteConfirmDialog.gameToDelete = root.gameData;
-                    deleteConfirmDialog.open();
+                    GameLauncherService.deleteGame(root.modelData.id);
                 }
             }
         }

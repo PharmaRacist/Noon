@@ -18,7 +18,7 @@ StyledRect {
 
     clip: true
     radius: Rounding.verylarge
-    color: "transparent"
+    color: Colors.colLayer1
 
     PagePlaceholder {
         shown: list.count === 0
@@ -49,7 +49,7 @@ StyledRect {
         id: list
         anchors {
             fill: parent
-            margins: Padding.massive
+            margins: Padding.large
         }
         hint: false
         onCurrentIndexChanged: GameLauncherService.selectedIndex = currentIndex
@@ -59,13 +59,13 @@ StyledRect {
         }
 
         delegate: GameLauncherItem {
-            property var gameData: modelData
+            required property var modelData
+            required property int index
             anchors.right: parent?.right
             anchors.left: parent?.left
-            enableBorders: list.currentIndex === index
+            isSelected: list.currentIndex === index
             colors: GameLauncherService.colors
             itemSize: Sizes.gameLauncherItemSize
-            collapsed: !root.expanded
             onGameStarted: root.gameStarted()
         }
 

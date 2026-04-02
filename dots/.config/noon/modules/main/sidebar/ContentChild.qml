@@ -21,7 +21,7 @@ Item {
     property alias searchInput: searchBar.searchInput
 
     property var parentRoot: GlobalStates.main.sidebar
-    readonly property QtObject colors: parentRoot.colors || Colors
+    readonly property QtObject colors: parentRoot?.colors ?? Colors
     readonly property var contentItem: contentStack.currentItem
 
     signal contentFocusRequested
@@ -116,7 +116,8 @@ Item {
 
                 if ("web_view" in item)
                     GlobalStates.web_session = Qt.binding(() => item.web_view);
-
+                if ("colors" in item)
+                    item.colors = Qt.binding(() => parentRoot.colors);
                 if ("searchQuery" in item)
                     item.searchQuery = Qt.binding(() => searchBar.searchText);
                 if ("detached" in item)
@@ -140,6 +141,7 @@ Item {
         SearchBar {
             id: searchBar
             root: panel
+            colors: panel.colors
             contentY: contentStack.y
             onContentFocusRequested: {
                 if (panel.contentItem && "contentFocusRequested" in panel.contentItem)
