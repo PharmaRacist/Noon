@@ -1,6 +1,7 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 import qs.common
+import qs.common.functions
 import qs.common.widgets
 import qs.common.utils
 import Quickshell
@@ -11,7 +12,7 @@ Singleton {
     id: root
 
     property var currentGame: null
-    property var gamesList: []
+    readonly property var store: Mem.states.services.games
 
     readonly property int status_not_installed: 0
     readonly property int status_installed: 1
@@ -19,16 +20,17 @@ Singleton {
     readonly property int status_completed: 3
     readonly property var statusNames: ["Not Installed", "Installed", "Playing", "Completed"]
     property int selectedIndex: 0
-    property var selectedInfo: gamesList[selectedIndex]
+    property var selectedInfo: store.list[selectedIndex]
     property alias colors: colorsgen.colors
+    property string pendingSelectedGame: ""
+    property string pendingSelectedCover: ""
+    property alias addDialog: addGamePicker
+    property alias addCoverDialog: addCoverPicker
 
-    Component.onCompleted: {
-        NoonUtils.execDetached(`touch ${gameFileView.path}`);
-        reload();
-    }
     function setGameMode(toggled) {
         !toggled ? NoonUtils.execDetached("hyprctl reload") : NoonUtils.execDetached(Mem.states.services.games.gameModeCommand);
     }
+
     function addGame(name, executablePath, coverImage = "", optimization, description = "") {
         const game = {
             "id": Date.now() + Math.random(),
@@ -43,28 +45,17 @@ Singleton {
             "dateAdded": new Date().toISOString()
         };
 
-        gamesList.push(game);
-        root.gamesList = gamesList.slice(0);
-        saveGames();
+        store.list.push(game);
     }
     function deleteGame(gameId) {
-        const index = gamesList.findIndex(game => game.id === gameId);
+        const index = store.list.findIndex(game => game.id === gameId);
         if (index >= 0) {
-            gamesList.splice(index, 1);
-            root.gamesList = gamesList.slice(0);
-            saveGames();
-        }
-    }
-    function updateGameStatus(gameId, newStatus) {
-        const game = gamesList.find(g => g.id === gameId);
-        if (game && newStatus >= status_not_installed && newStatus <= status_completed) {
-            game.status = newStatus;
-            root.gamesList = gamesList.slice(0);
-            saveGames();
+            store.list.splice(index, 1);
+            store.list = store.list.slice(0);
         }
     }
     function launchGame(gameId) {
-        const game = gamesList.find(g => g.id === gameId);
+        const game = store.list.find(g => g.id === gameId);
         if (!game)
             return false;
 
@@ -72,35 +63,23 @@ Singleton {
         if (game.status === status_installed) {
             game.status = status_playing;
         }
-        root.gamesList = gamesList.slice(0);
-        saveGames();
-        if (game.optimization)
+        if (game.optimization) {
             optimizeSystem();
+        }
         currentGame = game;
         gameProcess.running = true;
         return true;
     }
-    function saveGames() {
-        gameFileView.setText(JSON.stringify(root.gamesList, null, 2));
-    }
-    function reload() {
-        gameFileView.reload();
-    }
-    function getGamesByStatus(status) {
-        return gamesList.filter(game => game.status === status);
-    }
-    function getGameCount() {
-        return gamesList.length;
-    }
     function getRecentlyPlayed(count = 5) {
-        return gamesList.filter(game => game.lastPlayed).sort((a, b) => new Date(b.lastPlayed) - new Date(a.lastPlayed)).slice(0, count);
+        return store.list.filter(game => game.lastPlayed).sort((a, b) => new Date(b.lastPlayed) - new Date(a.lastPlayed)).slice(0, count);
     }
     function searchGames(query) {
         const lowerQuery = query.toLowerCase();
-        return gamesList.filter(game => game.name.toLowerCase().includes(lowerQuery) || game.description.toLowerCase().includes(lowerQuery));
+        return store.list.filter(game => game.name.toLowerCase().includes(lowerQuery) || game.description.toLowerCase().includes(lowerQuery));
     }
     function optimizeSystem() {
         NoonUtils.execDetached("hyprctl --batch keyword animations:enabled 0; keyword decoration:shadow:enabled 0; keyword decoration:blur:enabled 0; keyword general:gaps_in 0; keyword general:gaps_out 0; keyword general:border_size 1; keyword input:sensitivity 0; keyword decoration:rounding 0; keyword general:allow_tearing 1");
+        NoonUtils.callIpc("global deload");
     }
     Process {
         id: gameProcess
@@ -122,30 +101,30 @@ Singleton {
             const path = root.currentGame.executablePath;
             return path.substring(0, path.lastIndexOf('/'));
         }
-        onStarted: NoonUtils.toast("Game Launched","stadia_controller")
-        onExited: NoonUtils.execDetached("hyprctl reload")
+        onStarted: NoonUtils.toast("Game Launched", "stadia_controller")
+        onExited: {
+            NoonUtils.callIpc("global load");
+            NoonUtils.execDetached("hyprctl reload");
+        }
     }
 
-    FileView {
-        id: gameFileView
-        // Todo: Urgent
-        // path: Directories.standard.config + "/heroic/sideload_apps/library.json"
-
-        onLoaded: {
-            try {
-                const fileContents = gameFileView.text();
-                let parsedList = JSON.parse(fileContents);
-                root.gamesList = parsedList || [];
-            } catch (error) {
-                root.gamesList = [];
-            }
+    FileDialog {
+        id: addGamePicker
+        title: "Select Game Executable"
+        nameFilters: ["Executable files (*.exe *.AppImage *.sh)", "All files (*)"]
+        onAccepted: {
+            root.pendingSelectedGame = FileUtils.trimFileProtocol(currentFile);
+            NoonUtils.callIpc("sidebar reveal Games");
         }
+    }
 
-        onLoadFailed: error => {
-            if (error == FileViewError.FileNotFound) {
-                root.gamesList = [];
-                saveGames();
-            }
+    FileDialog {
+        id: addCoverPicker
+        title: "Select Cover Executable"
+        nameFilters: ["Image files (*.png *.jpg *.jpeg)", "All files (*)"]
+        onAccepted: {
+            root.pendingSelectedCover = FileUtils.trimFileProtocol(currentFile);
+            NoonUtils.callIpc("sidebar reveal Games");
         }
     }
 

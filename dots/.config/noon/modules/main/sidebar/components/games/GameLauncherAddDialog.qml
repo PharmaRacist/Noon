@@ -23,9 +23,8 @@ BottomDialog {
         leftMargin: sidebarExpanded ? 100 : Padding.large
     }
     function clearInput() {
-        nameInput.text = "";
-        pathInput.text = "";
-        coverInput.text = "";
+        GameLauncherService.pendingSelectedGame = "";
+        GameLauncherService.pendingSelectedCover = "";
         root.show = false;
     }
 
@@ -52,10 +51,10 @@ BottomDialog {
 
         EntryArea {
             id: pathInput
+            text: GameLauncherService.pendingSelectedGame
             materialIcon: "folder"
             action: () => {
-                executableFileDialog.open();
-                NoonUtils.callIpc("sidebar hide");
+                GameLauncherService.addDialog.open();
             }
             name: "Path:"
             placeholder: "/path/to/game.exe or /path/to/game"
@@ -64,8 +63,9 @@ BottomDialog {
         EntryArea {
             id: coverInput
             materialIcon: "image"
+            text: GameLauncherService.pendingSelectedCover
             action: () => {
-                coverImageFileDialog.open();
+                GameLauncherService.addCoverDialog.open();
                 NoonUtils.callIpc("sidebar hide");
             }
             name: "Cover:"
@@ -108,28 +108,6 @@ BottomDialog {
                     }
                 }
             }
-        }
-    }
-    FileDialog {
-        id: executableFileDialog
-
-        title: "Select Game Executable"
-        nameFilters: ["Executable files (*.exe *.AppImage *.sh)", "All files (*)"]
-        onAccepted: {
-            let filePath = currentFile ? currentFile.toString() : selectedFile.toString();
-            pathInput.text = filePath.replace("file://", "");
-            NoonUtils.callIpc("sidebar reveal Games");
-        }
-    }
-    FileDialog {
-        id: coverImageFileDialog
-
-        title: "Select Cover Image"
-        nameFilters: ["Image files (*.jpg *.jpeg *.png *.gif *.bmp)", "All files (*)"]
-        onAccepted: {
-            let filePath = currentFile ? currentFile.toString() : selectedFile.toString();
-            coverInput.text = filePath.replace("file://", "");
-            NoonUtils.callIpc("sidebar reveal Games");
         }
     }
     component OptionArea: RowLayout {

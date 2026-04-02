@@ -8,12 +8,20 @@ StyledRect {
     property bool expanded
     property string searchQuery: ""
     readonly property QtObject colors: GameLauncherService.colors
+
+    signal searchFocusRequested
+    signal contentFocusRequested
+    signal dismiss
     signal gameStarted
+
+    onContentFocusRequested: list.forceActiveFocus()
+
     clip: true
     radius: Rounding.verylarge
     color: "transparent"
+
     PagePlaceholder {
-        shown: GameLauncherService.gamesList.length === 0
+        shown: list.count === 0
         title: "No Games Avilable"
         icon: "stadia_controller"
         iconSize: 128
@@ -22,6 +30,7 @@ StyledRect {
         colBackground: root.colors.colSecondaryContainer
         colOnBackground: root.colors.colOnSecondaryContainer
     }
+
     Loader {
         z: -1
         anchors.fill: parent
@@ -35,22 +44,62 @@ StyledRect {
             blur: true
         }
     }
+
     StyledListView {
+        id: list
         anchors {
             fill: parent
             margins: Padding.massive
         }
         hint: false
         onCurrentIndexChanged: GameLauncherService.selectedIndex = currentIndex
-        model: searchQuery.length > 0 ? GameLauncherService.searchGames(searchQuery) : GameLauncherService.gamesList
+
+        model: ScriptModel {
+            values: searchQuery.length > 0 ? GameLauncherService.searchGames(searchQuery) : GameLauncherService.store.list
+        }
+
         delegate: GameLauncherItem {
             property var gameData: modelData
+            anchors.right: parent?.right
+            anchors.left: parent?.left
+            enableBorders: list.currentIndex === index
             colors: GameLauncherService.colors
             itemSize: Sizes.gameLauncherItemSize
             collapsed: !root.expanded
             onGameStarted: root.gameStarted()
         }
+
+        Keys.onPressed: event => {
+            if (event.key === Qt.Key_Slash && root.focus) {
+                root.searchFocusRequested();
+            } else if (event.key === Qt.Key_Up) {
+                if (currentIndex <= 0) {
+                    currentIndex = -1;
+                    root.searchFocusRequested();
+                } else {
+                    currentIndex--;
+                }
+            } else if (event.key === Qt.Key_Down) {
+                if (currentIndex < count - 1) {
+                    currentIndex++;
+                }
+            } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                if (currentIndex >= 0) {
+                    const selectedData = model.values[currentIndex];
+                    if (selectedData && selectedData.executablePath) {
+                        GameLauncherService.launchGame(selectedData.id);
+                        NoonUtils.playSound("event_accepted");
+                    }
+                }
+            } else if (event.key === Qt.Key_Escape) {
+                root.dismiss();
+            } else
+                return;
+
+            event.accepted = true;
+        }
     }
+
     GameLauncherAddDialog {
         sidebarExpanded: root.expanded
     }

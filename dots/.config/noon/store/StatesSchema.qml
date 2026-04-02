@@ -73,6 +73,7 @@ JsonAdapter {
         property JsonObject games
 
         games: JsonObject {
+            property list<var> list: []
             property string gameModeCommand
         }
         islam: JsonObject {

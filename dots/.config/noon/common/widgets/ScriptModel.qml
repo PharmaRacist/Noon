@@ -1,0 +1,3 @@
+import Quickshell
+
+ScriptModel {}
