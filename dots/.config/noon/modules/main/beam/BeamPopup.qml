@@ -39,7 +39,7 @@ StyledRect {
             "active": true
         }
     }
-
+    readonly property bool topMode: Mem.options.beam.behavior.topMode ?? false
     readonly property var currentConf: contentMap[activeState] || contentMap["all"]
 
     z: -1
@@ -47,7 +47,8 @@ StyledRect {
     opacity: root.reveal && (root.hintText.length > 0) ? 1 : 0
 
     anchors {
-        bottom: mainBg.top
+        top: topMode ? mainBg.bottom : undefined
+        bottom: !topMode ? mainBg.top : undefined
         horizontalCenter: parent.horizontalCenter
     }
 
@@ -64,7 +65,7 @@ StyledRect {
     }
 
     width: Math.max(200, Math.min(hintText.length * 80, mainBg.width))
-    height: 128
+    height: 136
     color: Colors.colLayer0
     enableBorders: true
     radius: Rounding.massive
