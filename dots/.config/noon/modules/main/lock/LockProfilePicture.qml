@@ -13,7 +13,7 @@ Item {
     id: root
     implicitHeight: 400
     implicitWidth: 400
-
+    readonly property bool isLocked: GlobalStates.main.locked
     Anim on x {
         from: 0
         to: (Screen?.width - width) / 2
@@ -26,6 +26,41 @@ Item {
         duration: 450
     }
 
+    ParallelAnimation {
+        id: lockAnimation
+        running: root.isLocked
+        RotationAnimation {
+            target: shape
+            property: "rotation"
+            from: 360
+            to: 0
+            duration: 700
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Animations.curves.expressiveEffects
+        }
+        Anim {
+            target: shape
+            property: "scale"
+            from: 0.0
+            to: 1.0
+            duration: 700
+        }
+    }
+    MaterialShapeWrappedSymbol {
+        id: lockShape
+        z: 999
+        text: "lock"
+        iconSize: 50
+        padding: Padding.huge
+        shape: MaterialShape.Shape.Cookie6Sided
+        color: Colors.colPrimary
+        colSymbol: Colors.colOnPrimary
+        anchors {
+            right: shape.right
+            bottom: shape.bottom
+            margins: Padding.massive
+        }
+    }
     Shape {
         id: shape
         anchors.centerIn: parent
