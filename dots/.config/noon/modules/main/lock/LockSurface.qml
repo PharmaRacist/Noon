@@ -24,11 +24,11 @@ Rectangle {
         source: WallpaperService.currentWallpaper
         fillMode: Image.PreserveAspectCrop
         tint: true
-        tintColor: Colors.colPrimaryContainer
-        tintLevel: 0.9
+        tintColor: ColorUtils.colorWithLightness(Colors.colPrimaryContainer, 0.3)
+        tintLevel: 0.8
         blur: true
         blurSize: 2
-        blurMax: 40
+        blurMax: 42
 
         Anim on opacity {
             from: 0
