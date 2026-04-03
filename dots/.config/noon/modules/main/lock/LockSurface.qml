@@ -44,5 +44,7 @@ Rectangle {
 
     LockControls {}
 
-    LockBeam {}
+    LockBeam {
+        context: root.context
+    }
 }
