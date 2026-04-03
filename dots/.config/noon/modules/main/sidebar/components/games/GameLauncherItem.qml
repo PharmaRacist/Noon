@@ -29,8 +29,8 @@ StyledRect {
         z: 0
         blur: true
         tint: true
-        tintLevel: 0.85
-        tintColor: Colors.colPrimaryContainer
+        tintLevel: 0.7
+        tintColor: Colors.colScrim
         anchors.fill: parent
         source: root.modelData.coverImage && root.modelData.coverImage !== "" ? (root.modelData.coverImage.startsWith("file://") ? root.modelData.coverImage : "file://" + root.modelData.coverImage) : ""
         smooth: true
