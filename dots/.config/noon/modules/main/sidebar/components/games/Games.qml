@@ -7,7 +7,7 @@ StyledRect {
     id: root
     property bool expanded
     property string searchQuery: ""
-    readonly property QtObject colors: GameLauncherService.colors
+    property QtObject colors: Colors
 
     signal searchFocusRequested
     signal contentFocusRequested
@@ -18,7 +18,7 @@ StyledRect {
 
     clip: true
     radius: Rounding.verylarge
-    color: Colors.colLayer1
+    color: colors.colLayer1
 
     PagePlaceholder {
         shown: list.count === 0
@@ -64,9 +64,9 @@ StyledRect {
             anchors.right: parent?.right
             anchors.left: parent?.left
             isSelected: list.currentIndex === index
-            colors: GameLauncherService.colors
             itemSize: Sizes.gameLauncherItemSize
             onGameStarted: root.gameStarted()
+            colors: root.colors
         }
 
         Keys.onPressed: event => {

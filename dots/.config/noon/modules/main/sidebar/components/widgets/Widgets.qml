@@ -8,7 +8,6 @@ import qs.modules.main.desktop.widgets
 
 Item {
     id: root
-    anchors.fill: parent
     property bool expanded: false
     property bool isDragging: false
     property int pinnedCount: 0

@@ -2,9 +2,6 @@ pragma Singleton
 pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
-import qs.common
-import qs.common.functions
-import qs.common.widgets
 
 Singleton {
     // Color Palettes
@@ -126,7 +123,7 @@ Singleton {
         }
     ]
     // Gowall
-    property var themes: [
+    readonly property var themes: [
         {
             "name": "Arc Dark",
             "value": "arcdark",
@@ -234,7 +231,7 @@ Singleton {
         }
     ]
     // M3 Modes
-    property var modes: [
+    readonly property var modes: [
         {
             "name": "Tonal Spot",
             "value": "scheme-tonal-spot",

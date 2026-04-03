@@ -14,6 +14,7 @@ Item {
     anchors.margins: Padding.huge
 
     required property string category
+    required property QtObject colors
     readonly property bool effectiveSearchable: SidebarData.isSearchable(category)
     property string previousCategory: ""
     property bool _detached: false
@@ -21,7 +22,6 @@ Item {
     property alias searchInput: searchBar.searchInput
 
     property var parentRoot: GlobalStates.main.sidebar
-    readonly property QtObject colors: parentRoot?.colors ?? Colors
     readonly property var contentItem: contentStack.currentItem
 
     signal contentFocusRequested
@@ -116,8 +116,6 @@ Item {
 
                 if ("web_view" in item)
                     GlobalStates.web_session = Qt.binding(() => item.web_view);
-                if ("colors" in item)
-                    item.colors = Qt.binding(() => parentRoot?.colors ?? Colors);
                 if ("searchQuery" in item)
                     item.searchQuery = Qt.binding(() => searchBar.searchText);
                 if ("detached" in item)

@@ -142,7 +142,7 @@ Item {
         SidebarNavigationRail {
             content: root
             selectedCategory: root.selectedCategory
-            colors: root.colors
+            colors: root?.colors
             radius: panelWindow.appearanceMode > 0 ? panelWindow.rounding : 0
         }
 
@@ -158,7 +158,8 @@ Item {
             sourceComponent: SidebarData.detachedContent.includes(root.selectedCategory) ? placeholder : content
 
             property Component content: ContentChild {
-                category: root.selectedCategory
+                colors: root?.colors
+                category: root?.selectedCategory
             }
             property Component placeholder: PagePlaceholder {
                 colors: root.colors
