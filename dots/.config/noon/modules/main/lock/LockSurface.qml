@@ -38,8 +38,6 @@ Rectangle {
 
     LockProfilePicture {}
 
-    LockQuotes {}
-
     LockContentArea {}
 
     LockControls {}

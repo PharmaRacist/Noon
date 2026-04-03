@@ -30,24 +30,20 @@ Item {
             spacing: Padding.normal
 
             Repeater {
-                model: ScriptModel {
-                    values: {
-                        return [
-                            {
-                                icon: "power_settings_new",
-                                releaseAction: () => NoonUtils.execDetached("systemctl poweroff")
-                            },
-                            {
-                                icon: "restart_alt",
-                                releaseAction: () => NoonUtils.execDetached("reboot")
-                            },
-                            {
-                                icon: "dark_mode",
-                                releaseAction: () => NoonUtils.execDetached("systemctl suspend")
-                            }
-                        ];
+                model: [
+                    {
+                        icon: "power_settings_new",
+                        releaseAction: () => NoonUtils.execDetached("systemctl poweroff")
+                    },
+                    {
+                        icon: "restart_alt",
+                        releaseAction: () => NoonUtils.execDetached("reboot")
+                    },
+                    {
+                        icon: "dark_mode",
+                        releaseAction: () => NoonUtils.execDetached("systemctl suspend")
                     }
-                }
+                ]
                 delegate: RippleButtonWithIcon {
                     materialIcon: modelData?.icon
                     buttonRadius: Rounding.massive

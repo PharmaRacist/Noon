@@ -1,8 +1,9 @@
-import QtQuick
-import Quickshell
-import qs.common.utils
 pragma Singleton
 pragma ComponentBehavior: Bound
+import QtQuick
+import Quickshell
+import qs.common
+import qs.common.utils
 
 Singleton {
     id: root
@@ -32,11 +33,9 @@ Singleton {
         }
 
         stdout: SplitParser {
-            onRead: (line) => {
+            onRead: line => {
                 return fetcher.output += line;
             }
         }
-
     }
-
 }
