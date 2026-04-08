@@ -24,13 +24,13 @@ Singleton {
 
     function convertTheme(themeName): void {
         root._pendingOutput = current_processed_wall;
-        proc.command = ["gowall", "convert", "-t", themeName, inputPath, "--output", current_processed_wall];
+        proc.command = ["gowall", "convert", "--yes", "-t", themeName, inputPath, "--output", current_processed_wall];
         proc.running = true;
     }
 
     function removeBackground(input: string): void {
         const inputPath = FileUtils.trimFileProtocol(WallpaperService.currentWallpaper);
-        depthProc.command = ["bash", "-c", `[ -f '${WallpaperService.currentFgPath}' ] || gowall bg --output '${WallpaperService.currentFgPath}' '${inputPath}'`];
+        depthProc.command = ["bash", "-c", `[ -f '${WallpaperService.currentFgPath}' ] || gowall bg --output --yes '${WallpaperService.currentFgPath}' '${inputPath}'`];
         depthProc.running = true;
     }
     Process {

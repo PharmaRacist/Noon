@@ -14,7 +14,10 @@ StyledRect {
     signal dismiss
     signal gameStarted
 
-    onContentFocusRequested: list.forceActiveFocus()
+    onContentFocusRequested: {
+        list.currentIndex = 0;
+        list.forceActiveFocus();
+    }
 
     clip: true
     radius: Rounding.verylarge
@@ -52,6 +55,7 @@ StyledRect {
             margins: Padding.large
         }
         hint: false
+        currentIndex: -1
         onCurrentIndexChanged: GameLauncherService.selectedIndex = currentIndex
 
         model: ScriptModel {

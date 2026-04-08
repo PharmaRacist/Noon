@@ -249,7 +249,7 @@ Item {
 
                 ColumnLayout {
                     spacing: parent.spacing
-                    visible: modelData.cat === root.selectedCategory
+                    visible: modelData?.cat === root?.selectedCategory ?? true
 
                     Repeater {
                         id: repeater

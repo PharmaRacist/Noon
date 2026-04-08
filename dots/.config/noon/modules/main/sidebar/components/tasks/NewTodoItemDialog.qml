@@ -44,6 +44,7 @@ BottomDialog {
                 id: inputArea
                 placeholderText: "Task Name"
                 Layout.fillWidth: true
+                Keys.onReturnPressed: addTask()
             }
         }
 
@@ -60,6 +61,8 @@ BottomDialog {
                 Layout.fillWidth: true
                 placeholderText: "DD/MM"
                 maximumLength: 5
+                Keys.onReturnPressed: addTask()
+
                 onTextEdited: {
                     var d = text.replace(/\D/g, "").slice(0, 4);
                     if (d.length >= 2)
@@ -104,17 +107,17 @@ BottomDialog {
             }
             DialogButton {
                 buttonText: "OK"
-                onClicked: {
-                    if (inputArea.text.length > 0) {
-                        TodoService.addTask(inputArea.text, root._pendingTaskStatus, dateInputArea.text);
-                        clear();
-                        root.show = false;
-                    }
-                }
+                onClicked: addTask()
             }
         }
     }
-
+    function addTask() {
+        if (inputArea.text.length > 0) {
+            TodoService.addTask(inputArea.text, root._pendingTaskStatus, dateInputArea.text);
+            clear();
+            root.show = false;
+        }
+    }
     function clear() {
         root._pendingTaskStatus = -1;
         inputArea.text = "";

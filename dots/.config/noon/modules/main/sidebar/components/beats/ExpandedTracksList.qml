@@ -10,9 +10,12 @@ StyledRect {
 
     property string searchText: ""
 
-    readonly property var filteredTracks: {
-        const search = searchText.toLowerCase();
-        return BeatsService.tracksList.filter(entry => search === "" || (entry.title ?? entry.filename ?? "").toLowerCase().includes(search));
+    ScriptModel {
+        id: filteredModel
+        values: {
+            const search = searchText.toLowerCase();
+            return BeatsService.tracksList.filter(entry => search === "" || (entry.title ?? entry.filename ?? "").toLowerCase().includes(search));
+        }
     }
 
     z: 99
@@ -28,7 +31,7 @@ StyledRect {
 
         BottomDialogHeader {
             title: "Beats"
-            subTitle: `There are ${root.filteredTracks.length} Tracks in your playlist !`
+            subTitle: `There are ${filteredModel.values.length} Tracks in your playlist !`
             showCloseButton: false
         }
 
@@ -61,7 +64,8 @@ StyledRect {
             Layout.margins: Padding.normal
             spacing: 6
             clip: true
-            model: root.filteredTracks
+            reuseItems: false
+            model: filteredModel
 
             delegate: StyledDelegateItem {
                 required property int index

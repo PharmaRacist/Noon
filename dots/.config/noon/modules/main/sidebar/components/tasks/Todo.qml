@@ -19,7 +19,10 @@ StyledRect {
     clip: true
     radius: Rounding.verylarge
     color: Colors.colLayer1
-    onContentFocusRequested: list.forceActiveFocus()
+    onContentFocusRequested: {
+        list.currentIndex = 0;
+        list.forceActiveFocus();
+    }
     Component.onCompleted: TodoService.removeDone()
     ScrollEdgeFade {
         target: list

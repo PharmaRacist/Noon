@@ -41,6 +41,14 @@ Singleton {
             wineArgs: []
         })
 
+    Component.onCompleted: {
+        resetStatus();
+    }
+
+    function resetStatus() {
+        store.list.forEach(item => item.status = 1);
+    }
+
     function setGameMode(toggled) {
         !toggled ? NoonUtils.execDetached("hyprctl reload") : NoonUtils.execDetached(Mem.states.services.games.gameModeCommand);
     }

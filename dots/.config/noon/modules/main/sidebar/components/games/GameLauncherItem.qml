@@ -111,14 +111,17 @@ StyledRect {
             Layout.fillWidth: true
             spacing: Padding.large
             RippleButtonWithIcon {
+                enabled: modelData.status !== GameLauncherService.status_playing
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
                 buttonRadius: Rounding.normal
                 toggled: true
-                materialIcon: "play_arrow"
+                materialIcon: !enabled ? "stop" : "play_arrow"
                 releaseAction: () => {
-                    root.gameStarted();
-                    GameLauncherService.launchGame(root.modelData.id);
+                    if (modelData.status !== GameLauncherService.status_playing) {
+                        root.gameStarted();
+                        GameLauncherService.launchGame(root.modelData.id);
+                    }
                 }
             }
             RippleButtonWithIcon {
