@@ -33,7 +33,7 @@ Scope {
 
             FocusHandler {
                 windows: [panel]
-                active: panel.visible && bg.contentMap[root.currentMode]?.focus
+                active: panel.visible && (bg.contentMap[root.currentMode]?.focus ?? false)
                 onCleared: {
                     if (bg.contentMap[root.currentMode]?.focus)
                         dismiss();
@@ -82,7 +82,7 @@ Scope {
                         "incubate": {
                             comp: "IncubatorContent",
                             preload: "category",
-                            focus: true,
+                            // focus: true,
                             size: Qt.size(Screen.width * 0.8, Screen.height * 0.7)
                         },
                         "assure": {
@@ -134,13 +134,13 @@ Scope {
                         active: root.currentMode.length > 0
                         anchors.fill: parent
                         asynchronous: true
-                        source: sanitizeSource("content/", currentItem?.comp) ?? null
-                        onLoaded: if (ready) {
-                            if (currentItem.preload in item)
-                                item[currentItem.preload] = GlobalStates.main.sysDialogs.pendingData;
-                            item.dismiss.connect(() => panel.dismiss());
+                        source: currentItem?.comp ? sanitizeSource("content/", currentItem.comp) : ""
+                        onLoaded: {
+                            if (currentItem.preload in _item)
+                                _item[currentItem?.preload] = GlobalStates.main.sysDialogs?.pendingData ?? null;
+                            _item.dismiss.connect(() => panel.dismiss());
                         }
-                        readonly property var currentItem: bg.contentMap[root.currentMode]
+                        readonly property var currentItem: bg.contentMap[root?.currentMode]
                     }
                 }
 

@@ -89,6 +89,7 @@ Singleton {
             activeIcon: "stylus_note",
             componentPath: "notes/Notes",
             expandable: true,
+            incubatable: true,
             detachable: true,
             shape: "Slanted",
             enabled: Mem.options.sidebar.content.notes
