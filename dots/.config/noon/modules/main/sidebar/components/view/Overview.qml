@@ -140,16 +140,14 @@ Item {
             delegate: OverviewWindow {
                 id: window
                 required property var modelData
-
                 property string address: `0x${modelData.HyprlandToplevel.address}`
                 property int wsCol: windowData?.workspace?.id !== undefined ? root.getColIndex(windowData.workspace.id) : 0
                 property int wsRow: windowData?.workspace?.id !== undefined ? root.getRowIndex(windowData.workspace.id) : 0
                 property bool atInitPosition: initX === x && initY === y
-
                 windowData: root.windowByAddress[address]
                 toplevel: modelData
                 monitorData: root.monitorData
-                viewScale: root.viewScale - root.windowOffset
+                viewScale: root.viewScale
                 availableWorkspaceWidth: root.workspaceImplicitWidth
                 availableWorkspaceHeight: root.workspaceImplicitHeight
                 restrictToWorkspace: Drag.active || atInitPosition

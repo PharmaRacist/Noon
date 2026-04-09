@@ -22,11 +22,10 @@ StyledRect {
     property bool hovered: false
     property bool pressed: false
 
-    property real initX: Math.max((windowData?.at[0] - (monitorData?.x ?? 0) - (monitorData?.reserved[0] ?? 0)) * viewScale, 0) + xOffset
-    property real initY: Math.max((windowData?.at[1] - (monitorData?.y ?? 0) - (monitorData?.reserved[1] ?? 0)) * viewScale, 0) + yOffset
-
-    readonly property real targetWindowWidth: (windowData?.size[0] ?? 0)
-    readonly property real targetWindowHeight: (windowData?.size[1] ?? 0)
+    property real initX: Math.max((windowData?.at[0] - (monitorData?.x ?? 0) - (monitorData?.reserved?.[3] ?? 0)) * viewScale, 0) + xOffset
+    property real initY: Math.max((windowData?.at[1] - (monitorData?.y ?? 0) - (monitorData?.reserved?.[0] ?? 0)) * viewScale, 0) + yOffset
+    readonly property real targetWindowWidth: (windowData?.size[0] ?? 0) * viewScale
+    readonly property real targetWindowHeight: (windowData?.size[1] ?? 0) * viewScale
 
     x: initX
     y: initY
