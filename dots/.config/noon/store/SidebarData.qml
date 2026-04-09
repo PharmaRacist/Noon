@@ -75,15 +75,6 @@ Singleton {
             shape: "Clover8Leaf",
             enabled: true
         },
-        // "Tasks": {
-        //     icon: "task_alt",
-        //     activeIcon: "add_task",
-        //     componentPath: "tasks/Kanban",
-        //     expandable: true,
-        //     detachable: true,
-        //     shape: "Clover4Leaf",
-        //     enabled: Mem.options.sidebar.content.tasks
-        // },
         "Notes": {
             icon: "stylus",
             activeIcon: "stylus_note",
@@ -101,7 +92,8 @@ Singleton {
             componentPath: "view/Overview",
             expandable: true,
             preExpand: true,
-            expandSize: sizePresets.overview,
+            baseSize: sizePresets.overview,
+            expandSize: sizePresets.overviewExpanded,
             enabled: Mem.options.sidebar.content.overview
         },
         "Downloads": {

@@ -55,7 +55,8 @@ Singleton {
         readonly property real threeQuarter: Math.round(Screen.width * 0.85)
 
         readonly property real session: 280
-        readonly property real overview: 1250
+        readonly property real overview: bar + Math.round(Screen.width * 0.185) + Padding.massive * 2
+        readonly property real overviewExpanded: 1185
         readonly property real widgetSize: 172
         readonly property real widgetPillHeight: 72
         readonly property size shelfItemSize: Qt.size(115, 115)

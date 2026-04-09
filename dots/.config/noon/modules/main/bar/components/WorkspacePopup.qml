@@ -24,7 +24,7 @@ StyledPopup {
         readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
         readonly property string windowAppId: activeWindow.appId ?? ""
         readonly property var iconPath: DesktopEntries.byId(windowAppId).icon
-        readonly property size mainSize: Qt.size(380, 214)
+        readonly property size mainSize: Qt.size(380.444, 214)
 
         clip: true
         anchors.fill: parent

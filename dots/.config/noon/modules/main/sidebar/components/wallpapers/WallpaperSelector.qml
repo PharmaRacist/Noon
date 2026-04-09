@@ -35,7 +35,10 @@ RedunduntMultiViewPanel {
             walls.dismiss();
         }
     }
-
+    onSelectedTabIndexChanged: {
+        if (item && selectedTabIndex > -1)
+            item.contentFocusRequested();
+    }
     onContentFocusRequested: {
         item.contentFocusRequested();
     }

@@ -290,7 +290,6 @@ Item {
                                     id: screencopyView
                                     captureSource: HyprlandService.isHyprland && previewPopup ? windowButton.modelData : null
                                     live: true
-                                    radius: Rounding.small
                                     paintCursor: true
                                     constraintSize: Qt.size(root.maxWindowPreviewWidth, root.maxWindowPreviewHeight)
                                     onHasContentChanged: previewPopup.updatePreviewReadiness()

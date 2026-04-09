@@ -20,7 +20,7 @@ Item {
         anchors.fill: parent
         _detached: true
         category: root.category
-        anchors.margins: ["Beats", "Notes"].includes(category) ? 0 : Padding.massive
+        anchors.margins: ["View", "Beats", "Notes"].includes(category) ? 0 : Padding.massive
         parentRoot: root
         colors: SidebarData.getColors(category)
     }

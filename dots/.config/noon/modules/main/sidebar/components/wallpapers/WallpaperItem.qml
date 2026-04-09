@@ -25,7 +25,9 @@ StyledRect {
         return false;
     }
 
-    readonly property Component imageComp: StyledImage {}
+    readonly property Component imageComp: StyledImage {
+        sourceSize: undefined
+    }
     readonly property Component vidComp: VideoPreview {
         Symbol {
             text: "play_arrow"

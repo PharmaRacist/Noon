@@ -12,7 +12,7 @@ Item {
     id: thumbContainer
 
     property var hWin: null
-    property var wHandle:null
+    property var wHandle: null
 
     property string winKey: ''
 
@@ -47,58 +47,58 @@ Item {
     }
 
     function updateLastPos() {
-        var lp = root.lastPositions || ({})
-        var prev = lp[winKey] || ({})
-        prev.x = x
-        prev.y = y
-        lp[winKey] = prev
-        root.lastPositions = lp
+        var lp = root.lastPositions || ({});
+        var prev = lp[winKey] || ({});
+        prev.x = x;
+        prev.y = y;
+        lp[winKey] = prev;
+        root.lastPositions = lp;
     }
 
     onTargetXChanged: {
         if (!root.animateWindows) {
-            x = targetX
-            updateLastPos()
-            return
+            x = targetX;
+            updateLastPos();
+            return;
         }
 
-        var lp = root.lastPositions || ({})
-        var prev = lp[winKey]
-        var startX = (prev && prev.x !== undefined) ? prev.x : targetX
+        var lp = root.lastPositions || ({});
+        var prev = lp[winKey];
+        var startX = (prev && prev.x !== undefined) ? prev.x : targetX;
 
         if (startX === targetX) {
-            x = targetX
-            updateLastPos()
-            return
+            x = targetX;
+            updateLastPos();
+            return;
         }
 
-        animX.stop()
-        animX.from = startX
-        animX.to = targetX
-        animX.start()
+        animX.stop();
+        animX.from = startX;
+        animX.to = targetX;
+        animX.start();
     }
 
     onTargetYChanged: {
         if (!root.animateWindows) {
-            y = targetY
-            updateLastPos()
-            return
+            y = targetY;
+            updateLastPos();
+            return;
         }
 
-        var lp = root.lastPositions || ({})
-        var prev = lp[winKey]
-        var startY = (prev && prev.y !== undefined) ? prev.y : targetY
+        var lp = root.lastPositions || ({});
+        var prev = lp[winKey];
+        var startY = (prev && prev.y !== undefined) ? prev.y : targetY;
 
         if (startY === targetY) {
-            y = targetY
-            updateLastPos()
-            return
+            y = targetY;
+            updateLastPos();
+            return;
         }
 
-        animY.stop()
-        animY.from = startY
-        animY.to = targetY
-        animY.start()
+        animY.stop();
+        animY.from = startY;
+        animY.to = targetY;
+        animY.start();
     }
 
     onXChanged: updateLastPos()
@@ -106,44 +106,44 @@ Item {
 
     Component.onCompleted: {
         if (!root.animateWindows) {
-            x = targetX
-            y = targetY
-            updateLastPos()
+            x = targetX;
+            y = targetY;
+            updateLastPos();
         }
     }
 
     function activateWindow() {
-        if (!hWin) return
-
-        var targetIsSpecial = (hWin?.workspace ?? 0) < 0 || (hWin?.workspace?.name ?? "").startsWith("special")
+        if (!hWin)
+            return;
+        var targetIsSpecial = (hWin?.workspace ?? 0) < 0 || (hWin?.workspace?.name ?? "").startsWith("special");
 
         if (root.specialActive && !targetIsSpecial) {
-            Hyprland.dispatch("togglespecialworkspace")
+            Hyprland.dispatch("togglespecialworkspace");
         }
 
         if (hWin.workspace) {
-            hWin.workspace.activate()
+            hWin.workspace.activate();
         }
 
-        root.toggleExpose()
-        Hyprland.dispatch("focuswindow address:0x" + hWin.address)
-        Hyprland.dispatch("alterzorder top")
+        root.toggleExpose();
+        Hyprland.dispatch("focuswindow address:0x" + hWin.address);
+        Hyprland.dispatch("alterzorder top");
         if (thumbContainer.moveCursorToActiveWindow) {
-          var cx = clientInfo.at[0] + (clientInfo.size[0]/2)
-          var cy = clientInfo.at[1] + (clientInfo.size[1]/2)
-        Hyprland.dispatch("movecursor " + cx + " " + cy)
-
+            var cx = clientInfo.at[0] + (clientInfo.size[0] / 2);
+            var cy = clientInfo.at[1] + (clientInfo.size[1] / 2);
+            Hyprland.dispatch("movecursor " + cx + " " + cy);
         }
     }
 
     function closeWindow() {
-        if (!hWin) return
-        Hyprland.dispatch("closewindow address:0x" + hWin.address)
+        if (!hWin)
+            return;
+        Hyprland.dispatch("closewindow address:0x" + hWin.address);
     }
 
     function refreshThumb() {
         if (thumbLoader.item) {
-            thumbLoader.item.captureFrame()
+            thumbLoader.item.captureFrame();
         }
     }
 
@@ -155,7 +155,7 @@ Item {
         transformOrigin: Item.Center
 
         Behavior on scale {
-            Anim { }
+            Anim {}
         }
 
         MouseArea {
@@ -165,16 +165,16 @@ Item {
             acceptedButtons: Qt.LeftButton | Qt.MiddleButton
 
             onEntered: {
-                exposeArea.currentIndex = index
+                exposeArea.currentIndex = index;
             }
             onClicked: event => {
-                exposeArea.currentIndex = index
+                exposeArea.currentIndex = index;
 
                 if (event.button === Qt.LeftButton) {
-                    thumbContainer.activateWindow()
+                    thumbContainer.activateWindow();
                 }
                 if (event.button === Qt.MiddleButton) {
-                    thumbContainer.closeWindow()
+                    thumbContainer.closeWindow();
                 }
             }
         }
@@ -200,20 +200,11 @@ Item {
                 paintCursor: false
                 visible: root.isActive && thumbContainer.wHandle && hasContent
 
-                layer.enabled: true
-                layer.effect: OpacityMask {
-                    maskSource: Rectangle {
-                        width: thumb.width
-                        height: thumb.height
-                        radius: Rounding.verylarge
-                    }
-                }
-
                 StyledRect {
                     anchors.fill: parent
-                    border.width : thumbContainer.hovered ? 3 : 1
-                    border.color : thumbContainer.hovered ? Colors.colPrimary : Colors.colOutline
-                    color: thumbContainer.hovered ? "transparent": "#33000000"
+                    border.width: thumbContainer.hovered ? 3 : 1
+                    border.color: thumbContainer.hovered ? Colors.colPrimary : Colors.colOutline
+                    color: thumbContainer.hovered ? "transparent" : "#33000000"
                     radius: Rounding.verylarge
                 }
             }
@@ -230,8 +221,7 @@ Item {
 
             radius: Rounding.normal
             color: thumbContainer.hovered ? Colors.colLayer0 : Colors.colLayer0Hover
-            enableBorders:true
-
+            enableBorders: true
 
             Text {
                 id: titleText

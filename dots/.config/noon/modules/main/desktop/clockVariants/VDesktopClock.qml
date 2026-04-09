@@ -41,9 +41,9 @@ Item {
                 id: textItem
                 required property var modelData
                 required property int index
-
                 text: modelData
                 font.pixelSize: 100 * root.clockScale
+                font.family: Fonts.family.clock
                 color: root.hovered ? ((Math.floor(index / 2) + index) % 2 === 0 ? Colors.colPrimary : Colors.colSecondaryContainer) : Colors.colOnBackground
 
                 font.variableAxes: {

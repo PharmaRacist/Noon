@@ -1,101 +1,67 @@
-import qs.services
-import qs.common
-import qs.common.widgets
-
-import Qt5Compat.GraphicalEffects
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Hyprland
+import qs.common
+import qs.services
+import qs.common.widgets
 
-Rectangle { // Window
+StyledRect {
     id: root
+
     property var toplevel
     property var windowData
     property var monitorData
-    property var scale
-    property var availableWorkspaceWidth
-    property var availableWorkspaceHeight
-    property bool restrictToWorkspace: true
-    property real initX: Math.max((windowData?.at[0] - (monitorData?.x ?? 0) - monitorData?.reserved[0]) * root.scale, 0) + xOffset
-    property real initY: Math.max((windowData?.at[1] - (monitorData?.y ?? 0) - monitorData?.reserved[1]) * root.scale, 0) + yOffset
+    property real viewScale
+    property real availableWorkspaceWidth
+    property real availableWorkspaceHeight
     property real xOffset: 0
     property real yOffset: 0
-    property var targetWindowWidth: windowData?.size[0] * scale
-    property var targetWindowHeight: windowData?.size[1] * scale
+    property bool restrictToWorkspace: true
     property bool hovered: false
     property bool pressed: false
 
-    property var iconToWindowRatio: 0.3
-    property var xwaylandIndicatorToIconRatio: 0.35
-    property var iconToWindowRatioCompact: 0.6
-    property var iconPath: NoonUtils.iconPath(AppSearch.guessIcon(windowData?.class))
-    property bool compactMode: Fonts.sizes.verysmall * 4 > targetWindowHeight || Fonts.sizes.verysmall * 4 > targetWindowWidth
+    property real initX: Math.max((windowData?.at[0] - (monitorData?.x ?? 0) - (monitorData?.reserved[0] ?? 0)) * viewScale, 0) + xOffset
+    property real initY: Math.max((windowData?.at[1] - (monitorData?.y ?? 0) - (monitorData?.reserved[1] ?? 0)) * viewScale, 0) + yOffset
 
-    property bool indicateXWayland: (windowData?.xwayland) ?? false
+    readonly property real targetWindowWidth: (windowData?.size[0] ?? 0)
+    readonly property real targetWindowHeight: (windowData?.size[1] ?? 0)
 
     x: initX
     y: initY
-    width: Math.round(Math.min(targetWindowWidth, (restrictToWorkspace ? availableWorkspaceWidth : availableWorkspaceWidth - x + xOffset)))
-    height: Math.round(Math.min(targetWindowHeight, (restrictToWorkspace ? availableWorkspaceHeight : availableWorkspaceHeight - y + yOffset)))
-    color: Colors.colLayer2
+    width: Math.min(targetWindowWidth, restrictToWorkspace ? availableWorkspaceWidth : availableWorkspaceWidth - x + xOffset)
+    height: Math.min(targetWindowHeight, restrictToWorkspace ? availableWorkspaceHeight : availableWorkspaceHeight - y + yOffset)
+
+    color: Colors.colLayer1
     radius: Rounding.verylarge
-    border.color: Colors.colOutline
-    StyledRectangularShadow {
-        target: parent
-    }
+    enableBorders: true
+    clip: true
+
     Behavior on x {
         Anim {}
     }
     Behavior on y {
         Anim {}
     }
-    Behavior on width {
-        Anim {}
-    }
-    Behavior on height {
-        Anim {}
-    }
-    clip: true
 
-    Loader {
-        id: windowLoader
+    StyledScreencopyView {
         anchors.fill: parent
-        anchors.margins: Padding.normal
-        sourceComponent: StyledScreencopyView {
-            id: windowPreview
-            anchors.fill: parent
-            captureSource: root.toplevel
-            live: true
+        paintCursor: false
+        constraintSize: Qt.size(parent.width, parent.height)
+        captureSource: root.toplevel
+        live: true
+    }
 
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: Rectangle {
-                    width: windowPreview.width
-                    height: windowPreview.height
-                    radius: Rounding.verylarge
-                }
-            }
-        }
-        Image {
-            id: windowIcon
-            property var iconSize: Math.min(targetWindowWidth, targetWindowHeight) * (root.compactMode ? root.iconToWindowRatioCompact : root.iconToWindowRatio)
-            mipmap: true
-            source: root.iconPath
-            width: iconSize
-            height: iconSize
-            sourceSize: Qt.size(iconSize, iconSize)
-            anchors {
-                centerIn: windowLoader
-            }
-            Behavior on width {
-                Anim {}
-            }
-            Behavior on height {
-                Anim {}
-            }
+    StyledIconImage {
+        z: 999
+        mipmap: true
+        _source: AppSearch.guessIcon(root.windowData?.class)
+        implicitSize: Math.sqrt(Math.pow(parent.width, 2) + Math.pow(parent.height, 2)) * 0.18
+        anchors {
+            bottom: parent.bottom
+            right: parent.right
+            margins: implicitSize / 10
         }
     }
 }

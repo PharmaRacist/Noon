@@ -10,22 +10,8 @@ import qs.services
 
 ScreencopyView {
     id: root
-
-    property int radius: 0
-
+    paintCursor: false
+    constraintSize: Qt.size(parent.width, parent.height)
     visible: HyprlandService.isHyprland
     live: true
-    paintCursor: true
-    layer.enabled: false // radius > 0
-
-    layer.effect: OpacityMask {
-
-        maskSource: Rectangle {
-            width: root.width
-            height: root.height
-            radius: radius
-        }
-
-    }
-
 }
