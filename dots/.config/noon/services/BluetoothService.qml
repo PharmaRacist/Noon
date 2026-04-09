@@ -177,8 +177,12 @@ Singleton {
 
         const mappings = [
             {
+                icon: "earbuds_2",
+                terms: ["buds", "airpods", "pod", "airpod", "arctis"]
+            },
+            {
                 icon: "headset",
-                terms: ["headset", "audio", "headphone", "airpod", "arctis"]
+                terms: ["headset", "audio", "headphone", "arctis"]
             },
             {
                 icon: "mouse",

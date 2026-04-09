@@ -14,7 +14,7 @@ BottomDialog {
     color: Colors.colLayer2
 
     property int _pendingTaskStatus: -1
-
+    onShowChanged: show ? inputArea.forceActiveFocus() : null
     contentItem: ColumnLayout {
         anchors.fill: parent
         anchors.margins: Padding.large

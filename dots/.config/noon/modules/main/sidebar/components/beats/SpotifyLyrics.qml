@@ -132,17 +132,14 @@ Item {
                     required property var modelData
 
                     width: column.width
-                    font.family: "Rubik"
+                    font.family: "SF Arabic Rounded"
+                    font.weight: 700
                     font.variableAxes: Fonts.variableAxes.lyrics
-                    font.pixelSize: index === currentLineIndex ? Fonts.sizes.title * scale : Fonts.sizes.verylarge * scale
+                    font.pixelSize: Math.max(Fonts.sizes.huge, opacity * Fonts.sizes.title * scale)
                     text: modelData.lineText
                     color: BeatsService.colors.colOnLayer2
                     wrapMode: Text.Wrap
-                    opacity: Math.max(0.2, 1 - Math.abs(index - currentLineIndex) / 4)
-
-                    Behavior on font.pixelSize {
-                        Anim {}
-                    }
+                    opacity: Math.max(0.15, 1 - Math.abs(index - currentLineIndex) / 4)
                     Behavior on opacity {
                         Anim {}
                     }
@@ -151,7 +148,7 @@ Item {
         }
 
         Timer {
-            interval: 40
+            interval: 20
             running: showContent && currentLineIndex >= 0 && column.height > flick.height
             repeat: true
             onTriggered: {

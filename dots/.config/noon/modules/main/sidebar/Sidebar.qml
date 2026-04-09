@@ -321,7 +321,12 @@ StyledPanel {
         function reveal(cat: string) {
             sidebarContent.changeContent(cat);
         }
-
+        function pin() {
+            root.pinned = true;
+        }
+        function unpin() {
+            root.pinned = false;
+        }
         function toggle_pin() {
             root.pinned = !root.pinned;
         }

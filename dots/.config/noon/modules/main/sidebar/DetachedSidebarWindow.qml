@@ -15,6 +15,7 @@ AppWindow {
         anchors.margins: ["Beats", "Notes"].includes(category) ? 0 : Padding.massive
         category: root.category
         parentRoot: root
+        colors: SidebarData.getColors(category)
     }
 
     Component.onCompleted: SidebarData.detachedContent.push(category)

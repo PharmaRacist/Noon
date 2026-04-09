@@ -7,6 +7,7 @@ import qs.services
 
 RedunduntMultiViewPanel {
     id: walls
+    property string searchQuery: ""
     path: Qt.resolvedUrl("./")
     tabButtonList: [
         {
@@ -24,7 +25,7 @@ RedunduntMultiViewPanel {
             "preloadData": searchQuery
         }
     ]
-    property string searchQuery: ""
+
     Connections {
         target: item
         function onSearchFocusRequested() {

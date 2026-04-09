@@ -4,6 +4,7 @@ import qs.common
 import qs.common.widgets
 import qs.services
 import Quickshell
+import Noon.Utils.Dialogs
 
 StyledRect {
     id: root
@@ -51,6 +52,9 @@ StyledRect {
         "combobox": {
             component: comboboxComponent,
             width: 165
+        },
+        "font": {
+            component: fontDialogComponent
         },
         "field": {
             component: plainFieldComponent,
@@ -238,7 +242,7 @@ StyledRect {
             Layout.fillWidth: true
         }
 
-        Loader {
+        StyledLoader {
             id: mainLoader
 
             sourceComponent: root.dict[type].component
@@ -370,10 +374,33 @@ StyledRect {
             colBackground: root.colors.colLayer3
             materialIcon: "play_arrow"
             materialIconFill: true
-            releaseAction: function () {
+            releaseAction: () => {
                 let cmd = Directories.scriptsDir + "/" + root.actionName;
                 NoonUtils.execDetached(cmd);
                 NoonUtils.callIpc("sidebar hide");
+            }
+        }
+    }
+
+    Component {
+        id: fontDialogComponent
+        RippleButtonWithIcon {
+            id: buttonRoot
+            implicitSize: 45
+            colBackground: root.colors.colLayer3
+            materialIcon: "match_case"
+            materialIconFill: true
+            FontDialog {
+                id: fontDialog
+                title: "Select a Font"
+                onFontSelected: font => {
+                    root.setConfigValue(font.family);
+                    NoonUtils.callIpc("sidebar unpin");
+                }
+            }
+            onClicked: {
+                fontDialog.open();
+                NoonUtils.callIpc("sidebar pin");
             }
         }
     }

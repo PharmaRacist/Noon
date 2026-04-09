@@ -63,7 +63,7 @@ Singleton {
                     "icon": "font_download",
                     "name": "UI Font",
                     "key": "appearance.fonts.main",
-                    "type": "text"
+                    "type": "font"
                 },
                 {
                     "icon": "font_download",

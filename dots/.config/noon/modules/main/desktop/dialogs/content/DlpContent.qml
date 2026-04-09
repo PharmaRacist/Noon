@@ -64,8 +64,8 @@ Item {
         let url = root.url;
         if (!url)
             return;
-        const isAudio = mode === "audio";
         let mode = segmentedButtonsContent[segmentedButtons.selectedIndex].toLowerCase();
+        const isAudio = mode === "audio";
         let dir = isAudio ? FileUtils.trimFileProtocol(Directories.standard.music) : FileUtils.trimFileProtocol(Directories.standard.videos);
         let config = qualityOptions[mode];
         let quality = qualityRow.model[qualityRow.currentIndex] || config.default;

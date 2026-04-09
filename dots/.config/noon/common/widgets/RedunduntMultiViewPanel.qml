@@ -64,8 +64,8 @@ StyledRect {
                     asynchronous: true
                     onLoaded: {
                         if (listData.preload in _item) {
-                            if (listData.preload && listData.preloadData)
-                                _item[listData.preload] = Qt.binding(() => listData.preloadData);
+                            // if (listData.preload && listData.preloadData)
+                            _item[listData.preload] = Qt.binding(() => listData.preloadData);
                         }
                     }
                 }
