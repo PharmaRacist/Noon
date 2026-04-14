@@ -2,128 +2,23 @@ pragma Singleton
 pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
+import Qt.labs.folderlistmodel
+import qs.common
 
 Singleton {
     id: root
 
     // Color Palettes
-    readonly property var palettes: [
-        {
-            "name": "Auto",
-            "value": "auto",
-            "icon": "brightness_auto"
-        },
-        {
-            "name": "Ayu Dark",
-            "value": "ayu_dark",
-            "icon": "dark_mode"
-        },
-        {
-            "name": "Catppuccin Latte",
-            "value": "catppuccin_latte",
-            "icon": "coffee"
-        },
-        {
-            "name": "Catppuccin Mocha",
-            "value": "catppuccin_mocha",
-            "icon": "coffee"
-        },
-        {
-            "name": "Cobalt2",
-            "value": "cobalt2",
-            "icon": "water"
-        },
-        {
-            "name": "Dracula",
-            "value": "dracula",
-            "icon": "dark_mode"
-        },
-        {
-            "name": "GitHub Dark",
-            "value": "github_dark",
-            "icon": "code"
-        },
-        {
-            "name": "Gruvbox Dark",
-            "value": "gruvbox_dark",
-            "icon": "palette"
-        },
-        {
-            "name": "Gruvbox Light",
-            "value": "gruvbox_light",
-            "icon": "palette"
-        },
-        {
-            "name": "High Contrast Dark",
-            "value": "high_contrast_dark",
-            "icon": "contrast"
-        },
-        {
-            "name": "High Contrast Light",
-            "value": "high_contrast_light",
-            "icon": "contrast"
-        },
-        {
-            "name": "Material Dark",
-            "value": "material_dark",
-            "icon": "layers"
-        },
-        {
-            "name": "Material Light",
-            "value": "material_light",
-            "icon": "layers"
-        },
-        {
-            "name": "Monokai",
-            "value": "monokai",
-            "icon": "water_drop"
-        },
-        {
-            "name": "Nord",
-            "value": "nord",
-            "icon": "ac_unit"
-        },
-        {
-            "name": "Night Owl",
-            "value": "night_owl",
-            "icon": "dark_mode"
-        },
-        {
-            "name": "One Dark",
-            "value": "one_dark",
-            "icon": "circle"
-        },
-        {
-            "name": "Palenight",
-            "value": "palen_night",
-            "icon": "dark_mode"
-        },
-        {
-            "name": "Shades of Purple",
-            "value": "shades_of_purple",
-            "icon": "color_lens"
-        },
-        {
-            "name": "Solarized Dark",
-            "value": "solarized_dark",
-            "icon": "wb_sunny"
-        },
-        {
-            "name": "Solarized Light",
-            "value": "solarized_light",
-            "icon": "wb_sunny"
-        },
-        {
-            "name": "Synthwave84",
-            "value": "synthwave84",
-            "icon": "graphic_eq"
-        },
-        {
-            "name": "Tokyo Night",
-            "value": "tokyo_night",
-            "icon": "dark_mode"
-        }
-    ]
+    readonly property alias palettes: palettesModel
+
+    FolderListModel {
+        id: palettesModel
+        folder: Qt.resolvedUrl(Directories.assets) + "/db/palettes"
+        // nameFilters: ["*.json"]
+        showDirs: false
+        showFiles: true
+        Component.onCompleted: console.log(palettesModel.count, "in ", folder)
+    }
 
     // Gowall
     readonly property var themes: [

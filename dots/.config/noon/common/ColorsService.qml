@@ -12,11 +12,11 @@ Singleton {
     readonly property string currentFilePath: {
         const current = Mem?.options?.appearance?.colors?.palatteName ?? "auto";
         const m3 = Directories?.standard.state + "/colors.json";
-        const palettesDir = Qt.resolvedUrl(Directories.store);
+        const palettesDir = Qt.resolvedUrl(Directories.assets);
         if (current === "auto")
             return m3;
         else
-            return palettesDir + "/colorPresets/" + current + ".json";
+            return palettesDir + "/db/palettes/" + current + ".json";
     }
 
     ConfigFileView {
