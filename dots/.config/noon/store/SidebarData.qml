@@ -38,19 +38,6 @@ Singleton {
             shape: "PixelCircle",
             enabled: Mem.options.sidebar.content.apis
         },
-        "Web": {
-            icon: "globe",
-            componentPath: "web/WebBrowser",
-            expandable: true,
-            incubatable: true,
-            preExpand: true,
-            async: true,
-            on_accepted_only: true,
-            searchable: true,
-            detachable: true,
-            shape: "Ghostish",
-            enabled: Mem.options.sidebar.content.web
-        },
         "Notifs": {
             icon: "notifications",
             activeIcon: "notifications_active",
@@ -123,17 +110,6 @@ Singleton {
             shape: "Ghostish",
             enabled: Mem.options.sidebar.content.history
         },
-        "Games": {
-            icon: "stadia_controller",
-            activeIcon: "joystick",
-            componentPath: "games/Games",
-            searchable: true,
-            incubatable: true,
-            shape: "Ghostish",
-            detachable: true,
-            colors: GameLauncherService.colors,
-            enabled: Mem.options.sidebar.content.games
-        },
         "Bookmarks": {
             icon: "bookmark",
             activeIcon: "bookmark_heart",
@@ -178,20 +154,6 @@ Singleton {
             incubatable: true,
             shape: "Cookie4Sided",
             enabled: Mem.options.sidebar.content.timers
-        },
-        "Share": {
-            icon: "share",
-            componentPath: "share/Share",
-            shape: "Ghostish",
-            enabled: Mem.options.sidebar.content.share
-        },
-        "Deen": {
-            icon: "mosque",
-            expandable: true,
-            componentPath: "deen/Deen",
-            detachable: true,
-            shape: "Cookie9Sided",
-            enabled: Mem.options.sidebar.content.islam
         },
         "Tweaks": {
             icon: "settings",
@@ -268,10 +230,9 @@ Singleton {
     }
     function getComponentPath(id) {
         const c = _get(id);
-        if (c.isPlugin)
-            return c.entry;
-        else
-            return c ? "components/" + c.componentPath + ".qml" : "";
+        if (!c)
+            return "";
+        return c.isPlugin ? c.entry : "components/" + c.componentPath + ".qml";
     }
     function isSearchable(id) {
         return !!_get(id)?.searchable;

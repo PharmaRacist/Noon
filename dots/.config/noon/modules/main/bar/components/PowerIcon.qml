@@ -13,34 +13,33 @@ MaterialShapeWrappedSymbol {
             icon: "eco",
             color: Colors.colTertiary,
             sColor: Colors.colOnTertiary,
-            shape: MaterialShape.Cookie4Sided
+            shape: MaterialShape.Shape.Cookie4Sided
         },
         {
             name: "Balanced",
             icon: "balance",
             color: Colors.colSecondary,
             sColor: Colors.colOnSecondary,
-            shape: MaterialShape.Cookie6Sided
+            shape: MaterialShape.Shape.Cookie6Sided
         },
         {
             name: "Performance",
             icon: "bolt",
             color: Colors.colPrimary,
             sColor: Colors.colOnPrimary,
-            shape: MaterialShape.Cookie9Sided
+            shape: MaterialShape.Shape.Cookie9Sided
         }
     ]
 
     readonly property var currentModeData: aMap.filter(mode => mode.name === PowerService.modeName)[0]
 
     implicitSize: 32
-    animateChange: true
-    text: !enabled ? getCurrentDesktopIcon() : currentModeData.icon
-    shape: !enabled ? MaterialShape.Cookie9Sided : currentModeData.shape
+    text: !enabled ? getCurrentDesktopInfo()?.icon ?? "deployed_code" : currentModeData.icon
+    shape: !enabled ? getCurrentDesktopInfo()?.shape ?? MaterialShape.Shape.Cookie8Sided : currentModeData.shape
     color: !enabled ? Colors.colPrimary : currentModeData.color
     colSymbol: !enabled ? Colors.colOnPrimary : currentModeData.sColor
 
-    function getCurrentDesktopIcon() {
+    function getCurrentDesktopInfo() {
         const activeApp = MonitorsInfo.topLevel?.appId;
 
         if (activeApp === null)
@@ -49,29 +48,34 @@ MaterialShapeWrappedSymbol {
         const rules = [
             {
                 pattern: /brave|firefox|zen|chromium|chrome|opera|vivaldi/i,
-                icon: "globe"
+                icon: "globe",
+                shape: MaterialShape.Shape.Cookie9Sided
             },
             {
                 pattern: /dolphin|nautilus|files|thunar|nemo|pcmanfm|ranger/i,
-                icon: "folder"
+                icon: "folder",
+                shape: MaterialShape.Shape.Cookie4Sided
             },
             {
                 pattern: /steam|heroic|lutris|gamescope|bottles/i,
-                icon: "joystick"
+                icon: "joystick",
+                shape: MaterialShape.Shape.Bun
             },
             {
                 pattern: /kitty|ghostty|alacritty|foot|wezterm|konsole|xterm/i,
-                icon: "terminal_2"
+                icon: "terminal_2",
+                shape: MaterialShape.Shape.Oval
             },
             {
                 pattern: /code|zeditor|zed|antigravity|cursor|windsurf/i,
-                icon: "data_object"
+                icon: "data_object",
+                shape: MaterialShape.Shape.Slanted
             },
         ];
 
         return rules.find(({
                 pattern
-            }) => pattern.test(activeApp))?.icon ?? "deployed_code";
+            }) => pattern.test(activeApp));
     }
 
     MouseArea {

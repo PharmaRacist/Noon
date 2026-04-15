@@ -9,7 +9,7 @@ StyledRect {
     property bool verticalMode: false
     property bool active: Mem.options.bar.appearance.barGroup
     readonly property real padding: Padding.normal
-    color: active ? Colors.colLayer2 : "transparent"
+    color: active ? Colors.colLayer1 : "transparent"
     radius: Rounding.large
     clip: true
     Layout.fillHeight: !vertical

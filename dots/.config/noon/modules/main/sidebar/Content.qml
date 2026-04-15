@@ -9,11 +9,8 @@ import "components/notifs"
 import "components/settings"
 import "components/shelf"
 import "components/tasks"
-import "components/share"
 import "components/view"
 import "components/wallpapers"
-import "components/web"
-import "components/deen"
 import "components/widgets"
 import QtQuick
 import QtQuick.Layouts

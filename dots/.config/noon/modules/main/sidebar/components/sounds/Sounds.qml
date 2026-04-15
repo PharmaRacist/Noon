@@ -12,11 +12,6 @@ RedunduntMultiViewPanel {
             "component": "Mixer"
         },
         {
-            "icon": "relax",
-            "name": "Ambients",
-            "component": "Ambients"
-        },
-        {
             "icon": "radio",
             "name": "Radio",
             "component": "Radio"
