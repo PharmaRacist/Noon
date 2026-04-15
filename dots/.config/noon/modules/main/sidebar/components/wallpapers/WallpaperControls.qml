@@ -21,9 +21,9 @@ BottomDialog {
     }
     z: 9999
     bottomAreaReveal: true
-    hoverHeight: 320
+    hoverHeight: 230
     color: Colors.colLayer1
-    collapsedHeight: 165
+    collapsedHeight: 195
     enableStagedReveal: false
     bgAnchors {
         rightMargin: Padding.large
@@ -34,26 +34,17 @@ BottomDialog {
         anchors.fill: parent
         anchors.margins: Padding.verylarge
         spacing: Padding.large
-        RLayout {
+        clip: true
+        ListView {
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredHeight: 32
-            Repeater {
-                model: ["Primary", "Secondary", "Tertiary", "PrimaryContainer", "SecondaryContainer", "TertiaryContainer", "Error", "ErrorContainer"]
-                delegate: StyledRect {
-                    radius: 999
-                    color: Colors["col" + modelData]
-                    implicitSize: 28
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        StyledToolTip {
-                            extraVisibleCondition: parent.containsMouse
-                            content: modelData.replace("Container", " Container")
-                        }
-                    }
-                }
-            }
+            Layout.preferredHeight: 60
+            Layout.rightMargin: 40
+            Layout.leftMargin: Padding.large
+            spacing: Padding.normal
+            interactive: true
+            orientation: Qt.Horizontal
+            model: ThemeStore.predefinedColors
+            delegate: PaletteDelegation {}
         }
         RLayout {
             Layout.fillWidth: true
