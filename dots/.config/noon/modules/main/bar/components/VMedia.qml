@@ -16,7 +16,7 @@ BarGroup {
         id: progress
         value: BeatsService.currentTrackProgressRatio()
         anchors.centerIn: parent
-        implicitSize: root.width * 0.7
+        implicitSize: root.width * 0.6
 
         Symbol {
             fill: 1

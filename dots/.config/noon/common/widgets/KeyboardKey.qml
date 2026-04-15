@@ -11,7 +11,7 @@ Rectangle {
     property real extraBottomBorderWidth: 2
     property color borderColor: Colors.colOnLayer0
     property real borderRadius: 5
-    property real pixelSize: Fonts.pixelSize.small
+    property real pixelSize: Fonts.sizes.small
     property color keyColor: Colors.m3.m3surfaceContainerLow
     implicitWidth: keyFace.implicitWidth + borderWidth * 2
     implicitHeight: keyFace.implicitHeight + borderWidth * 2 + extraBottomBorderWidth

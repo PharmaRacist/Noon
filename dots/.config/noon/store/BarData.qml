@@ -94,6 +94,7 @@ Singleton {
         showDirs: false
         showFiles: true
     }
+
     FolderListModel {
         id: vModel
         nameFilters: ["*.qml"]

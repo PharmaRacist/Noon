@@ -22,16 +22,14 @@ BarGroup {
         spacing: Padding.tiny
 
         Repeater {
-            model: [DateTimeService.hour, DateTimeService.minute, DateTimeService.dayTime]
+            model: [DateTimeService.hour, DateTimeService.minute]
             StyledText {
                 required property var modelData
-                visible: modelData !== ""
                 text: modelData
-                font.weight: 900
+                font.variableAxes: Fonts.variableAxes.main
                 font.pixelSize: Fonts.sizes.normal
                 color: Colors.colSecondary
                 Layout.alignment: Qt.AlignHCenter
-                animateChange: true
             }
         }
     }

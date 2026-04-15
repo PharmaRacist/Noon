@@ -14,7 +14,7 @@ BarGroup {
 
     readonly property bool isCharging: UPower.displayDevice.state == UPowerDeviceState.Charging
     property bool revealAll: false
-    readonly property int itemSize: Math.round((vertical ? width : height) * 0.7)
+    readonly property int itemSize: Math.round((vertical ? width : height) * 0.6)
 
     Layout.preferredHeight: content.implicitHeight + Padding.massive + (revealAll ? 20 : 0)
     Layout.preferredWidth: content.implicitWidth + Padding.massive + (revealAll ? 20 : 0)

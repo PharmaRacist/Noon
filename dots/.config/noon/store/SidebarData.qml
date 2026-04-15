@@ -14,8 +14,8 @@ Singleton {
     property int sidebarWidth
     property var detachedContent: []
     readonly property QtObject sizePresets: Sizes.sidebar
-    readonly property var enabledCategories: Object.keys(registry).filter(key => (registry[key].enabled ?? true) && !registry[key].stealth && (registry[key].shell === undefined || registry[key].shell === Mem.options.desktop.shell.mode))
-    property var registry: shellReg
+    property var enabledCategories: ({})
+    property var registry: ({})
     readonly property var shellReg: {
         "Apps": {
             icon: "rocket",
@@ -229,22 +229,29 @@ Singleton {
             stealth: true
         }
     }
-
     function _get(id) {
         return registry[id];
     }
+    function rebuildAll() {
+        registry = rebuildRegistry();
+        enabledCategories = getEnabledCategories();
+    }
+    onShellRegChanged: rebuildAll()
+    Component.onCompleted: rebuildAll()
 
-    Component.onCompleted: rebuildRegistry()
+    function getEnabledCategories() {
+        return Object.keys(registry).filter(key => {
+            const item = registry[key];
+            const isEnabled = item.enabled ?? true;
+            const isNotStealth = !item.stealth;
+            const matchesShell = item.shell === undefined || item.shell === Mem.options.desktop.shell.mode;
 
-    function rebuildRegistry() {
-        registry = Object.assign({}, shellReg, PluginsManager.sidebarPlugins);
+            return isEnabled && isNotStealth && matchesShell;
+        });
     }
 
-    Connections {
-        target: PluginsManager
-        function onSidebarPluginsChanged() {
-            root.rebuildRegistry();
-        }
+    function rebuildRegistry() {
+        return Object.assign({}, shellReg, PluginsManager.sidebarPlugins);
     }
 
     function getColors(id) {
