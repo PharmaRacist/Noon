@@ -39,7 +39,6 @@ Singleton {
         case "main":
             TimerService.reload();
             AlarmService.reload();
-            AmbientSoundsService.reload();
             NoonUtils.playSound("device_unlocked");
             break;
         case "nobuntu":

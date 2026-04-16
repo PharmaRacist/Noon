@@ -66,7 +66,6 @@ JsonAdapter {
         property JsonObject radio
         property JsonObject emojis
         property JsonObject nightLight
-        property JsonObject ambientSounds
         property JsonObject mediaPlayer
         property JsonObject power
         property JsonObject games
@@ -120,12 +119,6 @@ JsonAdapter {
 
         emojis: JsonObject {
             property list<var> frequentEmojies: []
-        }
-        ambientSounds: JsonObject {
-            property real masterVolume: 1
-            property bool masterPaused: false
-            property bool muted: false
-            property list<var> activeSounds: []
         }
         mediaPlayer: JsonObject {}
     }

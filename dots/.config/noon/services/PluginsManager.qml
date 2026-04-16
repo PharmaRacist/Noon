@@ -9,13 +9,23 @@ Singleton {
     readonly property bool enablePlugins: true
     readonly property alias sidebarPlugins: sidebar?.plugins
     readonly property alias dockPlugins: dock?.plugins
+
     PluginExtractor {
         id: dock
-        dir: Directories.plugins.dock
+        group: "dock"
     }
+
     PluginExtractor {
         id: sidebar
-        dir: Directories.plugins.sidebar
+        group: "sidebar"
         onPluginsChanged: SidebarData.rebuildAll()
+    }
+
+    IpcHandler {
+        target: "plugins"
+        function reload(): void {
+            dock.refresh();
+            sidebar.refresh();
+        }
     }
 }

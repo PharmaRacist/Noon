@@ -37,6 +37,8 @@ Scope {
                 z: 99
                 hoverEnabled: true
                 height: parent.height
+                propagateComposedEvents: true
+                acceptedButtons: Qt.NoButton
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: bg?.width
                 anchors.top: parent.top

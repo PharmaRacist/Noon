@@ -9,8 +9,12 @@ import qs.store
 Item {
     id: root
     property var plugins
-    required property string dir
+    required property string group
     property bool active: PluginsManager.enablePlugins
+    visible: false
+    function refresh() {
+        getProc.running = true;
+    }
     Loader {
         visible: false
         asynchronous: true
@@ -18,7 +22,7 @@ Item {
         sourceComponent: FolderListModel {
             id: folderModel
             showDirs: true
-            folder: Qt.resolvedUrl(dir)
+            folder: Qt.resolvedUrl(Directories.plugins.main + '/' + group)
             onStatusChanged: getProc.running = true
         }
     }
@@ -26,11 +30,10 @@ Item {
     Process {
         id: getProc
         running: root.active
-        command: ["bash", Directories.scriptsDir + "/plugins_helper.sh", dir, "list"]
+        command: ["bash", Directories.scriptsDir + "/plugins_helper.sh", "list", group]
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
-                    // console.log(text.trim());
                     root.plugins = JSON.parse(text.trim());
                 } catch (e) {
                     console.warn("[Plugins] Failed to parse:", e, "\nRaw:", text);

@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
-PLUGINS_DIR="${1:?Usage: plugins.sh <plugins_dir> <command>}"
-CMD="${2:?Commands: list, enable, disable, install, remove}"
+
+PLUGINS_DIR="$HOME/.noon_plugins"
+
+CMD="${1:?Usage: $(basename "$0") <command> [group] [target] [-f]}"
+GROUP="$2"
 TARGET="$3"
+FORCE=0
+[[ "$3" == "-f" || "$4" == "-f" ]] && FORCE=1
+[[ "$3" == "-f" ]] && TARGET=""
+
+_plugin_dir() {
+    echo "$PLUGINS_DIR/$GROUP/$TARGET"
+}
 
 list() {
     local first=1
     echo "{"
-    for dir in "$PLUGINS_DIR"/*/; do
+    for dir in "$PLUGINS_DIR/$GROUP"/*/; do
         local manifest="$dir/manifest.json"
         [[ -f "$manifest" ]] || continue
         local name absdir content
@@ -17,6 +27,30 @@ list() {
         printf "  \"%s\": %s" "$name" "$content"
     done
     printf "\n}\n"
+}
+
+_write_qmldir() {
+    local dir="$1"
+    local module="$2"
+    local out="$dir/qmldir"
+    [[ -f "$out" && "$FORCE" -eq 0 ]] && return
+
+    {
+        printf 'module %s\n' "$module"
+        while IFS= read -r qml; do
+            local component basename_qml is_singleton
+            basename_qml=$(basename "$qml")
+            component=$(basename "$qml" .qml)
+            is_singleton=$(echo "$singletons_json" | jq -r --arg f "$basename_qml" 'if . | contains([$f]) then "1" else "0" end')
+            if [[ "$is_singleton" == "1" ]]; then
+                printf 'singleton %s %s %s\n' "$component" "$version" "$basename_qml"
+            else
+                printf '%s %s %s\n' "$component" "$version" "$basename_qml"
+            fi
+        done < <(find "$dir" -maxdepth 1 -name "*.qml" | sort)
+    } > "$out"
+
+    echo "  Created qmldir for module $module"
 }
 
 _ensure_qml_setup() {
@@ -42,67 +76,54 @@ _ensure_qml_setup() {
         echo "  Injected 'import \"./\"' into $relative_entry"
     fi
 
-   local qmldir="$plugin_dir/qmldir"
-       if [[ ! -f "$qmldir" ]]; then
-           local name version
-           name=$(jq -r '.name' "$manifest")
-           version=$(jq -r '.version // "1.0"' "$manifest")
-           {
-               printf 'module %s\n' "$name"
-               while IFS= read -r qml; do
-                   local component
-                   component=$(basename "$qml" .qml)
-                   printf '%s %s %s\n' "$component" "$version" "$(basename "$qml")"
-               done < <(find "$plugin_dir" -maxdepth 1 -name "*.qml" | sort)
-           } > "$qmldir"
+    local name version singletons_json
+    name=$(jq -r '.name' "$manifest")
+    version=$(jq -r '.version // "1.0"' "$manifest")
+    singletons_json=$(jq -r '[.singletons // [] | .[] ] | @json' "$manifest")
 
-           while IFS= read -r subdir; do
-               local rel_sub sub_qmldir sub_module
-               rel_sub="${subdir#$plugin_dir/}"
-               sub_module="$name.$(echo "$rel_sub" | tr '/' '.')"
-               sub_qmldir="$subdir/qmldir"
-               [[ -f "$sub_qmldir" ]] && continue
-               {
-                   printf 'module %s\n' "$sub_module"
-                   while IFS= read -r qml; do
-                       local component
-                       component=$(basename "$qml" .qml)
-                       printf '%s %s %s\n' "$component" "$version" "$(basename "$qml")"
-                   done < <(find "$subdir" -maxdepth 1 -name "*.qml" | sort)
-               } > "$sub_qmldir"
-               echo "  Created qmldir for submodule $sub_module"
-           done < <(find "$plugin_dir" -mindepth 1 -type d | sort)
+    if [[ ! -f "$plugin_dir/qmldir" || "$FORCE" -eq 1 ]]; then
+        _write_qmldir "$plugin_dir" "$name"
 
-           echo "  Created qmldir for module $name"
-       fi
+        while IFS= read -r subdir; do
+            local rel_sub sub_module
+            rel_sub="${subdir#$plugin_dir/}"
+            sub_module="$name.$(echo "$rel_sub" | tr '/' '.')"
+            _write_qmldir "$subdir" "$sub_module"
+        done < <(find "$plugin_dir" -mindepth 1 -type d | sort)
+    fi
 }
 
 enable() {
-    local manifest="$PLUGINS_DIR/$TARGET/manifest.json"
-    [[ -f "$manifest" ]] || { echo "Plugin '$TARGET' not found"; exit 1; }
+    local plugin_dir
+    plugin_dir=$(_plugin_dir)
+    local manifest="$plugin_dir/manifest.json"
+    [[ -f "$manifest" ]] || { echo "Plugin '$GROUP/$TARGET' not found"; exit 1; }
     local tmp
     tmp=$(mktemp)
     jq '.enabled = true' "$manifest" > "$tmp" && mv "$tmp" "$manifest"
-    _ensure_qml_setup "$PLUGINS_DIR/$TARGET"
-    echo "Enabled $TARGET"
+    _ensure_qml_setup "$plugin_dir"
+    echo "Enabled $GROUP/$TARGET"
 }
 
 disable() {
-    local manifest="$PLUGINS_DIR/$TARGET/manifest.json"
-    [[ -f "$manifest" ]] || { echo "Plugin '$TARGET' not found"; exit 1; }
+    local plugin_dir
+    plugin_dir=$(_plugin_dir)
+    local manifest="$plugin_dir/manifest.json"
+    [[ -f "$manifest" ]] || { echo "Plugin '$GROUP/$TARGET' not found"; exit 1; }
     local tmp
     tmp=$(mktemp)
     jq '.enabled = false' "$manifest" > "$tmp" && mv "$tmp" "$manifest"
-    echo "Disabled $TARGET"
+    echo "Disabled $GROUP/$TARGET"
 }
 
 install() {
+    [[ -n "$GROUP" ]] || { echo "Group required: $(basename "$0") install <group> <source>"; exit 1; }
     [[ -e "$TARGET" ]] || { echo "Source '$TARGET' not found"; exit 1; }
     local name
     if [[ -d "$TARGET" ]]; then
         [[ -f "$TARGET/manifest.json" ]] || { echo "No manifest.json in '$TARGET'"; exit 1; }
         name=$(jq -r '.name' "$TARGET/manifest.json")
-        cp -r "$TARGET" "$PLUGINS_DIR/$name"
+        cp -r "$TARGET" "$PLUGINS_DIR/$GROUP/$name"
     elif [[ "$TARGET" == *.tar.gz ]]; then
         local tmp
         tmp=$(mktemp -d)
@@ -111,21 +132,22 @@ install() {
         mf=$(find "$tmp" -maxdepth 2 -name manifest.json | head -1)
         [[ -f "$mf" ]] || { echo "No manifest.json in archive"; exit 1; }
         name=$(jq -r '.name' "$mf")
-        cp -r "$(dirname "$mf")" "$PLUGINS_DIR/$name"
+        cp -r "$(dirname "$mf")" "$PLUGINS_DIR/$GROUP/$name"
         rm -rf "$tmp"
     else
         echo "Unsupported format. Use a directory or .tar.gz"
         exit 1
     fi
-    _ensure_qml_setup "$PLUGINS_DIR/$name"
-    echo "Installed $name"
+    _ensure_qml_setup "$PLUGINS_DIR/$GROUP/$name"
+    echo "Installed $GROUP/$name"
 }
 
 remove() {
-    local dir="$PLUGINS_DIR/$TARGET"
-    [[ -d "$dir" ]] || { echo "Plugin '$TARGET' not found"; exit 1; }
-    rm -rf "$dir"
-    echo "Removed $TARGET"
+    local plugin_dir
+    plugin_dir=$(_plugin_dir)
+    [[ -d "$plugin_dir" ]] || { echo "Plugin '$GROUP/$TARGET' not found"; exit 1; }
+    rm -rf "$plugin_dir"
+    echo "Removed $GROUP/$TARGET"
 }
 
 case "$CMD" in
