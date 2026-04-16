@@ -2,7 +2,6 @@ import qs.services
 import qs.common
 import qs.common.widgets
 import qs.common.functions
-
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Controls
@@ -11,7 +10,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 
-RippleButton {
+GroupButton {
     id: root
 
     property var appToplevel
@@ -25,8 +24,8 @@ RippleButton {
     property bool isSeparator: appToplevel.appId === "SEPARATOR"
     property var desktopEntry: DesktopEntries.byId(appToplevel.appId)
     enabled: !isSeparator
-    implicitHeight: iconSize
-    implicitWidth: isSeparator ? 1 : implicitHeight
+    baseSize: iconSize
+    width: isSeparator ? 1 : implicitWidth
     Layout.fillHeight: true
     buttonRadius: Rounding.normal
     colBackground: "transparent"
@@ -60,14 +59,13 @@ RippleButton {
             }
         }
     }
-    onClicked: {
-        if (appToplevel.toplevels.length === 0) {
-            if (root.desktopEntry) {
-                return root.desktopEntry.execute();
-            } else {
-                return NoonUtils.execDetached("gtk-launch", [appToplevel.appId]);
-            }
+    releaseAction: () => {
+        if (appToplevel.toplevels.find(item => item.id === appToplevel.toplevels[lastFocused].id)) {
+            appToplevel.toplevels[lastFocused].activate();
             return;
+        } else {
+            root.desktopEntry?.execute();
+            lastFocused = (lastFocused + 1) % appToplevel.toplevels.length;
         }
     }
 
@@ -84,50 +82,40 @@ RippleButton {
     contentItem: Loader {
         active: !isSeparator
         sourceComponent: Item {
+            anchors.fill: parent
             Loader {
                 id: iconImageLoader
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                }
+                anchors.centerIn: parent
                 active: !root.isSeparator
+                width: root.iconSize - Padding.large
+                height: root.iconSize - Padding.large
                 sourceComponent: StyledIconImage {
                     id: iconImage
+                    cache: false
                     source: NoonUtils.iconPath(root.desktopEntry ? (root.desktopEntry.icon || root.desktopEntry.genericIcon || "applications-system") : appToplevel.appId)
-                    implicitSize: root.iconSize - Padding.small
-                    implicitWidth: root.iconSize - Padding.small
-                    implicitHeight: root.iconSize - Padding.small
-                    colorize: Mem.options.appearance.icons.tint
                 }
             }
 
             RowLayout {
-                spacing: 1
+                spacing: 2
                 height: countDotHeight
                 width: countDotWidth * Math.min(appToplevel.toplevels.length, 2)
 
                 anchors {
                     top: iconImageLoader.bottom
-                    topMargin: -countDotHeight
-                    horizontalCenter: iconImageLoader.horizontalCenter
+                    topMargin: countDotHeight
+                    horizontalCenter: parent.horizontalCenter
                 }
                 Repeater {
-                    Layout.alignment: Qt.AlignCenter
-                    Layout.fillWidth: true
                     model: Math.min(appToplevel.toplevels.length, 3)
-                    delegate: Rectangle {
+                    delegate: StyledRect {
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.fillWidth: true
                         required property int index
                         radius: Rounding.full
-                        implicitWidth: (appToplevel.toplevels.length <= 3) ? root.countDotWidth : root.countDotHeight
+                        Layout.maximumWidth: (appToplevel.toplevels.length <= 3) ? Sizes.infinity : root.countDotHeight
                         implicitHeight: root.countDotHeight
                         color: appIsActive ? Colors.colPrimary : ColorUtils.transparentize(Colors.colOnLayer0, 0.4)
-                        Behavior on implicitWidth {
-                            Anim {}
-                        }
-                        Behavior on color {
-                            CAnim {}
-                        }
                     }
                 }
             }

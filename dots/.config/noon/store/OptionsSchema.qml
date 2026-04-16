@@ -450,7 +450,7 @@ JsonAdapter {
 
         property bool enabled: false
         property bool hoverToReveal: true
-
+        property int animationDuration: 200
         appearance: JsonObject {
             property real iconSize: 100 * iconSizeMultiplier
             property real iconSizeMultiplier: 0.5

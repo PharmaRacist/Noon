@@ -16,7 +16,7 @@ IconImage {
     property real tint: 0.6
     property bool colorize: Mem.options.appearance.icons.tint
     property color tintColor: Colors.m3.m3surfaceTint
-    property bool cache: backer.cache
+    property bool cache: false
     property string _source
 
     source: NoonUtils.iconPath(_source.toLowerCase()) || ""

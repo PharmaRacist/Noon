@@ -12,33 +12,19 @@ import Quickshell.Hyprland
 
 Item {
     id: root
-    property real maxWindowPreviewHeight: 200
-    property real maxWindowPreviewWidth: 300
+    property real maxWindowPreviewHeight: 216
+    property real maxWindowPreviewWidth: 384
     property real windowControlsHeight: 30
 
     property Item lastHoveredButton
     property bool buttonHovered: false
     property bool requestDockShow: previewPopup.show
     property bool verticalMode: false
-    property var pinnedApps: []
+    property var pinnedApps: Mem.states.favorites.apps
     Layout.preferredWidth: listView.implicitWidth
     Layout.preferredHeight: listView.implicitHeight
-    // Layout.fillWidth: true
-    Component.onCompleted: {
-        if (Mem && Mem.states && Mem.states.dock) {
-            pinnedApps = Qt.binding(() => Mem.states.favorites.apps ?? []);
-        }
-    }
+    Layout.margins: Padding.normal
 
-    Connections {
-        target: Mem?.states?.favorites
-
-        function onAppsChanged() {
-            root.pinnedApps = Mem.states.favorites.apps ?? [];
-        }
-    }
-
-    // Layout.fillHeight: true
     StyledListView {
         id: listView
         spacing: height / 10
@@ -52,31 +38,25 @@ Item {
                 var pinnedAppIds = new Set();
                 var runningAppIds = new Set();
 
-                // Process pinned apps
                 for (const appId of root.pinnedApps) {
                     const normalizedAppId = appId.toLowerCase();
                     pinnedAppIds.add(normalizedAppId);
-
                     if (!map.has(normalizedAppId)) {
                         map.set(normalizedAppId, {
-                            appId: appId  // Keep original case
-                            ,
+                            appId: appId,
                             pinned: true,
                             toplevels: []
                         });
                     }
                 }
 
-                // Process running apps
                 for (const toplevel of ToplevelManager.toplevels.values) {
                     const originalAppId = toplevel.appId;
                     const normalizedAppId = originalAppId.toLowerCase();
                     runningAppIds.add(normalizedAppId);
-
                     if (!map.has(normalizedAppId)) {
                         map.set(normalizedAppId, {
-                            appId: originalAppId  // Store original
-                            ,
+                            appId: originalAppId,
                             pinned: false,
                             toplevels: []
                         });
@@ -84,21 +64,16 @@ Item {
                     map.get(normalizedAppId).toplevels.push(toplevel);
                 }
 
-                // Determine if we need a separator
                 const hasUnpinnedRunningApps = Array.from(runningAppIds).some(appId => !pinnedAppIds.has(appId));
                 const shouldAddSeparator = root.pinnedApps.length > 0 && hasUnpinnedRunningApps;
-
-                // Build the final values array
                 var values = [];
 
-                // Add pinned apps first
                 for (const appId of root.pinnedApps) {
                     const normalizedAppId = appId.toLowerCase();
                     if (map.has(normalizedAppId)) {
                         const appData = map.get(normalizedAppId);
                         values.push({
-                            appId: appData.appId  // Use original case
-                            ,
+                            appId: appData.appId,
                             toplevels: appData.toplevels,
                             pinned: appData.pinned
                         });
@@ -106,7 +81,6 @@ Item {
                     }
                 }
 
-                // Add separator if needed
                 if (shouldAddSeparator) {
                     values.push({
                         appId: "SEPARATOR",
@@ -115,7 +89,6 @@ Item {
                     });
                 }
 
-                // Add remaining running apps
                 for (const [normalizedKey, appData] of map) {
                     if (appData.toplevels.length > 0) {
                         values.push({
@@ -139,55 +112,52 @@ Item {
 
     PopupWindow {
         id: previewPopup
-        // visible: false
+        visible: false
         property var appTopLevel: root.lastHoveredButton?.appToplevel
         property bool allPreviewsReady: false
+        property int readyCount: 0
+        property int totalCount: 0
+
         Connections {
             target: root
             function onLastHoveredButtonChanged() {
-                previewPopup.allPreviewsReady = false; // Reset readiness when the hovered button changes
+                previewPopup.allPreviewsReady = false;
+                previewPopup.readyCount = 0;
+                previewPopup.totalCount = 0;
             }
         }
-        function updatePreviewReadiness() {
-            for (var i = 0; i < previewRowLayout.children.length; i++) {
-                const view = previewRowLayout.children[i];
-                if (view.hasContent === false) {
-                    allPreviewsReady = false;
-                    return;
-                }
-            }
-            allPreviewsReady = true;
+
+        function notifyViewReady() {
+            readyCount++;
+            if (totalCount > 0 && readyCount >= totalCount)
+                allPreviewsReady = true;
         }
-        property bool shouldShow: {
-            const hoverConditions = (popupMouseArea.containsMouse || root.buttonHovered);
-            return hoverConditions && allPreviewsReady;
+
+        function registerView(alreadyHasContent) {
+            totalCount++;
+            if (alreadyHasContent)
+                notifyViewReady();
         }
+
+        property bool shouldShow: (popupMouseArea.containsMouse || root.buttonHovered) && allPreviewsReady
         property bool show: false
 
-        onShouldShowChanged: {
-            if (shouldShow) {
-                // show = true;
-                updateTimer.restart();
-            } else {
-                updateTimer.restart();
-            }
-        }
+        onShouldShowChanged: updateTimer.restart()
+
         Timer {
             id: updateTimer
             interval: 100
-            onTriggered: {
-                previewPopup.show = previewPopup.shouldShow;
-            }
+            onTriggered: previewPopup.show = previewPopup.shouldShow
         }
         anchor {
             window: root.QsWindow.window
             adjustment: PopupAdjustment.None
             gravity: Edges.Top | Edges.Right
-            edges: Edges.Top | Edges.Left
+            edges: Edges.Top | Edges.Right
         }
-        visible: popupBackground.visible
+        // visible: popupBackground.visible
         color: "transparent"
-        implicitWidth: root.QsWindow.window?.width ?? 1
+        implicitWidth: Screen.width
         implicitHeight: popupMouseArea.implicitHeight + root.windowControlsHeight + Sizes.elevationMargin * 2
 
         MouseArea {
@@ -197,12 +167,12 @@ Item {
             implicitHeight: root.maxWindowPreviewHeight + root.windowControlsHeight + Sizes.elevationMargin * 2
             hoverEnabled: true
             x: {
-                if (!root.lastHoveredButton || root.lastHoveredButton.window === null) {
-                    return 0;  // Fallback: left-align during unready states
-                }
+                if (!root.lastHoveredButton || root.lastHoveredButton.window === null)
+                    return 0;
                 var itemCenter = root.QsWindow.mapFromItem(root.lastHoveredButton, root.lastHoveredButton.width / 2, 0);
                 return itemCenter.x - width / 2;
             }
+
             StyledRectangularShadow {
                 target: popupBackground
                 opacity: previewPopup.show ? 1 : 0
@@ -211,14 +181,12 @@ Item {
                     Anim {}
                 }
             }
-            Rectangle {
+
+            StyledRect {
                 id: popupBackground
-                property real padding: 5
+                readonly property real padding: Padding.large
                 opacity: previewPopup.show ? 1 : 0
                 visible: opacity > 0
-                Behavior on opacity {
-                    Anim {}
-                }
                 clip: true
                 color: Colors.colSurfaceContainer
                 radius: Rounding.normal
@@ -227,30 +195,19 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 implicitHeight: previewRowLayout.implicitHeight + padding * 2
                 implicitWidth: previewRowLayout.implicitWidth + padding * 2
-                Behavior on implicitWidth {
-                    Anim {}
-                }
-                Behavior on implicitHeight {
-                    Anim {}
-                }
 
                 RowLayout {
                     id: previewRowLayout
                     anchors.centerIn: parent
                     Repeater {
-                        model: ScriptModel {
-                            values: previewPopup.appTopLevel?.toplevels ?? []
-                        }
+                        model: previewPopup.appTopLevel?.toplevels
                         RippleButton {
                             id: windowButton
                             required property var modelData
                             padding: 0
-                            middleClickAction: () => {
-                                windowButton.modelData?.close();
-                            }
-                            onClicked: {
-                                windowButton.modelData?.activate();
-                            }
+                            middleClickAction: () => windowButton.modelData?.close()
+                            releaseAction: () => windowButton.modelData?.activate()
+
                             contentItem: ColumnLayout {
                                 implicitWidth: screencopyView.implicitWidth
                                 implicitHeight: screencopyView.implicitHeight
@@ -286,13 +243,16 @@ Item {
                                         onClicked: windowButton.modelData?.close()
                                     }
                                 }
+
                                 StyledScreencopyView {
                                     id: screencopyView
-                                    captureSource: HyprlandService.isHyprland && previewPopup ? windowButton.modelData : null
-                                    live: true
-                                    paintCursor: true
+                                    captureSource: windowButton?.modelData ?? null
                                     constraintSize: Qt.size(root.maxWindowPreviewWidth, root.maxWindowPreviewHeight)
-                                    onHasContentChanged: previewPopup.updatePreviewReadiness()
+                                    Component.onCompleted: previewPopup.registerView(hasContent)
+                                    onHasContentChanged: {
+                                        if (hasContent)
+                                            previewPopup.notifyViewReady();
+                                    }
                                 }
                             }
                         }

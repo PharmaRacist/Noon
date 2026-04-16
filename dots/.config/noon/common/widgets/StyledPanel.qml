@@ -10,6 +10,8 @@ PanelWindow {
     required property string name
     property bool fill: false
     property bool kbFocus: false
+    property string _layer: "Top"
+    WlrLayershell.layer: WlrLayer[_layer]
     reloadableId: name
     color: "transparent"
     exclusiveZone: 0

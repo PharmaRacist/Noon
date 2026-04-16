@@ -1,38 +1,31 @@
-import qs.services
-import qs.common
-import qs.common.widgets
-import qs.modules.main.dock.components
-import qs.modules.main.dock
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
-import Quickshell.Wayland
+import qs.common
+import qs.common.widgets
+import "components"
 
 Scope {
     id: root
-    property bool pinned: Mem.states.dock.pinned ?? false
+    readonly property bool pinned: Mem.states.dock.pinned ?? false
 
     Variants {
-        model: [Quickshell.screens[0]]
+        model: MonitorsInfo.main
 
         StyledPanel {
             id: dockRoot
             name: "dock"
-            shell: "nobuntu"
-            WlrLayershell.layer: WlrLayer.Top
-
+            shell: "noon"
             screen: modelData
-
+            _layer: "Top"
             required property var modelData
-            readonly property bool reveal: root.pinned || mouseArea.containsMouse || (!ToplevelManager.activeToplevel?.activated && !GlobalStates.main.sidebar.expanded)
+            readonly property bool reveal: root.pinned || mouseArea.containsMouse || (!GlobalStates.topLevel?.activated && !GlobalStates.main.sidebar.expanded)
 
-            implicitWidth: bg.implicitWidth + 100
-            implicitHeight: bg.implicitHeight + 100
-            exclusiveZone: root.pinned ? bg.implicitHeight + Sizes.elevationMargin : -1
-
-            anchors.bottom: true
-
+            implicitWidth: Screen.width
+            implicitHeight: bg?.height + Sizes.elevationMargin * 2
+            exclusiveZone: root.pinned ? bg?.height + Sizes.elevationMargin : -1
+            fill: true
+            anchors.top: false
             mask: Region {
                 item: mouseArea
             }
@@ -42,28 +35,34 @@ Scope {
                 z: 99
                 hoverEnabled: true
                 height: parent.height
-                anchors.left: parent.left
-                anchors.right: parent.right
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: bg?.width
                 anchors.top: parent.top
-                anchors.topMargin: {
-                    if (dockRoot.reveal && !GlobalStates.main.showBeam && !GlobalStates.main.showOsdValues)
-                        return 5;
-                    else
-                        dockRoot.implicitHeight - 5;
-                }
+                anchors.topMargin: dockRoot.implicitHeight - 5
                 opacity: anchors.topMargin > dockRoot.implicitHeight - 6 ? 0 : 1
-
-                Behavior on anchors.topMargin {
-                    Anim {}
+                states: [
+                    State {
+                        name: "revealed"
+                        when: dockRoot.reveal && !GlobalStates.main.showBeam && !GlobalStates.main.showOsdValues
+                        PropertyChanges {
+                            target: mouseArea
+                            anchors.topMargin: 5
+                        }
+                    }
+                ]
+                transitions: Transition {
+                    Anim {
+                        properties: "anchors.topMargin,opacity,width,height"
+                        duration: Mem.options.dock.animationDuration
+                    }
                 }
                 StyledRectangularShadow {
                     target: bg
                 }
                 StyledRect {
                     id: bg
-                    enableBorders: true
-                    implicitWidth: content.implicitWidth
-                    implicitHeight: content.implicitHeight
+                    width: content.implicitWidth
+                    height: content.implicitHeight
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottomMargin: Sizes.elevationMargin
                     anchors.bottom: parent.bottom
@@ -72,11 +71,9 @@ Scope {
 
                     RowLayout {
                         id: content
-                        spacing: Padding.small
                         anchors.centerIn: parent
-                        DockApps {
-                            Layout.margins: Padding.normal
-                        }
+                        DockPinButton {}
+                        DockApps {}
                     }
                 }
             }
