@@ -30,6 +30,7 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
+                    // console.log(text.trim());
                     root.plugins = JSON.parse(text.trim());
                 } catch (e) {
                     console.warn("[Plugins] Failed to parse:", e, "\nRaw:", text);

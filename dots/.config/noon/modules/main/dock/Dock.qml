@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import qs.services
+import qs.store
 import qs.common
 import qs.common.widgets
 import "components"
@@ -72,8 +74,13 @@ Scope {
                     RowLayout {
                         id: content
                         anchors.centerIn: parent
+                        spacing: 0
                         DockPinButton {}
+                        DockPluginsFactory {
+                            leftMode: true
+                        }
                         DockApps {}
+                        DockPluginsFactory {}
                     }
                 }
             }

@@ -90,7 +90,7 @@ Singleton {
     }
 
     function togglePower() {
-        if (adapted)
+        if (adapter)
             adapter.enabled = !adapter.enabled;
     }
 
