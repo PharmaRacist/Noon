@@ -32,11 +32,16 @@ Singleton {
     }
     property string activeHint
 
-    readonly property var registry: {
+    property var registry: rebuildRegistry()
+    readonly property var pluginsContent: PluginsManager?.beamPlugins
+    readonly property var rawBeamPlugins: PluginsManager?.beamPlugins
+    onRawBeamPluginsChanged: rebuildRegistry()
+
+    readonly property var mainContent: {
         "ai": {
             prefix: "",
             icon: "thread_unread",
-            shape: MaterialShape.Shape.Ghostish,
+            shape: "Ghostish",
             placeholder: "Ask " + root.modelName + " Any Thing ..",
             showHint: false,
             showOsrButton: true,
@@ -51,7 +56,7 @@ Singleton {
         "commands": {
             prefix: ";",
             icon: "keyboard_return",
-            shape: MaterialShape.Shape.Oval,
+            shape: "Oval",
             placeholder: "Command Master ..",
             showHint: true,
             showOsrButton: false,
@@ -70,7 +75,7 @@ Singleton {
         "calc": {
             prefix: "=",
             icon: "calculate",
-            shape: MaterialShape.Shape.Hexagon,
+            shape: "Hexagon",
             placeholder: "Calculate ..",
             showHint: true,
             showOsrButton: false,
@@ -91,7 +96,7 @@ Singleton {
         "install": {
             prefix: "$",
             icon: "deployed_code_update",
-            shape: MaterialShape.Shape.SoftBurst,
+            shape: "SoftBurst",
             placeholder: "Install ..",
             showHint: false,
             showOsrButton: false,
@@ -101,7 +106,7 @@ Singleton {
         "note": {
             prefix: ",",
             icon: "stylus",
-            shape: MaterialShape.Shape.Slanted,
+            shape: "Slanted",
             placeholder: "Note ..",
             showHint: false,
             showOsrButton: false,
@@ -114,7 +119,7 @@ Singleton {
         "alarm": {
             prefix: "`",
             icon: "timer",
-            shape: MaterialShape.Shape.Diamond,
+            shape: "Diamond",
             placeholder: "I Can Wake You ..",
             showHint: false,
             showOsrButton: false,
@@ -130,7 +135,7 @@ Singleton {
         "launch": {
             prefix: ".",
             icon: "rocket_launch",
-            shape: MaterialShape.Shape.Pentagon,
+            shape: "Pentagon",
             placeholder: "Launch App ..",
             showHint: true,
             showOsrButton: false,
@@ -177,7 +182,7 @@ Singleton {
         "timer": {
             prefix: "~",
             icon: "hourglass",
-            shape: MaterialShape.Shape.Clover8Leaf,
+            shape: "Clover8Leaf",
             placeholder: "How Long ..",
             showHint: false,
             showOsrButton: false,
@@ -193,7 +198,7 @@ Singleton {
         "todo": {
             prefix: "/",
             icon: "task_alt",
-            shape: MaterialShape.Shape.Cookie4Sided,
+            shape: "Cookie4Sided",
             placeholder: "Any plans ..?",
             showHint: false,
             showOsrButton: false,
@@ -203,7 +208,7 @@ Singleton {
         "ipc": {
             prefix: "!",
             icon: "moon_stars",
-            shape: MaterialShape.Shape.Pentagon,
+            shape: "Pentagon",
             placeholder: "Just Order ..?",
             showHint: true,
             showOsrButton: false,
@@ -222,7 +227,7 @@ Singleton {
         "search": {
             prefix: "?",
             icon: "search",
-            shape: MaterialShape.Shape.PixelCircle,
+            shape: "PixelCircle",
             placeholder: "Wanna Search Google ..?",
             showHint: true,
             showOsrButton: false,
@@ -246,38 +251,38 @@ Singleton {
                     prefix: "",
                     icon: "search",
                     searchQuery: Mem.options.networking.searchPrefix,
-                    shape: MaterialShape.Shape.PixelCircle
+                    shape: "PixelCircle"
                 },
                 "yt_music": {
                     prefix: "m",
                     icon: "music_note",
                     searchQuery: "https://music.youtube.com/search?q=",
-                    shape: MaterialShape.Shape.Bun
+                    shape: "Bun"
                 },
                 "spotify": {
                     prefix: "s",
                     icon: "music_cast",
                     searchQuery: "https://open.spotify.com/search/",
-                    shape: MaterialShape.Shape.Cookie7Sided
+                    shape: "Cookie7Sided"
                 },
                 "m3": {
                     prefix: "i",
                     icon: "glyphs",
                     searchQuery: "https://fonts.google.com/icons?icon.query=",
-                    shape: MaterialShape.Shape.Cookie12Sided
+                    shape: "Cookie12Sided"
                 },
                 "github": {
                     prefix: "g",
                     icon: "commit",
                     searchQuery: "https://github.com/search?q=",
-                    shape: MaterialShape.Shape.Oval
+                    shape: "Oval"
                 }
             }
         },
         "translate": {
             prefix: ">",
             icon: "translate",
-            shape: MaterialShape.Shape.Arrow,
+            shape: "Arrow",
             placeholder: "Translate ..?",
             showHint: true,
             showOsrButton: false,
@@ -298,7 +303,7 @@ Singleton {
         "download": {
             prefix: "-",
             icon: "download",
-            shape: MaterialShape.Shape.Arrow,
+            shape: "Arrow",
             placeholder: "Download ..?",
             showHint: false,
             showOsrButton: false,
@@ -315,24 +320,23 @@ Singleton {
                     prefix: "v",
                     icon: "play_arrow",
                     parameters: "bestvideo[height<=720]+bestaudio/best[height<=720]",
-                    shape: MaterialShape.Shape.PixelCircle
+                    shape: "PixelCircle"
                 },
                 "audio": {
                     prefix: "m",
                     icon: "music_note",
                     parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" `,
-                    shape: MaterialShape.Shape.PixelCircle
+                    shape: "PixelCircle"
                 },
                 "audio_search": {
                     prefix: "?m",
                     icon: "music_note",
                     parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:%q'`,
-                    shape: MaterialShape.Shape.PixelCircle
+                    shape: "PixelCircle"
                 }
             }
         }
     }
-
     function updateStateFromQuery(fullQuery) {
         query = fullQuery;
 
@@ -394,7 +398,7 @@ Singleton {
     function getShape() {
         if (subConfig)
             return subConfig.shape;
-        return config?.shape || MaterialShape.Shape.Oval;
+        return MaterialShape.Shape[config?.shape];
     }
 
     function getHint() {
@@ -410,6 +414,80 @@ Singleton {
         id: debounceTimer
         interval: 120
         onTriggered: activeHint = config?.hinter ? config.hinter() : ""
+    }
+
+    Process {
+        id: shellRunner
+
+        property string data: ""
+        property var pendingCb: null
+        property string lastQuery: ""
+
+        function run(cmd, cb) {
+            if (running)
+                running = false;
+            data = "";
+            pendingCb = cb ?? null;
+            command = ["bash", "-c", cmd.replace(/\$q/g, root.cleanQuery)];
+            running = true;
+        }
+
+        stdout: SplitParser {
+            onRead: data => shellRunner.data += data + "\n"
+        }
+
+        onExited: {
+            const out = data.trim();
+            root.activeHint = out;
+            if (pendingCb)
+                pendingCb(out);
+            pendingCb = null;
+            data = "";
+        }
+    }
+
+    function buildBeamPlugins() {
+        const raw = rawBeamPlugins;
+        if (!raw || Object.keys(raw).length === 0)
+            return {};
+
+        const ctx = {
+            get cleanQuery() {
+                return root.cleanQuery;
+            },
+            get activeState() {
+                return root.activeState;
+            },
+            get activeHint() {
+                return root.activeHint;
+            },
+            set activeHint(v) {
+                root.activeHint = v;
+            },
+            exec: cmd => Quickshell.execDetached(["bash", "-c", cmd.replace(/\$q/g, root.cleanQuery)]),
+            shell: (cmd, cb) => {
+                if (root.cleanQuery === shellRunner.lastQuery)
+                    return;
+                shellRunner.lastQuery = root.cleanQuery;
+                shellRunner.run(cmd, cb);
+            }
+        };
+
+        const wrap = fn => fn ? new Function("ctx", `with(ctx){ return (${fn.replace(/%q/g, "ctx.cleanQuery")}) }`)(ctx) : null;
+
+        const result = {};
+        for (let key in raw) {
+            const p = raw[key];
+            result[key] = Object.assign({}, p, {
+                hinter: wrap(p.hinter) ?? (() => ""),
+                executor: wrap(p.executor) ?? (() => {})
+            });
+        }
+        return result;
+    }
+
+    function rebuildRegistry() {
+        registry = Object.assign({}, mainContent, buildBeamPlugins());
     }
 
     function executeCommand() {
