@@ -39,7 +39,14 @@ Singleton {
             shape: MaterialShape.Shape.Ghostish,
             placeholder: "Ask " + root.modelName + " Any Thing ..",
             showHint: false,
-            showOsrButton: true
+            showOsrButton: true,
+            hinter: () => "",
+            executor: () => {
+                if (Mem.options.beam.behavior.clearAiChatBeforeSearch)
+                    Ai.clearMessages();
+                Ai.sendUserMessage(query);
+                NoonUtils.callIpc("sidebar reveal API");
+            }
         },
         "commands": {
             prefix: ";",
@@ -47,7 +54,18 @@ Singleton {
             shape: MaterialShape.Shape.Oval,
             placeholder: "Command Master ..",
             showHint: true,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => {
+                if (NoonUtils.avilableSystemCommands.length < 1)
+                    NoonUtils.fetchCommands();
+                const q = cleanQuery.toLowerCase();
+                for (let cmd of NoonUtils.avilableSystemCommands) {
+                    if (cmd.toLowerCase().startsWith(q))
+                        return cmd;
+                }
+                return "";
+            },
+            executor: () => Quickshell.execDetached(["bash", "-c", cleanQuery])
         },
         "calc": {
             prefix: "=",
@@ -55,7 +73,20 @@ Singleton {
             shape: MaterialShape.Shape.Hexagon,
             placeholder: "Calculate ..",
             showHint: true,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => {
+                if (cleanQuery.length > 0) {
+                    QalcService.calculate(cleanQuery, result => {
+                        if (activeState === "calc")
+                            activeHint = result;
+                    });
+                }
+                return activeHint;
+            },
+            executor: () => {
+                if (QalcService.result)
+                    ClipboardService.copy(QalcService.result);
+            }
         },
         "install": {
             prefix: "$",
@@ -63,7 +94,9 @@ Singleton {
             shape: MaterialShape.Shape.SoftBurst,
             placeholder: "Install ..",
             showHint: false,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => "",
+            executor: () => NoonUtils.installPkg(cleanQuery)
         },
         "note": {
             prefix: ",",
@@ -71,7 +104,12 @@ Singleton {
             shape: MaterialShape.Shape.Slanted,
             placeholder: "Note ..",
             showHint: false,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => "",
+            executor: () => {
+                const separator = Mem.options.beam.behavior.addSeparatorForNotes ? "\n - - - " : "";
+                NotesService.note(cleanQuery + separator);
+            }
         },
         "alarm": {
             prefix: "`",
@@ -79,7 +117,15 @@ Singleton {
             shape: MaterialShape.Shape.Diamond,
             placeholder: "I Can Wake You ..",
             showHint: false,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => "",
+            executor: () => {
+                AlarmService.addTimer(cleanQuery, "Beam Timer");
+                if (Mem.options.beam.behavior.revealLauncherOnAction) {
+                    Mem.states.sidebar.misc.selectedTabIndex = 3;
+                    NoonUtils.callIpc("sidebar reveal Alarms");
+                }
+            }
         },
         "launch": {
             prefix: ".",
@@ -87,7 +133,46 @@ Singleton {
             shape: MaterialShape.Shape.Pentagon,
             placeholder: "Launch App ..",
             showHint: true,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => {
+                if (cleanQuery === "") {
+                    suggestedApp = null;
+                    return "";
+                }
+                const allApps = [...DesktopEntries.applications.values];
+                const q = cleanQuery.toLowerCase();
+                let bestMatch = null;
+                let bestScore = 0;
+                for (let app of allApps) {
+                    const name = (app.name || "").toLowerCase();
+                    const genericName = (app.genericName || "").toLowerCase();
+                    let score = 0;
+                    if (name.startsWith(q))
+                        score = 100 + (100 - name.length);
+                    else if (name.includes(q))
+                        score = 50;
+                    if (genericName.startsWith(q))
+                        score = Math.max(score, 90);
+                    else if (genericName.includes(q))
+                        score = Math.max(score, 45);
+                    const acronym = name.split(/\s+/).map(w => w[0]).join("").toLowerCase();
+                    if (acronym === q)
+                        score = Math.max(score, 95);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMatch = app;
+                    }
+                }
+                suggestedApp = bestMatch;
+                return bestMatch ? bestMatch.name : "";
+            },
+            executor: () => {
+                if (suggestedApp) {
+                    const entry = DesktopEntries.byId(suggestedApp.id);
+                    if (entry)
+                        entry.execute();
+                }
+            }
         },
         "timer": {
             prefix: "~",
@@ -95,7 +180,15 @@ Singleton {
             shape: MaterialShape.Shape.Clover8Leaf,
             placeholder: "How Long ..",
             showHint: false,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => "",
+            executor: () => {
+                const duration = TimerService.parseTimeString(cleanQuery);
+                if (duration > 0)
+                    TimerService.addTimer("Focus Time", duration, true, true);
+                if (Mem.options.beam.behavior.revealLauncherOnAction)
+                    NoonUtils.callIpc("sidebar reveal Timers");
+            }
         },
         "todo": {
             prefix: "/",
@@ -103,7 +196,9 @@ Singleton {
             shape: MaterialShape.Shape.Cookie4Sided,
             placeholder: "Any plans ..?",
             showHint: false,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => "",
+            executor: () => TodoService.addTask(cleanQuery)
         },
         "ipc": {
             prefix: "!",
@@ -111,7 +206,18 @@ Singleton {
             shape: MaterialShape.Shape.Pentagon,
             placeholder: "Just Order ..?",
             showHint: true,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => {
+                if (NoonUtils.avilableIpcCommands.length < 1)
+                    NoonUtils.fetchIpcCommands();
+                const q = cleanQuery.toLowerCase();
+                for (let cmd of NoonUtils.avilableIpcCommands) {
+                    if (cmd.toLowerCase().startsWith(q))
+                        return cmd;
+                }
+                return "";
+            },
+            executor: () => NoonUtils.callIpc(cleanQuery)
         },
         "search": {
             prefix: "?",
@@ -120,6 +226,21 @@ Singleton {
             placeholder: "Wanna Search Google ..?",
             showHint: true,
             showOsrButton: false,
+            hinter: () => {
+                if (BookmarksService.bookmarkTitles.length > 0) {
+                    const q = cleanQuery.toLowerCase();
+                    for (let bookmark of BookmarksService.bookmarkTitles) {
+                        if (bookmark.toLowerCase().startsWith(q))
+                            return bookmark;
+                    }
+                }
+                return "";
+            },
+            executor: () => {
+                const searchUrl = subConfig?.searchQuery || Mem.options.networking.searchPrefix;
+                const searchText = subConfig ? cleanQuery.substring(subConfig.prefix.length) : cleanQuery;
+                Quickshell.execDetached(["xdg-open", searchUrl + encodeURIComponent(searchText)]);
+            },
             subStates: {
                 "search": {
                     prefix: "",
@@ -159,7 +280,20 @@ Singleton {
             shape: MaterialShape.Shape.Arrow,
             placeholder: "Translate ..?",
             showHint: true,
-            showOsrButton: false
+            showOsrButton: false,
+            hinter: () => {
+                if (cleanQuery.length > 0) {
+                    TranslatorService.translate(cleanQuery, result => {
+                        if (activeState === "translate")
+                            activeHint = result;
+                    });
+                }
+                return activeHint;
+            },
+            executor: () => {
+                if (TranslatorService.translatedText)
+                    ClipboardService.copy(TranslatorService.translatedText);
+            }
         },
         "download": {
             prefix: "-",
@@ -168,6 +302,14 @@ Singleton {
             placeholder: "Download ..?",
             showHint: false,
             showOsrButton: false,
+            hinter: () => "",
+            executor: () => {
+                const params = subConfig?.parameters || "";
+                const searchQuery = subConfig ? cleanQuery.substring(subConfig.prefix.length).trim() : cleanQuery.trim();
+                const processedParams = params.replace(/%q/g, searchQuery);
+                const cmd = params.includes("%q") ? `yt-dlp -f ${processedParams}` : `yt-dlp -f ${processedParams} '${searchQuery}'`;
+                BeatsService.downloadByCommand(cmd);
+            },
             subStates: {
                 "video": {
                     prefix: "v",
@@ -181,7 +323,7 @@ Singleton {
                     parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" `,
                     shape: MaterialShape.Shape.PixelCircle
                 },
-                "audio": {
+                "audio_search": {
                     prefix: "?m",
                     icon: "music_note",
                     parameters: `bestaudio --extract-audio --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -P "${Directories.beats.downloads}" 'ytsearch1:%q'`,
@@ -202,13 +344,10 @@ Singleton {
 
         const firstChar = fullQuery[0];
 
-        // Check main states
         for (let key in registry) {
             const stateConfig = registry[key];
             if (stateConfig.prefix === firstChar && firstChar !== "") {
                 activeState = key;
-
-                // Check for sub-states
                 if (stateConfig.subStates) {
                     updateSubState(fullQuery.substring(1), stateConfig.subStates);
                 } else {
@@ -218,7 +357,6 @@ Singleton {
             }
         }
 
-        // Default to AI
         activeState = "ai";
         activeSubState = "";
     }
@@ -237,7 +375,6 @@ Singleton {
             }
         }
 
-        // Default sub-state (usually the first one or empty)
         activeSubState = Object.keys(subStates)[0] || "";
     }
 
@@ -259,6 +396,7 @@ Singleton {
             return subConfig.shape;
         return config?.shape || MaterialShape.Shape.Oval;
     }
+
     function getHint() {
         if (!config.showHint) {
             activeHint = "";
@@ -267,246 +405,18 @@ Singleton {
         debounceTimer.restart();
         return activeHint;
     }
+
     Timer {
         id: debounceTimer
         interval: 120
-        onTriggered: activeHint = getImmediateHint()
-    }
-
-    function getImmediateHint() {
-        const handlers = {
-            "commands": getCommandHint,
-            "calc": getCalcHint,
-            "launch": getLaunchHint,
-            "ipc": getIpcHint,
-            "search": getSearchHint,
-            "translate": getTranslateHint
-        };
-
-        const handler = handlers[activeState];
-        return handler ? handler() : "";
-    }
-    function getCommandHint() {
-        return findMatchingCommand(NoonUtils.avilableSystemCommands, cleanQuery, () => NoonUtils.fetchCommands());
-    }
-
-    function getIpcHint() {
-        return findMatchingCommand(NoonUtils.avilableIpcCommands, cleanQuery, () => NoonUtils.fetchIpcCommands());
-    }
-
-    function findMatchingCommand(commandList, searchQuery, fetchFn) {
-        if (commandList.length < 1)
-            fetchFn();
-
-        const queryLower = searchQuery.toLowerCase();
-        for (let cmd of commandList) {
-            if (cmd.toLowerCase().startsWith(queryLower)) {
-                return cmd;
-            }
-        }
-        return "";
-    }
-
-    function getCalcHint() {
-        if (cleanQuery.length > 0) {
-            QalcService.calculate(cleanQuery, result => {
-                if (activeState === "calc")
-                    activeHint = result;
-            });
-        }
-        return activeHint;
-    }
-
-    function getLaunchHint() {
-        if (cleanQuery === "") {
-            suggestedApp = null;
-            return "";
-        }
-
-        const allApps = [...DesktopEntries.applications.values];
-        const bestApp = findBestAppMatch(allApps, cleanQuery.toLowerCase());
-
-        suggestedApp = bestApp;
-        return bestApp ? bestApp.name : "";
-    }
-
-    function findBestAppMatch(apps, query) {
-        let bestMatch = null;
-        let bestScore = 0;
-
-        for (let app of apps) {
-            const score = calculateAppScore(app, query);
-            if (score > bestScore) {
-                bestScore = score;
-                bestMatch = app;
-            }
-        }
-
-        return bestMatch;
-    }
-
-    function calculateAppScore(app, query) {
-        const name = (app.name || "").toLowerCase();
-        const genericName = (app.genericName || "").toLowerCase();
-        let score = 0;
-
-        // Name matching
-        if (name.startsWith(query)) {
-            score = 100 + (100 - name.length);
-        } else if (name.includes(query)) {
-            score = 50;
-        }
-
-        // Generic name matching
-        if (genericName.startsWith(query)) {
-            score = Math.max(score, 90);
-        } else if (genericName.includes(query)) {
-            score = Math.max(score, 45);
-        }
-
-        // Acronym matching
-        const acronym = name.split(/\s+/).map(w => w[0]).join('').toLowerCase();
-        if (acronym === query) {
-            score = Math.max(score, 95);
-        }
-
-        return score;
-    }
-
-    function getSearchHint() {
-        if (BookmarksService.bookmarkTitles.length > 0) {
-            const queryLower = cleanQuery.toLowerCase();
-            for (let bookmark of BookmarksService.bookmarkTitles) {
-                if (bookmark.toLowerCase().startsWith(queryLower)) {
-                    return bookmark;
-                }
-            }
-        }
-        return "";
-    }
-
-    function getTranslateHint() {
-        if (cleanQuery.length > 0) {
-            TranslatorService.translate(cleanQuery, result => {
-                if (activeState === "translate")
-                    activeHint = result;
-            });
-        }
-        return activeHint;
+        onTriggered: activeHint = config?.hinter ? config.hinter() : ""
     }
 
     function executeCommand() {
         if (cleanQuery.length === 0 && activeState !== "ai")
             return;
-
-        const executors = {
-            "ai": executeAi,
-            "commands": executeCommands,
-            "calc": executeCalc,
-            "install": executeInstall,
-            "note": executeNote,
-            "alarm": executeAlarm,
-            "launch": executeLaunch,
-            "timer": executeTimer,
-            "todo": executeTodo,
-            "ipc": executeIpc,
-            "search": executeSearch,
-            "translate": executeTranslate,
-            "download": executeDownload
-        };
-
-        const executor = executors[activeState];
-        if (executor)
-            executor();
-    }
-
-    function executeAi() {
-        if (Mem.options.beam.behavior.clearAiChatBeforeSearch) {
-            Ai.clearMessages();
-        }
-        Ai.sendUserMessage(query);
-        NoonUtils.callIpc("sidebar reveal API");
-    }
-
-    function executeCommands() {
-        Quickshell.execDetached(["bash", "-c", cleanQuery]);
-    }
-
-    function executeCalc() {
-        if (QalcService.result) {
-            ClipboardService.copy(QalcService.result);
-        }
-    }
-
-    function executeInstall() {
-        NoonUtils.installPkg(cleanQuery);
-    }
-
-    function executeNote() {
-        const separator = Mem.options.beam.behavior.addSeparatorForNotes ? "\n - - - " : "";
-        NotesService.note(cleanQuery + separator);
-    }
-
-    function executeAlarm() {
-        AlarmService.addTimer(cleanQuery, "Beam Timer");
-        if (Mem.options.beam.behavior.revealLauncherOnAction) {
-            Mem.states.sidebar.misc.selectedTabIndex = 3;
-            NoonUtils.callIpc("sidebar reveal Misc");
-        }
-    }
-
-    function executeLaunch() {
-        if (suggestedApp) {
-            const entry = DesktopEntries.byId(suggestedApp.id);
-            if (entry)
-                entry.execute();
-        }
-    }
-
-    function executeTimer() {
-        const duration = TimerService.parseTimeString(cleanQuery);
-        if (duration > 0) {
-            const id = TimerService.addTimer("Focus Time", duration);
-            TimerService.startTimer(id);
-            if (Mem.options.beam.behavior.revealLauncherOnAction) {
-                Mem.states.sidebar.misc.selectedTabIndex = 2;
-                NoonUtils.callIpc("sidebar reveal Misc");
-            }
-        }
-    }
-
-    function executeTodo() {
-        TodoService.addTask(cleanQuery);
-    }
-
-    function executeIpc() {
-        NoonUtils.callIpc(cleanQuery);
-    }
-
-    function executeSearch() {
-        const searchUrl = subConfig?.searchQuery || Mem.options.networking.searchPrefix;
-        const searchText = subConfig ? cleanQuery.substring(subConfig.prefix.length) : cleanQuery;
-        Quickshell.execDetached(["xdg-open", searchUrl + encodeURIComponent(searchText)]);
-    }
-
-    function executeTranslate() {
-        if (TranslatorService.translatedText) {
-            ClipboardService.copy(TranslatorService.translatedText);
-        }
-    }
-
-    function executeDownload() {
-        const params = subConfig?.parameters || "";
-        const searchQuery = subConfig ? cleanQuery.substring(subConfig.prefix.length).trim() : cleanQuery.trim();
-        const processedParams = params.replace(/%q/g, searchQuery);
-        let cmd;
-        // extract %q and replace with query
-        if (params.includes("%q")) {
-            cmd = `yt-dlp -f ${processedParams}`;
-        } else {
-            cmd = `yt-dlp -f ${processedParams} '${searchQuery}'`;
-        }
-        BeatsService.downloadByCommand(cmd);
+        if (config?.executor)
+            config.executor();
     }
 
     function autocomplete(hintText) {
@@ -516,11 +426,9 @@ Singleton {
         const prefix = config?.prefix || "";
 
         const resultStates = ["calc", "translate"];
-        if (resultStates.includes(activeState)) {
+        if (resultStates.includes(activeState))
             return query;
-        }
 
-        // For suggestion-type hints, replace with suggestion
         return prefix + hintText;
     }
 }
