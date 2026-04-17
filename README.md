@@ -1,7 +1,8 @@
 <p align="center">
   <img src="./dots/.config/noon/assets/icons/noon-light.png" alt="Project logo" width="280">
+  <br>
+  <a href="https://pharmaracist.github.io/Noon-Docs/"><b>Documentation</b></a>
 </p>
-
 <h1 align="center">NOON</h1>
 
 ### PharmaRacist Prespictive of a Hyprland desktop  
