@@ -1,5 +1,8 @@
 import QtQuick.Layouts
 import QtQuick
+import QtQuick.Controls
+import org.kde.syntaxhighlighting
+
 import Quickshell
 import qs.common
 import qs.store
@@ -104,14 +107,21 @@ StyledRect {
                     anchors.fill: parent
                     spacing: 0
 
-                    StyledText {
+                    StyledTextArea {
                         id: popupText
+                        textFormat: Text.PlainText
                         text: root.hintText || ""
-                        color: Colors.colOnLayer1
                         Layout.fillWidth: true
                         font {
                             family: Fonts.family.monospace
                             pixelSize: Fonts.sizes.subTitle
+                        }
+
+                        SyntaxHighlighter {
+                            textEdit: popupText
+                            repository: Repository
+                            definition: Repository.definitionForName("bash")
+                            theme: Colors.m3.darkmode ? "Dracula" : "ayu Light"
                         }
                     }
 

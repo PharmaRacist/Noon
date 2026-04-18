@@ -21,7 +21,7 @@ Scope {
             GlobalStates.main.showBeam = !GlobalStates.main.showBeam;
         }
         function translate(query: string): string {
-            BeamData.query = "> " + query;
+            BeamData.query = "< " + query;
             toggle_beam();
         }
         function toggle_bar_mode() {
