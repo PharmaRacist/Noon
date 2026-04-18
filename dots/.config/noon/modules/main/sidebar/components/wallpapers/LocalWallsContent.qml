@@ -186,8 +186,6 @@ StyledRect {
         }
     }
 
-    WallpaperControls {}
-
     PagePlaceholder {
         shown: listView.count === 0
         title: qsTr("No wallpapers found")

@@ -1,10 +1,8 @@
 import QtQuick
-import Quickshell
-import Quickshell.Io
 import qs.common
-import qs.common.functions
 import qs.common.widgets
 import qs.services
+import qs.services.wallpapers
 
 StyledRect {
     id: root
@@ -16,169 +14,24 @@ StyledRect {
 
     property string query: ""
     property string _debouncedQuery: ""
-    property var wallhavenResults: []
-    property bool isLoading: false
-    property int currentPage: 1
-    property bool hasMore: true
-    property string apiKey: ""
-    property string downloadingId: ""
-    property int selectedCategory: 0
-
-    property var categories: [
-        {
-            label: "Hot",
-            icon: "mode_heat",
-            sorting: "toplist",
-            range: "1w"
-        },
-        {
-            label: "Latest",
-            icon: "app_badging",
-            sorting: "date_added",
-            range: ""
-        },
-        {
-            label: "Top",
-            icon: "social_leaderboard",
-            sorting: "toplist",
-            range: "1M"
-        },
-        {
-            label: "Views",
-            icon: "play_arrow",
-            sorting: "views",
-            range: ""
-        },
-        {
-            label: "Random",
-            icon: "shuffle",
-            sorting: "random",
-            range: ""
-        }
-    ]
 
     signal searchFocusRequested
     signal contentFocusRequested
     signal dismiss
 
     onQueryChanged: debounceTimer.restart()
-    Component.onCompleted: root.fetchWallpapers()
+    onContentFocusRequested: listView.forceActiveFocus()
 
     Timer {
         id: debounceTimer
-        interval: 400
+        interval: 200
         repeat: false
         onTriggered: {
             root._debouncedQuery = root.query.trim();
-            root.currentPage = 1;
-            root.wallhavenResults = [];
-            root.fetchWallpapers();
+            OnlineWallpaperService.search(root._debouncedQuery);
         }
     }
 
-    onContentFocusRequested: listView.forceActiveFocus()
-
-    function fetchWallpapers() {
-        if (root.isLoading)
-            return;
-        root.isLoading = true;
-
-        const cat = root.categories[root.selectedCategory];
-        const query = root._debouncedQuery;
-
-        let url = "https://wallhaven.cc/api/v1/search" + "?sorting=" + cat.sorting + "&page=" + root.currentPage + "&categories=110" + "&purity=100";
-
-        if (query)
-            url += "&q=" + encodeURIComponent(query);
-
-        if (cat.range)
-            url += "&toplist_range=" + cat.range;
-
-        if (root.apiKey)
-            url += "&apikey=" + root.apiKey;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", url);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState !== XMLHttpRequest.DONE)
-                return;
-            root.isLoading = false;
-
-            if (xhr.status !== 200)
-                return;
-            const json = JSON.parse(xhr.responseText);
-            const items = json.data.map(function (w) {
-                return {
-                    id: w.id,
-                    thumbUrl: w.thumbs.large,
-                    fullUrl: w.path,
-                    resolution: w.resolution,
-                    fileType: w.file_type
-                };
-            });
-
-            root.wallhavenResults = root.currentPage === 1 ? items : root.wallhavenResults.concat(items);
-
-            root.hasMore = json.meta ? (json.meta.current_page < json.meta.last_page) : false;
-        };
-        xhr.send();
-    }
-
-    function loadMore() {
-        if (!root.isLoading && root.hasMore) {
-            root.currentPage++;
-            root.fetchWallpapers();
-        }
-    }
-
-    function selectCategory(index) {
-        if (root.selectedCategory === index)
-            return;
-        root.selectedCategory = index;
-        root.currentPage = 1;
-        root.wallhavenResults = [];
-        root.fetchWallpapers();
-    }
-
-    function downloadAndApply(item) {
-        const ext = item.fileType.split("/")[1] || "jpg";
-        const fileName = "wallhaven-" + item.id + "." + ext;
-        const destPath = FileUtils.trimFileProtocol(WallpaperService.currentFolderPath + "/" + fileName);
-        const destUrl = "file://" + destPath;
-
-        root.downloadingId = item.id;
-        downloader.command = ["curl", "-L", "-s", "-o", destPath, item.fullUrl];
-        downloader._pendingUrl = destUrl;
-        downloader.running = true;
-    }
-
-    Process {
-        id: downloader
-        property string _pendingUrl: ""
-
-        onExited: function (code) {
-            root.downloadingId = "";
-            if (code === 0) {
-                WallpaperService.applyWallpaper(_pendingUrl);
-                NoonUtils.playSound("event_accepted");
-                load_timer.restart();
-            }
-        }
-    }
-
-    Timer {
-        id: load_timer
-        interval: 800
-        onTriggered: {
-            if (WallpaperService.wallpaperModel)
-                WallpaperService.wallpaperModel.refresh();
-        }
-    }
-    StyledText {
-        id: err
-        anchors.centerIn: parent
-        font.pixelSize: 50
-    }
     StyledListView {
         id: listView
         anchors {
@@ -194,13 +47,13 @@ StyledRect {
         popin: true
         spacing: Padding.small
         hint: false
-        model: root.wallhavenResults
+        model: OnlineWallpaperService.results
         highlightFollowsCurrentItem: true
         highlightMoveDuration: 300
 
         onContentYChanged: {
             if (contentHeight > 0 && contentY + height >= contentHeight - height * 0.5)
-                root.loadMore();
+                OnlineWallpaperService.loadMore();
         }
 
         delegate: Item {
@@ -215,11 +68,12 @@ StyledRect {
                 id: wallpaperItem
                 anchors.fill: parent
                 isKeyboardSelected: listView.currentIndex === index
-                isCurrentWallpaper: WallpaperService.currentWallpaper.toString().includes("wallhaven-" + modelData.id + ".")
+                isCurrentWallpaper: WallpaperService.currentWallpaper.toString().includes(modelData.id + ".")
                 fileUrl: modelData.thumbUrl
                 applyAction: () => {
-                    root.downloadAndApply(modelData);
+                    OnlineWallpaperService.downloadAndApply(modelData);
                 }
+
                 StyledRect {
                     z: 999
                     anchors {
@@ -231,7 +85,7 @@ StyledRect {
                     height: resLabel.implicitHeight + Padding.normal
                     radius: Rounding.normal
                     color: Colors.colPrimary
-                    visible: root.downloadingId !== modelData.id
+                    visible: OnlineWallpaperService.downloadingId !== modelData.id
 
                     StyledText {
                         id: resLabel
@@ -247,7 +101,7 @@ StyledRect {
                 anchors.fill: parent
                 radius: parent.height * 0.05
                 color: Colors.colLayer0
-                opacity: root.downloadingId === modelData.id ? 0.65 : 0
+                opacity: OnlineWallpaperService.downloadingId === modelData.id ? 0.65 : 0
 
                 Symbol {
                     anchors.centerIn: parent
@@ -279,9 +133,9 @@ StyledRect {
                     currentIndex++;
             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                 if (currentIndex >= 0) {
-                    const item = root.wallhavenResults[currentIndex];
+                    const item = OnlineWallpaperService.results[currentIndex];
                     if (item)
-                        root.downloadAndApply(item);
+                        OnlineWallpaperService.downloadAndApply(item);
                 }
             } else if (event.key === Qt.Key_Escape) {
                 root.dismiss();
@@ -311,7 +165,7 @@ StyledRect {
             implicitHeight: contentItem.childrenRect.height
             spacing: Padding.small
             clip: true
-            model: root.categories
+            model: OnlineWallpaperService.categories
 
             delegate: StyledRect {
                 required property int index
@@ -320,29 +174,29 @@ StyledRect {
                 implicitHeight: symb.implicitHeight + Padding.large * 2
                 implicitWidth: symb.implicitWidth + Padding.large * 2
                 radius: Rounding.large
-                color: root.selectedCategory === index ? Colors.colPrimary : Colors.colLayer4
+                color: OnlineWallpaperService.selectedCategory === index ? Colors.colPrimary : Colors.colLayer4
 
                 Symbol {
                     id: symb
                     anchors.centerIn: parent
                     text: modelData.icon
-                    fill: root.selectedCategory === index ? 1 : 0
+                    fill: OnlineWallpaperService.selectedCategory === index ? 1 : 0
                     font.pixelSize: Fonts.sizes.normal
-                    color: root.selectedCategory === index ? Colors.colOnPrimary : Colors.colOnLayer4
+                    color: OnlineWallpaperService.selectedCategory === index ? Colors.colOnPrimary : Colors.colOnLayer4
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.selectCategory(index)
+                    onClicked: OnlineWallpaperService.selectCategory(index)
                 }
             }
         }
     }
 
     PagePlaceholder {
-        shown: !root.isLoading && listView.count === 0
-        title: qsTr("No wallpapers found")
+        shown: !OnlineWallpaperService.isLoading && listView.count === 0
+        title: "No wallpapers found"
         icon: "image_not_supported"
         anchors.centerIn: parent
     }

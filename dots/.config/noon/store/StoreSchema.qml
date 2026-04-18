@@ -6,6 +6,11 @@ JsonAdapter {
         property list<string> systemCommands: []
     }
 
+    property JsonObject secrets: JsonObject {
+        property string wallhaven: ""
+        property string unsplash: ""
+    }
+
     property JsonObject services: JsonObject {
         property JsonObject ambientSounds
         property JsonObject icons

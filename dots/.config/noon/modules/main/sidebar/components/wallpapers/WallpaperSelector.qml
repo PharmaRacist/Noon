@@ -19,12 +19,13 @@ RedunduntMultiViewPanel {
         },
         {
             "icon": "wallpaper",
-            "name": "Wallhaven",
-            "component": "WallhavenContent",
+            "name": "Online",
+            "component": "OnlineWallsContent",
             "preload": "query",
             "preloadData": searchQuery
         }
     ]
+    WallpaperControls {}
 
     Connections {
         target: item

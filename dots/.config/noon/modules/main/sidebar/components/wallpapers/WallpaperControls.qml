@@ -92,16 +92,37 @@ BottomDialog {
                 }
             }
         }
-        StyledTextField {
-            property string sanitizedAddress: "~" + FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentFolder.slice(Directories.standard.home.length))
+        RowLayout {
+
             Layout.preferredHeight: 45
             Layout.fillWidth: true
-            text: sanitizedAddress
-            placeholderText: "Wallpaper folder path..."
-            placeholderTextColor: Colors.colOnLayer1
-            color: Colors.colOnLayer1
-            Keys.onEscapePressed: focus = false
-            onAccepted: Mem.states.desktop.bg.currentFolder = Qt.resolvedUrl(text.replace("~", Directories.standard.home))
+            StyledTextField {
+                property string sanitizedAddress: "~" + FileUtils.trimFileProtocol(Mem.states.desktop.bg.currentFolder.slice(Directories.standard.home.length))
+                Layout.preferredHeight: 45
+                Layout.fillWidth: true
+                text: sanitizedAddress
+                placeholderText: "Wallpaper folder path..."
+                placeholderTextColor: Colors.colOnLayer1
+                color: Colors.colOnLayer1
+                Keys.onEscapePressed: focus = false
+                onAccepted: Mem.states.desktop.bg.currentFolder = Qt.resolvedUrl(text.replace("~", Directories.standard.home))
+            }
+            GroupButton {
+                baseHeight: 45
+                clip: true
+                buttonRadius: Rounding.large
+                buttonRadiusPressed: Rounding.small
+
+                colBackground: colors.colLayer2
+                baseWidth: (text?.contentWidth ?? 50) + Padding.massive
+                releaseAction: () => {
+                    OnlineWallpaperService.currentApiIndex = (OnlineWallpaperService.currentApiIndex + 1) % OnlineWallpaperService.apis.length;
+                }
+                contentItem: StyledText {
+                    id: text
+                    text: OnlineWallpaperService.apis[OnlineWallpaperService.currentApiIndex].name
+                }
+            }
         }
     }
 }
