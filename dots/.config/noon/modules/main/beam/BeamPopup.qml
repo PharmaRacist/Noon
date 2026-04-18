@@ -66,7 +66,7 @@ StyledRect {
     }
 
     width: Math.max(200, Math.min(hintText.length * 80, mainBg.width))
-    height: 136
+    height: Math.max(136, Math.min(500, popupText?.contentHeight + Padding.massive))
     color: Colors.colLayer0
     enableBorders: true
     radius: Rounding.massive
@@ -79,7 +79,7 @@ StyledRect {
         spacing: Padding.massive
 
         StyledLoader {
-            active: root.currentConf && root.currentConf.active
+            active: root.currentConf && root.currentConf.active && root.height <= 260
             asynchronous: true
             visible: active
             sourceComponent: root.currentConf ? root.currentConf.comp : null
@@ -89,35 +89,45 @@ StyledRect {
                 }
             }
         }
-
-        ColumnLayout {
-            visible: root.hintText.length > 0
-            Layout.maximumHeight: 100
+        Item {
+            Layout.fillHeight: true
             Layout.fillWidth: true
-            spacing: 0
+            StyledFlickable {
+                id: scrollArea
+                anchors.fill: parent
+                anchors.topMargin: Padding.massive
+                contentHeight: hintContent.implicitHeight
+                clip: true
+                ColumnLayout {
+                    id: hintContent
+                    visible: root.hintText.length > 0
+                    anchors.fill: parent
+                    spacing: 0
 
-            StyledText {
-                id: popupText
-                text: root.hintText || ""
-                color: Colors.colOnLayer1
-                Layout.fillWidth: true
-                font {
-                    family: Fonts.family.monospace
-                    pixelSize: Fonts.sizes.subTitle
-                }
-            }
+                    StyledText {
+                        id: popupText
+                        text: root.hintText || ""
+                        color: Colors.colOnLayer1
+                        Layout.fillWidth: true
+                        font {
+                            family: Fonts.family.monospace
+                            pixelSize: Fonts.sizes.subTitle
+                        }
+                    }
 
-            StyledText {
-                id: popupDescriptionText
-                visible: text.length > 0 && root.activeState === "launch"
-                Layout.fillWidth: true
-                Layout.maximumWidth: 300
-                truncate: true
-                text: root.appData ? (root.appData.comment || "") : ""
-                color: Colors.colSubtext
-                font {
-                    family: Fonts.family.monospace
-                    pixelSize: Fonts.sizes.huge
+                    StyledText {
+                        id: popupDescriptionText
+                        visible: text.length > 0 && root.activeState === "launch"
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: 300
+                        truncate: true
+                        text: root.appData ? (root.appData.comment || "") : ""
+                        color: Colors.colSubtext
+                        font {
+                            family: Fonts.family.monospace
+                            pixelSize: Fonts.sizes.huge
+                        }
+                    }
                 }
             }
         }

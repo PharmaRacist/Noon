@@ -31,8 +31,6 @@ StyledPanel {
         } else
             return elevation;
     }
-    onRevealChanged: !reveal ? BeamData.query = "" : null
-
     visible: reveal || scrollReveal
     implicitWidth: Sizes.beamSizeExpanded.width + 999
     implicitHeight: Sizes.beamSize.height + elevationValue + 999
