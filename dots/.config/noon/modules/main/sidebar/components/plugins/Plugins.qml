@@ -1,5 +1,3 @@
-import Qt5Compat.GraphicalEffects
-import QtQuick.Effects
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -38,7 +36,35 @@ StyledRect {
             Layout.fillHeight: true
             spacing: Padding.massive
 
+            Binding {
+                target: indicator
+                property: "currentIndex"
+                value: swipeView.currentIndex
+            }
+
+            contentItem: ListView {
+                model: swipeView.contentModel
+                interactive: swipeView.interactive
+                currentIndex: swipeView.currentIndex
+                spacing: swipeView.spacing
+                orientation: ListView.Horizontal
+                snapMode: ListView.SnapOneItem
+                highlightRangeMode: ListView.StrictlyEnforceRange
+                preferredHighlightBegin: 0
+                preferredHighlightEnd: width
+                highlightMoveDuration: 0
+                boundsBehavior: Flickable.StopAtBounds
+                clip: true
+
+                displaced: Transition {
+                    Anim {
+                        property: "x"
+                    }
+                }
+            }
+
             Repeater {
+                id: repeater
                 model: ScriptModel {
                     values: PluginsManager.allPlugins
                 }
@@ -46,6 +72,17 @@ StyledRect {
                     required property var modelData
                     color: Colors.colLayer2
                     radius: Rounding.huge
+                    property real targetScale: SwipeView.isCurrentItem ? 1.0 : 0.85
+
+                    scale: targetScale
+                    Behavior on scale {
+                        Anim {}
+                    }
+
+                    opacity: SwipeView.isCurrentItem ? 1.0 : 0.5
+                    Behavior on opacity {
+                        Anim {}
+                    }
 
                     StyledListView {
                         id: list
@@ -74,7 +111,12 @@ StyledRect {
                 }
             }
         }
-
+        M3PageIndicator {
+            id: indicator
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            count: swipeView.contentModel.count
+            onCurrentIndexChanged: swipeView.currentIndex = currentIndex
+        }
         StyledRect {
             Layout.fillWidth: true
             radius: Rounding.large
