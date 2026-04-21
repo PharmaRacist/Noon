@@ -18,7 +18,7 @@ Rectangle {
     property string text: ""
     property var inputTextArea: isInput ? inputLoader.item : undefined
     readonly property string displayedText: isInput ? inputLoader.item.text : root.text.length > 0 ? outputLoader.item.text : ""
-    default property alias actionButtons: actions.data
+    default property alias actionButtons: actions.buttonsData
 
     signal inputTextChanged // Signal emitted when text changes
 

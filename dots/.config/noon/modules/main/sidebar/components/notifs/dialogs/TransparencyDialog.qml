@@ -107,7 +107,7 @@ BottomDialog {
                 StyledSlider {
                     Layout.fillWidth: true
                     from: 0
-                    to: 1
+                    to: Mem.options.desktop.hyprland.layerAlpha - 0.01
                     value: Mem.options.appearance.transparency.scale
                     onMoved: Mem.options.appearance.transparency.scale = value
                 }

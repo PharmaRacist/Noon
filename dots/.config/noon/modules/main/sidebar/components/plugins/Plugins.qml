@@ -88,7 +88,7 @@ StyledRect {
                         id: list
                         anchors.fill: parent
                         anchors.margins: Padding.huge
-                        spacing: Padding.small
+                        spacing: Padding.verysmall
                         model: ScriptModel {
                             id: itemsModel
                             values: Object.values(modelData.data)

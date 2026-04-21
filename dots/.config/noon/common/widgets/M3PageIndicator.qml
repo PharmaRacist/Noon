@@ -16,15 +16,17 @@ RowLayout {
     Repeater {
         model: root.count
         MaterialShape {
-
             required property int index
+            Layout.alignment: Qt.AlignVCenter
             shape: root.currentIndex !== index ? MaterialShape.Shape.Circle : root.shapes[index]
             implicitSize: root.currentIndex === index ? root.activeItemSize : root.itemSize
             opacity: root.currentIndex === index ? 1.0 : 0.4
             color: root.currentIndex === index ? Colors.colPrimary : Colors.colSecondary
+
             Behavior on implicitSize {
                 Anim {}
             }
+
             Behavior on opacity {
                 Anim {}
             }

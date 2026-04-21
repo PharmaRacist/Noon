@@ -139,8 +139,8 @@ BottomDialog {
                     Layout.fillWidth: true
                     from: 0
                     to: 2
-                    value: Mem.states.desktop.Colors.chroma
-                    onMoved: Mem.states.desktop.Colors.chroma = value
+                    value: Mem.states.desktop.colors.chroma
+                    onMoved: Mem.states.desktop.colors.chroma = value
                 }
             }
 

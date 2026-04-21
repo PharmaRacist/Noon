@@ -11,7 +11,7 @@ import qs.common.widgets
 Rectangle {
     id: root
 
-    default property alias data: rowLayout.data
+    default property alias buttonsData: rowLayout.data
     property real spacing: 5
     property real padding: 0
     property int clickIndex: rowLayout.clickIndex

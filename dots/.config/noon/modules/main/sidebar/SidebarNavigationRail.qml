@@ -43,8 +43,13 @@ Item {
                 y: navRailList.currentItem ? navRailList.currentItem.y : 0
                 z: -2
 
-                Behavior on y {
+                Behavior on opacity {
                     Anim {}
+                }
+
+                Anim on opacity {
+                    from: 0
+                    to: 1
                 }
 
                 StyledRect {

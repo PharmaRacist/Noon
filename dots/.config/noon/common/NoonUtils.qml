@@ -286,6 +286,9 @@ Singleton {
         function onGapsOutChanged() {
             NoonUtils.setHyprKey("gaps_out", conf.gapsOut);
         }
+        function onLayerAlphaChanged() {
+            NoonUtils.setHyprKey("layer_alpha", conf.layerAlpha);
+        }
         function onShadowsChanged() {
             NoonUtils.setHyprKey("shadows", conf.shadows);
         }

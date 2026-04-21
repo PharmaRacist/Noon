@@ -10,15 +10,13 @@ Item {
     // Model
     property var content
     anchors.fill: parent
-    Component.onCompleted: console.log("Done")
-    StyledRectangularShadow {
-        target: bg
-    }
+
     StyledRect {
         id: bg
         radius: Rounding.silly
         color: Colors.colLayer1
         anchors.fill: parent
+
         StyledListView {
             anchors.fill: parent
             clip: true

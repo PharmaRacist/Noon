@@ -373,6 +373,7 @@ JsonAdapter {
             property int gapsOut: 1
             property int gapsIn: 1
             property int borders: 1
+            property real layerAlpha: 0.6
             property string cursorTheme: "Breeze"
         }
 

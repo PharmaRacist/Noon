@@ -8,6 +8,7 @@ import Noon.Utils.Dialogs
 
 StyledRect {
     id: root
+    enabled: true
     property string icon: ""
     property string name: ""
     property string key: ""
@@ -15,7 +16,6 @@ StyledRect {
     property string type: "switch"
     property string actionName: ""
     property bool reloadOnChange: false
-    property bool enabled: true
     property bool useStates: false
     property bool enableTooltip: true
     property bool hideTitle: type === "field"

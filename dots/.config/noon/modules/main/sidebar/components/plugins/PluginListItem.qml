@@ -16,7 +16,7 @@ StyledRect {
     property string group
     property string subtext
     property bool enabled
-    color: Colors.m3.m3surface
+    color: Colors.m3.m3surfaceContainerHigh
     height: 72
 
     MouseArea {

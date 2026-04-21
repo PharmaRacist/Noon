@@ -76,8 +76,8 @@ Item {
             }
         }
 
-        StyledRect {
-            id: rectArea
+        M3PasswordTextEntry {
+            id: inputField
             anchors {
                 top: parent.top
                 bottom: parent.bottom
@@ -87,38 +87,19 @@ Item {
                 leftMargin: Padding.large
                 margins: Padding.normal
             }
-            color: Colors.colLayer2
-            radius: Rounding.full
+            enabled: !root.context.unlockInProgress
+            leftPadding: Padding.massive * 1.5
+            rightPadding: Padding.massive * 1.5
+            inputMethodHints: Qt.ImhSensitiveData
+            onAccepted: root.context.tryUnlock()
+            onTextChanged: root.context.currentText = this.text
 
-            TextField {
-                id: inputField
-                anchors.fill: parent
-                enabled: !root.context.unlockInProgress
-                leftPadding: Padding.massive * 1.5
-                rightPadding: Padding.massive * 1.5
-                focus: true
-                echoMode: TextInput.Password
-                inputMethodHints: Qt.ImhSensitiveData
-                placeholderText: "Enter your password"
-                font.pixelSize: 16
-                color: Colors.m3.m3onSurface
-                selectionColor: Colors.m3.m3primary
-                onAccepted: root.context.tryUnlock()
-                onTextChanged: root.context.currentText = this.text
-                scale: focus ? 1.05 : 1
-                background: null
-
-                Connections {
-                    function onCurrentTextChanged() {
-                        inputField.text = root.context.currentText;
-                    }
-
-                    target: root.context
+            Connections {
+                function onCurrentTextChanged() {
+                    inputField.text = root.context.currentText;
                 }
 
-                Behavior on scale {
-                    Anim {}
-                }
+                target: root.context
             }
         }
 

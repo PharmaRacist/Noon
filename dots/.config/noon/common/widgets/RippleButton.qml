@@ -167,9 +167,6 @@ Button {
         Item {
             id: ripple
 
-            property real implicitWidth: 0
-            property real implicitHeight: 0
-
             width: ripple.implicitWidth
             height: ripple.implicitHeight
             opacity: 0

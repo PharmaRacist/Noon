@@ -7,7 +7,7 @@ import qs.common.functions
 RectangularGlow {
     property var target
     property int radius: target.radius || Rounding.verylarge
-    property bool show: true
+    property bool show: !Colors.transparent
     property real intensity: 1
     z: -999
     opacity: show ? 1 : 0
@@ -17,6 +17,7 @@ RectangularGlow {
     glowRadius: radius
     color: ColorUtils.transparentize(Colors.colShadow, 1 - intensity)
     cached: true
+
     Behavior on opacity {
         Anim {}
     }

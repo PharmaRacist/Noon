@@ -8,11 +8,11 @@ StyledRect {
     id: root
 
     Layout.alignment: Qt.AlignHCenter
-    Layout.preferredWidth: playerSelector.width + 10
-    Layout.preferredHeight: playerSelector.height + 10
+    Layout.preferredWidth: playerSelector?.width + Padding.veryhuge
+    Layout.preferredHeight: 36
     Layout.bottomMargin: -10
-    radius: 15
-    color: root.colors.colSecondaryContainer
+    radius: Rounding.full
+    color: root.colors.colLayer2
     visible: repeater.count > 1
     property QtObject colors: BeatsService.colors
 
@@ -35,37 +35,73 @@ StyledRect {
     function getPlayerName(player, index) {
         return player?.identity || player?.dbusName?.replace("org.mpris.MediaPlayer2.", "") || "Player " + (index + 1);
     }
+    Rectangle {
+        id: activeIndicator
+        z: 1
+        height: 20
+        anchors.verticalCenter: parent.verticalCenter
+        radius: Rounding.full
+        color: colors.colPrimary
 
-    Grid {
+        readonly property int selectedIndex: BeatsService?.selectedPlayerIndex ?? 0
+        readonly property var selectedItem: repeater.itemAt(selectedIndex)
+
+        x: (playerSelector?.x ?? 0) + (selectedItem?.x ?? 0)
+        width: 20
+
+        Behavior on x {
+            Anim {}
+        }
+
+        SequentialAnimation {
+            id: stretchAnim
+            Anim {
+                target: activeIndicator
+                property: "width"
+                to: 32
+                duration: Animations.durations.verysmall
+            }
+            Anim {
+                target: activeIndicator
+                property: "width"
+                to: 20
+                duration: Animations.durations.large
+            }
+        }
+
+        onSelectedIndexChanged: stretchAnim.restart()
+    }
+    RLayout {
         id: playerSelector
         anchors.centerIn: parent
-        spacing: 4
-        rows: 1
-        columns: repeater.count
-
+        z: 2
         Repeater {
             id: repeater
-            model: BeatsService.meaningfulPlayers.filter(player => player.trackTitle.length > 0)
-            delegate: RippleButtonWithIcon {
-                implicitSize: 20
-                buttonRadius: Rounding.full
-
+            model: BeatsService.meaningfulPlayers
+            delegate: Item {
+                id: symbolItem
+                required property var modelData
+                required property int index
                 readonly property bool isSelected: index === BeatsService.selectedPlayerIndex
-
-                toggled: isSelected
-                colBackground: isSelected ? root.colors.colPrimary : root.colors.colSecondaryContainer
-                colBackgroundToggled: root.colors.colPrimaryActive
-                colBackgroundHover: isSelected ? root.colors.colPrimaryHover : root.colors.colSecondaryContainerHover
-                colRipple: isSelected ? root.colors.colPrimary : root.colors.colSecondaryContainerActive
-
-                materialIcon: root.getPlayerIcon(modelData?.dbusName)
-                iconColor: isSelected ? root.colors.colOnPrimary : root.colors.colOnSecondaryContainer
-
-                onClicked: BeatsService.selectedPlayerIndex = index
-
-                StyledToolTip {
-                    extraVisibleCondition: hovered
-                    content: root.getPlayerName(modelData, index)
+                height: 20
+                width: 20
+                Symbol {
+                    id: symbol
+                    anchors.centerIn: parent
+                    fill: 1
+                    font.pixelSize: 16
+                    text: root.getPlayerIcon(modelData?.dbusName)
+                    color: symbolItem.isSelected ? root.colors.colOnPrimary : root.colors.colOnLayer2
+                }
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: BeatsService.selectedPlayerIndex = index
+                    StyledToolTip {
+                        extraVisibleCondition: parent.containsMouse
+                        content: root.getPlayerName(modelData, index)
+                    }
                 }
             }
         }

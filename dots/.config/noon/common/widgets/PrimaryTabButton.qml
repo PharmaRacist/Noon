@@ -113,9 +113,6 @@ TabButton {
             width: ripple.implicitWidth
             height: ripple.implicitHeight
             opacity: 0
-
-            property real implicitWidth: 0
-            property real implicitHeight: 0
             visible: width > 0 && height > 0
 
             Behavior on opacity {

@@ -38,12 +38,11 @@ ColumnLayout {
                 buttonIcon: modelData.icon
                 minimumWidth: 160
             }
-
         }
 
         background: Item {
             WheelHandler {
-                onWheel: (event) => {
+                onWheel: event => {
                     if (event.angleDelta.y < 0)
                         tabBar.currentIndex = Math.min(tabBar.currentIndex + 1, root.tabButtonList.length - 1);
                     else if (event.angleDelta.y > 0)
@@ -51,9 +50,7 @@ ColumnLayout {
                 }
                 acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
             }
-
         }
-
     }
 
     // Tab indicator
@@ -89,19 +86,13 @@ ColumnLayout {
             }
 
             Behavior on x {
-                Anim {
-                }
-
+                Anim {}
             }
 
             Behavior on implicitWidth {
-                Anim {
-                }
-
+                Anim {}
             }
-
         }
-
     }
 
     Rectangle {
@@ -114,5 +105,4 @@ ColumnLayout {
         Layout.bottomMargin: 0
         Layout.topMargin: 0
     }
-
 }

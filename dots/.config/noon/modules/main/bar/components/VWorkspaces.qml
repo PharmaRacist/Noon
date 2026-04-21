@@ -89,7 +89,7 @@ BarGroup {
         Repeater {
             model: shownWs
 
-            Rectangle {
+            StyledRect {
                 readonly property int workspaceId: workspaceGroup * shownWs + index + 1
                 readonly property bool isOccupied: HyprlandService.windowList.some(w => w.workspace?.id === workspaceId)
 
@@ -111,27 +111,10 @@ BarGroup {
                 Layout.alignment: Qt.AlignHCenter
                 implicitHeight: workspaceButtonHeight
                 implicitWidth: 34 * 0.8
-                radius: Rounding.full
-                color: Colors.colLayer1
+                color: Colors.colLayer3Hover
                 opacity: isOccupied ? 1 : 0
-
-                // Round top corners only if no occupied workspace above
-                topLeftRadius: adjacentOccupiedAbove ? 0 : Rounding.full
-                topRightRadius: adjacentOccupiedAbove ? 0 : Rounding.full
-
-                // Round bottom corners only if no occupied workspace below
-                bottomLeftRadius: adjacentOccupiedBelow ? 0 : Rounding.full
-                bottomRightRadius: adjacentOccupiedBelow ? 0 : Rounding.full
-
-                Behavior on opacity {
-                    Anim {}
-                }
-                Behavior on topLeftRadius {
-                    Anim {}
-                }
-                Behavior on bottomLeftRadius {
-                    Anim {}
-                }
+                topRadius: adjacentOccupiedAbove ? 0 : Rounding.full
+                bottomRadius: adjacentOccupiedBelow ? 0 : Rounding.full
             }
         }
     }

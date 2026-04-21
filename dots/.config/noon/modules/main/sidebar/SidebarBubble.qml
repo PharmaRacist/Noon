@@ -252,7 +252,9 @@ Item {
 
                     Repeater {
                         id: repeater
-                        model: modelData.bubbles
+                        model: ScriptModel {
+                            values: modelData.bubbles
+                        }
 
                         RippleButtonWithIcon {
                             colors: root.colors

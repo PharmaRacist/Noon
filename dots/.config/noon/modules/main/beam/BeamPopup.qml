@@ -25,7 +25,7 @@ StyledRect {
     readonly property string hintText: BeamData.getHint() || ""
     readonly property string catIcon: BeamData.getIcon() || ""
     readonly property string activeState: BeamData.activeState || "all"
-
+    readonly property var currentConf: contentMap[activeState]
     readonly property var contentMap: {
         "launch": {
             "comp": iconComponent,

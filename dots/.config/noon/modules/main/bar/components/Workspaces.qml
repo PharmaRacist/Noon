@@ -96,33 +96,19 @@ BarGroup {
         Repeater {
             model: shownWs
 
-            Rectangle {
+            StyledRect {
                 readonly property bool isActiveWorkspace: monitor.activeWorkspace?.id === index + 1
                 readonly property bool isOccupied: workspaceOccupied[index] && !(isActiveWorkspace && !activeWindow?.activated)
                 readonly property bool adjacentOccupiedLeft: workspaceOccupied[index - 1] && !isActiveWorkspace
                 readonly property bool adjacentOccupiedRight: workspaceOccupied[index + 1] && !(!activeWindow?.activated && monitor.activeWorkspace?.id === index + 2)
 
                 z: 1
+                opacity: isOccupied ? 1 : 0
                 implicitWidth: workspaceButtonWidth
                 implicitHeight: workspaceButtonWidth
-                radius: Rounding.full
-                color: "transparent"
-                opacity: isOccupied ? 1 : 0
-
-                topLeftRadius: adjacentOccupiedLeft ? 0 : Rounding.full
-                bottomLeftRadius: adjacentOccupiedLeft ? 0 : Rounding.full
-                topRightRadius: adjacentOccupiedRight ? 0 : Rounding.full
-                bottomRightRadius: adjacentOccupiedRight ? 0 : Rounding.full
-
-                Behavior on opacity {
-                    Anim {}
-                }
-                Behavior on topLeftRadius {
-                    Anim {}
-                }
-                Behavior on bottomLeftRadius {
-                    Anim {}
-                }
+                color: Colors.colLayer3Hover
+                leftRadius: adjacentOccupiedLeft ? 0 : Rounding.full
+                rightRadius: adjacentOccupiedRight ? 0 : Rounding.full
             }
         }
     }
