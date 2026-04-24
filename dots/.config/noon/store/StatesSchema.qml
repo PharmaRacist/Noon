@@ -75,7 +75,11 @@ JsonAdapter {
         property JsonObject games
         property JsonObject todo
         property JsonObject timers
+        property JsonObject beats
 
+        beats: JsonObject {
+            property list<var> hits: []
+        }
         timers: JsonObject {
             property list<var> alarms: []
             property int nextAlarmId: 1

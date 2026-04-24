@@ -12,6 +12,7 @@ Item {
 
     z: 99
     anchors.fill: target
+    anchors.margins: -target?.anchors.margins
 
     EndGradient {
         shown: !(root.vertical ? root.target.atYBeginning : root.target.atXBeginning)
@@ -22,7 +23,6 @@ Item {
             right: vertical ? parent.right : undefined
             bottom: vertical ? undefined : parent.bottom
         }
-
     }
 
     EndGradient {
@@ -35,7 +35,6 @@ Item {
             left: vertical ? parent.left : undefined
             top: vertical ? undefined : parent.top
         }
-
     }
 
     component EndGradient: Rectangle {
@@ -47,9 +46,7 @@ Item {
         visible: opacity > 0
 
         Behavior on opacity {
-            Anim {
-            }
-
+            Anim {}
         }
 
         gradient: Gradient {
@@ -64,9 +61,6 @@ Item {
                 position: 1
                 color: ColorUtils.transparentize(root.color)
             }
-
         }
-
     }
-
 }

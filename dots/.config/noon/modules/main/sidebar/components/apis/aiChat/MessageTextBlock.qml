@@ -33,12 +33,12 @@ ColumnLayout {
         repeat: false
         onTriggered: {
             const color = Colors.colOnLayer1.toString();
-            renderedLatexHashes = LatexService.detectAndRenderLatex(segmentContent, color);
+            // renderedLatexHashes = LatexService.detectAndRenderLatex(segmentContent, color);
         }
     }
 
     function updateRenderedContent() {
-        renderedSegmentContent = LatexService.replaceLatexWithImages(segmentContent, renderedLatexHashes);
+        // renderedSegmentContent = LatexService.replaceLatexWithImages(segmentContent, renderedLatexHashes);
     }
 
     onDoneChanged: renderTimer.restart()
@@ -64,14 +64,14 @@ ColumnLayout {
         }
     }
 
-    Connections {
-        target: LatexService
-        function onRenderFinished(hash, imagePath) {
-            if (renderedLatexHashes.includes(hash)) {
-                updateRenderedContent();
-            }
-        }
-    }
+    // Connections {
+    //     target: LatexService
+    //     function onRenderFinished(hash, imagePath) {
+    //         if (renderedLatexHashes.includes(hash)) {
+    //             updateRenderedContent();
+    //         }
+    //     }
+    // }
 
     Repeater {
         id: textLinesRepeater

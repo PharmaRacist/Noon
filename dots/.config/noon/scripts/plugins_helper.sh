@@ -69,6 +69,29 @@ _write_qmldir() {
     echo "  Created qmldir for module $module"
 }
 
+_ensure_python_requirements() {
+    local plugin_dir="$1"
+    local manifest="$plugin_dir/manifest.json"
+
+    [[ -f "$manifest" ]] || return
+
+    local reqs
+    reqs=$(jq -r '.pythonRequirements // [] | .[]' "$manifest")
+    [[ -n "$reqs" ]] || return
+
+    [[ -n "$SHELL_VENV" ]] || { echo "  [python] SHELL_VENV is not set, skipping python requirements"; return; }
+    [[ -d "$SHELL_VENV" ]] || { echo "  [python] SHELL_VENV directory '$SHELL_VENV' does not exist, skipping"; return; }
+
+    local pkg_list=()
+    while IFS= read -r pkg; do
+        pkg_list+=("$pkg")
+    done <<< "$reqs"
+
+    echo "  [python] Installing ${#pkg_list[@]} package(s): ${pkg_list[*]}"
+    uv --directory "$SHELL_VENV" pip install "${pkg_list[@]}"
+    echo "  [python] Done installing python requirements"
+}
+
 _ensure_qml_setup() {
     local plugin_dir="$1"
     local manifest="$plugin_dir/manifest.json"
@@ -153,6 +176,7 @@ install() {
             ;;
     esac
 
+    _ensure_python_requirements "$PLUGINS_DIR/$group/$name"
     _ensure_qml_setup "$PLUGINS_DIR/$group/$name"
     echo "Installed $group/$name"
 }

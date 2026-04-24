@@ -114,9 +114,8 @@ Item {
                 const b = b => Qt.binding(() => b);
                 if (!item)
                     return;
-                console.log(SidebarData.getPreloadData(panel.category));
                 // if ("preloadData" in item)
-                item.preloadData = Qt.binding(() => SidebarData.getPreloadData(panel.category));
+                //     item.preloadData = Qt.binding(() => SidebarData.getPreloadData(panel.category));
                 if ("web_view" in item)
                     GlobalStates.web_session = Qt.binding(() => item.web_view);
                 if ("searchQuery" in item)

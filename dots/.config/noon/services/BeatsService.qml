@@ -19,10 +19,13 @@ Singleton {
     property int selectedPlayerIndex: 0
     property string currentTrackPath: ""
     property var tracksMetadata: ({})
+    property string _playing_online_url: ""
 
     readonly property list<string> excludedPlayers: Mem.options.mediaPlayer?.excludedPlayers ?? []
     readonly property QtObject colors: palette.colors
-    readonly property bool filterPlayersEnabled: false
+    readonly property bool filterPlayersEnabled: true
+    readonly property bool _playing_online: onlineProc.running
+    readonly property bool _downloading: dlpHelperProc.running
     readonly property bool _connected: vlcSocket.connected
     readonly property bool _playing: player && player.playbackState === MprisPlaybackState.Playing
     readonly property string artUrl: player ? StringUtils.cleanMusicTitle(player.trackArtUrl) : ""
@@ -174,7 +177,19 @@ Singleton {
         id: rebuildMetaProc
         command: ["python3", Directories.scriptsDir + "/build_metadata.py", FileUtils.trimFileProtocol(_tracksDir)]
     }
-
+    function playOnline(url) {
+        _playing_online_url = url;
+        onlineProc.running = false;
+        onlineProc.command = ["bash", "-c", `mpv --no-video --no-terminal --ytdl-format="bestaudio" "${url}"`];
+        onlineProc.running = true;
+    }
+    function downloadSong(downloadURL) {
+        downloadWithDLP({
+            parameters: "bestaudio/best|-x --audio-format mp3 --audio-quality 0",
+            destination: FileUtils.trimFileProtocol(Mem.states.mediaPlayer?.currentTrackPath),
+            url: downloadURL
+        });
+    }
     function downloadWithDLP(info) {
         dlpHelperProc.command = ["bash", "-c", `${Directories.scriptsDir}/dlpHelper.sh '${info.parameters}' '${info.url}' '${info.destination}'`];
         dlpHelperProc.running = true;
@@ -184,6 +199,9 @@ Singleton {
     }
     Process {
         id: dlpHelperProc
+    }
+    Process {
+        id: onlineProc
     }
 
     FileView {
