@@ -8,15 +8,40 @@ import qs.common.functions
 Singleton {
     id: root
     readonly property var hits: Mem.states.services.beats.hits
-    readonly property bool isBusy: fetchProc.running
+    readonly property bool isBusy: searchProc.running || fetchProc.running
+    readonly property int searchLimit: Mem.states.services.beats.searchLimit
+    property int _limit: searchLimit
+    property var searchResults
 
-    function request(limit = 10) {
-        fetchProc.command = ["uv", "--directory", Directories.venv, "run", Directories.scriptsDir + "/hits_service.py", "--limit", limit, FileUtils.trimFileProtocol(BeatsService._metadataPath)];
+    function search(query, limit = _searchLimit) {
+        _searchLimit = limit;
+        var cmd = ["uv", "--directory", Directories.venv, "run", Directories.scriptsDir + "/hits_service.py", "search", "--query", query, "--limit", limit];
+        root.searchResults = null;
+        searchProc.running = false;
+        searchProc.command = cmd;
+        searchProc.running = true;
+    }
+
+    function searchMore(query) {
+        search(query, _limit + 32);
+    }
+
+    function request(limit = _searchLimit) {
+        var cmd = ["uv", "--directory", Directories.venv, "run", Directories.scriptsDir + "/hits_service.py", "recommend", FileUtils.trimFileProtocol(BeatsService._metadataPath), "--limit", limit];
+        fetchProc.running = false;
+        fetchProc.command = cmd;
         fetchProc.running = true;
     }
-    function refresh(limit) {
+    function refresh(limit = _searchLimit) {
         Mem.states.services.beats.hits = [];
         Qt.callLater(() => request(limit));
+    }
+
+    Process {
+        id: searchProc
+        stdout: StdioCollector {
+            onStreamFinished: root.searchResults = JSON.parse(text.trim())
+        }
     }
     Process {
         id: fetchProc

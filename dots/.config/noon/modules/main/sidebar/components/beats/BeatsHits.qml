@@ -9,38 +9,19 @@ StyledRect {
     color: Colors.colLayer1
     radius: Rounding.verylarge
     property bool expanded
+    property bool isSearching: false
+    onIsSearchingChanged: inputArea.forceActiveFocus()
+
     function loadMore(i) {
-        if (!BeatsHitsService.isBusy)
+        if (BeatsHitsService.isBusy)
+            return;
+        if (isSearching) {
+            BeatsHitsService.searchMore(inputArea.text);
+        } else {
             BeatsHitsService.request(i);
-    }
-    StyledRect {
-        z: 9999
-        anchors.margins: Padding.huge
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: 100
-        height: 45
-        radius: Rounding.huge
-        color: Colors.colLayer3
-        ButtonGroup {
-            anchors.fill: parent
-            Repeater {
-                model: [
-                    {
-                        icon: "refresh",
-                        action: () => {
-                            BeatsHitsService.refresh(64);
-                        }
-                    }
-                ]
-                delegate: GroupButtonWithIcon {
-                    baseSize: 45
-                    materialIcon: modelData.icon
-                    releaseAction: () => modelData.action()
-                }
-            }
         }
     }
+    HitsControls {}
     ScrollEdgeFade {
         target: grid
     }
@@ -54,7 +35,14 @@ StyledRect {
         cellHeight: cellWidth
         reuseItems: false
         model: ScriptModel {
-            values: BeatsHitsService.hits
+            values: {
+                if (root.isSearching)
+                    return BeatsHitsService.searchResults;
+                else if (Mem.states.services.beats.shuffleHits)
+                    return BeatsHitsService.hits.sort(() => Math.random() - 0.5);
+                else
+                    return BeatsHitsService.hits;
+            }
         }
         delegate: Hit {
             implicitSize: grid.cellWidth - Padding.large

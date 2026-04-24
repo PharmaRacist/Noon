@@ -29,7 +29,7 @@ StyledRect {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.left: parent.left
-        color: Colors.colLayer3
+        color: Colors.m3.m3surfaceContainerHigh
         height: eventArea.containsMouse ? parent.height : 45
 
         GridLayout {
