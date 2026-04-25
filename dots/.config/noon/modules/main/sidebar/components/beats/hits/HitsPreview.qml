@@ -9,40 +9,44 @@ StyledRect {
     id: root
 
     property var songData
-    property var player: getPlayerByUrl(songData?.url)
-    readonly property bool _loading: !player.canPlay
-    readonly property bool _playing: (player?.playbackState === MprisPlaybackState.Playing)
-    readonly property string currentPlayerUrl: player?.metadata["xesam:url"] ?? ""
+
+    readonly property bool _playing: player?.playbackState === MprisPlaybackState.Playing
+    readonly property var player: {
+        if (!songData?.url)
+            return;
+        return BeatsService?.meaningfulPlayers?.find(p => p.metadata["xesam:url"] === normalizeUrl(songData.url));
+    }
 
     clip: true
     radius: Rounding.verylarge
     color: "transparent"
-    function getPlayerByUrl(url) {
-        if (!url)
-            return null;
-        const players = Object.values(Mpris.players.values);
-        if (!players || players.length === 0)
-            return null;
-        return players.find(p => p.metadata["xesam:url"] === url) ?? null;
+
+    function normalizeUrl(inputUrl) {
+        let url = new URL(inputUrl);
+        let params = new URLSearchParams(url.search);
+        if (url.hostname.includes("music.youtube.com"))
+            url.hostname = "www.youtube.com";
+        if (params.has("list"))
+            params.set("list", params.get("list").replace(/^VL/, ""));
+        url.search = params.toString();
+        return url.toString();
     }
 
-    onSongDataChanged: {
-        if (!songData?.url)
-            return;
-        const p = getPlayerByUrl(songData.url);
-        if (p?.playbackState === MprisPlaybackState.Playing)
-            return;
-        BeatsService.previewURL(songData.url);
-    }
+    onSongDataChanged: Qt.callLater(() => {
+        if (!player)
+            BeatsService.previewURL(root.songData.url);
+    })
 
     Visualizer {
         z: 0
         active: true
     }
+
     RowLayout {
         z: 1
         anchors.fill: parent
         spacing: Padding.massive
+
         MusicCoverArt {
             implicitSize: 136
             source: songData?.thumbnail ?? ""
@@ -78,9 +82,7 @@ StyledRect {
                     model: [
                         {
                             icon: "close",
-                            action: () => {
-                                root.dismiss();
-                            }
+                            action: () => root.dismiss()
                         },
                         {
                             icon: "download",
@@ -91,8 +93,8 @@ StyledRect {
                         },
                         {
                             toggled: root._playing,
-                            icon: (root._loading || !root.player.metadata["xesam:artist" || !root.player.trackArtist]) ? "circle_circle" : root._playing ? "pause" : "play_arrow",
-                            action: () => root.player.togglePlaying()
+                            icon: (!root.player?.metadata["xesam:artist"] || !root.player?.trackArtist) ? "circle_circle" : root._playing ? "pause" : "play_arrow",
+                            action: () => root.player?.togglePlaying()
                         }
                     ]
 

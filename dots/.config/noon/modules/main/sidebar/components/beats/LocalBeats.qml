@@ -100,13 +100,13 @@ StyledRect {
             id: content
             Layout.fillWidth: true
             Layout.fillHeight: true
-
             SpotifyLyrics {
                 id: activeLyrics
             }
 
             StyledLoader {
                 anchors.centerIn: parent
+                anchors.verticalCenterOffset: -35
                 width: root.playing ? 320 : 285
                 height: width
                 fade: true

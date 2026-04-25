@@ -9,18 +9,16 @@ StyledRect {
     id: bg
     z: 9999
     clip: true
+
     property var songData
+    property string mode: ""
 
-    property string mode: "options"
-    readonly property var dict: {
-        "options": optionsComponent,
-        "preview": previewComponent
-    }
-    readonly property Component optionsComponent: HitsOptions {}
-    readonly property Component previewComponent: HitsPreview {}
-
-    property bool _expanded: false
+    property bool _expanded: mode !== ""
     property alias inputArea: bottomRow.inputArea
+
+    onModeChanged: if (mode)
+        _expanded = true
+
     anchors.margins: Padding.huge
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
@@ -51,15 +49,9 @@ StyledRect {
         }
     ]
 
-    transitions: Transition {
-        Anim {
-            properties: "width,height,x,y,opacity"
-        }
-    }
-
     StyledLoader {
-        active: bg._expanded
-
+        shown: bg._expanded
+        fade: true
         anchors.bottom: bottomRow.top
         anchors.top: parent.top
         anchors.right: parent.right
@@ -69,6 +61,13 @@ StyledRect {
         anchors.rightMargin: Padding.huge
 
         sourceComponent: dict[bg.mode]
+
+        readonly property var dict: {
+            "options": optionsComponent,
+            "preview": previewComponent
+        }
+        readonly property Component optionsComponent: HitsOptions {}
+        readonly property Component previewComponent: HitsPreview {}
 
         onLoaded: {
             if ("songData" in _item)

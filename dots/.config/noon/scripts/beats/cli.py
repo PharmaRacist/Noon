@@ -2,7 +2,7 @@ import argparse
 import json
 import sys
 
-from .dbus import ensure_dbus, register_dbus
+# from .dbus import ensure_dbus, register_dbus
 from .player import Player
 
 
@@ -22,7 +22,7 @@ def main():
             "seek",
             "status",
             "refresh-config",
-            "session",
+            # "session",
         ],
     )
     parser.add_argument("--index", type=int, default=0)
@@ -32,11 +32,11 @@ def main():
     parser.add_argument("--url", type=str, default="")
     args = parser.parse_args()
 
-    if args.command == "session":
-        register_dbus(Player(args.player))
-        return
+    # if args.command == "session":
+    #     register_dbus(Player(args.player))
+    #     return
+    # ensure_dbus()
 
-    ensure_dbus()
     p = Player(args.player)
 
     dispatch = {

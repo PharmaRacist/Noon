@@ -43,12 +43,6 @@ ButtonGroup {
                 }
             },
             {
-                icon: bg._expanded ? "keyboard_arrow_down" : "keyboard_arrow_up",
-                action: () => {
-                    bg._expanded = !bg._expanded;
-                }
-            },
-            {
                 icon: bg.mode === "options" ? "music_note" : "menu",
                 action: () => {
                     if (bg.mode === "options")

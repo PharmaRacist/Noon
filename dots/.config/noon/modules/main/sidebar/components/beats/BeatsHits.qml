@@ -10,7 +10,6 @@ StyledRect {
     radius: Rounding.verylarge
     property bool expanded
     property bool isSearching: false
-    property var previewData: null
     property rect previewOrigin: Qt.rect(0, 0, 0, 0)
 
     onIsSearchingChanged: controls.inputArea.forceActiveFocus()
@@ -30,6 +29,7 @@ StyledRect {
 
     HitsControls {
         id: controls
+        songData: Mem.states.services.beats.previewData
     }
 
     ScrollEdgeFade {
@@ -57,8 +57,9 @@ StyledRect {
         }
         delegate: Hit {
             implicitSize: grid.cellWidth - Padding.large
+
             onPreview: {
-                controls.songData = modelData;
+                Mem.states.services.beats.previewData = modelData;
                 controls._expanded = true;
                 controls.mode = "preview";
             }

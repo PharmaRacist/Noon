@@ -4,10 +4,10 @@ import subprocess
 import sys
 import time
 
-from .config import load_conf
-
 
 def ensure_dbus():
+    from .config import load_conf
+
     conf = load_conf()
     for name in conf.get("players", {}):
         pid_file = f"/tmp/beats_{name}.pid"

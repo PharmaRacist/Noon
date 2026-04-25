@@ -48,7 +48,6 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 const out = JSON.parse(text.trim());
-                console.log(text);
                 if (out.length > 0)
                     Mem.states.services.beats.hits = [...Mem.states.services.beats.hits, ...out];
             }

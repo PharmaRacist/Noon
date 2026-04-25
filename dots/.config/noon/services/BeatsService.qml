@@ -18,8 +18,6 @@ Singleton {
     property int selectedPlayerIndex: 0
     property string currentTrackPath: ""
     property var tracksMetadata: ({})
-    property var previewData: ({})
-    property string _playing_online_url: ""
     readonly property alias daemonOptions: daemonView.data
     readonly property list<string> excludedPlayers: Mem.options.mediaPlayer?.excludedPlayers ?? []
     readonly property QtObject colors: palette.colors
@@ -201,9 +199,9 @@ Singleton {
     ConfigFileView {
         id: daemonView
         state: false
-        fileName: "x"
+        fileName: "beats"
         BeatsSchema {}
-        onFileChanged: _daemonCmd(["--player", "main", "refresh-config"])
+        onFileChanged: _daemonCmd(["refresh-config"])
     }
 
     FileView {
