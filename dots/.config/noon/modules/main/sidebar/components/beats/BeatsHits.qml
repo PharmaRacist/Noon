@@ -10,26 +10,32 @@ StyledRect {
     radius: Rounding.verylarge
     property bool expanded
     property bool isSearching: false
+    property var previewData: null
+    property rect previewOrigin: Qt.rect(0, 0, 0, 0)
+
     onIsSearchingChanged: controls.inputArea.forceActiveFocus()
 
     function loadMore(i) {
         if (BeatsHitsService.isBusy)
             return;
-        if (isSearching) {
+        if (isSearching)
             BeatsHitsService.searchMore(controls.inputArea.text);
-        } else {
+        else
             BeatsHitsService.request(i);
-        }
     }
+
     StyledRectangularShadow {
         target: controls
     }
+
     HitsControls {
         id: controls
     }
+
     ScrollEdgeFade {
         target: grid
     }
+
     StyledGridView {
         id: grid
         z: 1
@@ -51,12 +57,18 @@ StyledRect {
         }
         delegate: Hit {
             implicitSize: grid.cellWidth - Padding.large
+            onPreview: {
+                controls.songData = modelData;
+                controls._expanded = true;
+                controls.mode = "preview";
+            }
         }
         onContentYChanged: {
             if (contentHeight > 0 && contentY + height >= contentHeight - height * 0.25)
                 root.loadMore();
         }
     }
+
     MaterialLoadingIndicator {
         z: 2
         visible: loading
@@ -65,5 +77,23 @@ StyledRect {
         anchors.topMargin: Padding.massive
         anchors.horizontalCenter: parent.horizontalCenter
         implicitSize: 54
+    }
+    StyledRect {
+        z: controls.z - 1
+        opacity: dismissArea.enabled ? 1 : 0
+        anchors.fill: parent
+        color: Colors.colScrim
+    }
+    MouseArea {
+        id: dismissArea
+        z: controls.z - 1
+        preventStealing: true
+        hoverEnabled: true
+        enabled: controls._expanded
+        anchors.fill: parent
+        onClicked: {
+            controls.mode = "options";
+            controls._expanded = false;
+        }
     }
 }

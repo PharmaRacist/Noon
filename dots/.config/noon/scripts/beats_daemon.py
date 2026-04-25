@@ -172,16 +172,33 @@ def cmd_preview_url(url: str):
         start_new_session=True,
     )
     with open(PREVIEW_PID_FILE, "w") as f:
-        f.write(str(proc.pid))
+        json.dump({"pid": proc.pid, "url": url}, f)
+
+
+def cmd_preview_status():
+    if not os.path.exists(PREVIEW_PID_FILE):
+        print(json.dumps({"active": False}))
+        return
+    with open(PREVIEW_PID_FILE, "r") as f:
+        data = json.load(f)
+    pid = data.get("pid")
+    url = data.get("url", "")
+    try:
+        os.kill(int(pid), 0)
+        print(json.dumps({"active": True, "pid": pid, "url": url}))
+    except (ProcessLookupError, ValueError):
+        os.remove(PREVIEW_PID_FILE)
+        print(json.dumps({"active": False}))
 
 
 def cmd_kill_preview():
     if not os.path.exists(PREVIEW_PID_FILE):
         return
     with open(PREVIEW_PID_FILE, "r") as f:
-        pid = f.read().strip()
+        data = json.load(f)
+    pid = data.get("pid")
     try:
-        subprocess.run(["kill", pid])
+        subprocess.run(["kill", str(pid)])
     except Exception:
         pass
     os.remove(PREVIEW_PID_FILE)
@@ -236,6 +253,7 @@ def main():
             "refresh-config",
             "preview-url",
             "kill-preview",
+            "preview-status",
         ],
     )
     parser.add_argument("--index", type=int, default=0)
@@ -267,6 +285,8 @@ def main():
         cmd_preview_url(args.url)
     elif args.command == "kill-preview":
         cmd_kill_preview()
+    elif args.command == "preview-status":
+        cmd_preview_status()
     elif args.command == "status":
         cmd_status()
 

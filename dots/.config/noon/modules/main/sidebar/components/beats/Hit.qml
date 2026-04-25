@@ -11,15 +11,16 @@ StyledRect {
     clip: true
     color: Colors.colLayer2
     radius: Rounding.huge
+    signal preview(url: string, x: int, y: int)
 
     MouseArea {
         id: eventArea
         z: 99999
-        acceptedButtons: Qt.NoButton
         propagateComposedEvents: true
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
+        onClicked: preview(modelData.url, root.x, root.y)
     }
 
     StyledRect {
@@ -30,49 +31,7 @@ StyledRect {
         anchors.right: parent.right
         anchors.left: parent.left
         color: Colors.m3.m3surfaceContainerHigh
-        height: eventArea.containsMouse ? parent.height : 45
-
-        GridLayout {
-            opacity: eventArea.containsMouse ? 1 : 0
-            visible: opacity > 0
-            columnSpacing: Padding.huge
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -Padding.huge
-            Repeater {
-                model: ScriptModel {
-                    values: {
-                        const l = [
-                            {
-                                icon: "download",
-                                action: () => {
-                                    BeatsService.downloadSong(modelData.url);
-                                }
-                            },
-                            {
-                                visible: BeatsService._playing_online_url !== modelData.url,
-                                icon: "play_arrow",
-                                action: () => {
-                                    BeatsService.previewURL(modelData.url);
-                                }
-                            }
-                        ];
-                        return l.filter(i => i?.visible ?? true);
-                    }
-                }
-                delegate: Symbol {
-
-                    text: modelData.icon
-                    font.pixelSize: 28
-                    fill: 1
-                    color: Colors.colOnLayer3
-                    MouseArea {
-                        id: hoverArea
-                        anchors.fill: parent
-                        onClicked: modelData.action()
-                    }
-                }
-            }
-        }
+        height: 45
 
         ColumnLayout {
             height: 45

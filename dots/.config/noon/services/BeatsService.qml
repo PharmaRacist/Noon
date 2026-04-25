@@ -18,6 +18,7 @@ Singleton {
     property int selectedPlayerIndex: 0
     property string currentTrackPath: ""
     property var tracksMetadata: ({})
+    property var previewData: ({})
     property string _playing_online_url: ""
     readonly property alias daemonOptions: daemonView.data
     readonly property list<string> excludedPlayers: Mem.options.mediaPlayer?.excludedPlayers ?? []
@@ -202,6 +203,13 @@ Singleton {
         fileName: "beats"
         BeatsSchema {}
         onFileChanged: _daemonCmd("refresh-config")
+    }
+
+    FileView {
+        id: previewFile
+        path: "/tmp/beats_preview.pid"
+        blockWrites: true
+        onTextChanged: root.previewData = JSON.parse(previewFile.text())
     }
 
     FileView {
