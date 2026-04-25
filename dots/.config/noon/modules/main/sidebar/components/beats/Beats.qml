@@ -20,6 +20,13 @@ RedunduntMultiViewPanel {
             "preload": "expanded",
             "preloadData": root.expanded,
             "component": "BeatsHits"
+        },
+        {
+            "icon": "equalizer",
+            "name": "EQ",
+            "preload": "expanded",
+            "preloadData": root.expanded,
+            "component": "BeatsEqualizer"
         }
     ]
 }

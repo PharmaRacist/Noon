@@ -21,7 +21,12 @@ StyledRect {
             BeatsHitsService.request(i);
         }
     }
-    HitsControls {}
+    StyledRectangularShadow {
+        target: controls
+    }
+    HitsControls {
+        id: controls
+    }
     ScrollEdgeFade {
         target: grid
     }

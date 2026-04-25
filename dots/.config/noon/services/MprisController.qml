@@ -65,7 +65,6 @@ Singleton {
         }
 
         function onTrackArtUrlChanged() {
-            // console.log("arturl:", activePlayer.trackArtUrl)
             // root.updateTrack();
             if (root.activePlayer.uniqueId == root.activeTrack.uniqueId && root.activePlayer.trackArtUrl != root.activeTrack.artUrl) {
                 // cantata likes to send cover updates *BEFORE* updating the track info.
@@ -80,7 +79,6 @@ Singleton {
     onActivePlayerChanged: this.updateTrack()
 
     function updateTrack() {
-        //console.log(`update: ${this.activePlayer?.trackTitle ?? ""} : ${this.activePlayer?.trackArtists}`)
         this.activeTrack = {
             uniqueId: this.activePlayer?.uniqueId ?? 0,
             artUrl: this.activePlayer?.trackArtUrl ?? "",
@@ -136,7 +134,6 @@ Singleton {
 
     function setActivePlayer(player: MprisPlayer) {
         const targetPlayer = player ?? Mpris.players[0];
-        console.log(`[Mpris] Active player ${targetPlayer} << ${activePlayer}`);
 
         if (targetPlayer && this.activePlayer) {
             this.__reverse = Mpris.players.indexOf(targetPlayer) < Mpris.players.indexOf(this.activePlayer);

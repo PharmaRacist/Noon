@@ -46,14 +46,13 @@ StyledRect {
                                 icon: "download",
                                 action: () => {
                                     BeatsService.downloadSong(modelData.url);
-                                    console.log("Started");
                                 }
                             },
                             {
                                 visible: BeatsService._playing_online_url !== modelData.url,
                                 icon: "play_arrow",
                                 action: () => {
-                                    BeatsService.playOnline(modelData.url);
+                                    BeatsService.previewURL(modelData.url);
                                 }
                             }
                         ];

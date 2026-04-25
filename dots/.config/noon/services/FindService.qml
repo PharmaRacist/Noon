@@ -8,7 +8,6 @@ Singleton {
     id: root
     readonly property alias resultsModel: styledResults
     property list<string> results: []
-    onResultsChanged: console.log(JSON.stringify(results))
 
     ScriptModel {
         id: styledResults

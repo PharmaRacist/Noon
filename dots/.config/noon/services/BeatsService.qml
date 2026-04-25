@@ -14,19 +14,17 @@ import Qt.labs.folderlistmodel
 
 Singleton {
     id: root
-    readonly property alias socket: vlcSocket
 
     property int selectedPlayerIndex: 0
     property string currentTrackPath: ""
     property var tracksMetadata: ({})
     property string _playing_online_url: ""
-
+    readonly property alias daemonOptions: daemonView.data
     readonly property list<string> excludedPlayers: Mem.options.mediaPlayer?.excludedPlayers ?? []
     readonly property QtObject colors: palette.colors
     readonly property bool filterPlayersEnabled: true
-    readonly property bool _playing_online: onlineProc.running
+
     readonly property bool _downloading: dlpHelperProc.running
-    readonly property bool _connected: vlcSocket.connected
     readonly property bool _playing: player && player.playbackState === MprisPlaybackState.Playing
     readonly property string artUrl: player ? StringUtils.cleanMusicTitle(player.trackArtUrl) : ""
     readonly property string title: player ? StringUtils.cleanMusicTitle(player.trackTitle) : "No Title"
@@ -34,6 +32,8 @@ Singleton {
     readonly property string _tracksDir: Qt.resolvedUrl(Mem.states.mediaPlayer?.currentTrackPath ?? Directories.beats.tracks)
     readonly property string _metadataPath: _tracksDir + "/.metadata"
     readonly property string _playlistPath: _tracksDir + "/.playlist.m3u"
+    readonly property string _daemonScript: Directories.scriptsDir + "/beats_daemon.py"
+
     readonly property var tracksInfo: {
         const map = {};
         for (const key in root.tracksMetadata) {
@@ -98,32 +98,17 @@ Singleton {
         return "file://" + root._tracksDir + "/" + entry.cover_art.replace(/^\.\//, "");
     }
 
-    function startConnection() {
-        if (vlcSocket.connected)
-            return;
-        Quickshell.execDetached(buildConnectionCommand());
-        vlcSocket.reconnect();
+    function _daemonCmd(args) {
+        mpvProc.command = ["python3", root._daemonScript].concat(args);
+        mpvProc.running = false;
+        mpvProc.running = true;
+    }
+    function playTrackByPath(path) {
+        _daemonCmd(["play-file", "--file", path, "--playlist", FileUtils.trimFileProtocol(root._playlistPath)]);
     }
 
-    function buildConnectionCommand() {
-        var vlcConf = {
-            random: true,
-            loop: true
-        };
-        var cmd = ["vlc", "--intf", "oldrc", "--rc-unix", vlcSocket.path, "--rc-fake-tty", "--one-instance", "--no-video", FileUtils.trimFileProtocol(root._playlistPath)];
-
-        if (vlcConf.random)
-            cmd.push("--random");
-        if (vlcConf.loop)
-            cmd.push("--loop");
-        return cmd;
-    }
     function playTrack(index) {
-        if (vlcSocket.connected) {
-            vlcSocket.add("goto " + index);
-        } else {
-            vlcSocket.reconnect();
-        }
+        _daemonCmd(["play-index", "--index", index, "--playlist", FileUtils.trimFileProtocol(root._playlistPath)]);
     }
 
     function currentTrackProgressRatio() {
@@ -153,16 +138,41 @@ Singleton {
     }
 
     function isCurrentPlayer() {
-        return player?.desktopEntry?.toLowerCase() === "vlc";
+        return player?.desktopEntry?.toLowerCase() === "mpv";
     }
 
     function stopPlayer() {
-        NoonUtils.execDetached("killall " + player?.desktopEntry?.toLowerCase());
+        _daemonCmd(["stop"]);
     }
 
     function downloadCurrentSong() {
         dlpHelperProc.command = ["bash", "-c", `${Directories.scriptsDir}/dlpHelper.sh --download-song "${root.title}" "${root.artist}" "${info.destination}"`];
         dlpHelperProc.running = true;
+    }
+
+    function previewURL(url) {
+        _daemonCmd(["preview-url", "--url", url]);
+    }
+
+    function killPreview() {
+        _daemonCmd(["kill-preview"]);
+    }
+
+    function downloadSong(downloadURL) {
+        downloadWithDLP({
+            parameters: "bestaudio/best|-x --audio-format mp3 --audio-quality 0",
+            destination: FileUtils.trimFileProtocol(Mem.states.mediaPlayer?.currentTrackPath),
+            url: downloadURL
+        });
+    }
+
+    function downloadWithDLP(info) {
+        dlpHelperProc.command = ["bash", "-c", `${Directories.scriptsDir}/dlpHelper.sh '${info.parameters}' '${info.url}' '${info.destination}'`];
+        dlpHelperProc.running = true;
+    }
+
+    function addNewFolder() {
+        folderPicker.open();
     }
 
     Timer {
@@ -174,34 +184,24 @@ Singleton {
     }
 
     Process {
+        id: mpvProc
+    }
+
+    Process {
         id: rebuildMetaProc
         command: ["python3", Directories.scriptsDir + "/build_metadata.py", FileUtils.trimFileProtocol(_tracksDir)]
     }
-    function playOnline(url) {
-        _playing_online_url = url;
-        onlineProc.running = false;
-        onlineProc.command = ["bash", "-c", `mpv --no-video --no-terminal --ytdl-format="bestaudio" "${url}"`];
-        onlineProc.running = true;
-    }
-    function downloadSong(downloadURL) {
-        downloadWithDLP({
-            parameters: "bestaudio/best|-x --audio-format mp3 --audio-quality 0",
-            destination: FileUtils.trimFileProtocol(Mem.states.mediaPlayer?.currentTrackPath),
-            url: downloadURL
-        });
-    }
-    function downloadWithDLP(info) {
-        dlpHelperProc.command = ["bash", "-c", `${Directories.scriptsDir}/dlpHelper.sh '${info.parameters}' '${info.url}' '${info.destination}'`];
-        dlpHelperProc.running = true;
-    }
-    function addNewFolder() {
-        folderPicker.open();
-    }
+
     Process {
         id: dlpHelperProc
     }
-    Process {
-        id: onlineProc
+
+    ConfigFileView {
+        id: daemonView
+        state: false
+        fileName: "beats"
+        BeatsSchema {}
+        onFileChanged: _daemonCmd("refresh-config")
     }
 
     FileView {
@@ -214,11 +214,6 @@ Singleton {
                 rebuildMetadata();
             }
         }
-    }
-
-    UnixSocket {
-        id: vlcSocket
-        path: "/tmp/vlc.sock"
     }
 
     FolderDialog {

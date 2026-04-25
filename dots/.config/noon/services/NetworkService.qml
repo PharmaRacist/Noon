@@ -131,7 +131,6 @@ Singleton {
 
         interval: 2000
         onTriggered: {
-            console.log("Restarting network service...");
             networkMonitor.running = true;
         }
     }

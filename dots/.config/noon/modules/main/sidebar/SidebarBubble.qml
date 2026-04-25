@@ -168,10 +168,6 @@ Item {
                 "cat": "Beats",
                 "bubbles": [
                     {
-                        "icon": "upload",
-                        "action": () => BeatsService.startConnection()
-                    },
-                    {
                         "icon": "download",
                         "extraVisibleCondition": !BeatsService.isCurrentPlayer(),
                         "action": () => BeatsService.downloadCurrentSong()

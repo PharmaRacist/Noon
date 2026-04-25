@@ -88,7 +88,7 @@ StyledRect {
                 colBackgroundHover: colors.colLayer3Hover
                 colors: root.colors
 
-                releaseAction: () => BeatsService.playTrack(modelData?.playlist_index + 1)
+                releaseAction: () => BeatsService.playTrackByPath(modelData?.filepath)
                 altAction: () => trackContextMenu.popup()
 
                 TrackContextMenu {

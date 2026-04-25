@@ -53,7 +53,7 @@ StyledRect {
     }
 
     ColumnLayout {
-        visible: root._expanded
+        visible: bg._expanded
         anchors.bottom: group.top
         anchors.right: parent.right
         anchors.left: parent.left
@@ -73,7 +73,7 @@ StyledRect {
         OptionSwitch {
             title: "Shuffle Hits"
             button.checked: Mem.states.services.beats.shuffleHits
-            button.onCheckedChanged: Mem.states.services.beats.shuffleHits = button.checked
+            button.onCheckedChanged: () => Mem.states.services.beats.shuffleHits = button.checked
         }
     }
 
