@@ -1,2 +1,7 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# SDDM
 sddm/theme.conf
-dots/.config/noon/scripts/__pycache__
