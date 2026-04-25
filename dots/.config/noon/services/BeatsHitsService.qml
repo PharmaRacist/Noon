@@ -13,8 +13,8 @@ Singleton {
     property int _limit: searchLimit
     property var searchResults
 
-    function search(query, limit = _searchLimit) {
-        _searchLimit = limit;
+    function search(query, limit = _limit) {
+        _limit = limit;
         var cmd = ["uv", "--directory", Directories.venv, "run", Directories.scriptsDir + "/hits_service.py", "search", "--query", query, "--limit", limit];
         root.searchResults = null;
         searchProc.running = false;
@@ -26,13 +26,13 @@ Singleton {
         search(query, _limit + 32);
     }
 
-    function request(limit = _searchLimit) {
+    function request(limit = _limit) {
         var cmd = ["uv", "--directory", Directories.venv, "run", Directories.scriptsDir + "/hits_service.py", "recommend", FileUtils.trimFileProtocol(BeatsService._metadataPath), "--limit", limit];
         fetchProc.running = false;
         fetchProc.command = cmd;
         fetchProc.running = true;
     }
-    function refresh(limit = _searchLimit) {
+    function refresh(limit = _limit) {
         Mem.states.services.beats.hits = [];
         Qt.callLater(() => request(limit));
     }

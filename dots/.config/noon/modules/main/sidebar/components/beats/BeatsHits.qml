@@ -10,13 +10,13 @@ StyledRect {
     radius: Rounding.verylarge
     property bool expanded
     property bool isSearching: false
-    onIsSearchingChanged: inputArea.forceActiveFocus()
+    onIsSearchingChanged: controls.inputArea.forceActiveFocus()
 
     function loadMore(i) {
         if (BeatsHitsService.isBusy)
             return;
         if (isSearching) {
-            BeatsHitsService.searchMore(inputArea.text);
+            BeatsHitsService.searchMore(controls.inputArea.text);
         } else {
             BeatsHitsService.request(i);
         }

@@ -9,7 +9,7 @@ StyledRect {
     z: 9999
     clip: true
     property bool _expanded: false
-
+    property alias inputArea: inputArea
     anchors.margins: Padding.huge
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
