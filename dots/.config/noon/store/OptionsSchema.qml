@@ -301,7 +301,7 @@ JsonAdapter {
         property string visualizerMode: ""
         property bool showVisualizer: false
         property bool lyrics: false
-        property list<string> excludedPlayers: [".mpd", "playerctld", "firefox", "chromium", "kdeconnect"]
+        property list<string> excludedPlayers: [".mpd", "playerctld", "beats_preview", "firefox", "chromium", "kdeconnect"]
     }
     property JsonObject desktop: JsonObject {
         property JsonObject shell

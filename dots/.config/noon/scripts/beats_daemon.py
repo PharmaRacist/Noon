@@ -168,7 +168,13 @@ def cmd_preview_url(url: str):
         cmd_kill_preview()
     send_command(["set_property", "pause", True])
     proc = subprocess.Popen(
-        ["mpv", "--no-video", "--no-terminal", "--ytdl-format=bestaudio", url],
+        [
+            "mpv",
+            "--no-video",
+            "--no-terminal",
+            "--ytdl-format=bestaudio",
+            url,
+        ],
         start_new_session=True,
     )
     with open(PREVIEW_PID_FILE, "w") as f:

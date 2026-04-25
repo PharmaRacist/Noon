@@ -161,7 +161,7 @@ Singleton {
 
     function downloadSong(downloadURL) {
         downloadWithDLP({
-            parameters: "bestaudio/best|-x --audio-format mp3 --audio-quality 0",
+            parameters: "bestaudio/best|-x --audio-format mp3 --audio-quality 0  --embed-thumbnail --add-metadata",
             destination: FileUtils.trimFileProtocol(Mem.states.mediaPlayer?.currentTrackPath),
             url: downloadURL
         });
@@ -209,7 +209,6 @@ Singleton {
         id: previewFile
         path: "/tmp/beats_preview.pid"
         blockWrites: true
-        onTextChanged: root.previewData = JSON.parse(previewFile.text())
     }
 
     FileView {
