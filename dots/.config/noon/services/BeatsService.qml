@@ -14,10 +14,10 @@ import Qt.labs.folderlistmodel
 
 Singleton {
     id: root
-
-    property int selectedPlayerIndex: 0
+    property int selectedPlayerIndex: defaultPlayerIndex
     property string currentTrackPath: ""
     property var tracksMetadata: ({})
+    readonly property int defaultPlayerIndex: getCurrentPlayerIndex()
     readonly property alias daemonOptions: daemonView.data
     readonly property list<string> excludedPlayers: Mem.options.mediaPlayer?.excludedPlayers ?? []
     readonly property QtObject colors: palette.colors
@@ -32,7 +32,7 @@ Singleton {
     readonly property string _metadataPath: _tracksDir + "/.metadata"
     readonly property string _playlistPath: _tracksDir + "/.playlist.m3u"
     readonly property string _daemonScript: Directories.scriptsDir + "/beats_daemon.py"
-
+    readonly property var tracksList: Object.values(root.tracksMetadata)
     readonly property var tracksInfo: {
         const map = {};
         for (const key in root.tracksMetadata) {
@@ -43,8 +43,6 @@ Singleton {
         return map;
     }
 
-    readonly property var tracksList: Object.values(root.tracksMetadata)
-
     readonly property var currentTrackMeta: {
         if (!root.currentTrackPath)
             return null;
@@ -52,12 +50,7 @@ Singleton {
         return root.tracksInfo[fileName] ?? null;
     }
 
-    readonly property MprisPlayer player: {
-        const list = meaningfulPlayers;
-        if (!list || list.length === 0)
-            return null;
-        return list[Math.max(0, Math.min(selectedPlayerIndex, list.length - 1))] || null;
-    }
+    readonly property MprisPlayer player: meaningfulPlayers[selectedPlayerIndex] ?? null
 
     readonly property var meaningfulPlayers: {
         const source = Mpris.players.values;
@@ -82,6 +75,11 @@ Singleton {
         return Array.from(map.values());
     }
 
+    function getCurrentPlayerIndex() {
+        const players = meaningfulPlayers;
+        const currentlyActivePlayer = players.find(player => player.playbackState === MprisPlaybackState.Playing);
+        return Math.max(0, players?.indexOf(currentlyActivePlayer)) ?? 0;
+    }
     function rebuildMetadata() {
         rebuildMetaProc.running = false;
         rebuildMetaProc.running = true;
@@ -108,10 +106,15 @@ Singleton {
     }
 
     function playTrack(index) {
+        if (player && (player?.shuffle)) {
+            player.shuffle = false;
+            shuffleHandleTimer.restart();
+        }
         _daemonCmd(["--player", "main", "play-index", "--index", index, "--source", FileUtils.trimFileProtocol(root._playlistPath)]);
     }
 
     function stopPlayer() {
+        _daemonCmd(["--player", "preview", "stop"]);
         _daemonCmd(["--player", "main", "stop"]);
     }
 
@@ -199,7 +202,6 @@ Singleton {
     ConfigFileView {
         id: daemonView
         state: false
-        autoCreateOnError: false
         fileName: "beats"
         BeatsSchema {}
         onFileChanged: _daemonCmd(["refresh-config"])
@@ -233,7 +235,11 @@ Singleton {
             }
         }
     }
-
+    Timer {
+        id: shuffleHandleTimer
+        interval: 200
+        onTriggered: player.shuffle = true
+    }
     FolderListModel {
         folder: root._tracksDir
         showDirs: false

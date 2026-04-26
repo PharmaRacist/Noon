@@ -7,7 +7,7 @@ import qs.common
 GridView {
     id: root
 
-    property bool clip: false
+    property bool hint: false
     property int radius: Rounding.large
     property color colBackground: "transparent"
     // Scroll behavior properties
@@ -16,6 +16,15 @@ GridView {
     property real mouseScrollDeltaThreshold: Mem.options.interactions.scrolling.mouseScrollDeltaThreshold ?? 120
     property real scrollTargetY: 0
 
+    StyledLoader {
+        z: 999
+        active: root.hint
+        anchors.fill: parent
+        anchors.margins: -parent?.anchors.margins
+        sourceComponent: ScrollEdgeFade {
+            target: root
+        }
+    }
     // GridView properties
     maximumFlickVelocity: 3500
     boundsBehavior: Flickable.DragOverBounds

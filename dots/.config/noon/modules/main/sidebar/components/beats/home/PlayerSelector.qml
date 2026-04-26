@@ -43,9 +43,8 @@ StyledRect {
         radius: Rounding.full
         color: colors.colPrimary
 
-        readonly property int selectedIndex: BeatsService?.selectedPlayerIndex ?? 0
+        readonly property int selectedIndex: BeatsService?.selectedPlayerIndex
         readonly property var selectedItem: repeater.itemAt(selectedIndex)
-
         x: (playerSelector?.x ?? 0) + (selectedItem?.x ?? 0)
         width: 20
 
@@ -77,12 +76,12 @@ StyledRect {
         z: 2
         Repeater {
             id: repeater
-            model: BeatsService.meaningfulPlayers
+            model: BeatsService?.meaningfulPlayers
             delegate: Item {
                 id: symbolItem
                 required property var modelData
                 required property int index
-                readonly property bool isSelected: index === BeatsService.selectedPlayerIndex
+                readonly property bool isSelected: index === activeIndicator?.selectedIndex
                 height: 20
                 width: 20
                 Symbol {

@@ -7,6 +7,7 @@ import qs.common.functions
 
 Singleton {
     id: root
+
     readonly property var hits: Mem.states.services.beats.hits
     readonly property bool isBusy: searchProc.running || fetchProc.running
     readonly property int searchLimit: Mem.options.mediaPlayer.fetchLimit ?? 18
@@ -29,7 +30,7 @@ Singleton {
     function request(limit = _limit) {
         var cmd = ["uv", "--directory", Directories.venv, "run", Directories.scriptsDir + "/hits_service.py"];
 
-        if (BeatsService.daemonOptions.isAuth) {
+        if (Mem.states.services.beats.discoverMode) {
             cmd.push("discover");
         } else {
             cmd.push("recommend", FileUtils.trimFileProtocol(BeatsService._metadataPath));
@@ -42,11 +43,6 @@ Singleton {
         fetchProc.running = true;
     }
 
-    function auth() {
-        if (!BeatsService.daemonOptions.isAuth)
-            _cmd(["auth"]);
-    }
-
     function _cmd(...arg) {
         const cmd = ["uv", "--directory", Directories.venv, "run", Directories.scriptsDir + "/hits_service.py"];
         cmd.push(...arg);
@@ -57,9 +53,11 @@ Singleton {
         Mem.states.services.beats.hits = [];
         Qt.callLater(() => request(limit));
     }
+
     Process {
         id: actionProc
     }
+
     Process {
         id: searchProc
         stdout: StdioCollector {

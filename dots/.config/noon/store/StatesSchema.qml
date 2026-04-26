@@ -79,6 +79,7 @@ JsonAdapter {
 
         beats: JsonObject {
             property var previewData: ({})
+            property bool discoverMode: false
             property bool shuffleHits: false
             property int searchLimit: 128
             property list<var> hits: []

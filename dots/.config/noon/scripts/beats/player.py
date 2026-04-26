@@ -181,3 +181,47 @@ class Player:
             r = self._send(["get_property", prop])
             result[key] = r.get("data") if r else None
         return result
+
+    def get_queue(self) -> list:
+        """Returns the current MPV playlist as a list of dicts."""
+        count = self.get_property("playlist-count")
+        if not count:
+            return []
+        queue = []
+        for i in range(int(count)):
+            item = self.get_property(f"playlist/{i}")
+            queue.append(
+                {
+                    "index": i,
+                    "filename": item.get("filename", ""),
+                    "title": item.get("title", item.get("filename", "")),
+                    "current": item.get("current", False),
+                    "playing": item.get("playing", False),
+                }
+            )
+        return queue
+
+    def queue_add(self, url_or_path: str, source: str):
+        """Appends a track to the end of the playlist."""
+        self.ensure_running(source)
+        url_or_path = (
+            self._normalize_url(url_or_path)
+            if url_or_path.startswith("http")
+            else url_or_path
+        )
+        self._send(["loadfile", url_or_path, "append"])
+
+    def queue_remove(self, index: int, source: str):
+        """Removes a track by playlist index."""
+        self.ensure_running(source)
+        self._send(["playlist-remove", index])
+
+    def queue_move(self, index: int, new_index: int, source: str):
+        """Moves a track from index to new_index."""
+        self.ensure_running(source)
+        self._send(["playlist-move", index, new_index])
+
+    def queue_clear(self, source: str):
+        """Clears all tracks except the currently playing one."""
+        self.ensure_running(source)
+        self._send(["playlist-clear"])

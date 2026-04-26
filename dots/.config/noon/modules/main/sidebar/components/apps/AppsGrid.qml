@@ -66,13 +66,11 @@ StyledRect {
             popup.forceActiveFocus();
         });
     }
-    ScrollEdgeFade {
-        target: contentView
-        anchors.margins: -Padding.huge
-    }
+
     StyledGridView {
         id: contentView
         focus: true
+        hint: true
         currentIndex: -1
         anchors.fill: parent
         anchors.margins: Padding.huge

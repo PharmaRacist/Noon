@@ -7,6 +7,7 @@ import qs.common.widgets
 SquareComponent {
     id: bg
     clip: true
+
     BlurImage {
         z: 0
         anchors.fill: parent
@@ -14,6 +15,8 @@ SquareComponent {
         asynchronous: true
         blur: true
         tint: true
+        tintLevel: 1
+        tintColor: BeatsService.colors.colPrimary
     }
 
     RowLayout {

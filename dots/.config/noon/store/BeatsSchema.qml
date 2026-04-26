@@ -2,6 +2,11 @@ import qs.common.utils
 
 JsonAdapter {
     property bool isAuth: false
+    property JsonObject account: JsonObject {
+        property string accountName: ""
+        property string accountPhoto: ""
+        property string accountHandle: ""
+    }
     property JsonObject hits: JsonObject {
         property string recommendationsMode: "playlists"
     }

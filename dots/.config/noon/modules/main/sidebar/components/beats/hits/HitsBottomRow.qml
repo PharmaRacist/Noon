@@ -26,6 +26,7 @@ ButtonGroup {
         background: null
         onAccepted: BeatsHitsService.search(inputArea.text)
     }
+
     Repeater {
         model: ScriptModel {
             values: {
@@ -35,6 +36,14 @@ ButtonGroup {
                         icon: "search",
                         action: () => {
                             root.isSearching = !root.isSearching;
+                        }
+                    },
+                    {
+                        icon: Mem.states.services.beats.discoverMode ? "for_you" : "explore",
+                        action: () => {
+                            root.isSearching = false;
+                            Mem.states.services.beats.discoverMode = !Mem.states.services.beats.discoverMode;
+                            BeatsHitsService.refresh();
                         }
                     },
                     {
@@ -53,13 +62,6 @@ ButtonGroup {
                                 bg.mode = "options";
                         }
                     },
-                    {
-                        visible: !BeatsService.daemonOptions.isAuth,
-                        icon: BeatsService.daemonOptions.isAuth ? "check" : "login",
-                        action: () => {
-                            BeatsHitsService.auth();
-                        }
-                    }
                 ];
                 return l.filter(b => b?.visible ?? true);
             }

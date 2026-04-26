@@ -1,6 +1,7 @@
 import QtQuick
 import qs.common
 import qs.common.widgets
+import "pages"
 
 RedunduntMultiViewPanel {
     id: root
@@ -8,25 +9,34 @@ RedunduntMultiViewPanel {
     path: Qt.resolvedUrl("./")
     tabButtonList: [
         {
+            // Queue ?
             "icon": "music_note",
-            "name": "Beats",
+            "name": "Home",
             "preload": "expanded",
             "preloadData": root.expanded,
-            "component": "LocalBeats"
+            "component": "pages/HomePage"
         },
         {
+            // Quick picks - discover - trending
             "icon": "globe",
-            "name": "New",
+            "name": "Feed",
             "preload": "expanded",
             "preloadData": root.expanded,
-            "component": "BeatsHits"
+            "component": "pages/HitsPage"
         },
         {
-            "icon": "equalizer",
+            "icon": "list",
+            "name": "Local",
+            "preload": "expanded",
+            "preloadData": root.expanded,
+            "component": "pages/LocalTracksPage"
+        },
+        {
+            "icon": "tune",
             "name": "EQ",
             "preload": "expanded",
             "preloadData": root.expanded,
-            "component": "BeatsEqualizer"
-        }
+            "component": "pages/EQPage"
+        },
     ]
 }

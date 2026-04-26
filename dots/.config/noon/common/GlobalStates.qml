@@ -18,14 +18,13 @@ Singleton {
     property QtObject toasts
     property var web_session
     property bool showDormantSphere: true
-    property bool superPressed: false
+    property bool superPressed: superHeldShortcut.pressed
     readonly property var topLevel: ToplevelManager.activeToplevel
     readonly property bool superHeld: superHeldShortcut.pressed
 
     CustomShortcut {
         id: superHeldShortcut
         name: "superHeld"
-        onPressed: GlobalStates.superPressed = !GlobalStates.superPressed
     }
     Component.onCompleted: {
         ClipboardService.init();

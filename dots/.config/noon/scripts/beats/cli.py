@@ -22,9 +22,15 @@ def main():
             "seek",
             "status",
             "refresh-config",
+            "queue",
+            "queue-add",
+            "queue-remove",
+            "queue-move",
+            "queue-clear",
             # "session",
         ],
     )
+    parser.add_argument("--new-index", type=int, default=0)
     parser.add_argument("--index", type=int, default=0)
     parser.add_argument("--seconds", type=float, default=5.0)
     parser.add_argument("--source", type=str, default="")
@@ -50,6 +56,11 @@ def main():
         "seek": lambda: p.seek(args.seconds, args.source),
         "refresh-config": p.refresh_config,
         "status": lambda: print(json.dumps(p.status())),
+        "queue": lambda: print(json.dumps(p.get_queue())),
+        "queue-add": lambda: p.queue_add(args.url or args.file, args.source),
+        "queue-remove": lambda: p.queue_remove(args.index, args.source),
+        "queue-move": lambda: p.queue_move(args.index, args.new_index, args.source),
+        "queue-clear": lambda: p.queue_clear(args.source),
     }
 
     dispatch[args.command]()

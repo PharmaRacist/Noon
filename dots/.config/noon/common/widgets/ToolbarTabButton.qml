@@ -36,7 +36,6 @@ RippleButton {
 
         StyledText {
             id: label
-
             anchors.verticalCenter: parent.verticalCenter
             text: root.text
         }

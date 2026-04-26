@@ -4,6 +4,8 @@ import Quickshell.Services.Mpris
 import qs.common
 import qs.common.widgets
 import qs.services
+import "../"
+import "../home"
 
 StyledRect {
     id: root
@@ -139,28 +141,9 @@ StyledRect {
                 Spacer {}
                 PlayerSelector {}
                 MediaPlayerControls {
-                    spermFrequency: root.expanded ? Math.round(root.width * 0.014) : 7
+                    spermFrequency: 7 // root.expanded ? Math.round(root.width * 0.014) : 7
                     showCover: root.displayingLyrics
                 }
-
-                // StyledLoader {
-                //     id: controlsLoader
-                //     fade: true
-                //     height: _item.implicitHeight
-                //     Layout.fillWidth: true
-                //     sourceComponent: root.detached ? detachedControls : controls
-                //     Component {
-                //         id: detachedControls
-                //         DetachedMediaPlayerControls {}
-                //     }
-                //     Component {
-                //         id: controls
-                //         MediaPlayerControls {
-                //             spermFrequency: root.expanded ? Math.round(root.width * 0.014) : 7
-                //             showCover: root.displayingLyrics
-                //         }
-                //     }
-                // }
             }
         }
 
@@ -171,15 +154,15 @@ StyledRect {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            ExpandedTracksList {
-                id: expandedTrackList
+            TracksQueue {
+                id: queue
                 anchors.fill: parent
                 colors: root.colors
             }
 
             StyledRectangularShadow {
                 visible: root.expanded
-                target: expandedTrackList
+                target: queue
                 intensity: 0.4
             }
         }

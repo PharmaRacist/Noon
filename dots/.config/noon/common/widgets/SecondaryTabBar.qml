@@ -10,6 +10,7 @@ ColumnLayout {
     clip: true
     required property var tabButtonList // Something like [{"icon": "notifications", "name": qsTr("Notifications")}, {"icon": "volume_up", "name": qsTr("Volume mixer")}]
     required property var externalTrackedTab
+
     property bool enableIndicatorAnimation: false
     property bool enableSpacing: false
     property color colIndicator: Colors.colPrimary ?? "#65558F"
@@ -27,10 +28,6 @@ ColumnLayout {
         spacing: 25
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
-        currentIndex: root.externalTrackedTab
-        onCurrentIndexChanged: {
-            root.onCurrentIndexChanged(currentIndex);
-        }
         background: Item {
             WheelHandler {
                 onWheel: event => {

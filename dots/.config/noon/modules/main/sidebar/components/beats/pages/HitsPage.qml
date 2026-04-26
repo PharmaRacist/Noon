@@ -3,6 +3,8 @@ import QtQuick.Layouts
 import qs.common
 import qs.common.widgets
 import qs.services
+import "../"
+import "./../hits"
 
 StyledRect {
     id: root
@@ -21,15 +23,6 @@ StyledRect {
             BeatsHitsService.searchMore(controls.inputArea.text);
         else
             BeatsHitsService.request(i);
-    }
-
-    StyledRectangularShadow {
-        target: controls
-    }
-
-    HitsControls {
-        id: controls
-        songData: Mem.states.services.beats.previewData
     }
 
     ScrollEdgeFade {
@@ -55,10 +48,13 @@ StyledRect {
                     return BeatsHitsService.hits;
             }
         }
-        delegate: Hit {
+        delegate: TrackItem {
             implicitSize: grid.cellWidth - Padding.large
-
-            onPreview: {
+            title: modelData.title
+            artist: modelData.artist
+            coverArt: modelData.thumbnail
+            isPlaylist: modelData.isPlaylist
+            action: () => {
                 Mem.states.services.beats.previewData = modelData;
                 controls._expanded = true;
                 controls.mode = "preview";
@@ -68,6 +64,14 @@ StyledRect {
             if (contentHeight > 0 && contentY + height >= contentHeight - height * 0.25)
                 root.loadMore();
         }
+    }
+    StyledRectangularShadow {
+        target: controls
+    }
+
+    HitsControls {
+        id: controls
+        songData: Mem.states.services.beats.previewData
     }
 
     MaterialLoadingIndicator {

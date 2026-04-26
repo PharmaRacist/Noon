@@ -8,6 +8,12 @@ StyledRect {
     id: root
     required property var modelData
     required property int index
+    readonly property alias eventArea: eventArea
+    property string title
+    property string artist
+    property string coverArt
+    property bool isPlaylist
+    property var action
     clip: true
     color: Colors.colLayer2
     radius: Rounding.huge
@@ -16,11 +22,12 @@ StyledRect {
     MouseArea {
         id: eventArea
         z: 99999
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         propagateComposedEvents: true
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
-        onClicked: preview(modelData.url, root.x, root.y)
+        onClicked: action()
     }
 
     StyledRect {
@@ -48,7 +55,7 @@ StyledRect {
                 StyledText {
                     font.pixelSize: Fonts.sizes.small
                     font.variableAxes: Fonts.variableAxes.title
-                    text: modelData.title
+                    text: root.title
                     Layout.fillWidth: true
                     truncate: true
                     color: Colors.colOnLayer3
@@ -56,14 +63,14 @@ StyledRect {
 
                 StyledText {
                     font.pixelSize: Fonts.sizes.verysmall
-                    text: modelData.artist
+                    text: root.artist
                     Layout.fillWidth: true
                     truncate: true
                     color: Colors.colSubtext
                 }
             }
             Symbol {
-                visible: modelData.isPlaylist
+                visible: root.isPlaylist
                 font.pixelSize: 20
                 text: "list"
                 color: Colors.colOnLayer3
@@ -80,7 +87,7 @@ StyledRect {
     }
     StyledImage {
         anchors.fill: parent
-        source: Qt.resolvedUrl(modelData?.thumbnail) ?? ""
+        source: Qt.resolvedUrl(root.coverArt) ?? ""
         cache: true
     }
 }
