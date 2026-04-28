@@ -5,64 +5,64 @@ import QtQuick
 import Quickshell
 
 JsonAdapter {
-    property JsonObject applications: JsonObject {
-        property JsonObject windowControls: JsonObject {
+    property JO applications: JO {
+        property JO windowControls: JO {
             property bool minimize: false
             property bool maximize: false
             property bool close: true
         }
     }
-    property JsonObject appearance: JsonObject {
-        property JsonObject animations
-        property JsonObject colors
-        property JsonObject transparency
-        property JsonObject rounding
-        property JsonObject padding
-        property JsonObject icons
-        property JsonObject fonts
+    property JO appearance: JO {
+        property JO animations
+        property JO colors
+        property JO transparency
+        property JO rounding
+        property JO padding
+        property JO icons
+        property JO fonts
 
-        animations: JsonObject {
+        animations: JO {
             property real scale: 1
         }
 
-        colors: JsonObject {
+        colors: JO {
             property string palattePath: "auto"
             property bool palatte: false
         }
 
-        transparency: JsonObject {
+        transparency: JO {
             property bool blur: true
             property bool enabled: false
             property real scale: 0
         }
 
-        rounding: JsonObject {
+        rounding: JO {
             property real scale: 1.5
             property real power: 2
         }
 
-        padding: JsonObject {
+        padding: JO {
             property real scale: 1
         }
 
-        icons: JsonObject {
+        icons: JO {
             property bool tint: true
         }
 
-        fonts: JsonObject {
+        fonts: JO {
             property real scale: 1
             property string main: "Google Sans Flex"
             property bool syncFamily: false
         }
     }
 
-    property JsonObject policies: JsonObject {
+    property JO policies: JO {
         property int ai: 1
         property int translator: 1
         property int todoist: 1
     }
 
-    property JsonObject ai: JsonObject {
+    property JO ai: JO {
 
         property string beamScreenshotHintCommand: "Explain This Briefly and Simply"
         property string summaryPrompt: "Summarize the following text:"
@@ -92,7 +92,7 @@ JsonAdapter {
         // property list<var> extraModels: []
         property string model: "gemini-3.1-flash-lite"
         property real temperature: 0.5
-        property JsonObject context: JsonObject {
+        property JO context: JO {
             property bool distro: false
             property bool datetime: false
             property bool windowclass: false
@@ -109,20 +109,20 @@ JsonAdapter {
         }
     }
 
-    property JsonObject audio: JsonObject {
-        property JsonObject protection
+    property JO audio: JO {
+        property JO protection
 
-        protection: JsonObject {
+        protection: JO {
             property bool enable: false
             property real maxAllowedIncrease: 100
             property real maxAllowed: 200
         }
     }
 
-    property JsonObject interactions: JsonObject {
-        property JsonObject scrolling
+    property JO interactions: JO {
+        property JO scrolling
         property bool mouseOriented: false
-        scrolling: JsonObject {
+        scrolling: JO {
             property bool fasterTouchpadScroll: true
             property int mouseScrollDeltaThreshold: 120
             property int mouseScrollFactor: 120
@@ -130,7 +130,7 @@ JsonAdapter {
         }
     }
 
-    property JsonObject apps: JsonObject {
+    property JO apps: JO {
         property string bluetooth: "kcmshell6 kcm_bluetooth"
         property string network: "plasmawindowed org.kde.plasma.networkmanagement"
         property string networkEthernet: "kcmshell6 kcm_networkmanagement"
@@ -143,47 +143,47 @@ JsonAdapter {
         property string editor: "zeditor"
     }
 
-    property JsonObject services: JsonObject {
-        property JsonObject idle
-        property JsonObject todo
-        property JsonObject time
-        property JsonObject prayer
-        property JsonObject weather
-        property JsonObject recording
-        property JsonObject notifications
-        property JsonObject nightLight
-        property JsonObject ambientSounds
-        property JsonObject games
+    property JO services: JO {
+        property JO idle
+        property JO todo
+        property JO time
+        property JO prayer
+        property JO weather
+        property JO recording
+        property JO notifications
+        property JO nightLight
+        property JO ambientSounds
+        property JO games
         property string backlightDevice: "dell::kbd_backlight"
         property bool easyEffects: false
         property string location: "Cairo"
 
-        games: JsonObject {
+        games: JO {
             property bool adaptiveTheme: false
             property list<string> launchEnv: ["__NV_PRIME_RENDER_OFFLOAD=1", "__GLX_VENDOR_LIBRARY_NAME=nvidia"] // Nvidia Offloading
         }
 
-        idle: JsonObject {
+        idle: JO {
             property int timeOut: 10000
             property bool inhibit: false
         }
 
-        nightLight: JsonObject {
+        nightLight: JO {
             property bool autoNightLightCycle: false
         }
-        time: JsonObject {
+        time: JO {
             property bool use12HourFormat: true
         }
 
-        prayer: JsonObject {
+        prayer: JO {
             property string method: "Egyptian"
         }
 
-        weather: JsonObject {
+        weather: JO {
             property bool useFehrenheit: false
         }
 
-        recording: JsonObject {
+        recording: JO {
             property int recordingMode: 0
             property int audioMode: 1
             property int quality: 1
@@ -192,22 +192,22 @@ JsonAdapter {
             property int customFramerate: 0
         }
 
-        notifications: JsonObject {
+        notifications: JO {
             property bool silent: false
         }
 
-        ambientSounds: JsonObject {}
+        ambientSounds: JO {}
     }
 
-    property JsonObject battery: JsonObject {
+    property JO battery: JO {
         property bool automaticSuspend: true
         property int low: 20
         property int critical: 5
         property int suspend: 2
     }
 
-    property JsonObject beam: JsonObject {
-        property JsonObject behavior: JsonObject {
+    property JO beam: JO {
+        property JO behavior: JO {
             property bool scrollToReveal: true
             property bool revealOnEmpty: false
             property bool topMode: false
@@ -216,18 +216,18 @@ JsonAdapter {
         }
     }
 
-    property JsonObject sidebar: JsonObject {
-        property JsonObject content
-        property JsonObject behavior
-        property JsonObject appearance
-        property JsonObject shelf
+    property JO sidebar: JO {
+        property JO content
+        property JO behavior
+        property JO appearance
+        property JO shelf
         property bool pinned: false
 
-        shelf: JsonObject {
+        shelf: JO {
             property int previewDelay: 250
         }
 
-        content: JsonObject {
+        content: JO {
             property bool apps: true
             property bool apis: true
             property bool shelf: true
@@ -246,14 +246,14 @@ JsonAdapter {
             property bool timers: true
         }
 
-        behavior: JsonObject {
+        behavior: JO {
             property bool overlay: false
             property bool preExpand: false
             property bool aiTextFadeIn: false
             property bool superHeldReveal: false
         }
 
-        appearance: JsonObject {
+        appearance: JO {
             property int mode: 2
             property real itemListScale: 1
             property bool showNavTitles: false
@@ -263,24 +263,24 @@ JsonAdapter {
         }
     }
 
-    property JsonObject osd: JsonObject {
+    property JO osd: JO {
         property int timeout: 3000
         property bool enabled: true
     }
 
-    property JsonObject osk: JsonObject {
+    property JO osk: JO {
         property string layout: "qwerty_full"
     }
 
-    property JsonObject search: JsonObject {
+    property JO search: JO {
         property int nonAppResultDelay: 120
         property bool sloppy: false
     }
 
-    property JsonObject language: JsonObject {
-        property JsonObject translator
+    property JO language: JO {
+        property JO translator
 
-        translator: JsonObject {
+        translator: JO {
             property int delay: 100
             property string engine: "auto"
             property string targetLanguage: "العربية"
@@ -288,13 +288,13 @@ JsonAdapter {
         }
     }
 
-    property JsonObject networking: JsonObject {
+    property JO networking: JO {
         property string userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
         property string sidebarAgent: "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.86 Mobile Safari/537.36"
         property string searchPrefix: "https://duckduckgo.com/?q="
     }
 
-    property JsonObject mediaPlayer: JsonObject {
+    property JO mediaPlayer: JO {
         property int fetchLimit: 24
         property bool useBlur: false
         property bool enableGrad: false
@@ -304,44 +304,44 @@ JsonAdapter {
         property bool lyrics: false
         property list<string> excludedPlayers: [".mpd", "playerctld", "mpv", "firefox", "chromium", "kdeconnect"]
     }
-    property JsonObject desktop: JsonObject {
-        property JsonObject shell
-        property JsonObject osd
-        property JsonObject bg
-        property JsonObject clock
-        property JsonObject view
-        property JsonObject lock
-        property JsonObject icons
-        property JsonObject hyprland
-        property JsonObject behavior
-        property JsonObject widgets
+    property JO desktop: JO {
+        property JO shell
+        property JO osd
+        property JO bg
+        property JO clock
+        property JO view
+        property JO lock
+        property JO icons
+        property JO hyprland
+        property JO behavior
+        property JO widgets
 
         property bool desktopClock: true
         property int screenCorners: 1
         property bool timerOverlayMode: true
 
-        shell: JsonObject {
+        shell: JO {
             property bool deloadOnFullscreen: true
             property string mode: ""
         }
-        widgets: JsonObject {
+        widgets: JO {
             property bool enabled: true
             property string mode: "col"
         }
-        osd: JsonObject {
+        osd: JO {
             property string mode: "bottom_pill"
         }
-        view: JsonObject {
+        view: JO {
             property string mode: "spiral"
         }
-        bg: JsonObject {
-            property JsonObject parallax
+        bg: JO {
+            property JO parallax
 
             property real borderMultiplier: 0.2
             property bool depthMode: true
             property bool useQs: true
 
-            parallax: JsonObject {
+            parallax: JO {
                 property bool enabled: false
                 property bool widgetParallax: false
                 property bool verticalParallax: false
@@ -349,7 +349,7 @@ JsonAdapter {
             }
         }
 
-        clock: JsonObject {
+        clock: JO {
             property bool enabled: false
             property real scale: 1
             property real spacingMultiplier: 0.3
@@ -357,14 +357,14 @@ JsonAdapter {
             property string font: "Badeen Display"
         }
 
-        lock: JsonObject {
+        lock: JO {
             property bool enabled: true
             property bool showAzkar: true
         }
 
-        icons: JsonObject {}
+        icons: JO {}
 
-        hyprland: JsonObject {
+        hyprland: JO {
             property list<string> externalMonitorProfiles: ["1680x1050@68", "1920x1080@60", "1920x1080@72"]
             property string externalMonitorProfile: "1680x1050@68"
             property string tilingLayout: "dwindle"
@@ -381,22 +381,22 @@ JsonAdapter {
             property string cursorTheme: "Breeze"
         }
 
-        behavior: JsonObject {
-            property JsonObject sounds
+        behavior: JO {
+            property JO sounds
 
-            sounds: JsonObject {
+            sounds: JO {
                 property bool enabled: true
                 property real level: 0.75
             }
         }
     }
 
-    property JsonObject bar: JsonObject {
-        property JsonObject appearance
-        property JsonObject behavior
-        property JsonObject modules
-        property JsonObject keyboard
-        property JsonObject workspaces
+    property JO bar: JO {
+        property JO appearance
+        property JO behavior
+        property JO modules
+        property JO keyboard
+        property JO workspaces
 
         property bool enabled: true
         property int batteryLowThreshold: 20
@@ -405,13 +405,13 @@ JsonAdapter {
         property string currentLayout: "Dynamic"
         property list<var> hMapPresets: []
         property list<var> vMapPresets: []
-        property JsonObject vMap: JsonObject {
+        property JO vMap: JO {
             property int spacing: 6
             property list<string> topArea: ["materialStatusIcons", "battery", "weather", "tray"]
             property list<string> centerArea: []
             property list<string> bottomArea: ["media", "resources", "separator", "volume", "brightness", "separator", "progressWs", "separator", "clock", "separator", "keyboard", "separator", "power"]
         }
-        property JsonObject hMap: JsonObject {
+        property JO hMap: JO {
             property int spacing: 6
             property list<string> leftArea: ["power", "separator", "progressWs", "separator", "title"]
             property list<string> centerArea: ["media", "separator", "clock"]
@@ -419,7 +419,7 @@ JsonAdapter {
         }
         property list<string> bars: ["Dynamic", "HyDe", "NovelKnocks", "Sleek", "VDynamic"]
 
-        appearance: JsonObject {
+        appearance: JO {
             property int mode: 2
             property bool enableSeparators: true
             property bool useBg: true
@@ -429,19 +429,19 @@ JsonAdapter {
             property int width: 50
         }
 
-        behavior: JsonObject {
+        behavior: JO {
             property string position: "left"
             property bool autoHide: false
             property bool showOnAll: false
         }
 
-        modules: JsonObject {
+        modules: JO {
             property bool visualizer: false
         }
 
-        keyboard: JsonObject {}
+        keyboard: JO {}
 
-        workspaces: JsonObject {
+        workspaces: JO {
             property int shownWs: 4
             property bool showAppIcons: true
             property string displayMode: "normal"
@@ -453,31 +453,31 @@ JsonAdapter {
         }
     }
 
-    property JsonObject dock: JsonObject {
-        property JsonObject appearance
+    property JO dock: JO {
+        property JO appearance
 
         property bool enabled: false
         property bool hoverToReveal: true
         property int animationDuration: 200
-        appearance: JsonObject {
+        appearance: JO {
             property real iconSize: 100 * iconSizeMultiplier
             property real iconSizeMultiplier: 0.5
         }
     }
 
-    property JsonObject cheats: JsonObject {
+    property JO cheats: JO {
         property string superKey: "󰌽"
         property bool useMacSymbol: true
         property bool splitButtons: true
         property bool useMouseSymbol: true
         property bool useFnSymbol: true
-        property JsonObject fontSize: JsonObject {
+        property JO fontSize: JO {
             property int key: Fonts.sizes.large
             property int comment: Fonts.sizes.verylarge
         }
     }
 
-    property JsonObject hacks: JsonObject {
+    property JO hacks: JO {
         property int arbitraryRaceConditionDelay: 100
     }
 }

@@ -7,7 +7,7 @@ import qs.services
 
 BottomDialog {
     id: root
-    collapsedHeight: 360
+    collapsedHeight: 460
     enableStagedReveal: false
     bottomAreaReveal: true
     hoverHeight: 300
@@ -22,6 +22,8 @@ BottomDialog {
         anchors.leftMargin: Padding.massive * 1.5
         spacing: Padding.normal
 
+        AccountInfoSection {}
+        BottomDialogSeparator {}
         StyledText {
             text: "New Task"
             font {

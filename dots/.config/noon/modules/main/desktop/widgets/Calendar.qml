@@ -10,18 +10,29 @@ SquareComponent {
     property var calendarLayout: CalendarLayout.getCalendarLayout(viewingDate, monthShift === 0)
     property int monthShift: 0
     property var viewingDate: CalendarLayout.getDateInXMonthsTime(monthShift)
+    readonly property string today: DateTimeService.request("D/M/yyyy")
+
+    function formatTasks() {
+        const data = TodoService.list;
+        return data.map(item => {
+            return {
+                content: item.content,
+                start: item.due + '/' + DateTimeService.year,
+                isTask: true
+            };
+        });
+    }
+
+    function getTasksOfDate(dateString) {
+        const todayEvents = CalendarService.list.filter(e => e.start === dateString);
+        const allTasks = formatTasks();
+        const tasks = allTasks.filter(task => task.start === dateString);
+
+        return [...todayEvents, ...tasks];
+    }
 
     function isToday(date) {
-        if (!date)
-            return false;
-        if (date === -1)
-            return true;
-        const parts = date.split('/');
-        const day = parseInt(parts[0]);
-        const month = parseInt(parts[1]);
-        const year = parseInt(parts[2]);
-        const now = new Date();
-        return day === now.getDate() && month === (now.getMonth() + 1) && year === now.getFullYear();
+        return isInDate(date, today);
     }
 
     RowLayout {
@@ -48,6 +59,7 @@ SquareComponent {
                 font.variableAxes: Fonts.variableAxes.numbers
                 font.pixelSize: 40
             }
+
             StyledListView {
                 radius: 0
                 clip: true
@@ -55,9 +67,7 @@ SquareComponent {
                 Layout.topMargin: Padding.normal
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                model: ScriptModel {
-                    values: TodoService.list.filter(task => isToday(task?.due))
-                }
+                model: getTasksOfDate(DateTimeService.request("d/M/yyyy"))
                 delegate: Item {
                     required property var modelData
                     anchors.right: parent?.right
@@ -65,36 +75,37 @@ SquareComponent {
                     height: 55
                     RLayout {
                         anchors.fill: parent
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.margins: Padding.verysmall
-                            width: 6
-                            radius: 4
-                            color: {
-                                switch (modelData.status) {
-                                case TodoService.Status.Todo:
-                                    return Colors.colPrimaryContainer;
-                                case TodoService.Status.InProgress:
-                                    return Colors.colPrimaryContainer;
-                                case TodoService.Status.FinalTouches:
-                                    return Colors.colPrimary;
-                                case TodoService.Status.Done:
-                                    return Colors.colSuccess;
-                                default:
-                                    return Colors.colPrimaryContainer;
-                                }
-                            }
-                        }
-                        StyledText {
-                            text: modelData?.content
-                            font.strikeout: modelData.status === TodoService.Status.Done
-                            color: modelData.status === TodoService.Status.Done ? Colors.colSubtext : Colors.colOnLayer0
-                            font.pixelSize: Fonts.sizes.small
-                            font.family: Fonts.family.variable
-                            font.variableAxes: Fonts.variableAxes.title
+
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            truncate: true
-                            Layout.maximumWidth: 100
+
+                            StyledText {
+                                text: modelData.content
+                                color: Colors.colOnLayer0
+                                font.pixelSize: Fonts.sizes.normal
+                                font.family: Fonts.family.variable
+                                font.variableAxes: Fonts.variableAxes.title
+                                Layout.fillWidth: true
+                                truncate: true
+                                Layout.rightMargin: Padding.large
+                            }
+                            StyledText {
+                                visible: text.length > 0
+                                text: {
+                                    if (modelData.isTask)
+                                        return "";
+                                    const parts = modelData.end.split('/');
+                                    const prefix = "Ends at ";
+                                    return prefix + parts[0] + '/' + parts[1];
+                                }
+                                color: Colors.colOnLayer0
+                                font.pixelSize: Fonts.sizes.verysmall + 1
+                                font.family: Fonts.family.variable
+                                font.variableAxes: Fonts.variableAxes.main
+                                Layout.fillWidth: true
+                                truncate: true
+                                Layout.maximumWidth: 100
+                            }
                         }
                     }
                 }
@@ -107,9 +118,11 @@ SquareComponent {
                 }
             }
         }
+
         VerticalSeparator {
             visible: root.expanded
         }
+
         ColumnLayout {
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
             Layout.fillHeight: true
@@ -142,10 +155,29 @@ SquareComponent {
                 Repeater {
                     model: 35
                     delegate: CalendarDayButton {
+                        id: dayButton
                         readonly property int row: Math.floor(index / 7)
                         readonly property int col: index % 7
                         day: calendarLayout[row][col].day
                         isToday: calendarLayout[row][col].today
+                        StyledToolTip {
+                            color: Colors.colLayer2
+                            content: {
+                                if (dayButton.hovered) {
+                                    const day = dayButton.day;
+                                    if (!day)
+                                        return "";
+                                    const date = DateTimeService.request(`${day}/M/yyyy`);
+                                    const events = root.getTasksOfDate(date);
+                                    const text = events.map(event => event.content).join('\n');
+                                    if (text.length > 0)
+                                        return text;
+                                    else
+                                        return "No Events in day " + day;
+                                } else
+                                    return "";
+                            }
+                        }
                     }
                 }
             }

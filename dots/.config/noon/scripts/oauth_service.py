@@ -11,13 +11,16 @@ import webbrowser
 from requests_oauth2client import OAuth2Client
 
 OAUTH_STATE_PATH = os.path.expanduser("~/.local/state/noon/user/generated/oauth.json")
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
+GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+REQUIRED_SCOPES = "openid email profile"
 
 
 class NoonAuthenticator:
     def __init__(self, scopes, service_name=None, client_id=None, client_secret=None):
-        self.scopes = scopes
+        self.scopes = f"{scopes} {REQUIRED_SCOPES}".strip()
         self.service = service_name
-
         self.cid = (
             client_id
             or (
@@ -27,7 +30,6 @@ class NoonAuthenticator:
             )
             or os.environ.get("NOON_OAUTH_ID")
         )
-
         self.sec = (
             client_secret
             or (
@@ -44,16 +46,19 @@ class NoonAuthenticator:
             )
 
         self.client = OAuth2Client(
-            token_endpoint="https://oauth2.googleapis.com/token",
+            token_endpoint=GOOGLE_TOKEN_URL,
             client_id=self.cid,
             client_secret=self.sec,
         )
+
+        token = self.get_token()
+        self.accountinfo = token.get("account", {}) if token else {}
 
     def _load_vault(self) -> dict:
         try:
             with open(OAUTH_STATE_PATH) as f:
                 return json.load(f)
-        except:
+        except Exception:
             return {}
 
     def _save_to_vault(self, token_data):
@@ -65,7 +70,15 @@ class NoonAuthenticator:
         with open(OAUTH_STATE_PATH, "w") as f:
             json.dump(state, f, indent=2)
 
-    def get_token(self) -> dict:
+    def _post(self, url, data) -> dict:
+        resp = urllib.request.urlopen(
+            urllib.request.Request(
+                url, data=urllib.parse.urlencode(data).encode(), method="POST"
+            )
+        )
+        return json.loads(resp.read())
+
+    def get_token(self) -> dict | None:
         return self._load_vault().get(self.cid)
 
     def is_authenticated(self) -> bool:
@@ -78,22 +91,17 @@ class NoonAuthenticator:
             return None
         if time.time() >= token.get("expires_at", 0) - 60:
             try:
-                resp = urllib.request.urlopen(
-                    urllib.request.Request(
-                        "https://oauth2.googleapis.com/token",
-                        data=urllib.parse.urlencode(
-                            {
-                                "client_id": self.cid,
-                                "client_secret": self.sec,
-                                "refresh_token": token["refresh_token"],
-                                "grant_type": "refresh_token",
-                            }
-                        ).encode(),
-                        method="POST",
-                    )
+                new_token = self._post(
+                    GOOGLE_TOKEN_URL,
+                    {
+                        "client_id": self.cid,
+                        "client_secret": self.sec,
+                        "refresh_token": token["refresh_token"],
+                        "grant_type": "refresh_token",
+                    },
                 )
-                new_token = json.loads(resp.read())
                 new_token.setdefault("refresh_token", token["refresh_token"])
+                new_token.setdefault("account", token.get("account", {}))
                 self._save_to_vault(new_token)
                 return new_token
             except Exception:
@@ -102,17 +110,6 @@ class NoonAuthenticator:
 
     def auth_loopback(self, port=8085, interactive=False):
         redirect_uri = f"http://127.0.0.1:{port}"
-        params = urllib.parse.urlencode(
-            {
-                "client_id": self.cid,
-                "redirect_uri": redirect_uri,
-                "response_type": "code",
-                "scope": self.scopes,
-                "access_type": "offline",
-                "prompt": "consent",
-            }
-        )
-
         code_holder = {}
 
         class Handler(http.server.BaseHTTPRequestHandler):
@@ -130,11 +127,20 @@ class NoonAuthenticator:
         server = http.server.HTTPServer(("127.0.0.1", port), Handler)
         threading.Thread(target=server.handle_request, daemon=True).start()
 
-        webbrowser.open(f"https://accounts.google.com/o/oauth2/v2/auth?{params}")
+        url = f"{GOOGLE_AUTH_URL}?" + urllib.parse.urlencode(
+            {
+                "client_id": self.cid,
+                "redirect_uri": redirect_uri,
+                "response_type": "code",
+                "scope": self.scopes,
+                "access_type": "offline",
+                "prompt": "consent",
+            }
+        )
+
+        webbrowser.open(url)
         if interactive:
-            print(
-                f"[NOON AUTH] Authorize in browser: https://accounts.google.com/o/oauth2/v2/auth?{params}"
-            )
+            print(f"[NOON AUTH] Authorize in browser: {url}")
         else:
             subprocess.run(
                 ["notify-send", "Noon Auth", "Authorize in the browser window"]
@@ -144,24 +150,20 @@ class NoonAuthenticator:
             time.sleep(0.5)
         server.server_close()
 
-        resp = urllib.request.urlopen(
-            urllib.request.Request(
-                "https://oauth2.googleapis.com/token",
-                data=urllib.parse.urlencode(
-                    {
-                        "code": code_holder["code"],
-                        "client_id": self.cid,
-                        "client_secret": self.sec,
-                        "redirect_uri": redirect_uri,
-                        "grant_type": "authorization_code",
-                    }
-                ).encode(),
-                method="POST",
-            )
+        token_data = self._post(
+            GOOGLE_TOKEN_URL,
+            {
+                "code": code_holder["code"],
+                "client_id": self.cid,
+                "client_secret": self.sec,
+                "redirect_uri": redirect_uri,
+                "grant_type": "authorization_code",
+            },
         )
-        token_data = json.loads(resp.read())
+        token_data["account"] = self._fetch_accountinfo(token_data["access_token"])
         self._save_to_vault(token_data)
-        return token_data
+        self.accountinfo = token_data["account"]
+        return self.get_token()
 
     def revoke(self):
         try:
@@ -169,7 +171,7 @@ class NoonAuthenticator:
             del state[self.cid]
             with open(OAUTH_STATE_PATH, "w") as f:
                 json.dump(state, f, indent=2)
-        except:
+        except Exception:
             pass
 
     def get_user_info(self) -> dict:
@@ -179,11 +181,29 @@ class NoonAuthenticator:
         try:
             with urllib.request.urlopen(
                 urllib.request.Request(
-                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    GOOGLE_USERINFO_URL,
                     headers={"Authorization": f"Bearer {token['access_token']}"},
                 ),
                 timeout=10,
             ) as resp:
                 return json.loads(resp.read())
-        except:
+        except Exception:
+            return {}
+
+    def _fetch_accountinfo(self, access_token: str) -> dict:
+        try:
+            with urllib.request.urlopen(
+                urllib.request.Request(
+                    GOOGLE_USERINFO_URL,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                ),
+                timeout=10,
+            ) as resp:
+                info = json.loads(resp.read())
+                return {
+                    "name": info.get("name", ""),
+                    "handler": info.get("email", ""),
+                    "image": info.get("picture", ""),
+                }
+        except Exception:
             return {}

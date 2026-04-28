@@ -1,26 +1,26 @@
 import qs.common.utils
 
 JsonAdapter {
-    property JsonObject misc: JsonObject {
+    property JO misc: JO {
         property list<string> ipcCommands: []
         property list<string> systemCommands: []
     }
 
-    property JsonObject secrets: JsonObject {
+    property JO secrets: JO {
         property string wallhaven: ""
         property string unsplash: ""
     }
 
-    property JsonObject services: JsonObject {
-        property JsonObject ambientSounds
-        property JsonObject icons
-        property JsonObject emojis
-        property JsonObject backlight
-        property JsonObject cheats
-        property JsonObject colors
-        property JsonObject beats
+    property JO services: JO {
+        property JO ambientSounds
+        property JO icons
+        property JO emojis
+        property JO backlight
+        property JO cheats
+        property JO colors
+        property JO beats
 
-        beats: JsonObject {
+        beats: JO {
             property list<var> presets: [
                 {
                     name: "Flat",
@@ -224,23 +224,23 @@ JsonAdapter {
                 },
             ]
         }
-        colors: JsonObject {
+        colors: JO {
             property list<var> palettes: []
         }
 
-        cheats: JsonObject {
+        cheats: JO {
             property list<string> superKeys: ["󰖳", "󰌽", "󰘳", "", "󰨡", "", "", "󰣇", "", "", "", "", "", "", "󱄛"]
             property list<var> defaultKeybinds: []
             property list<var> shellKeybinds: []
         }
-        backlight: JsonObject {
+        backlight: JO {
             property list<var> devices: []
         }
 
-        icons: JsonObject {
+        icons: JO {
             property list<var> availableIconThemes: []
         }
-        ambientSounds: JsonObject {
+        ambientSounds: JO {
             property list<var> availableSounds: []
         }
     }

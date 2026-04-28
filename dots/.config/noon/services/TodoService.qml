@@ -19,7 +19,7 @@ Singleton {
     readonly property var store: Mem.states.services.todo
     readonly property var statusNames: ["Not Started", "In Progress", "Final Touches", "Finished"]
     readonly property var statusLabels: ["todo", "in_progress", "final_touches", "done"]
-
+    readonly property bool useGoogleTasks: true
     Component.onCompleted: Qt.callLater(pull)
 
     function addTask(desc, status = TodoService.Status.Todo, date = DateTimeService.request("d/M"), children = []) {
@@ -95,11 +95,13 @@ Singleton {
     }
 
     function push() {
-        _cmd("push");
+        if (useGoogleTasks)
+            _cmd("push");
     }
 
     function pull() {
-        _cmd("pull");
+        if (useGoogleTasks)
+            _cmd("pull");
     }
 
     function _cmd(action) {

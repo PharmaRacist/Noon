@@ -7,12 +7,14 @@ import QtQuick.Layouts
 ToolTip {
     id: root
     property string content
+    property alias color: backgroundRectangle.color
     property bool extraVisibleCondition: true
     property bool alternativeVisibleCondition: false
     property bool internalVisibleCondition: {
         const ans = (extraVisibleCondition && (parent.hovered === undefined || parent?.hovered)) || alternativeVisibleCondition;
         return ans;
     }
+
     verticalPadding: 7
     horizontalPadding: 14
     opacity: internalVisibleCondition ? 1 : 0

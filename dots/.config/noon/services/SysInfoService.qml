@@ -11,8 +11,8 @@ Singleton {
     property string distroIcon: "arch-symbolic"
     property string username: "user"
     property string userPfp: Directories.standard.home + "/.face.png"
-    readonly property var oauthData: JSON.parse(oauthView.text().trim())
-    Component.onCompleted: console.log(JSON.stringify(oauthData))
+    property var oauthData
+
     Timer {
         triggeredOnStart: true
         interval: 1
@@ -75,6 +75,15 @@ Singleton {
     FileView {
         id: oauthView
         path: Directories.standard.state + "/user/generated/oauth.json"
+        onTextChanged: {
+            try {
+                const data = JSON.parse(oauthView.text());
+                oauthData = Object.values(data) ?? null;
+            } catch (_) {
+                oauthData = null;
+                console.error(_);
+            }
+        }
     }
 
     FileView {

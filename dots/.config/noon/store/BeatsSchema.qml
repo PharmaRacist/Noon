@@ -2,49 +2,49 @@ import qs.common.utils
 
 JsonAdapter {
     property bool isAuth: false
-    property JsonObject account: JsonObject {
+    property JO account: JO {
         property string accountName: ""
         property string accountPhoto: ""
         property string accountHandle: ""
     }
-    property JsonObject hits: JsonObject {
+    property JO hits: JO {
         property string recommendationsMode: "playlists"
     }
 
-    property JsonObject ytmusicapi: JsonObject {
+    property JO ytmusicapi: JO {
         property var headers: ({})
         property string cookies: ""
     }
 
-    property JsonObject players: JsonObject {
-        property JsonObject main: JsonObject {
+    property JO players: JO {
+        property JO main: JO {
             property string socketPath: "/tmp/beats_main.sock"
             property string mpvLog: "/tmp/beats_main.log"
             property bool loopPlaylist: true
             property var queue: []
-            property JsonObject volumeNormalization: JsonObject {
+            property JO volumeNormalization: JO {
                 property bool enabled: true
                 property string replaygain: "track"
             }
 
-            property JsonObject eq: JsonObject {
+            property JO eq: JO {
                 property bool enabled: true
                 property var eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             }
         }
 
-        property JsonObject preview: JsonObject {
+        property JO preview: JO {
             property string socketPath: "/tmp/beats_preview.sock"
             property string mpvLog: "/tmp/beats_preview.log"
             property bool loopPlaylist: false
             property var queue: []
 
-            property JsonObject volumeNormalization: JsonObject {
+            property JO volumeNormalization: JO {
                 property bool enabled: false
                 property string replaygain: "track"
             }
 
-            property JsonObject eq: JsonObject {
+            property JO eq: JO {
                 property bool enabled: false
                 property var eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             }
