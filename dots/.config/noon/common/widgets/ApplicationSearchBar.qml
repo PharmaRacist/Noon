@@ -8,6 +8,7 @@ Item {
     id: root
     property alias query: inputArea.text
     property alias placeholderText: inputArea.placeholderText
+    property alias text: inputArea.text
     property alias inputArea: inputArea
     visible: false
     implicitHeight: 50
