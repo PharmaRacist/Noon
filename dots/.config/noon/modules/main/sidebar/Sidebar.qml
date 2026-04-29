@@ -74,7 +74,7 @@ StyledPanel {
 
     name: "blurred_layer"
     visible: true
-    implicitWidth: !pinned ? 999999 : visualContainer.width + bubble.width + Sizes.hyprland.gapsOut + rounding
+    implicitWidth: !pinned ? Screen.width : visualContainer.width + bubble.width + Sizes.hyprland.gapsOut + rounding
     exclusiveZone: !hoverMode && pinned ? implicitWidth - rounding : appearanceMode === 3 ? 0 : -1
     aboveWindows: true
     WlrLayershell.layer: WlrLayer.Overlay

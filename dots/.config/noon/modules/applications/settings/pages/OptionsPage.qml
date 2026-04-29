@@ -31,7 +31,7 @@ Item {
         id: scrollArea
         z: 0
         anchors.fill: parent
-        anchors.topMargin: Padding.massive
+        anchors.topMargin: searchbar.height + Padding.large
         contentHeight: contentColumn.implicitHeight + 100
         clip: true
 
@@ -51,12 +51,12 @@ Item {
             model: ScriptModel {
                 values: root.visibleData
             }
+
             delegate: ColumnLayout {
                 required property var modelData
                 required property int index
                 anchors.right: parent?.right
                 anchors.left: parent?.left
-
                 spacing: Padding.massive
 
                 RowLayout {
@@ -73,12 +73,14 @@ Item {
 
                     ColumnLayout {
                         spacing: 0
+
                         StyledText {
                             text: modelData.section || ""
                             color: Colors.colOnLayer0
                             font.pixelSize: 18
                             font.bold: true
                         }
+
                         StyledText {
                             text: "Shell Context: " + (modelData.shell || "Global")
                             color: Colors.colSubtext
@@ -109,8 +111,8 @@ Item {
                         GridLayout {
                             id: itemsGrid
                             Layout.fillWidth: true
-                            columnSpacing: 12
-                            rowSpacing: 12
+                            columnSpacing: Padding.large
+                            rowSpacing: Padding.large
                             columns: {
                                 if (root.width > 1200)
                                     return 4;
@@ -124,21 +126,24 @@ Item {
                             Repeater {
                                 model: modelData.items
                                 delegate: SettingsItem {
+                                    required property var modelData
+                                    required property int index
+                                    icon: modelData?.icon ?? "settings"
+                                    name: modelData?.name ?? ""
+                                    key: modelData?.key ?? ""
+                                    type: modelData?.type ?? "switch"
+                                    hint: modelData?.hint ?? ""
+                                    useStates: modelData?.state ?? false
+                                    sliderMinValue: modelData?.sliderMinValue ?? 0.0
+                                    sliderMaxValue: modelData?.sliderMaxValue ?? 100.0
+                                    reloadOnChange: modelData?.reloadOnChange ?? false
+                                    actionName: modelData?.actionName ?? ""
+                                    comboBoxValues: modelData?.comboBoxValues ?? []
+                                    fillHeight: modelData?.fillHeight ?? false
                                     Layout.fillWidth: true
-                                    fillHeight: modelData.fillHeight || false
-                                    colors: Colors
-                                    name: modelData.name || "Unknown"
-                                    key: modelData.key || ""
-                                    icon: modelData.icon || "settings"
-                                    type: modelData.type || "switch"
-                                    comboBoxValues: modelData.comboBoxValues || []
+                                    Layout.fillHeight: true
                                     radius: Rounding.normal
-                                    onToggledStateChanged: if (key) {
-                                        root.itemStates[key] = toggledState;
-                                    }
-                                    onIntValueChanged: if (key) {
-                                        root.itemStates[key] = intValue;
-                                    }
+                                    visible: modelData?.visible ?? true
                                 }
                             }
                         }
