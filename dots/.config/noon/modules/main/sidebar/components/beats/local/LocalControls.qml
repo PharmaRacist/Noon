@@ -132,6 +132,7 @@ StyledRect {
                             icon: "refresh",
                             action: () => {
                                 isSearching = false;
+                                BeatsService.rebuildMetadata();
                             }
                         },
                         {

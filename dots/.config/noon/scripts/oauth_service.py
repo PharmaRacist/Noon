@@ -17,33 +17,22 @@ GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 REQUIRED_SCOPES = "openid email profile"
 
 
-class NoonAuthenticator:
-    def __init__(self, scopes, service_name=None, client_id=None, client_secret=None):
-        self.scopes = f"{scopes} {REQUIRED_SCOPES}".strip()
-        self.service = service_name
-        self.cid = (
-            client_id
-            or (
-                os.environ.get(f"NOON_{service_name.upper()}_ID")
-                if service_name
-                else None
-            )
-            or os.environ.get("NOON_OAUTH_ID")
-        )
-        self.sec = (
-            client_secret
-            or (
-                os.environ.get(f"NOON_{service_name.upper()}_SECRET")
-                if service_name
-                else None
-            )
-            or os.environ.get("NOON_OAUTH_SECRET")
-        )
+def revoke(client_id: str):
+    try:
+        with open(OAUTH_STATE_PATH) as f:
+            state = json.load(f)
+        del state[client_id]
+        with open(OAUTH_STATE_PATH, "w") as f:
+            json.dump(state, f, indent=2)
+    except Exception:
+        pass
 
-        if not self.cid:
-            raise ValueError(
-                "Auth Error: Missing Client ID. Set NOON_OAUTH_ID environment variable."
-            )
+
+class NoonAuthenticator:
+    def __init__(self, client_id: str, client_secret: str, scopes: str):
+        self.cid = client_id
+        self.sec = client_secret
+        self.scopes = f"{scopes} {REQUIRED_SCOPES}".strip()
 
         self.client = OAuth2Client(
             token_endpoint=GOOGLE_TOKEN_URL,
@@ -164,15 +153,6 @@ class NoonAuthenticator:
         self._save_to_vault(token_data)
         self.accountinfo = token_data["account"]
         return self.get_token()
-
-    def revoke(self):
-        try:
-            state = self._load_vault()
-            del state[self.cid]
-            with open(OAUTH_STATE_PATH, "w") as f:
-                json.dump(state, f, indent=2)
-        except Exception:
-            pass
 
     def get_user_info(self) -> dict:
         token = self.get_token()

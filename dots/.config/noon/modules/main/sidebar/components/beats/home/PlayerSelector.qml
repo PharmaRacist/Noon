@@ -10,8 +10,8 @@ StyledRect {
     visible: repeater?.count > 1
     radius: Rounding.full
     Layout.alignment: Qt.AlignHCenter
-    width: Math.max(iconSize * 2, playerSelector?.width + Padding.massive)
-    height: Math.min(48, iconSize * 1.5)
+    implicitWidth: Math.max(iconSize * 2, playerSelector?.width + Padding.massive * 2)
+    implicitHeight: Math.min(48, iconSize * 1.5)
     Layout.bottomMargin: -10
     color: root.colors.colLayer2
     property QtObject colors: BeatsService.colors

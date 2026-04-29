@@ -6,6 +6,13 @@ import Quickshell
 Singleton {
     readonly property var tweaks: [
         {
+            "section": "Account",
+            "icon": "person",
+            "shell": "Global",
+            "isPage": true,
+            "pageName": "Account"
+        },
+        {
             "section": "Noon",
             "icon": "palette",
             "shell": "Global",

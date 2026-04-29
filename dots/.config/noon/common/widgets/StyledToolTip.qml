@@ -7,6 +7,7 @@ import QtQuick.Layouts
 ToolTip {
     id: root
     property string content
+    property alias textArea: tooltipTextObject
     property alias color: backgroundRectangle.color
     property bool extraVisibleCondition: true
     property bool alternativeVisibleCondition: false

@@ -1,4 +1,3 @@
-import Noon.Services
 import QtQuick
 import QtQuick.Layouts
 import qs.common
@@ -13,126 +12,173 @@ StyledPopup {
         spacing: 12
 
         StyledText {
-            text: "System Resources"
+            text: "Resources"
             color: Colors.m3.m3onSurface
             font.pixelSize: Fonts.sizes.large
             font.weight: Font.Bold
             Layout.bottomMargin: 8
         }
 
-        Repeater {
-            model: [
-                {
-                    label: "CPU Usage",
-                    value: `${ResourcesService.stats.cpu_percent.toFixed(1)}%`
-                },
-                {
-                    label: "CPU Temp",
-                    value: `${ResourcesService.stats.cpu_temp.toFixed(1)} °C`
-                },
-                {
-                    label: "CPU Clock",
-                    value: `${ResourcesService.stats.cpu_freq_ghz.toFixed(2)} GHz`
-                },
-                {
-                    label: "Memory",
-                    value: (() => {
-                            let used = ResourcesService.stats.mem_total - ResourcesService.stats.mem_available;
-                            let pct = (used / ResourcesService.stats.mem_total) * 100;
-                            return `${pct.toFixed(1)}% (${(used / 1073741824).toFixed(1)}G / ${(ResourcesService.stats.mem_total / 1073741824).toFixed(1)}G)`;
-                        })()
-                }
-            ]
+        SectionLabel {
+            text: "CPU"
+        }
 
-            delegate: RowLayout {
-                Layout.fillWidth: true
+        // Usage bar
+        ResourceBar {
+            title: "Usage"
+            value: ResourcesService.stats.cpu_percent / 100
+            valueText: ResourcesService.stats.cpu_percent.toFixed(1) + "%"
+        }
 
-                StyledText {
-                    text: modelData.label
-                    color: Colors.m3.m3onSurfaceVariant
-                    font.pixelSize: Fonts.sizes.normal
-                    font.weight: Font.Medium
-                }
+        // Temperature bar — max scale 100 °C
+        ResourceBar {
+            title: "Temperature"
+            value: Math.min(ResourcesService.stats.cpu_temp / 100, 1.0)
+            valueText: ResourcesService.stats.cpu_temp.toFixed(1) + " °C"
+            visible: ResourcesService.stats.cpu_temp > 0
+        }
 
-                StyledText {
-                    Layout.fillWidth: true
-                    horizontalAlignment: Text.AlignRight
-                    text: modelData.value
-                    color: Colors.m3.m3primary
-                    font.pixelSize: Fonts.sizes.normal
-                    font.weight: Font.DemiBold
-                }
-            }
+        // Current clock bar — normalised against total max
+        ResourceBar {
+            title: "Clock"
+            value: ResourcesService.stats.cpu_total_freq_ghz > 0 ? Math.min(ResourcesService.stats.cpu_freq_ghz / ResourcesService.stats.cpu_total_freq_ghz, 1.0) : 0
+            valueText: ResourcesService.stats.cpu_freq_ghz.toFixed(2) + " GHz" + " / " + ResourcesService.stats.cpu_total_freq_ghz.toFixed(2) + " GHz"
+        }
+
+        SectionLabel {
+            text: "Memory"
+        }
+
+        ResourceBar {
+            readonly property real used: ResourcesService.stats.mem_total - ResourcesService.stats.mem_available
+            title: "RAM"
+            value: ResourcesService.stats.mem_total > 0 ? used / ResourcesService.stats.mem_total : 0
+            valueText: (used / 1073741824).toFixed(1) + " GB" + " / " + (ResourcesService.stats.mem_total / 1073741824).toFixed(1) + " GB"
+        }
+
+        ResourceBar {
+            readonly property real swapUsed: ResourcesService.stats.swap_total - ResourcesService.stats.swap_free
+            title: "Swap"
+            value: ResourcesService.stats.swap_total > 0 ? swapUsed / ResourcesService.stats.swap_total : 0
+            valueText: (swapUsed / 1073741824).toFixed(1) + " GB" + " / " + (ResourcesService.stats.swap_total / 1073741824).toFixed(1) + " GB"
+            visible: ResourcesService.stats.swap_total > 0
         }
 
         Repeater {
             model: ResourcesService.stats.gpus
+
             delegate: ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 4
 
+                // Divider + GPU header
                 Rectangle {
                     Layout.fillWidth: true
                     height: 1
                     color: Colors.m3.m3outlineVariant
                     opacity: 0.2
                     Layout.topMargin: 10
-                    Layout.bottomMargin: 4
+                    Layout.bottomMargin: 2
                 }
 
                 StyledText {
-                    text: modelData.name.toUpperCase()
+                    Layout.fillWidth: true
+                    text: modelData.name
                     color: Colors.m3.m3onSurfaceVariant
                     font.pixelSize: Fonts.sizes.small
-                    font.weight: Font.Black
-                    font.letterSpacing: 1.1
-                    opacity: 0.8
+                    font.weight: Font.Bold
+                    elide: Text.ElideRight
                 }
 
-                Repeater {
-                    model: [
-                        {
-                            l: "Utilization",
-                            v: `${modelData.utilization.toFixed(1)}%`,
-                            vis: true
-                        },
-                        {
-                            l: "Temperature",
-                            v: `${modelData.temperature.toFixed(1)} °C`,
-                            vis: modelData.temperature > 0
-                        },
-                        {
-                            l: "VRAM",
-                            v: `${((modelData.memory_used / modelData.memory_total) * 100).toFixed(1)}%`,
-                            vis: modelData.memory_total > 1
-                        },
-                        {
-                            l: "Power",
-                            v: `${modelData.power_draw.toFixed(1)}W`,
-                            vis: modelData.power_draw > 0
-                        }
-                    ]
-                    delegate: RowLayout {
-                        Layout.fillWidth: true
-                        visible: modelData.vis
+                // Utilization
+                ResourceBar {
+                    title: "Utilization"
+                    value: modelData.utilization / 100
+                    valueText: modelData.utilization.toFixed(1) + "%"
+                }
 
-                        StyledText {
-                            text: modelData.l
-                            color: Colors.m3.m3onSurfaceVariant
-                            font.pixelSize: Fonts.sizes.small
-                            opacity: 0.7
-                        }
-                        StyledText {
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignRight
-                            text: modelData.v
-                            color: Colors.m3.m3onSurface
-                            font.pixelSize: Fonts.sizes.small
-                            font.weight: Font.Medium
-                        }
+                // Temperature
+                ResourceBar {
+                    title: "Temperature"
+                    value: Math.min(modelData.temperature / 100, 1.0)
+                    valueText: modelData.temperature.toFixed(1) + " °C"
+                    visible: modelData.temperature > 0
+                }
+
+                // VRAM bar
+                ResourceBar {
+                    title: "VRAM"
+                    value: modelData.memory_total > 0 ? modelData.memory_used / modelData.memory_total : 0
+                    valueText: modelData.memory_used.toFixed(0) + " MB" + " / " + modelData.memory_total.toFixed(0) + " MB"
+                    visible: modelData.memory_total > 0
+                }
+
+                // Power bar — normalised against power limit when available
+                ResourceBar {
+                    title: "Power"
+                    value: modelData.power_limit > 0 ? Math.min(modelData.power_draw / modelData.power_limit, 1.0) : 0
+                    valueText: modelData.power_limit > 0 ? modelData.power_draw.toFixed(1) + " W" + " / " + modelData.power_limit.toFixed(1) + " W" : modelData.power_draw.toFixed(1) + " W"
+                    visible: modelData.power_draw > 0
+                }
+            }
+        }
+    }
+
+    component ResourceBar: RLayout {
+        id: barRoot
+        property alias title: label.text
+        property real value: 0          // 0.0 – 1.0
+        property string valueText: ""
+        height: 40
+        Layout.fillWidth: true
+        spacing: Padding.huge
+
+        StyledText {
+            id: label
+            font.pixelSize: Fonts.sizes.normal
+            color: Colors.colOnLayer2
+            Layout.fillWidth: true
+        }
+
+        StyledText {
+            text: barRoot.valueText
+            color: Colors.m3.m3onSurfaceVariant
+            font.pixelSize: Fonts.sizes.small
+            font.weight: Font.Medium
+            horizontalAlignment: Text.AlignRight
+            Layout.preferredWidth: 110
+        }
+
+        StyledRect {
+            Layout.preferredWidth: 100
+            radius: Rounding.full
+            clip: true
+            height: 6
+            color: Colors.colLayer3
+
+            StyledRect {
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: Math.max(0, Math.min(barRoot.value, 1.0)) * parent.width
+                color: Colors.colPrimary
+
+                Behavior on width {
+                    SmoothedAnimation {
+                        velocity: 60
                     }
                 }
             }
         }
+    }
+
+    component SectionLabel: StyledText {
+        color: Colors.m3.m3onSurfaceVariant
+        font.pixelSize: Fonts.sizes.small
+        font.weight: Font.Black
+        font.letterSpacing: 1.1
+        opacity: 0.8
+        Layout.topMargin: 6
+        Layout.bottomMargin: 2
     }
 }

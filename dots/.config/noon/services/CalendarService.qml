@@ -71,5 +71,13 @@ Singleton {
 
     Process {
         id: mainProc
+        onStarted: console.log(JSON.stringify("CALENDAR", mainProc.environment))
+        stdout: StdioCollector {
+            onStreamFinished: console.log("CALENDAR", text)
+        }
+        environment: {
+            "NOON_CALENDAR_ID": AuthManager.integrations.calendar.authId,
+            "NOON_CALENDAR_SECRET": AuthManager.integrations.calendar.secret
+        }
     }
 }

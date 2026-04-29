@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import time
 import urllib.error
@@ -14,7 +15,21 @@ SCOPES = "https://www.googleapis.com/auth/tasks"
 STATUS_TAGS = ["[todo]", "[wip]", "[final]", "[done]"]
 STATES_KEY = ["services", "todo", "tasks"]
 
-auth = NoonAuthenticator(SCOPES)
+
+def get_auth():
+    client_id = os.environ.get("NOON_TASKS_ID")
+    client_secret = os.environ.get("NOON_TASKS_SECRET")
+    missing = [
+        name
+        for name, val in [
+            ("NOON_TASKS_ID", client_id),
+            ("NOON_TASKS_SECRET", client_secret),
+        ]
+        if not val
+    ]
+    if missing:
+        raise ValueError(f"Missing required env vars: {', '.join(missing)}")
+    return NoonAuthenticator(client_id, client_secret, SCOPES)
 
 
 def api(method, path, body=None):
@@ -154,6 +169,8 @@ COMMANDS = {"pull": pull, "push": push}
 
 
 def main():
+    global auth
+    auth = get_auth()
     if not auth.is_authenticated():
         auth.auth_loopback(interactive=True)
 

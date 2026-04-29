@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import sys
 import time
@@ -14,7 +15,21 @@ SCOPES = "https://www.googleapis.com/auth/calendar"
 STATES_KEY = ["services", "calendar", "events"]
 CALENDAR_ID = "primary"
 
-auth = NoonAuthenticator(SCOPES)
+
+def get_auth():
+    client_id = os.environ.get("NOON_CALENDAR_ID")
+    client_secret = os.environ.get("NOON_CALENDAR_SECRET")
+    missing = [
+        name
+        for name, val in [
+            ("NOON_CALENDAR_ID", client_id),
+            ("NOON_CALENDAR_SECRET", client_secret),
+        ]
+        if not val
+    ]
+    if missing:
+        raise ValueError(f"Missing required env vars: {', '.join(missing)}")
+    return NoonAuthenticator(client_id, client_secret, SCOPES)
 
 
 def get_timezone():
@@ -169,6 +184,8 @@ COMMANDS = {"pull": pull, "push": push}
 
 
 def main():
+    global auth
+    auth = get_auth()
     if not auth.is_authenticated():
         auth.auth_loopback(interactive=True)
     if len(sys.argv) != 2 or sys.argv[1] not in COMMANDS:

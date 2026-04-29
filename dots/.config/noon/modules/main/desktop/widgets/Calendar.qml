@@ -11,7 +11,7 @@ SquareComponent {
     property int monthShift: 0
     property var viewingDate: CalendarLayout.getDateInXMonthsTime(monthShift)
     readonly property string today: DateTimeService.request("D/M/yyyy")
-
+    Component.onCompleted: CalendarService.pull()
     function formatTasks() {
         const data = TodoService.list;
         return data.map(item => {
@@ -160,8 +160,12 @@ SquareComponent {
                         readonly property int col: index % 7
                         day: calendarLayout[row][col].day
                         isToday: calendarLayout[row][col].today
+                        releaseAction: () => {
+                            CalendarService.pull();
+                        }
                         StyledToolTip {
-                            color: Colors.colLayer2
+                            color: Colors.colLayer1
+                            textArea.font.pixelSize: Fonts.sizes.small
                             content: {
                                 if (dayButton.hovered) {
                                     const day = dayButton.day;
