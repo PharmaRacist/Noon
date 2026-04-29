@@ -76,12 +76,11 @@ StyledRect {
                     type: modelData?.type ?? "switch"
                     hint: modelData?.hint ?? ""
                     useStates: modelData?.state ?? false
-                    enableTooltip: modelData?.enableTooltip ?? true
                     sliderMinValue: modelData?.sliderMinValue ?? 0.0
                     sliderMaxValue: modelData?.sliderMaxValue ?? 100.0
-                    realValue: modelData?.sliderValue ?? 0.5
+                    // realValue: modelData?.sliderValue ?? 0.5
                     reloadOnChange: modelData?.reloadOnChange ?? false
-                    customItemHeight: modelData?.customItemHeight ?? 65
+                    // customItemHeight: modelData?.customItemHeight ?? 65
                     actionName: modelData?.actionName ?? ""
                     comboBoxValues: modelData?.comboBoxValues ?? []
                     fillHeight: modelData?.fillHeight ?? false
