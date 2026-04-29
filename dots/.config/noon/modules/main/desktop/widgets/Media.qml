@@ -41,13 +41,6 @@ ListView {
                 duration: 400
             }
         }
-        MouseArea {
-            id: hoverArea
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-            acceptedButtons: Qt.NoButton
-        }
         expanded: root.expanded
         pill: root.pill
         width: root.width
@@ -65,8 +58,18 @@ ListView {
         StyledRect {
             z: 999
             anchors.fill: parent
-            visible: opacity > 0
             opacity: bg.isHovered
+            MouseArea {
+                id: hoverArea
+                anchors.fill: parent
+                hoverEnabled: true
+                propagateComposedEvents: true
+                onClicked: {
+                    BeatsService.selectedPlayerIndex = index;
+                    NoonUtils.callIpc("sidebar reveal Beats");
+                }
+            }
+
             RowLayout {
                 anchors.bottomMargin: Padding.massive * 1.25
                 anchors.bottom: parent.bottom

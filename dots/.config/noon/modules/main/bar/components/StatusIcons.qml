@@ -19,7 +19,7 @@ BarGroup {
             icon: "radio_button_checked",
             visible: RecordingService.isRecording,
             dialog: "Record",
-            tooltip: "Recording " + RecordingService.getFormattedDuration()
+            tooltip: "Recording"
         },
         {
             icon: "volume_off",

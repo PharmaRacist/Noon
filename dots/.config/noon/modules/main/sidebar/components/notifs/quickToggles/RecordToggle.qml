@@ -9,19 +9,13 @@ import qs.services
 QuickToggleButton {
     id: root
     dialogName: "Record"
-    buttonName: RecordingService.isRecording ? `${qsTr("Recording")} ${RecordingService.getFormattedDuration()}` : qsTr("Record")
+    buttonName: RecordingService.isRecording ? "Recording " + RecordingService.getFormattedDuration() : "Record"
     toggled: RecordingService.isRecording
     buttonIcon: RecordingService.isRecording ? "radio_button_checked" : "radio_button_unchecked"
-    onClicked: RecordingService.toggleRecording()
-    holdAction: () => {
-        if (RecordingService.isRecording)
-            RecordingService.stopRecording();
-        else
-            NoonUtils.execDetached("xdg-open ~/Videos");
-    }
+    onClicked: !toggled ? RecordingService.record() : RecordingService.stop()
 
     StyledToolTip {
-        extraVisibleCondition: RecordingService.isRecording
-        content: StringUtils.format(qsTr("Recording {0} | Right-click to stop"), RecordingService.getFormattedDuration())
+        extraVisibleCondition: RecordingService.isRecording && !root.showButtonName
+        content: root.buttonName
     }
 }

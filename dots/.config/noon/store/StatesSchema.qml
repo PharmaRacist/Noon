@@ -68,6 +68,7 @@ JsonAdapter {
         property JO bookmarks
         property JO ai
         property JO radio
+        property JO record
         property JO emojis
         property JO nightLight
         property JO mediaPlayer
@@ -96,6 +97,11 @@ JsonAdapter {
         }
         todo: JO {
             property list<var> tasks: []
+        }
+        record: JO {
+            property bool fullscreen: true
+            property bool audio: true
+            property int duration: 200
         }
         games: JO {
             property list<var> list: []

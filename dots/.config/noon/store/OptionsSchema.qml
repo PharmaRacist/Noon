@@ -149,7 +149,6 @@ JsonAdapter {
         property JO time
         property JO prayer
         property JO weather
-        property JO recording
         property JO notifications
         property JO nightLight
         property JO ambientSounds
@@ -181,15 +180,6 @@ JsonAdapter {
 
         weather: JO {
             property bool useFehrenheit: false
-        }
-
-        recording: JO {
-            property int recordingMode: 0
-            property int audioMode: 1
-            property int quality: 1
-            property string customOutputPath: ""
-            property bool showCursor: true
-            property int customFramerate: 0
         }
 
         notifications: JO {

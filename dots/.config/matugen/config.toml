@@ -3,7 +3,9 @@
 [templates.btop]
 input_path = "~/.config/matugen/templates/applications/btop.theme"
 output_path = '~/.config/btop/themes/noon.theme'
-
+[templates.vitepress]
+input_path = "~/x.css"
+output_path = "~/xx.css"
 [templates.obsidian]
 input_path = "~/.config/matugen/templates/applications/obsidian.css"
 output_path = "~/Noon-docs/.obsidian/snippets/noon.css"

@@ -8,8 +8,10 @@ import qs.services
 BottomDialog {
     id: root
     readonly property bool isRecording: RecordingService.isRecording
-    collapsedHeight: isRecording ? 150 : 450
-    color: Colors.colLayer1
+    collapsedHeight: isRecording ? 150 : 300
+    color: Colors.colLayer3
+    clip: true
+
     bgAnchors {
         rightMargin: Padding.large
         leftMargin: Padding.large
@@ -24,19 +26,23 @@ BottomDialog {
             subTitle: root.isRecording ? RecordingService.getFormattedDuration() : "Configure and Record"
             target: root
         }
-
-        BottomDialogSeparator {
-            visible: !root.isRecording
-        }
-
-        StyledIndeterminateProgressBar {
-            visible: root.isRecording
+        Item {
+            Layout.preferredHeight: 35
             Layout.fillWidth: true
-            Layout.topMargin: -8
-            Layout.bottomMargin: -8
-            Layout.leftMargin: -Rounding.large
-            Layout.rightMargin: -Rounding.large
+            BottomDialogSeparator {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.right: parent.right
+                visible: !root.isRecording
+            }
+            StyledIndeterminateProgressBar {
+                visible: root.isRecording
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.right: parent.right
+            }
         }
+
         CLayout {
             visible: !root.isRecording
             Layout.fillWidth: true
@@ -45,44 +51,18 @@ BottomDialog {
 
             OptionsSection {
                 title: "Region"
-                content: ["Screen", "Region", "Window"]
-                action: i => RecordingService.setRecordingMode(i)
+                content: ["Screen", "Region"]
+                action: i => Mem.states.services.record.fullscreen === (content[i] === "Screen")
             }
 
             OptionsSection {
                 title: "Audio"
-                content: ["Muted", "System Audio", "Mic"]
-                action: i => RecordingService.setAudioMode(i)
+                content: ["Sound", "Muted"]
+                action: i => Mem.states.services.record.sound === (content[i] === "Sound")
             }
 
-            OptionsSection {
-                title: "Quality"
-                content: ["720@30", "1080@30", "1080@60"]
-                action: i => RecordingService.setQuality(i)
-            }
-
-            RLayout {
-                Layout.fillWidth: true
-                spacing: 10
-
-                Symbol {
-                    text: "mouse"
-                    font.pixelSize: Fonts.sizes.verylarge
-                    color: Colors.colOnSurfaceVariant
-                }
-
-                StyledText {
-                    Layout.fillWidth: true
-                    text: "Show Cursor"
-                    color: Colors.colOnSurfaceVariant
-                }
-
-                StyledSwitch {
-                    checked: RecordingService.showCursor
-                    onToggled: RecordingService.showCursor = checked
-                }
-            }
             Spacer {}
+
             RLayout {
                 Layout.preferredHeight: 50
                 Layout.fillWidth: true
@@ -97,9 +77,10 @@ BottomDialog {
                     colBackground: root.isRecording ? Colors.colError : Colors.colPrimary
                     colBackgroundHover: root.isRecording ? Colors.colErrorHover : Colors.colPrimaryHover
                     onClicked: {
-                        RecordingService.toggleRecording();
-                        if (!root.isRecording)
-                            root.show = false;
+                        if (root.isRecording)
+                            RecordingService.stop();
+                        else
+                            RecordingService.record();
                     }
                 }
 

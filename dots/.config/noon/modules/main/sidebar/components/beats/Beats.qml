@@ -24,7 +24,7 @@ RedunduntMultiViewPanel {
             "component": "pages/LocalTracksPage"
         },
         {
-            "icon": "globe",
+            "icon": "for_you",
             "name": "Feed",
             "preload": "expanded",
             "preloadData": root.expanded,
