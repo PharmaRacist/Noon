@@ -1,5 +1,6 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
+import Noon.Utils
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -22,6 +23,7 @@ Singleton {
     readonly property var modelList: states.models ?? []
     readonly property string currentModelId: states.model
     readonly property var skills: states.skills
+    property var sessions: []
     property var messageIDs: []
     property var messageByID: ({})
     property string pendingSkillName: ""
@@ -71,12 +73,44 @@ Singleton {
     function newSession() {
         root.clearMessages();
         root.states.currentSessionId = "";
-        getSessions.running = true;
+        refreshSessions();
     }
 
     function loadChat(id) {
+        if (!id)
+            return;
         root.clearMessages();
-        root.states.currentSessionId = id.trim().toString();
+        const cleanId = id.trim().toString();
+        root.states.currentSessionId = cleanId;
+        loadMessages(cleanId);
+    }
+
+    function loadMessages(id) {
+        const messages = db.tables.message.where({
+            session_id: id
+        });
+        messages.forEach(m => {
+            const mData = JSON.parse(m.data);
+            const parts = db.tables.part.where({
+                message_id: m.id
+            });
+
+            const content = parts.map(p => JSON.parse(p.data)).filter(p => p.type === "text").map(p => p.text).join("");
+
+            if (content.length === 0)
+                return;
+            const aiMessage = root.aiMessageComponent.createObject(root, {
+                "role": mData.role,
+                "content": content,
+                "rawContent": content,
+                "model": mData.model?.modelID ?? "",
+                "thinking": false,
+                "done": true
+            });
+            const msgId = root.idForMessage(aiMessage);
+            root.messageIDs = [...root.messageIDs, msgId];
+            root.messageByID[msgId] = aiMessage;
+        });
     }
 
     function attachFile(filePath) {
@@ -150,8 +184,20 @@ Singleton {
             requester.message.rawContent += "\n\n*[Stopped]*";
             requester.message.content += "\n\n*[Stopped]*";
         }
-        getSessions.running = true;
+        refreshSessions();
         root.responseFinished();
+    }
+    function refreshSessions() {
+        const rows = db.tables.session.all();
+
+        root.sessions = rows.map(r => ({
+                    id: r.id,
+                    title: r.title,
+                    created: r.time_created,
+                    updated: r.time_updated,
+                    directory: r.directory,
+                    projectId: r.project_id
+                }));
     }
 
     function summarizePDF(pdf) {
@@ -184,12 +230,11 @@ Singleton {
         }
     }
 
-    Process {
-        id: getSessions
-        command: ["sh", "-c", "opencode session list --format json < /dev/null"]
-        stdout: StdioCollector {
-            onStreamFinished: data => root.states.sessions = JSON.parse(text)
-        }
+    SQLReader {
+        id: db
+        path: "/home/pharmaracist/.local/share/opencode/opencode.db"
+        Component.onCompleted: refreshSessions()
+        onLoaded: refreshSessions()
     }
 
     Process {
@@ -235,7 +280,7 @@ Singleton {
                 root.postResponseHook();
                 root.postResponseHook = null;
             }
-            getSessions.running = true;
+            refreshSessions();
             root.responseFinished();
         }
 

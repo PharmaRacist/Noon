@@ -145,12 +145,12 @@ Item {
 
     function handleLoadSuggestions() {
         const query = messageInputField.text.split(" ")[1] ?? "";
-        const source = Mem.states.services.ai.sessions.map(s => ({
+        const source = Ai.sessions.map(s => ({
                     name: s.title,
                     prepared: Fuzzy.prepare(s.title),
                     obj: s
                 }));
-        const results = query.length === 0 ? Mem.states.services.ai.sessions.map(s => ({
+        const results = query.length === 0 ? Ai.sessions.map(s => ({
                     target: s
                 })) : Fuzzy.go(query, source, {
             all: true,
