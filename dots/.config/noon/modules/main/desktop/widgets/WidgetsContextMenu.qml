@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import qs.store
 import qs.common
 import qs.common.widgets
-import QtQuick.Layouts
 import qs.modules.main.desktop.widgets
 
 StyledMenu {
@@ -12,7 +12,7 @@ StyledMenu {
     readonly property string widgetId: modelData.id
     readonly property bool isExpanded: modelData?.expanded ?? false
     readonly property bool isPill: modelData?.pilled ?? false
-    readonly property var store: Mem.states.sidebar.widgets
+    readonly property var store: Mem?.states?.sidebar?.widgets
     content: {
         let items = [
             {

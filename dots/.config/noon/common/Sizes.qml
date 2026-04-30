@@ -54,6 +54,7 @@ Singleton {
         readonly property real quarter: Math.round(Screen.width * 0.256)
         readonly property real largerQuarter: Math.round(Screen.width * 0.275)
         readonly property real threeQuarter: Math.round(Screen.width * 0.85)
+        readonly property real widgetsExpanded: Math.round(Screen.width * 0.501)
 
         readonly property real session: 280
         readonly property real overview: bar + Math.round(Screen.width * 0.185) + Padding.massive * 2

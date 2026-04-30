@@ -175,6 +175,7 @@ JsonAdapter {
             property list<string> filePaths: []
         }
         widgets: JO {
+            property list<string> order: []
             property list<string> enabled: []
             property list<string> desktop: []
             property list<string> pilled: []

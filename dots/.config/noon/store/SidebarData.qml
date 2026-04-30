@@ -137,7 +137,7 @@ Singleton {
             icon: "ripples",
             expandable: true,
             baseSize: sizePresets.largerQuarter,
-            expandSize: sizePresets.half,
+            expandSize: sizePresets.widgetsExpanded,
             componentPath: "widgets/Widgets",
             enabled: Mem.options.sidebar.content.widgets
         },

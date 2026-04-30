@@ -6,69 +6,132 @@ import qs.common.widgets
 import QtQuick.Layouts
 import qs.modules.main.desktop.widgets
 
-Item {
+StyledRect {
     id: root
     property bool expanded: false
-    property bool isDragging: false
     property int pinnedCount: 0
-
+    readonly property var store: Mem.states.sidebar.widgets
     readonly property int columns: expanded ? 4 : 2
     readonly property int cellSize: 200
-    readonly property int gridSpacing: 20
+    readonly property int gridSpacing: Padding.small
     readonly property int unit: cellSize + gridSpacing
-
     readonly property var db: WidgetsData.db
+    color: Colors.colLayer1
+    radius: Rounding.verylarge
 
-    function arrangeAll() {
-        let pinned = [], unpinned = [];
+    function initOrder() {
+        if (root.db.length === 0)
+            return;
+        let ids = root.db.map(e => e.id);
+        let filtered = store.order.filter(id => ids.indexOf(id) !== -1);
+        let missing = ids.filter(id => filtered.indexOf(id) === -1);
+        store.order = filtered.concat(missing);
+    }
 
+    function moveItem(fromId, toGX, toGY) {
+        let pinnedIds = Mem.states.sidebar.widgets.pinned;
+        let enabledIds = Mem.states.sidebar.widgets.enabled;
+        let isPinnedSection = toGY < root.pinnedCount;
+
+        let order = store.order.slice();
+        let fromIdx = order.indexOf(fromId);
+        if (fromIdx === -1)
+            return;
+
+        let targetId = null;
         for (let i = 0; i < widgetRepeater.count; i++) {
             let item = widgetRepeater.itemAt(i);
             if (!item?.active)
                 continue;
+            if (item.widgetId === fromId)
+                continue;
+            if (item.gX === toGX && item.gY === toGY) {
+                targetId = item.widgetId;
+                break;
+            }
+        }
 
+        if (targetId !== null) {
+            let toIdx = order.indexOf(targetId);
+            if (toIdx !== -1) {
+                order.splice(fromIdx, 1);
+                let newToIdx = order.indexOf(targetId);
+                order.splice(fromIdx < toIdx ? newToIdx + 1 : newToIdx, 0, fromId);
+                store.order = order;
+            }
+        }
+
+        if (isPinnedSection) {
+            if (pinnedIds.indexOf(fromId) === -1) {
+                Mem.states.sidebar.widgets.pinned = [...pinnedIds, fromId];
+            }
+        } else {
+            if (pinnedIds.indexOf(fromId) !== -1) {
+                Mem.states.sidebar.widgets.pinned = pinnedIds.filter(id => id !== fromId);
+            }
+        }
+
+        Qt.callLater(root.arrangeAll);
+    }
+
+    function arrangeAll() {
+        if (store.order.length === 0) {
+            initOrder();
+        }
+
+        let enabledSet = Mem.states.sidebar.widgets.enabled;
+        let pinnedSet = Mem.states.sidebar.widgets.pinned;
+        let expandedSet = Mem.states.sidebar.widgets.expanded;
+
+        let itemMap = {};
+        for (let i = 0; i < widgetRepeater.count; i++) {
+            let item = widgetRepeater.itemAt(i);
+            if (!item?.active)
+                continue;
             if (i >= root.db.length) {
                 console.error(`Widget arrangement error: item index ${i} exceeds db length ${root.db.length}`);
                 continue;
             }
-
-            let widgetId = root.db[i].id;
-            let shouldExpand = root.db[i].expandable && Mem.states.sidebar.widgets.expanded.indexOf(widgetId) !== -1;
-
-            let data = {
-                item: item,
-                width: shouldExpand ? 2 : 1,
+            itemMap[root.db[i].id] = {
+                item,
                 index: i
             };
-            Mem.states.sidebar.widgets.pinned.indexOf(widgetId) !== -1 ? pinned.push(data) : unpinned.push(data);
+        }
+
+        let pinned = [], unpinned = [];
+
+        for (let id of store.order) {
+            if (enabledSet.indexOf(id) === -1)
+                continue;
+            let entry = itemMap[id];
+            if (!entry)
+                continue;
+            let dbEntry = root.db[entry.index];
+            let widened = dbEntry.expandable && expandedSet.indexOf(id) !== -1;
+            let rec = {
+                item: entry.item,
+                width: widened ? 2 : 1
+            };
+            pinnedSet.indexOf(id) !== -1 ? pinned.push(rec) : unpinned.push(rec);
         }
 
         let x = 0, y = 0;
 
-        function placeItems(items) {
-            for (let data of items) {
-                if (x < 0 || y < 0) {
-                    console.error(`Widget arrangement error: invalid position x=${x}, y=${y}`);
-                    x = Math.max(0, x);
-                    y = Math.max(0, y);
-                }
-
-                if (x + data.width > columns) {
+        function place(items) {
+            for (let d of items) {
+                if (x + d.width > columns) {
                     x = 0;
                     y++;
                 }
-
-                let actualWidth = Math.min(data.width, columns - x);
-                if (actualWidth < data.width) {
-                    console.warn(`Widget width reduced from ${data.width} to ${actualWidth} to prevent overflow`);
-                    data.width = actualWidth;
+                let w = Math.min(d.width, columns - x);
+                if (w < d.width) {
+                    console.warn(`Widget width clamped from ${d.width} to ${w}`);
+                    d.width = w;
                 }
-
-                data.item.gX = x;
-                data.item.gY = y;
-                data.item.isExpanded = data.width === 2;
-
-                x += data.width;
+                d.item.gX = x;
+                d.item.gY = y;
+                d.item.isExpanded = d.width === 2;
+                x += d.width;
                 if (x >= columns) {
                     x = 0;
                     y++;
@@ -76,274 +139,142 @@ Item {
             }
         }
 
-        placeItems(pinned);
+        place(pinned);
 
-        if (pinned.length > 0) {
-            root.pinnedCount = y + (x > 0 ? 1 : 0);
-            if (x > 0) {
-                x = 0;
-                y++;
-            }
-        } else {
-            root.pinnedCount = 0;
+        root.pinnedCount = pinned.length > 0 ? y + (x > 0 ? 1 : 0) : 0;
+        if (x > 0) {
+            x = 0;
+            y++;
         }
 
-        placeItems(unpinned);
+        place(unpinned);
     }
 
-    onExpandedChanged: {
-        Qt.callLater(arrangeAll);
-    }
+    onExpandedChanged: Qt.callLater(arrangeAll)
 
     Connections {
         target: Mem.states.sidebar.widgets
         function onEnabledChanged() {
-            Qt.callLater(root.arrangeAll);
+            root.initOrder();
+            Qt.callLater(arrangeAll);
         }
         function onPinnedChanged() {
-            Qt.callLater(root.arrangeAll);
+            Qt.callLater(arrangeAll);
         }
         function onExpandedChanged() {
-            Qt.callLater(root.arrangeAll);
+            Qt.callLater(arrangeAll);
         }
         function onPilledChanged() {
-            Qt.callLater(root.arrangeAll);
+            Qt.callLater(arrangeAll);
         }
     }
 
-    Flickable {
+    StyledFlickable {
         anchors.fill: parent
         contentHeight: container.childrenRect.height + 100
-        interactive: !root.isDragging
         clip: true
         boundsBehavior: Flickable.StopAtBounds
 
         Item {
             id: container
-            width: parent.width
-            anchors.margins: Padding.massive
-
-            Separator {
-                visible: root.pinnedCount > 0
-                width: parent.width - Padding.massive
-                y: root.pinnedCount * root.unit - root.gridSpacing / 2 - 1.5
-                opacity: 0.85
-            }
+            anchors.fill: parent
+            anchors.margins: Padding.large
 
             Repeater {
                 id: widgetRepeater
                 model: root.db
 
-                delegate: Loader {
+                delegate: StyledLoader {
                     id: loader
-                    active: Mem.states.sidebar.widgets.enabled.indexOf(modelData.id) !== -1
-                    visible: active
-                    source: active ? `${Directories.shellDir}/modules/main/desktop/widgets/${modelData.component}.qml` : ""
 
                     property int gX: 0
                     property int gY: 0
                     property bool isExpanded: false
-                    property bool isPinned: Mem.states.sidebar.widgets.pinned.indexOf(modelData.id) !== -1
-                    property bool isDesktop: Mem.states.sidebar.widgets.desktop.indexOf(modelData.id) !== -1
-                    property bool isPill: Mem.states.sidebar.widgets.pilled.indexOf(modelData.id) !== -1
+                    readonly property bool isDragged: dragArea.drag.active
+                    readonly property bool isPinned: Mem.states.sidebar.widgets.pinned.indexOf(modelData.id) !== -1
+                    readonly property bool isDesktop: Mem.states.sidebar.widgets.desktop.indexOf(modelData.id) !== -1
+                    readonly property bool isPill: Mem.states.sidebar.widgets.pilled.indexOf(modelData.id) !== -1
                     readonly property bool canExpand: modelData.expandable
                     readonly property string widgetId: modelData.id
 
-                    width: active ? (isExpanded ? cellSize * 2 + gridSpacing : cellSize) : 0
-                    height: active ? cellSize : 0
-                    x: dragArea.pressed ? dragArea.dragX : gX * unit
-                    y: dragArea.pressed ? dragArea.dragY : gY * unit
-                    z: dragArea.pressed ? 1000 : 1
+                    Component.onCompleted: {
+                        root.initOrder();
+                        Qt.callLater(root.arrangeAll);
+                    }
+
+                    shown: Mem.states.sidebar.widgets.enabled.indexOf(modelData.id) !== -1
+                    source: sanitizeSource(Directories.shellDir + "/modules/main/desktop/widgets/", modelData.component)
+                    width: isExpanded ? cellSize * 2 + gridSpacing : cellSize
+                    height: cellSize
+
+                    onLoaded: {
+                        _item.pill = Qt.binding(() => isPill);
+                        _item.pinned = Qt.binding(() => isPinned);
+                        _item.expanded = Qt.binding(() => isExpanded);
+                    }
+
+                    Drag.active: dragArea.drag.active
+                    Drag.hotSpot.x: width / 2
+                    Drag.hotSpot.y: height / 2
+
+                    x: isDragged ? x : gX * unit
+                    y: isDragged ? y : gY * unit
+                    z: isDragged ? 1000 : 1
 
                     Behavior on x {
-                        enabled: !dragArea.pressed && active
+                        enabled: !isDragged
                         Anim {}
                     }
                     Behavior on y {
-                        enabled: !dragArea.pressed && active
-                        Anim {}
-                    }
-                    Behavior on width {
+                        enabled: !isDragged
                         Anim {}
                     }
 
                     MouseArea {
                         id: dragArea
-                        anchors.fill: parent
                         z: 999
+                        hoverEnabled: false
+                        propagateComposedEvents: true
+                        anchors.fill: parent
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-                        property real dragX: loader.x
-                        property real dragY: loader.y
-                        property point startPos
+                        drag.target: loader.isPinned ? null : loader
+                        drag.threshold: 8
 
                         onPressed: mouse => {
-                            if (mouse.button === Qt.RightButton) {
+                            if (mouse.button === Qt.RightButton)
                                 widgetMenu.popup(mouse.x, mouse.y);
-                                mouse.accepted = true;
-                                return;
-                            }
-                            if (loader.isPinned) {
-                                mouse.accepted = false;
-                                return;
-                            }
-
-                            root.isDragging = true;
-                            startPos = Qt.point(mouse.x, mouse.y);
-                            dragX = loader.x;
-                            dragY = loader.y;
-                        }
-
-                        onPositionChanged: mouse => {
-                            if (loader.isPinned || !pressed || !(mouse.buttons & Qt.LeftButton))
-                                return;
-                            dragX += mouse.x - startPos.x;
-                            dragY += mouse.y - startPos.y;
                         }
 
                         onReleased: mouse => {
-                            if (mouse.button === Qt.RightButton) {
-                                mouse.accepted = true;
+                            if (mouse.button === Qt.RightButton)
                                 return;
-                            }
-                            if (mouse.button !== Qt.LeftButton || loader.isPinned)
-                                return;
-                            root.isDragging = false;
 
-                            let targetY = Math.round(dragY / unit);
-                            let targetX = Math.round(dragX / unit);
+                            let snapX = Math.max(0, Math.min(Math.round(loader.x / root.unit), root.columns - 1));
+                            let snapY = Math.max(0, Math.round(loader.y / root.unit));
 
-                            if (targetY < root.pinnedCount) {
-                                let list = Mem.states.sidebar.widgets.pinned;
-                                if (list.indexOf(loader.widgetId) === -1) {
-                                    list.push(loader.widgetId);
-                                    Mem.states.sidebar.widgets.pinned = list.slice();
-                                }
-                                return;
-                            }
-
-                            Qt.callLater(root.arrangeAll);
+                            root.moveItem(loader.widgetId, snapX, snapY);
                         }
                     }
 
-                    StyledMenu {
+                    WidgetItemContextMenu {
                         id: widgetMenu
-                        content: {
-                            let items = [
-                                {
-                                    text: loader.isPinned ? "Unpin" : "Pin",
-                                    materialIcon: "push_pin",
-                                    action: () => {
-                                        let list = Mem.states.sidebar.widgets.pinned;
-                                        let idx = list.indexOf(loader.widgetId);
-                                        if (idx === -1) {
-                                            list.push(loader.widgetId);
-                                        } else {
-                                            list.splice(idx, 1);
-                                        }
-                                        Mem.states.sidebar.widgets.pinned = list.slice();
-                                        widgetMenu.close();
-                                    }
-                                },
-                                {
-                                    text: loader.isDesktop ? "Remove from desktop" : "Send To Desktop",
-                                    materialIcon: "open_in_new",
-                                    action: () => {
-                                        let list = Mem.states.sidebar.widgets.desktop;
-                                        let idx = list.indexOf(loader.widgetId);
-                                        if (idx === -1) {
-                                            list.push(loader.widgetId);
-                                        } else {
-                                            list.splice(idx, 1);
-                                        }
-                                        Mem.states.sidebar.widgets.desktop = list.slice();
-                                        widgetMenu.close();
-                                    }
-                                },
-                                {
-                                    text: loader.isPill ? "Square" : "Pill",
-                                    materialIcon: loader.isPill ? "capture" : "pill",
-                                    action: () => {
-                                        let list = Mem.states.sidebar.widgets.pilled;
-                                        let idx = list.indexOf(loader.widgetId);
-                                        if (idx === -1) {
-                                            list.push(loader.widgetId);
-                                        } else {
-                                            list.splice(idx, 1);
-                                        }
-                                        Mem.states.sidebar.widgets.pilled = list.slice();
-                                        widgetMenu.close();
-                                    }
-                                },
-                                {
-                                    text: "Disable",
-                                    materialIcon: "visibility_off",
-                                    action: () => {
-                                        let list = Mem.states.sidebar.widgets.enabled;
-                                        let idx = list.indexOf(loader.widgetId);
-                                        if (idx !== -1) {
-                                            list.splice(idx, 1);
-                                            Mem.states.sidebar.widgets.enabled = list.slice();
-                                        }
-                                        widgetMenu.close();
-                                    }
-                                }
-                            ];
-
-                            if (loader.canExpand) {
-                                items.push({
-                                    text: loader.isExpanded ? "Collapse" : "Expand",
-                                    materialIcon: loader.isExpanded ? "close_fullscreen" : "open_in_full",
-                                    action: () => {
-                                        let list = Mem.states.sidebar.widgets.expanded;
-                                        let idx = list.indexOf(loader.widgetId);
-                                        if (idx === -1) {
-                                            list.push(loader.widgetId);
-                                        } else {
-                                            list.splice(idx, 1);
-                                        }
-                                        Mem.states.sidebar.widgets.expanded = list.slice();
-                                        widgetMenu.close();
-                                    }
-                                });
-                            }
-
-                            return items;
-                        }
+                        widgetData: modelData
                     }
-
-                    Binding {
-                        when: loader.status === Loader.Ready
-                        target: loader.item
-                        property: "width"
-                        value: loader.width
-                    }
-                    Binding {
-                        when: loader.status === Loader.Ready
-                        target: loader.item
-                        property: "pill"
-                        value: loader.isPill
-                    }
-                    Binding {
-                        when: loader.status === Loader.Ready
-                        target: loader.item
-                        property: "expanded"
-                        value: loader.isExpanded
-                    }
-
-                    Component.onCompleted: Qt.callLater(root.arrangeAll)
                 }
             }
         }
     }
+
     PagePlaceholder {
         icon: "widgets"
         title: "No Enabled Widgets"
         description: "Scroll Below To Reveal Available Widgets"
         anchors.centerIn: parent
-        shape: MaterialShape.Shapes.SoftBoom
+        shape: MaterialShape.Shape.Clover8Leaf
+        iconSize: 100
         shown: Mem.states.sidebar.widgets.enabled.length === 0
     }
+
     WidgetsSpawnerDialog {
         db: root.db
     }
