@@ -1,66 +1,101 @@
 pragma Singleton
-pragma ComponentBehavior: Bound
-// import Noon.Utils.Latex
 import QtQuick
 import Quickshell
 
 Singleton {
     id: root
 
-    property var renderedImagePaths: ({})
-    property var latexExpressions: ({})
+    readonly property var subScripts: ({
+            "0": "\u2080",
+            "1": "\u2081",
+            "2": "\u2082",
+            "3": "\u2083",
+            "4": "\u2084",
+            "5": "\u2085",
+            "6": "\u2086",
+            "7": "\u2087",
+            "8": "\u2088",
+            "9": "\u2089",
+            "+": "\u208A",
+            "-": "\u208B",
+            "=": "\u208C",
+            "(": "\u208D",
+            ")": "\u208E",
+            "a": "\u2090",
+            "e": "\u2091",
+            "o": "\u2092",
+            "x": "\u2093",
+            "h": "\u2095",
+            "k": "\u2096",
+            "l": "\u2097",
+            "m": "\u2098",
+            "n": "\u2099",
+            "p": "\u209A",
+            "s": "\u209B",
+            "t": "\u209C"
+        })
 
-    signal renderFinished(string hash, string imagePath)
+    readonly property var superScripts: ({
+            "0": "\u2070",
+            "1": "\u00B9",
+            "2": "\u00B2",
+            "3": "\u00B3",
+            "4": "\u2074",
+            "5": "\u2075",
+            "6": "\u2076",
+            "7": "\u2077",
+            "8": "\u2078",
+            "9": "\u2079",
+            "+": "\u207A",
+            "-": "\u207B",
+            "=": "\u207C",
+            "(": "\u207D",
+            ")": "\u207E",
+            "n": "\u207F",
+            "i": "\u1D62"
+        })
 
-    // readonly property LatexRenderer renderer: LatexRenderer {
-    //     fontSize: 18
-    //     padding: 4
-    // }
+    // Regex for symbol mapping
+    readonly property var symbolMap: ({
+            "->": "\u2192",
+            "<-": "\u2190",
+            "<=>": "\u21CC",
+            "+/-": "\u00B1",
+            "deg": "\u00B0",
+            "micro": "\u03BC",
+            "alpha": "\u03B1",
+            "beta": "\u03B2",
+            "gamma": "\u03B3",
+            "delta": "\u03B4",
+            "ohm": "\u2126",
+            "prescription": "\u211E" // ℞ symbol
+            ,
+            "approx": "\u2248"
+        })
 
-    function detectAndRenderLatex(content, colorHex = "#ffffff") {
-        const contentStr = String(content ?? "");
-        if (!contentStr)
-            return [];
-
-        const regex = /\$\$([\s\S]+?)\$\$|\$([^\$\n]+?)\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)/g;
-        let match;
-        const hashes = [];
-
-        while ((match = regex.exec(contentStr)) !== null) {
-            const raw = match[0];
-            const expr = (match[1] || match[2] || match[3] || match[4] || "").trim();
-            if (!expr)
-                continue;
-
-            const hash = Qt.md5(expr + colorHex);
-            latexExpressions[hash] = raw;
-            hashes.push(hash);
-
-            if (!renderedImagePaths[hash]) {
-                const path = renderer.render(expr, colorHex);
-                if (path) {
-                    renderedImagePaths[hash] = path;
-                    renderFinished(hash, path);
-                }
-            }
-        }
-        return hashes;
+    function toSub(text) {
+        return String(text).split('').map(c => subScripts[c] || c).join('');
     }
 
-    function replaceLatexWithImages(content, hashes) {
-        let result = String(content ?? "");
-        if (!hashes || hashes.length === 0)
-            return result;
+    function toSuper(text) {
+        return String(text).split('').map(c => superScripts[c] || c).join('');
+    }
 
-        const sorted = [...hashes].sort((a, b) => (latexExpressions[b] || "").length - (latexExpressions[a] || "").length);
+    function cleanFormula(content) {
+        if (!content)
+            return "";
+        let res = String(content);
 
-        for (const hash of sorted) {
-            const path = renderedImagePaths[hash];
-            const original = latexExpressions[hash];
-            if (path && original) {
-                result = result.split(original).join(`![latex](${path})`);
-            }
-        }
-        return result;
+        // Subscripts: H_2O
+        res = res.replace(/_([0-9a-z\+\-\=\(\)]+)/g, (_, p1) => toSub(p1));
+
+        // Superscripts: x^2
+        res = res.replace(/\^([0-9a-z\+\-\=\(\)]+)/g, (_, p1) => toSuper(p1));
+
+        // Symbols: replacing defined keywords with a single regex match
+        const pattern = new RegExp(Object.keys(symbolMap).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+        res = res.replace(pattern, matched => symbolMap[matched]);
+
+        return res;
     }
 }

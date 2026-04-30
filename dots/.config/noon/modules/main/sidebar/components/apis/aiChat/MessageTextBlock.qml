@@ -19,59 +19,30 @@ ColumnLayout {
     property bool done: true
     property bool forceDisableChunkSplitting: false
 
-    property list<string> renderedLatexHashes: []
-    property string renderedSegmentContent: ""
+    // Simplified properties
     property string shownText: ""
     property bool fadeChunkSplitting: !forceDisableChunkSplitting && !editing && !/\n\|/.test(shownText) && Mem.options.sidebar.behavior.aiTextFadeIn
 
     Layout.fillWidth: true
     spacing: 0
 
-    Timer {
-        id: renderTimer
-        interval: 100
-        repeat: false
-        onTriggered: {
-            const color = Colors.colOnLayer1.toString();
-            // renderedLatexHashes = LatexService.detectAndRenderLatex(segmentContent, color);
-        }
+    // Logic to process text through our new Unicode service
+    function processText(input) {
+        if (!input)
+            return "";
+        // If editing, we show raw text; otherwise, we format it
+        return editing ? input : LatexService.cleanFormula(input);
     }
-
-    function updateRenderedContent() {
-        // renderedSegmentContent = LatexService.replaceLatexWithImages(segmentContent, renderedLatexHashes);
-    }
-
-    onDoneChanged: renderTimer.restart()
 
     onEditingChanged: {
-        if (!editing) {
-            renderTimer.restart();
-        } else {
-            root.shownText = segmentContent;
-        }
+        shownText = processText(segmentContent);
     }
 
     onSegmentContentChanged: {
-        renderedSegmentContent = String(segmentContent ?? "");
-        if (!root.editing && segmentContent) {
-            renderTimer.restart();
+        if (segmentContent) {
+            shownText = processText(segmentContent);
         }
     }
-
-    onRenderedSegmentContentChanged: {
-        if (renderedSegmentContent) {
-            root.shownText = renderedSegmentContent;
-        }
-    }
-
-    // Connections {
-    //     target: LatexService
-    //     function onRenderFinished(hash, imagePath) {
-    //         if (renderedLatexHashes.includes(hash)) {
-    //             updateRenderedContent();
-    //         }
-    //     }
-    // }
 
     Repeater {
         id: textLinesRepeater
@@ -81,7 +52,7 @@ ColumnLayout {
             values: root.fadeChunkSplitting ? root.shownText.split(/\n\n(?= {0,2})|\n(?= {0,2}[-\*])/g).filter(line => line.trim() !== "") : [root.shownText]
             onValuesChanged: {
                 while (textLinesRepeater.textLineOpacities.length < values.length) {
-                    textLinesRepeater?.textLineOpacities.push(root.messageData?.done ? 1 : 0);
+                    textLinesRepeater.textLineOpacities.push(root.messageData?.done ? 1 : 0);
                 }
             }
         }
@@ -97,13 +68,18 @@ ColumnLayout {
             readOnly: !editing
             selectByMouse: enableMouseSelection || editing
             renderType: Text.NativeRendering
+
+            // Using a standard reading font that handles Unicode math well
             font.family: Fonts.family.reading
             font.hintingPreference: Font.PreferNoHinting
             font.pixelSize: Fonts.sizes.large * Mem.states.sidebar.apis.fontScale
+
             selectedTextColor: Colors.m3.m3onSecondaryContainer
             selectionColor: Colors.colSecondaryContainer
             wrapMode: TextEdit.Wrap
             color: root.messageData?.thinking ? Colors.colSubtext : Colors.colOnLayer1
+
+            // Markdown handles the Unicode characters natively as text
             textFormat: renderMarkdown ? TextEdit.MarkdownText : TextEdit.PlainText
             text: modelData
 

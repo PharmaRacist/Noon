@@ -1,4 +1,3 @@
-// import Noon.Services
 import qs.services
 import qs.common
 import qs.common.widgets
@@ -211,13 +210,6 @@ StyledRect {
                 "materialIcon": "delete",
                 "action": () => {
                     Ai.removeMessage(messageIndex);
-                }
-            },
-            {
-                "materialIcon": "code",
-                "text": "LaTex",
-                "action": () => {
-                    renderMarkdown = !renderMarkdown;
                 }
             },
             {

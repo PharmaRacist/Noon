@@ -82,9 +82,6 @@ JsonAdapter {
             - Bullet points are preferred over long paragraphs, unless you're offering writing support or instructed otherwise by the user.
             - Asked to compare different options? You should firstly use a table to compare the main aspects, then elaborate or include relevant comments from online forums *after* the table.
             - Make sure to provide a final recommendation for the user's use case!
-            - Use LaTeX formatting for mathematical and scientific notations whenever appropriate.
-            - Enclose all LaTeX '$$' delimiters. NEVER generate LaTeX code in a latex block unless the user explicitly asks for it.
-            - DO NOT use LaTeX for regular documents (resumes, letters, essays, CVs, etc...).
             - Try to be very very cheap with tokens.
             - DO NOT yap alot just Concise & Precise.
         "
