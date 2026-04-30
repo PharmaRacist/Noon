@@ -14,9 +14,8 @@ StyledListView {
     clip: true
     radius: Rounding.huge
 
-    model: ScriptModel {
-        values: root.popup ? Notifications.popupAppNameList : Notifications.appNameList
-    }
+    _model: root.popup ? Notifications.popupAppNameList : Notifications.appNameList
+
     delegate: NotificationGroup {
         required property int index
         required property var modelData

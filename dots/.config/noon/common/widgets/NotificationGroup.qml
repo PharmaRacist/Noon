@@ -25,7 +25,7 @@ Item { // Notification group area
     property bool popup: false
     property real padding: Padding.verylarge
     property int radius: Rounding.verylarge
-    property color color:Colors.colLayer1
+    property color color: Colors.colLayer1
     implicitHeight: background.implicitHeight
 
     property real dragConfirmThreshold: 70 // Drag further to discard notification
@@ -113,8 +113,8 @@ Item { // Notification group area
         radius: root.radius
         anchors.leftMargin: root.xOffset
         border {
-            color:Colors.colOutline
-            width:root.popup ? 1 : 0
+            color: Colors.colOutline
+            width: root.popup ? 1 : 0
         }
         Behavior on anchors.leftMargin {
             enabled: !dragManager.dragging
@@ -210,9 +210,7 @@ Item { // Notification group area
                     Behavior on spacing {
                         Anim {}
                     }
-                    model: ScriptModel {
-                        values: root.expanded ? root.notifications.slice().reverse() : root.notifications.slice().reverse().slice(0, 2)
-                    }
+                    _model: root.expanded ? root.notifications.slice().reverse() : root.notifications.slice().reverse().slice(0, 2)
                     delegate: NotificationItem {
                         required property int index
                         required property var modelData

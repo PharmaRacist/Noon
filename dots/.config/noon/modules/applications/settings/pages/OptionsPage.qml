@@ -47,10 +47,7 @@ Item {
             animateMovement: false
             popin: false
             hint: false
-
-            model: ScriptModel {
-                values: root.visibleData
-            }
+            _model: root.visibleData
 
             delegate: ColumnLayout {
                 required property var modelData

@@ -37,9 +37,9 @@ ListView {
     }
     ScriptModel {
         id: scripted
-        values: _model
+        values: root?._model ?? []
     }
-    model: _model ? scripted : null
+    model: (_model && scripted) ? scripted : []
     spacing: 5
     maximumFlickVelocity: 1000
     boundsBehavior: Flickable.StopAtBounds

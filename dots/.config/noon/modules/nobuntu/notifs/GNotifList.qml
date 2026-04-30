@@ -20,10 +20,7 @@ Item {
         clip: true
         radius: Rounding.huge
         anchors.fill: parent
-
-        model: ScriptModel {
-            values: Notifications.appNameList
-        }
+        _model: Notifications.appNameList
 
         delegate: NotificationGroup {
             required property int index

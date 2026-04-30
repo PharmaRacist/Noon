@@ -38,15 +38,13 @@ StyledRect {
         cellWidth: width / columns
         cellHeight: cellWidth
         reuseItems: false
-        model: ScriptModel {
-            values: {
-                if (root.isSearching)
-                    return BeatsHitsService.searchResults;
-                else if (Mem.states.services.beats.shuffleHits)
-                    return BeatsHitsService.hits.sort(() => Math.random() - 0.5);
-                else
-                    return BeatsHitsService.hits;
-            }
+        _model: {
+            if (root.isSearching)
+                return BeatsHitsService.searchResults;
+            else if (Mem.states.services.beats.shuffleHits)
+                return BeatsHitsService.hits.sort(() => Math.random() - 0.5);
+            else
+                return BeatsHitsService.hits;
         }
         delegate: TrackItem {
             implicitSize: grid.cellWidth - Padding.large

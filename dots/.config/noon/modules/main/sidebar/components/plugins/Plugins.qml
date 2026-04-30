@@ -89,10 +89,7 @@ StyledRect {
                         anchors.fill: parent
                         anchors.margins: Padding.huge
                         spacing: Padding.verysmall
-                        model: ScriptModel {
-                            id: itemsModel
-                            values: Object.values(modelData.data)
-                        }
+                        _model: Object.values(modelData.data)
                         delegate: PluginListItem {
                             required property var modelData
                             required property int index
@@ -105,7 +102,7 @@ StyledRect {
                             name: modelData?.name
                             subtext: modelData?.description ?? ""
                             topRadius: index === 0 ? Rounding.verylarge : Rounding.small
-                            bottomRadius: index === itemsModel.values.length - 1 ? Rounding.verylarge : Rounding.small
+                            bottomRadius: index === list.count ? Rounding.verylarge : Rounding.small
                         }
                     }
                 }

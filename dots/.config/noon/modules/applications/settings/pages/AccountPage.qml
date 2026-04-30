@@ -87,9 +87,7 @@ StyledRect {
             anchors.fill: parent
             anchors.margins: Padding.massive
             spacing: Padding.large
-            model: ScriptModel {
-                values: Object.values(AuthManager.integrations)
-            }
+            _model: Object.values(AuthManager.integrations)
             delegate: AccountAuthSection {}
         }
     }

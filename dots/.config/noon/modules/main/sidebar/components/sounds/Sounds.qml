@@ -71,7 +71,7 @@ Item {
     BottomDialog {
         id: bottomDialog
         show: root.showDeviceSelector
-        collapsedHeight: 180 + dialogFlickable.contentHeight
+        collapsedHeight: 240
         enableStagedReveal: false
         bottomAreaReveal: false
         contentItem: ColumnLayout {
