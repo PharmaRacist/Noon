@@ -14,5 +14,7 @@ Singleton {
 
     ResourcesWatcher {
         id: watcher
+        updateInterval: 6000
+        diskUpdateInterval: 600000
     }
 }

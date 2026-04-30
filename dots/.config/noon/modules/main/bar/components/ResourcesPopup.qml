@@ -23,14 +23,12 @@ StyledPopup {
             text: "CPU"
         }
 
-        // Usage bar
         ResourceBar {
             title: "Usage"
             value: ResourcesService.stats.cpu_percent / 100
             valueText: ResourcesService.stats.cpu_percent.toFixed(1) + "%"
         }
 
-        // Temperature bar — max scale 100 °C
         ResourceBar {
             title: "Temperature"
             value: Math.min(ResourcesService.stats.cpu_temp / 100, 1.0)
@@ -38,7 +36,6 @@ StyledPopup {
             visible: ResourcesService.stats.cpu_temp > 0
         }
 
-        // Current clock bar — normalised against total max
         ResourceBar {
             title: "Clock"
             value: ResourcesService.stats.cpu_total_freq_ghz > 0 ? Math.min(ResourcesService.stats.cpu_freq_ghz / ResourcesService.stats.cpu_total_freq_ghz, 1.0) : 0
@@ -46,7 +43,7 @@ StyledPopup {
         }
 
         SectionLabel {
-            text: "Memory"
+            text: "MEMORY"
         }
 
         ResourceBar {
@@ -64,14 +61,45 @@ StyledPopup {
             visible: ResourcesService.stats.swap_total > 0
         }
 
+        SectionLabel {
+            text: "STORAGE"
+            visible: ResourcesService.stats.disks && ResourcesService.stats.disks.length > 0
+        }
+
+        Repeater {
+            model: ResourcesService.stats.disks
+            delegate: ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 2
+
+                StyledText {
+                    Layout.fillWidth: true
+                    text: modelData.type.toUpperCase()
+                    color: Colors.m3.m3onSurfaceVariant
+                    font.pixelSize: Fonts.sizes.verysmall
+                    font.weight: Font.Medium
+                    elide: Text.ElideMiddle
+                    opacity: 0.7
+                }
+
+                ResourceBar {
+                    title: modelData.mount   // + " (" + modelData.device + ")"
+                    value: modelData.total > 0 ? modelData.used / modelData.total : 0
+                    valueText: (modelData.used / 1073741824).toFixed(1) + " GB / " + (modelData.total / 1073741824).toFixed(1) + " GB"
+                }
+
+                Item {
+                    Layout.preferredHeight: 4
+                }
+            }
+        }
+
         Repeater {
             model: ResourcesService.stats.gpus
-
             delegate: ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 4
 
-                // Divider + GPU header
                 Rectangle {
                     Layout.fillWidth: true
                     height: 1
@@ -90,14 +118,12 @@ StyledPopup {
                     elide: Text.ElideRight
                 }
 
-                // Utilization
                 ResourceBar {
                     title: "Utilization"
                     value: modelData.utilization / 100
                     valueText: modelData.utilization.toFixed(1) + "%"
                 }
 
-                // Temperature
                 ResourceBar {
                     title: "Temperature"
                     value: Math.min(modelData.temperature / 100, 1.0)
@@ -105,7 +131,6 @@ StyledPopup {
                     visible: modelData.temperature > 0
                 }
 
-                // VRAM bar
                 ResourceBar {
                     title: "VRAM"
                     value: modelData.memory_total > 0 ? modelData.memory_used / modelData.memory_total : 0
@@ -113,7 +138,6 @@ StyledPopup {
                     visible: modelData.memory_total > 0
                 }
 
-                // Power bar — normalised against power limit when available
                 ResourceBar {
                     title: "Power"
                     value: modelData.power_limit > 0 ? Math.min(modelData.power_draw / modelData.power_limit, 1.0) : 0
@@ -127,7 +151,7 @@ StyledPopup {
     component ResourceBar: RLayout {
         id: barRoot
         property alias title: label.text
-        property real value: 0          // 0.0 – 1.0
+        property real value: 0
         property string valueText: ""
         height: 40
         Layout.fillWidth: true

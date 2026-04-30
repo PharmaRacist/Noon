@@ -19,7 +19,7 @@ ListView {
     preferredHighlightBegin: 0
     preferredHighlightEnd: width
     reuseItems: true
-    _model: BeatsService.meaningfulPlayers
+    model: BeatsService.meaningfulPlayers
     snapMode: ListView.SnapToItem
     spacing: Padding.massive
     delegate: SquareComponent {
