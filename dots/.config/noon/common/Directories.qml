@@ -25,6 +25,7 @@ Singleton {
         readonly property string home: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         readonly property string config: StandardPaths.standardLocations(StandardPaths.ConfigLocation)[0]
         readonly property string state: home + "/.local/state/noon"
+        readonly property string share: home + "/.local/share"
         readonly property string cache: home + "/.cache/noon"
         readonly property string pictures: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
         readonly property string downloads: StandardPaths.standardLocations(StandardPaths.DownloadLocation)[0]
@@ -37,6 +38,7 @@ Singleton {
     readonly property QtObject services: QtObject {
         readonly property string notifications: FileUtils.trimFileProtocol(standard.cache + "/notifications/notifications.json")
         readonly property string latex: FileUtils.trimFileProtocol(standard.cache + "/media/latex")
+        readonly property string opencodeDb: FileUtils.trimFileProtocol(standard.share + "/opencode/opencode.db")
         readonly property string skills: FileUtils.trimFileProtocol(standard.config + "/opencode/skills")
         readonly property string m3path: FileUtils.trimFileProtocol(standard.state + "/user/generated/colors.json")
         readonly property string gamesCoverArts: FileUtils.trimFileProtocol(standard.state + "/user/generated/gamesCoverArts")

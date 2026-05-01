@@ -6,6 +6,7 @@ Loader {
     id: root
 
     property bool shown: true
+    property alias animationDuration: fadeAnim.duration
     property alias fade: opacityBehavior.enabled
     property var _item: ready ? item : null
     readonly property bool ready: item && item !== null
@@ -37,6 +38,8 @@ Loader {
     Behavior on opacity {
         id: opacityBehavior
 
-        Anim {}
+        Anim {
+            id: fadeAnim
+        }
     }
 }

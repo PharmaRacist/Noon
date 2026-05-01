@@ -18,6 +18,7 @@ Item {
     property var suggestionQuery: ""
     property var suggestionList: []
     signal expandRequested
+    Component.onCompleted: Ai.loadChat(Ai.currentSessionId)
 
     readonly property var allCommands: [
         {
@@ -286,40 +287,47 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            StyledRectangularShadow {
-                z: 1
-                target: statusBg
-                opacity: messageListView.atYBeginning ? 0 : 1
-                visible: opacity > 0
-                Behavior on opacity {
-                    Anim {}
-                }
-            }
-
             StyledListView {
                 id: messageListView
                 z: 0
                 anchors.fill: parent
                 spacing: Padding.veryhuge
-                animateMovement: true
                 popin: true
-                topMargin: statusBg.implicitHeight + statusBg.anchors.topMargin * 2
-                fasterInteractions: false
 
-                onContentHeightChanged: if (atYEnd)
-                    positionViewAtEnd()
-                onCountChanged: if (atYEnd)
-                    positionViewAtEnd()
+                // onContentHeightChanged: if (atYEnd)
+                //     positionViewAtEnd()
+                // onCountChanged: if (atYEnd)
+                //     positionViewAtEnd()
 
                 model: ScriptModel {
                     values: Ai.messageIDs.filter(id => Ai.messageByID[id]?.visibleToUser ?? true)
                 }
-                delegate: AiMessage {
+                delegate: Item {
                     required property var modelData
                     required property int index
-                    messageIndex: index
-                    messageData: Ai.messageByID[modelData]
-                    messageInputField: root.inputField
+
+                    readonly property var msg: Ai.messageByID[modelData]
+                    readonly property Component userComp: UserMessage {
+                        messageIndex: index
+                        messageData: msg
+                        messageInputField: root.inputField
+                    }
+                    readonly property Component aiComp: AiMessage {
+                        messageIndex: index
+                        messageData: msg
+                        messageInputField: root.inputField
+                    }
+
+                    anchors.left: parent?.left
+                    anchors.right: parent?.right
+                    height: loader.implicitHeight
+
+                    Loader {
+                        id: loader
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        sourceComponent: parent.msg?.role === "user" ? userComp : aiComp
+                    }
                 }
             }
 

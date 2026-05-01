@@ -19,19 +19,37 @@ ColumnLayout {
     property bool done: true
     property bool forceDisableChunkSplitting: false
 
-    // Simplified properties
     property string shownText: ""
     property bool fadeChunkSplitting: !forceDisableChunkSplitting && !editing && !/\n\|/.test(shownText) && Mem.options.sidebar.behavior.aiTextFadeIn
+
+    property var textLineOpacities: []
 
     Layout.fillWidth: true
     spacing: 0
 
-    // Logic to process text through our new Unicode service
     function processText(input) {
         if (!input)
             return "";
-        // If editing, we show raw text; otherwise, we format it
         return editing ? input : LatexService.cleanFormula(input);
+    }
+
+    function computeChunks() {
+        if (!root.shownText)
+            return [];
+        return root.fadeChunkSplitting ? root.shownText.split(/\n\n(?= {0,2})|\n(?= {0,2}[-\*])/g).filter(line => line.trim() !== "") : [root.shownText];
+    }
+
+    function syncOpacities(chunks) {
+        const prev = root.textLineOpacities;
+        const next = [];
+        for (let i = 0; i < chunks.length; i++) {
+            if (i < prev.length) {
+                next.push(prev[i]);
+            } else {
+                next.push(root.messageData?.done ? 1 : 0);
+            }
+        }
+        root.textLineOpacities = next;
     }
 
     onEditingChanged: {
@@ -39,47 +57,49 @@ ColumnLayout {
     }
 
     onSegmentContentChanged: {
-        if (segmentContent) {
+        if (segmentContent)
             shownText = processText(segmentContent);
-        }
+    }
+
+    onShownTextChanged: {
+        const chunks = computeChunks();
+        syncOpacities(chunks);
+        chunksModel.values = chunks;
+    }
+
+    onFadeChunkSplittingChanged: {
+        const chunks = computeChunks();
+        syncOpacities(chunks);
+        chunksModel.values = chunks;
     }
 
     Repeater {
         id: textLinesRepeater
-        property list<real> textLineOpacities: []
 
         model: ScriptModel {
-            values: root.fadeChunkSplitting ? root.shownText.split(/\n\n(?= {0,2})|\n(?= {0,2}[-\*])/g).filter(line => line.trim() !== "") : [root.shownText]
-            onValuesChanged: {
-                while (textLinesRepeater.textLineOpacities.length < values.length) {
-                    textLinesRepeater.textLineOpacities.push(root.messageData?.done ? 1 : 0);
-                }
-            }
+            id: chunksModel
+            values: []
         }
 
         delegate: TextArea {
             id: textArea
+
             required property int index
             required property string modelData
 
             Layout.fillWidth: true
             visible: opacity > 0
-            opacity: fadeChunkSplitting ? (textLinesRepeater.textLineOpacities[index] ?? (root.messageData?.done ? 1 : 0)) : 1
+            opacity: root.fadeChunkSplitting ? (root.textLineOpacities[index] ?? (root.messageData?.done ? 1 : 0)) : 1
             readOnly: !editing
             selectByMouse: enableMouseSelection || editing
             renderType: Text.NativeRendering
-
-            // Using a standard reading font that handles Unicode math well
             font.family: Fonts.family.reading
             font.hintingPreference: Font.PreferNoHinting
             font.pixelSize: Fonts.sizes.large * Mem.states.sidebar.apis.fontScale
-
             selectedTextColor: Colors.m3.m3onSecondaryContainer
             selectionColor: Colors.colSecondaryContainer
             wrapMode: TextEdit.Wrap
             color: root.messageData?.thinking ? Colors.colSubtext : Colors.colOnLayer1
-
-            // Markdown handles the Unicode characters natively as text
             textFormat: renderMarkdown ? TextEdit.MarkdownText : TextEdit.PlainText
             text: modelData
 
@@ -88,10 +108,14 @@ ColumnLayout {
             }
 
             Connections {
-                target: textLinesRepeater.model
-                function onValuesChanged() {
-                    if (textLinesRepeater.model.values.length > textArea.index + 1) {
-                        textLinesRepeater.textLineOpacities[textArea.index] = 1;
+                target: root
+                function onTextLineOpacitiesChanged() {
+                    if (index > 0 && index < root.textLineOpacities.length) {
+                        if (root.textLineOpacities[index - 1] >= 1) {
+                            const next = [...root.textLineOpacities];
+                            next[index] = 1;
+                            root.textLineOpacities = next;
+                        }
                     }
                 }
             }

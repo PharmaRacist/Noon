@@ -23,16 +23,14 @@ Singleton {
     readonly property var modelList: states.models ?? []
     readonly property string currentModelId: states.model
     readonly property var skills: states.skills
+
     property var sessions: []
     property var messageIDs: []
     property var messageByID: ({})
+    property var messageQueue: []
     property string pendingSkillName: ""
     property string pendingFilePath: ""
     property var postResponseHook
-
-    function resumeInWeb(sessionId) {
-        NoonUtils.execDetached(["opencode", "web"]);
-    }
 
     function idForMessage(message) {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
@@ -72,6 +70,7 @@ Singleton {
 
     function newSession() {
         root.clearMessages();
+        root.messageQueue = [];
         root.states.currentSessionId = "";
         refreshSessions();
     }
@@ -80,9 +79,9 @@ Singleton {
         if (!id)
             return;
         root.clearMessages();
-        const cleanId = id.trim().toString();
-        root.states.currentSessionId = cleanId;
-        loadMessages(cleanId);
+        root.messageQueue = [];
+        root.states.currentSessionId = id.trim().toString();
+        loadMessages(root.states.currentSessionId);
     }
 
     function loadMessages(id) {
@@ -94,18 +93,30 @@ Singleton {
             const parts = db.tables.part.where({
                 message_id: m.id
             });
+            const parsed = parts.map(p => JSON.parse(p.data));
 
-            const content = parts.map(p => JSON.parse(p.data)).filter(p => p.type === "text").map(p => p.text).join("");
+            const content = parsed.filter(p => p.type === "text").map(p => p.text).join("");
+            const tools = parsed.filter(p => p.type === "tool").map(p => ({
+                        tool: p.tool,
+                        callID: p.callID,
+                        status: p.state.status,
+                        input: p.state.input,
+                        output: p.state.output
+                    }));
+            const files = parsed.filter(p => p.type === "file").map(p => p.url).filter(Boolean);
 
-            if (content.length === 0)
+            if (content.length === 0 && tools.length === 0 && files.length === 0)
                 return;
+
             const aiMessage = root.aiMessageComponent.createObject(root, {
                 "role": mData.role,
                 "content": content,
                 "rawContent": content,
                 "model": mData.model?.modelID ?? "",
                 "thinking": false,
-                "done": true
+                "done": true,
+                "tools": tools,
+                "files": files
             });
             const msgId = root.idForMessage(aiMessage);
             root.messageIDs = [...root.messageIDs, msgId];
@@ -122,15 +133,16 @@ Singleton {
             name: root.currentModelId
         };
     }
+
     function setSkill(skillName) {
-        if (!skillName.includes(skills))
-            return;
-        root.pendingSkillName = skillName.trim();
+        const trimmed = skillName.trim();
+        if (root.skills.includes(trimmed))
+            root.pendingSkillName = trimmed;
     }
+
     function setModel(modelId) {
         if (!modelId || modelId.length === 0)
             return;
-        root.currentModelId = modelId;
         states.model = modelId;
         root.addMessage("Model set to " + modelId, root.interfaceRole);
     }
@@ -138,8 +150,27 @@ Singleton {
     function sendUserMessage(message) {
         if (message.length === 0)
             return;
-        root.addMessage(message, "user");
-        requester.makeRequest(message);
+        const filePath = root.pendingFilePath;
+        const aiMessage = aiMessageComponent.createObject(root, {
+            "role": "user",
+            "content": message,
+            "rawContent": message,
+            "thinking": false,
+            "done": true,
+            "queued": true,
+            "files": filePath.length > 0 ? [filePath] : []
+        });
+        const id = idForMessage(aiMessage);
+        root.messageIDs = [...root.messageIDs, id];
+        root.messageByID[id] = aiMessage;
+        root.messageQueue = [...root.messageQueue,
+            {
+                id: id,
+                text: message
+            }
+        ];
+        if (!requester.running)
+            processQueue();
     }
 
     function sendStealthMessage(message) {
@@ -156,7 +187,25 @@ Singleton {
         const id = idForMessage(aiMessage);
         root.messageIDs = [...root.messageIDs, id];
         root.messageByID[id] = aiMessage;
-        requester.makeRequest(message);
+        root.messageQueue = [...root.messageQueue,
+            {
+                id: id,
+                text: message
+            }
+        ];
+        if (!requester.running)
+            processQueue();
+    }
+
+    function processQueue() {
+        if (root.messageQueue.length === 0)
+            return;
+        const next = root.messageQueue[0];
+        root.messageQueue = root.messageQueue.slice(1);
+        const msg = root.messageByID[next.id];
+        if (msg)
+            msg.queued = false;
+        requester.makeRequest(next.text);
     }
 
     function regenerate(messageIndex) {
@@ -170,8 +219,18 @@ Singleton {
             root.removeMessage(i);
         const lastUserID = root.messageIDs[root.messageIDs.length - 1];
         const lastUser = root.messageByID[lastUserID];
-        if (lastUser)
-            requester.makeRequest(lastUser.rawContent);
+        if (lastUser) {
+            const fakeId = root.idForMessage(lastUser);
+            root.messageQueue = [
+                {
+                    id: fakeId,
+                    text: lastUser.rawContent
+                },
+                ...root.messageQueue];
+            root.messageByID[fakeId] = lastUser;
+            if (!requester.running)
+                processQueue();
+        }
     }
 
     function stop() {
@@ -186,11 +245,11 @@ Singleton {
         }
         refreshSessions();
         root.responseFinished();
+        processQueue();
     }
-    function refreshSessions() {
-        const rows = db.tables.session.all();
 
-        root.sessions = rows.map(r => ({
+    function refreshSessions() {
+        root.sessions = db.tables.session.all().map(r => ({
                     id: r.id,
                     title: r.title,
                     created: r.time_created,
@@ -200,18 +259,13 @@ Singleton {
                 }));
     }
 
-    function summarizePDF(pdf) {
-        root.addMessage(qsTr("PDF summarization not available in this mode"), root.interfaceRole);
-    }
-
     Process {
         id: skillsDiscovery
         running: true
         command: ["sh", "-c", "grep -rPl '^name:\\s*\\S+' " + Directories.services.skills + " --include='SKILL.md' | xargs -n1 dirname | xargs -n1 basename"]
         stdout: StdioCollector {
             onStreamFinished: {
-                const skillNames = text.trim().split("\n").filter(Boolean);
-                states.skills = skillNames;
+                states.skills = text.trim().split("\n").filter(Boolean);
             }
         }
     }
@@ -232,9 +286,9 @@ Singleton {
 
     SQLReader {
         id: db
-        path: "/home/pharmaracist/.local/share/opencode/opencode.db"
-        Component.onCompleted: refreshSessions()
+        path: Directories.services.opencodeDb
         onLoaded: refreshSessions()
+        Component.onCompleted: refreshSessions()
     }
 
     Process {
@@ -243,18 +297,17 @@ Singleton {
 
         function buildCommand(userMessage) {
             let flags = "--format json";
-            if (root.pendingSkillName.length > 0)
+            if (root.pendingSkillName.length > 0) {
                 userMessage += " , using skill " + root.pendingSkillName;
+                root.pendingSkillName = "";
+            }
             if (root.pendingFilePath.length > 0)
                 flags += ` -f ${root.pendingFilePath}`;
             if (root.currentModelId.length > 0)
                 flags += ` -m ${root.currentModelId}`;
-            if (Mem.states.services.ai.currentSessionId.length > 0)
-                flags += ` -s ${Mem.states.services.ai.currentSessionId}`;
-
-            const cmd = ["sh", "-c", `opencode run '${userMessage}' ${flags} < /dev/null`];
-            console.log("[Ai:requester] command:", cmd[2]);
-            return cmd;
+            if (root.currentSessionId.length > 0)
+                flags += ` -s ${root.currentSessionId}`;
+            return ["sh", "-c", `opencode run '${userMessage}' ${flags} < /dev/null`];
         }
 
         function makeRequest(userMessage) {
@@ -282,20 +335,16 @@ Singleton {
             }
             refreshSessions();
             root.responseFinished();
+            root.processQueue();
         }
 
         stdout: SplitParser {
             onRead: data => {
                 const event = JSON.parse(data);
-
-                if (event.sessionID && root.currentSessionId.length === 0) {
+                if (event.sessionID && root.currentSessionId.length === 0)
                     root.states.currentSessionId = event.sessionID;
-                    console.log("[Ai:requester] session captured:", root.currentSessionId);
-                }
-
                 if (requester.message.thinking)
                     requester.message.thinking = false;
-
                 switch (event.type) {
                 case "text":
                     requester.message.rawContent += event.part.text;
@@ -311,7 +360,6 @@ Singleton {
                     if (event.part.reason === "stop")
                         requester.markDone();
                     break;
-                case "step_start":
                 default:
                     break;
                 }

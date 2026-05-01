@@ -4,18 +4,13 @@ QtObject {
     property string role
     property string content
     property string rawContent
-    property string fileMimeType
-    property string fileUri
     property string localFilePath
     property string model
     property bool thinking: true
+    property bool queued: false
     property bool done: false
-    property var annotations: []
+    property var files: []
+    property var tools: []
     property var annotationSources: []
-    property list<string> searchQueries: []
-    property string functionName
-    property var functionCall
-    property string functionResponse
-    property bool functionPending: false
     property bool visibleToUser: true
 }
