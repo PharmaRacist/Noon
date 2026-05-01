@@ -85,47 +85,7 @@ Singleton {
     }
 
     function loadMessages(id) {
-        const messages = db.tables.message.where({
-            session_id: id
-        });
-        messages.forEach(m => {
-            const mData = JSON.parse(m.data);
-            const parts = db.tables.part.where({
-                message_id: m.id
-            });
-            const parsed = parts.map(p => JSON.parse(p.data));
-
-            const content = parsed.filter(p => p.type === "text").map(p => p.text).join("");
-            const tools = parsed.filter(p => p.type === "tool").map(p => ({
-                        tool: p.tool,
-                        callID: p.callID,
-                        status: p.state.status,
-                        input: p.state.input,
-                        output: p.state.output
-                    }));
-            const files = parsed.filter(p => p.type === "file").map(p => p.url).filter(Boolean);
-
-            if (content.length === 0 && tools.length === 0 && files.length === 0)
-                return;
-
-            const aiMessage = root.aiMessageComponent.createObject(root, {
-                "role": mData.role,
-                "content": content,
-                "rawContent": content,
-                "model": mData.model?.modelID ?? "",
-                "thinking": false,
-                "done": true,
-                "tools": tools,
-                "files": files
-            });
-            const msgId = root.idForMessage(aiMessage);
-            root.messageIDs = [...root.messageIDs, msgId];
-            root.messageByID[msgId] = aiMessage;
-        });
-    }
-
-    function attachFile(filePath) {
-        root.pendingFilePath = FileUtils.trimFileProtocol(filePath);
+        db.queryAsync("SELECT m.id as msg_id, m.data as msg_data, p.data as part_data " + "FROM message m LEFT JOIN part p ON p.message_id = m.id " + "WHERE m.session_id = ? " + "ORDER BY m.rowid ASC", [id]);
     }
 
     function getModel() {
@@ -287,8 +247,67 @@ Singleton {
     SQLReader {
         id: db
         path: Directories.services.opencodeDb
-        onLoaded: refreshSessions()
+        onLoaded: {
+            refreshSessions();
+            if (root.currentSessionId.length > 0)
+                loadMessages(root.currentSessionId);
+        }
         Component.onCompleted: refreshSessions()
+    }
+    Connections {
+        target: db
+        function onQueryFinished(rows) {
+            const grouped = {};
+            const order = [];
+
+            rows.forEach(row => {
+                const msgId = row.msg_id;
+                if (!grouped[msgId]) {
+                    grouped[msgId] = {
+                        msg_data: row.msg_data,
+                        parts: []
+                    };
+                    order.push(msgId);
+                }
+                if (row.part_data)
+                    grouped[msgId].parts.push(JSON.parse(row.part_data));
+            });
+
+            order.forEach(msgId => {
+                const {
+                    msg_data,
+                    parts
+                } = grouped[msgId];
+                const mData = JSON.parse(msg_data);
+
+                const content = parts.filter(p => p.type === "text").map(p => p.text).join("");
+                const tools = parts.filter(p => p.type === "tool").map(p => ({
+                            tool: p.tool,
+                            callID: p.callID,
+                            status: p.state.status,
+                            input: p.state.input,
+                            output: p.state.output
+                        }));
+                const files = parts.filter(p => p.type === "file").map(p => p.url).filter(Boolean);
+
+                if (content.length === 0 && tools.length === 0 && files.length === 0)
+                    return;
+
+                const aiMessage = root.aiMessageComponent.createObject(root, {
+                    "role": mData.role,
+                    "content": content,
+                    "rawContent": content,
+                    "model": mData.model?.modelID ?? "",
+                    "thinking": false,
+                    "done": true,
+                    "tools": tools,
+                    "files": files
+                });
+                const newId = root.idForMessage(aiMessage);
+                root.messageIDs = [...root.messageIDs, newId];
+                root.messageByID[newId] = aiMessage;
+            });
+        }
     }
 
     Process {
