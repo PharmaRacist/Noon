@@ -2,6 +2,7 @@ import qs.common
 import qs.common.widgets
 import QtQuick
 import QtQuick.Layouts
+import Noon.Services
 
 RowLayout {
     id: root

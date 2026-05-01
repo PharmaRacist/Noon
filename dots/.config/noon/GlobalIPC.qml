@@ -14,6 +14,12 @@ Scope {
     IpcHandler {
         target: "global"
 
+        function open_note(fileName: string): void {
+            NotesService.openNote(fileName);
+        }
+        function note(content: string): void {
+            NotesService.note(content);
+        }
         function toggle_screenshot(): void {
             GlobalStates.main.showScreenshot = !GlobalStates.main.showScreenshot;
         }

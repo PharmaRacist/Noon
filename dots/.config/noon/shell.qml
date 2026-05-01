@@ -36,7 +36,7 @@ Scope {
         sourceComponent: deload ? deloadComponent : shellMap[mode]
         onLoaded: GlobalStates.handle_init(root.mode)
     }
-
+    AiIPC {}
     GlobalIPC {}
     AppsIPC {}
 }

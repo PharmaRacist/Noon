@@ -11,7 +11,7 @@ Switch {
     id: root
 
     property QtObject colors: Colors
-    property real scale: 0.6 // Default in m3 spec is huge af
+    property real scale: 0.85 // Default in m3 spec is huge af
     // Color properties - standardized across components
     property color activeColor: colors.colPrimary ?? "#685496"
     property color inactiveColor: colors.colSurfaceContainerHighest ?? "#45464F"

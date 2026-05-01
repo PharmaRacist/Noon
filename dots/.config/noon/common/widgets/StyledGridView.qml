@@ -15,7 +15,12 @@ GridView {
     property real mouseScrollFactor: Mem.options.interactions.scrolling.mouseScrollFactor ?? 50
     property real mouseScrollDeltaThreshold: Mem.options.interactions.scrolling.mouseScrollDeltaThreshold ?? 120
     property real scrollTargetY: 0
-
+    property var _model
+    model: (script && script.values) ? script : []
+    ScriptModel {
+        id: script
+        values: _model
+    }
     StyledLoader {
         z: 999
         active: root.hint

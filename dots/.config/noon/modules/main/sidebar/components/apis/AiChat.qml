@@ -11,7 +11,7 @@ import Noon.Services
 
 Item {
     id: root
-    property real padding: 0
+    property real padding: Padding.huge
     property var inputField: messageInputField
     property string commandPrefix: "/"
     property bool isRecording: false
@@ -273,10 +273,7 @@ Item {
 
     ColumnLayout {
         id: columnLayout
-        anchors {
-            fill: parent
-            margins: root.padding
-        }
+        anchors.fill: parent
         spacing: root.padding
 
         StyledRect {
@@ -289,17 +286,19 @@ Item {
             StyledListView {
                 id: messageListView
                 z: 0
+                clip: true
+                radius: Rounding.verylarge
+                fasterInteractions: false
                 anchors.fill: parent
                 spacing: Padding.veryhuge
                 reuseItems: false
                 popin: false
                 animateAppearance: false
-                onCountChanged: if (atYEnd)
-                    Qt.callLater(positionViewAtEnd)
+                onCountChanged: if (messageListView.atYEnd)
+                    Qt.callLater(messageListView.positionViewAtEnd)
 
-                model: ScriptModel {
-                    values: Ai.messageIDs.filter(id => Ai.messageByID[id]?.visibleToUser ?? true)
-                }
+                _model: Ai.messageIDs.filter(id => Ai.messageByID[id]?.visibleToUser ?? true)
+
                 delegate: Item {
                     required property var modelData
                     required property int index
@@ -392,7 +391,7 @@ Item {
             id: inputWrapper
             property real spacing: 5
             Layout.fillWidth: true
-            radius: Rounding.verylarge - root.padding
+            radius: Rounding.verylarge
             color: Colors.colLayer1
             implicitHeight: Math.max(inputFieldRowLayout.implicitHeight + inputFieldRowLayout.anchors.topMargin + commandButtonsRow.implicitHeight + commandButtonsRow.anchors.bottomMargin + spacing, 45) + (attachedFileIndicator.implicitHeight + spacing + attachedFileIndicator.anchors.topMargin)
             clip: true
@@ -426,11 +425,14 @@ Item {
                     id: messageInputField
                     wrapMode: TextArea.Wrap
                     Layout.fillWidth: true
-                    padding: 10
+                    padding: Padding.normal
                     color: activeFocus ? Colors.m3.m3onSurface : Colors.m3.m3onSurfaceVariant
                     placeholderText: qsTr('Message the model... "%1" for commands').arg(root.commandPrefix)
                     background: null
-
+                    font {
+                        pixelSize: Fonts.sizes.normal
+                        family: Fonts.family.reading
+                    }
                     onTextChanged: {
                         if (text.length === 0) {
                             root.suggestionQuery = "";
