@@ -18,7 +18,6 @@ Item {
     property var suggestionQuery: ""
     property var suggestionList: []
     signal expandRequested
-    Component.onCompleted: Ai.loadChat(Ai.currentSessionId)
 
     readonly property var allCommands: [
         {
@@ -292,12 +291,11 @@ Item {
                 z: 0
                 anchors.fill: parent
                 spacing: Padding.veryhuge
-                popin: true
-
-                // onContentHeightChanged: if (atYEnd)
-                //     positionViewAtEnd()
-                // onCountChanged: if (atYEnd)
-                //     positionViewAtEnd()
+                reuseItems: false
+                popin: false
+                animateAppearance: false
+                onCountChanged: if (atYEnd)
+                    Qt.callLater(positionViewAtEnd)
 
                 model: ScriptModel {
                     values: Ai.messageIDs.filter(id => Ai.messageByID[id]?.visibleToUser ?? true)
@@ -320,10 +318,11 @@ Item {
 
                     anchors.left: parent?.left
                     anchors.right: parent?.right
-                    height: loader.implicitHeight
+                    implicitHeight: loader?.implicitHeight
 
                     Loader {
                         id: loader
+                        asynchronous: true
                         anchors.left: parent.left
                         anchors.right: parent.right
                         sourceComponent: parent.msg?.role === "user" ? userComp : aiComp
@@ -338,11 +337,6 @@ Item {
                 title: "AI"
                 description: "access various AI models\n press '/' for more options "
                 shape: MaterialShape.Shape.PixelCircle
-            }
-
-            ScrollToBottomButton {
-                z: 3
-                target: messageListView
             }
         }
 

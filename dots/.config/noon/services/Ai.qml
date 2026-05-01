@@ -247,13 +247,9 @@ Singleton {
     SQLReader {
         id: db
         path: Directories.services.opencodeDb
-        onLoaded: {
-            refreshSessions();
-            if (root.currentSessionId.length > 0)
-                loadMessages(root.currentSessionId);
-        }
-        Component.onCompleted: refreshSessions()
+        onLoaded: refreshSessions()
     }
+
     Connections {
         target: db
         function onQueryFinished(rows) {

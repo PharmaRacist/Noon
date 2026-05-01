@@ -45,6 +45,7 @@ Item {
 
         StyledText {
             visible: root.messageData?.queued ?? false
+            Layout.rightMargin: Padding.massive + 5
             Layout.alignment: Qt.AlignRight
             text: "Queued"
             font.pixelSize: Fonts.sizes.small
@@ -52,6 +53,7 @@ Item {
         }
 
         WrapperRectangle {
+            Layout.maximumWidth: parent?.width - Padding.massive * 2
             Layout.alignment: Qt.AlignRight
             Layout.rightMargin: Padding.huge
             color: Colors.colLayer3
