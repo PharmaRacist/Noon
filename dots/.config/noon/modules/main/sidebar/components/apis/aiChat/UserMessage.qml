@@ -53,7 +53,7 @@ Item {
         }
 
         WrapperRectangle {
-            Layout.maximumWidth: parent?.width - Padding.massive * 2
+            Layout.maximumWidth: parent?.width - Padding.huge
             Layout.alignment: Qt.AlignRight
             Layout.rightMargin: Padding.huge
             color: Colors.colLayer3

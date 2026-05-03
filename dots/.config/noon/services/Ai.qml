@@ -4,6 +4,7 @@ import Noon.Utils
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.store
 import qs.common
 import qs.common.utils
 import qs.common.functions
@@ -23,11 +24,12 @@ Singleton {
     readonly property var modelList: states.models ?? []
     readonly property string currentModelId: states.model
     readonly property var skills: states.skills
+    readonly property var modelPoses: posesView.data
 
     property var sessions: []
     property var messageIDs: []
-    property var messageByID: ({})
     property var messageQueue: []
+    property var messageByID: ({})
     property string pendingSkillName: ""
     property string pendingFilePath: ""
     property var postResponseHook
@@ -385,5 +387,11 @@ Singleton {
             if (!requester.message.done && exitCode === 0)
                 requester.markDone();
         }
+    }
+    ConfigFileView {
+        id: posesView
+        state: true
+        fileName: "poses"
+        adapter: PosesSchema {}
     }
 }

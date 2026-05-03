@@ -79,7 +79,7 @@ Singleton {
             // misc
             venv, assets, records, gallery, sounds, scriptsDir, shellConfigs, favicons,
             // services
-            services.notifications, services.latex, services.gamesCoverArts, services.screenshots,
+            services.latex, services.gamesCoverArts, services.screenshots,
             // wallpapers
             wallpapers.main, wallpapers.switchScript, wallpapers.depthDir, wallpapers.gowallDir, wallpapers.favorite,
             // beats

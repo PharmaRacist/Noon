@@ -116,6 +116,7 @@ Singleton {
     function stopPlayer() {
         _daemonCmd(["--player", "preview", "stop"]);
         _daemonCmd(["--player", "main", "stop"]);
+        daemonOptions.players.main.queue = [];
     }
 
     function previewURL(url) {
